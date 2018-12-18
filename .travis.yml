@@ -14,7 +14,7 @@ install:
 script:
   - npm run test
 
-install:
+before_deploy:
   - cd client && npm run build && cd ..
 
 deploy:
