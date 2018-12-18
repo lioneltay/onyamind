@@ -8,7 +8,7 @@ before_install:
   - openssl aes-256-cbc -K $encrypted_357e5deb27f8_key -iv $encrypted_357e5deb27f8_iv -in ./keys/travis-deployer.json.enc -out ./keys/travis-deployer.json -d
 
 install:
-  - cd client && npm install && cd ..
+  - cd client && npm install && npm run build && cd ..
   - cd server && npm install && cd ..
 
 script:
