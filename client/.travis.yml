@@ -1,0 +1,19 @@
+sudo: required
+
+language: node_js
+node_js:
+  - node
+
+before_install:
+  - pip install awscli --upgrade --user
+  - aws --version
+
+script:
+  - npm test -- --coverage
+
+deploy:
+  - provider: script
+    script: bash scripts/travis/production-deploy.sh
+    skip_cleanup: true
+    on:
+      branch: master

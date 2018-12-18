@@ -1,0 +1,6 @@
+dispatch:
+  - url: "api.app.tekktekk.com/*"
+    service: api-dev
+
+  - url: "app.tekktekk.com/*"
+    service: client-dev
