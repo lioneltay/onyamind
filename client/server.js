@@ -5,7 +5,7 @@ const app = express()
 app.use(express.static("./dist"))
 
 app.get("*", (req, res) => {
-  res.send("./dist/index.html")
+  res.sendFile("./dist/index.html")
 })
 
 const PORT = process.env.PORT || 3000
