@@ -18,6 +18,13 @@ deploy:
   - provider: gae
     project: tekktekk
     keyfile: ./keys/travis-deployer.json
+    config: 'dispatch.yaml'
+    verbosity: debug
+    on: master
+
+  - provider: gae
+    project: tekktekk
+    keyfile: ./keys/travis-deployer.json
     config: './client/app.yaml'
     verbosity: debug
     on: master
