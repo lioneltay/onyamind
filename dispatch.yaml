@@ -1,6 +1,6 @@
 dispatch:
-  - url: "api.app.tekktekk.com/*"
+  - url: "api.notes.tekktekk.com/*"
     service: api-dev
 
-  - url: "app.tekktekk.com/*"
+  - url: "notes.tekktekk.com/*"
     service: client-dev
