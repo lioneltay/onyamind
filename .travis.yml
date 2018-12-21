@@ -19,7 +19,7 @@ before_deploy:
 
 deploy:
   - provider: gae
-    project: tekktekk
+    project: tekktekk-notes
     keyfile: ./keys/travis-deployer.json
     config: "dispatch.yaml"
     verbosity: debug
@@ -27,7 +27,7 @@ deploy:
     on: master
 
   - provider: gae
-    project: tekktekk
+    project: tekktekk-notes
     keyfile: ./keys/travis-deployer.json
     config: "./client/app.yaml"
     verbosity: debug
@@ -35,7 +35,7 @@ deploy:
     on: master
 
   - provider: gae
-    project: tekktekk
+    project: tekktekk-notes
     keyfile: ./keys/travis-deployer.json
     config: "./server/app.yaml"
     verbosity: debug
