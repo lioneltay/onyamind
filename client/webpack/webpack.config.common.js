@@ -5,6 +5,18 @@ const WorkboxPlugin = require("workbox-webpack-plugin")
 const relativeToRoot = relativePath =>
   path.resolve(__dirname, "../", relativePath)
 
+const babel_loader = {
+  loader: "babel-loader",
+  options: {
+    cacheDirectory: true,
+  },
+}
+
+const ts_loader = {
+  loader: "ts-loader",
+  options: { transpileOnly: true },
+}
+
 module.exports = {
   entry: {
     main: relativeToRoot("./src/index.tsx"),
@@ -20,17 +32,20 @@ module.exports = {
       {
         test: /\.tsx?$/,
         exclude: /node_modules/,
+        use: [babel_loader, ts_loader],
+      },
+      {
+        test: /.worker.ts$/,
+        exclude: /node_modules/,
         use: [
           {
-            loader: "babel-loader",
+            loader: "worker-loader",
             options: {
-              cacheDirectory: true,
+              name: "[name].js",
             },
           },
-          {
-            loader: "ts-loader",
-            options: { transpileOnly: true },
-          },
+          babel_loader,
+          ts_loader,
         ],
       },
     ],

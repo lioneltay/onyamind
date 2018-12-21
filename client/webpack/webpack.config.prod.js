@@ -1,4 +1,5 @@
 const path = require("path")
+const CopyWebpackPlugin = require("copy-webpack-plugin")
 
 const relativeToRoot = relativePath =>
   path.resolve(__dirname, "../", relativePath)
@@ -15,5 +16,17 @@ module.exports = {
     publicPath: "/",
   },
 
-  plugins: [...common_config.plugins],
+  plugins: [
+    ...common_config.plugins,
+    new CopyWebpackPlugin([
+      {
+        from: relativeToRoot("./public"),
+        to: relativeToRoot("./dist/public"),
+      },
+      {
+        from: relativeToRoot("./server.js"),
+        to: relativeToRoot("./dist/server.js"),
+      },
+    ]),
+  ],
 }
