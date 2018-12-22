@@ -5,7 +5,8 @@ node_js:
   - node
 
 before_install:
-  - openssl aes-256-cbc -K $encrypted_357e5deb27f8_key -iv $encrypted_357e5deb27f8_iv -in ./keys/travis-deployer.json.enc -out ./keys/travis-deployer.json -d
+  # - openssl aes-256-cbc -K $encrypted_357e5deb27f8_key -iv $encrypted_357e5deb27f8_iv -in ./keys/travis-deployer.json.enc -out ./keys/travis-deployer.json -d
+  - openssl aes-256-cbc -K $encrypted_357e5deb27f8_key -iv $encrypted_357e5deb27f8_iv -in ./keys/travis-service-account.json.enc -out ./keys/travis-service-account.json -d
 
 install:
   - cd client && npm install && cd ..
@@ -20,7 +21,7 @@ before_deploy:
 deploy:
   - provider: gae
     project: tekktekk-notes
-    keyfile: ./keys/travis-deployer.json
+    keyfile: ./keys/travis-service-account.json
     config: "dispatch.yaml"
     verbosity: debug
     skip_cleanup: true
@@ -28,7 +29,7 @@ deploy:
 
   - provider: gae
     project: tekktekk-notes
-    keyfile: ./keys/travis-deployer.json
+    keyfile: ./keys/travis-service-account.json
     config: "./client/app.yaml"
     verbosity: debug
     skip_cleanup: true
@@ -36,7 +37,7 @@ deploy:
 
   - provider: gae
     project: tekktekk-notes
-    keyfile: ./keys/travis-deployer.json
+    keyfile: ./keys/travis-service-account.json
     config: "./server/app.yaml"
     verbosity: debug
     skip_cleanup: true

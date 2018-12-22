@@ -1,2 +1,3 @@
 - new service account for travis to use
 - change projects in .travis.yml
+- change domains in dispatch.yaml
