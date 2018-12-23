@@ -4,19 +4,35 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node -T src/index.ts",
+    "dev": "NODE_PATH=src nodemon src/index.ts",
+    "start": "ts-node src/index.ts",
     "deploy:dev": "gcloud app deploy app.yaml --project=tekktekk --quiet",
+    "makkee": "knex migrate:make initial",
+    "typeorm": "NODE_PATH=./src ts-node ./node_modules/.bin/typeorm",
+    "migration:run": "npm run typeorm -- migration:run",
+    "migration:revert": "npm run typeorm -- migration:revert",
+    "migration:create": "npm run typeorm -- migration:create",
+    "migration:rerun": "npm run migration:revert && npm run migration:run",
     "test": "echo NO TEST FOR SERVER YET"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/pg": "^7.4.11",
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
     "express": "^4.16.4",
-    "ts-node": "^7.0.1",
+    "mysql": "^2.14.1",
+    "pg": "^7.7.1",
+    "reflect-metadata": "^0.1.10",
+    "ts-node": "^6.2.0",
+    "typeorm": "^0.2.7",
     "typescript": "^3.2.2"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.4",
     "@types/express": "^4.16.0",
-    "@types/node": "^10.12.15"
+    "@types/node": "^8.0.29",
+    "typescript": "2.5.2"
   }
 }

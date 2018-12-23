@@ -1,0 +1,16 @@
+{
+  "ignore": [".git", "node_modules/**/node_modules"],
+  "verbose": false,
+  "execMap": {
+    "js": "node --harmony",
+    "ts": "ts-node -T"
+  },
+  "events": {
+    "start": "printf \"\\033c\"",
+    "restart": "printf \"\\033c\""
+  },
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "ext": "js jsx json ts tsx css gql"
+}
