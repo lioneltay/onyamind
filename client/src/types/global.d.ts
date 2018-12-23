@@ -5,6 +5,8 @@ declare global {
     className?: string
     style?: CSSProperties
   }
+
+  type Omit<U, V> = Pick<U, Exclude<keyof U, V>>
 }
 
 export {}

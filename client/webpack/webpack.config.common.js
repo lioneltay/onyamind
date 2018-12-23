@@ -19,7 +19,7 @@ const ts_loader = {
 
 module.exports = {
   entry: {
-    main: relativeToRoot("./src/index.tsx"),
+    main: ["@babel/polyfill", relativeToRoot("./src/index.tsx")],
   },
 
   resolve: {

@@ -16,6 +16,8 @@ module.exports = {
     publicPath: "/",
   },
 
+  devtool: "inline-source-map",
+
   devServer: {
     hot: false,
     port: 3000,
