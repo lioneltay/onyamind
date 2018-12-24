@@ -61,11 +61,13 @@ export default class TaskItem extends React.Component<Props, State> {
           />
         </Button> */}
 
-        <Button className="ml-3" color="tomato" style={{ border: "none" }}>
-          <i
-            className="fas fa-times"
-            onClick={() => this.props.onRemove(task.id)}
-          />
+        <Button
+          className="ml-3"
+          color="tomato"
+          style={{ border: "none" }}
+          onClick={() => this.props.onRemove(task.id)}
+        >
+          <i className="fas fa-times" />
         </Button>
       </Container>
     )

@@ -4,6 +4,7 @@ import uuid from "uuid/v4"
 import { sequenceMap } from "lib/promise"
 import * as api from "./api"
 import { Task, ID } from "./api"
+import { update } from "lib/typedash"
 
 // IndexedDB ===============================
 const db_promise = open("TaskDatabase", 1, db => {
@@ -134,11 +135,12 @@ async function processActions([action, ...rest]: Action[]): Promise<void> {
 // State Container =======================
 type ContainerState = {
   tasks: Task[]
+  title: string
 }
 
 const initial_state = async (): Promise<ContainerState> => {
   const tasks: Task[] = await task_store.getAll()
-  return Promise.resolve({ tasks })
+  return Promise.resolve({ tasks, title: "" })
 }
 
 function onlineHandler() {
@@ -170,6 +172,7 @@ export const StateContainer = createStateContainer({
   actions: updateState => ({
     getTasks: async (): Promise<Task[]> => {
       const tasks: Task[] = await api.getTasks()
+      await task_store.clear()
       await Promise.all(tasks.map(task => task_store.set(task.id, task)))
 
       updateState({ tasks })
@@ -200,82 +203,99 @@ export const StateContainer = createStateContainer({
     },
 
     addTask: async (task: Omit<Task, "id">): Promise<Task> => {
-      async function addTask(task: Omit<Task, "id">): Promise<Task> {
-        if (navigator.onLine) {
-          const new_task = await api.addTask(task)
-          await task_store.set(new_task.id, new_task)
-          return new_task
-        }
-
+      if (navigator.onLine) {
+        const temp_id = uuid()
+        const temp_task = { ...task, id: temp_id }
+        updateState(state => ({
+          title: "",
+          tasks: [...state.tasks, temp_task],
+        }))
+        const new_task = await api.addTask(task)
+        await task_store.set(new_task.id, new_task)
+        updateState(state => ({
+          title: "",
+          tasks: update(
+            state.tasks.findIndex(task => task.id === temp_id),
+            new_task,
+            state.tasks,
+          ),
+        }))
+        return new_task
+      } else {
         const id = uuid()
         const new_task = { id, ...task }
         await task_store.set(new_task.id, new_task)
         await addOfflineAction({ type: "add", task: new_task, id })
+        updateState(state => ({
+          title: "",
+          tasks: [...state.tasks, new_task],
+        }))
         return new_task
       }
-
-      const new_task = await addTask(task)
-      updateState(state => ({
-        title: "",
-        tasks: [...state.tasks, new_task],
-      }))
-      return new_task
     },
 
     editTask: async (
       task_id: ID,
       task_data: Partial<Omit<Task, "id">>,
     ): Promise<Task> => {
-      async function editTask(
-        task_id: ID,
-        task_data: Partial<Omit<Task, "id">>,
-      ): Promise<Task> {
-        if (navigator.onLine) {
-          const new_task = await api.editTask(task_id, task_data)
-          await task_store.set(new_task.id, new_task)
-          return new_task
-        }
-
+      if (navigator.onLine) {
+        updateState(state => {
+          const index = state.tasks.findIndex(task => task.id === task_id)
+          return {
+            tasks: update(
+              index,
+              { ...state.tasks[index], ...task_data },
+              state.tasks,
+            ),
+          }
+        })
+        const new_task = await api.editTask(task_id, task_data)
+        await task_store.set(new_task.id, new_task)
+        updateState(state => ({
+          tasks: update(
+            state.tasks.findIndex(task => task.id === task_id),
+            new_task,
+            state.tasks,
+          ),
+        }))
+        return new_task
+      } else {
         const old_task = await task_store.get(task_id)
         const new_task = { ...old_task, ...task_data, id: task_id }
         await task_store.set(task_id, new_task)
         await addOfflineAction({ type: "edit", data: new_task, id: task_id })
+        updateState(state => {
+          const index = state.tasks.findIndex(task => task.id === task_id)
+          return {
+            title: "",
+            tasks: [
+              ...state.tasks.slice(0, index),
+              new_task,
+              ...state.tasks.slice(index + 1),
+            ],
+          }
+        })
         return new_task
       }
-
-      const new_task = await editTask(task_id, task_data)
-      updateState(state => {
-        const index = state.tasks.findIndex(task => task.id === task_id)
-        return {
-          title: "",
-          tasks: [
-            ...state.tasks.slice(0, index),
-            new_task,
-            ...state.tasks.slice(index + 1),
-          ],
-        }
-      })
-      return new_task
     },
 
     removeTask: async (task_id: ID): Promise<ID> => {
-      async function removeTask(task_id: ID): Promise<ID> {
-        if (navigator.onLine) {
-          await api.removeTask(task_id)
-          await task_store.delete(task_id)
-          return task_id
-        }
-
+      if (navigator.onLine) {
+        updateState(state => ({
+          tasks: state.tasks.filter(t => t.id !== task_id),
+        }))
+        await api.removeTask(task_id)
+        await task_store.delete(task_id)
+        await task_store.delete(task_id)
+        return task_id
+      } else {
         await addOfflineAction({ type: "remove", id: task_id })
+        updateState(state => ({
+          tasks: state.tasks.filter(t => t.id !== task_id),
+        }))
+        await task_store.delete(task_id)
         return task_id
       }
-
-      await removeTask(task_id)
-      updateState(state => ({
-        tasks: state.tasks.filter(t => t.id !== task_id),
-      }))
-      await task_store.delete(task_id)
-      return task_id
     },
   }),
 })

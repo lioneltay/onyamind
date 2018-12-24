@@ -1,12 +1,45 @@
 import { CSSProperties } from "react"
 
+export {}
 declare global {
   export interface Stylable {
     className?: string
     style?: CSSProperties
   }
 
-  type Omit<U, V> = Pick<U, Exclude<keyof U, V>>
+  export type FunctionType<A extends any[] = any[], R = any> = (...args: A) => R
+
+  export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>
+
+  export type Arguments<T extends FunctionType> = T extends FunctionType<
+    infer A,
+    any
+  >
+    ? A
+    : never
+
+  export type Merge<A, B> = Pick<A, Exclude<keyof A, keyof B>> & B
+
+  export namespace NodeJS {
+    export interface ProcessEnv {
+      APP_MODE: "local" | "development" | "production"
+    }
+  }
+
+  // Unions of objects normally allow keys present in any member to be present. Strict unions will consider this an error
+  type UnionKeys<T> = T extends any ? keyof T : never
+  type StrictUnionHelper<T, TAll> = T extends any
+    ? T & Partial<Record<Exclude<UnionKeys<TAll>, keyof T>, never>>
+    : never
+  export type StrictUnion<T> = StrictUnionHelper<T, T>
+
+  export type PropsOf<T> = T extends React.ComponentType<infer P> ? P : never
+  // Same as React.Ref<T> but excludes the deprecated string ref
+  export type ReactRef<T> = Exclude<React.Ref<T>, string>
+
+  type ApplyCondition<T, C> = { [K in keyof T]: T[K] extends C ? K : never }
+  type ValueOf<T> = T[keyof T]
+  export type FilterKeys<T, C> = Pick<T, ValueOf<ApplyCondition<T, C>>>
 }
 
 export {}

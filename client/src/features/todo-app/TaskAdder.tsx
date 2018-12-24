@@ -10,16 +10,16 @@ const Container = styled.div`
 
 type Props = Stylable & {
   onAdd: (task: string) => Promise<void>
+  title: string
+  onChange: (title: string) => void
 }
 
 type State = {
-  task: string
   saving: boolean
 }
 
 export default class TaskAdder extends React.Component<Props, State> {
   state: State = {
-    task: "",
     saving: false,
   }
 
@@ -29,8 +29,8 @@ export default class TaskAdder extends React.Component<Props, State> {
         <Input
           className="fg-1"
           placeholder="Add a task"
-          value={this.state.task}
-          onChange={e => this.setState({ task: e.target.value })}
+          value={this.props.title}
+          onChange={e => this.props.onChange(e.currentTarget.value)}
         />
 
         <Button
@@ -38,8 +38,8 @@ export default class TaskAdder extends React.Component<Props, State> {
           onClick={() => {
             this.setState({ saving: true })
             this.props
-              .onAdd(this.state.task)
-              .then(() => this.setState({ task: "", saving: false }))
+              .onAdd(this.props.title)
+              .then(() => this.setState({ saving: false }))
               .catch(() => this.setState({ saving: false }))
           }}
         >

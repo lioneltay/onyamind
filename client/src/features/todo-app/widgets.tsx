@@ -16,9 +16,14 @@ export const Button = styled.button<{ color?: string }>`
   padding: 10px 18px;
 
   cursor: pointer;
+  transition: background 200ms;
 
   &:focus {
     outline: none;
+  }
+
+  &:hover {
+    background: #f8f8f8;
   }
 `
 

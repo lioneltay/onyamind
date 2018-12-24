@@ -43,15 +43,7 @@ type Props = {
   context: ContextType
 }
 
-type State = {
-  title: string
-}
-
 class TaskPageImplementation extends React.Component<Props, State> {
-  state: State = {
-    title: "",
-  }
-
   componentDidMount() {
     this.props.context.actions.getTasks()
   }
@@ -66,13 +58,11 @@ class TaskPageImplementation extends React.Component<Props, State> {
 
           <TaskContainer>
             <TaskAdder
-              onAdd={task =>
-                this.props.context.actions
-                  .addTask({
-                    title: task,
-                  })
-                  .then(() => this.setState({ title: "" }))
+              title={this.props.context.state.title}
+              onChange={title =>
+                this.props.context.actions.updateState({ title })
               }
+              onAdd={title => this.props.context.actions.addTask({ title })}
             />
 
             <div className="my-3" style={{ height: 1, background: "#eee" }} />
@@ -83,7 +73,7 @@ class TaskPageImplementation extends React.Component<Props, State> {
                 <TaskItem
                   key={task.id}
                   task={task}
-                  onEdit={(data) =>
+                  onEdit={data =>
                     this.props.context.actions.editTask(task.id, data)
                   }
                   onRemove={() =>
