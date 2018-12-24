@@ -1,5 +1,6 @@
 const path = require("path")
 const CopyWebpackPlugin = require("copy-webpack-plugin")
+const webpack = require("webpack")
 
 const relativeToRoot = relativePath =>
   path.resolve(__dirname, "../", relativePath)
