@@ -18,6 +18,9 @@ module.exports = {
 
   plugins: [
     ...common_config.plugins,
+    new webpack.EnvironmentPlugin({
+      APP_MODE: "production",
+    }),
     new CopyWebpackPlugin([
       {
         from: relativeToRoot("./public"),

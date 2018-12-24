@@ -1,7 +1,7 @@
 {
-  "name": "A PWA!",
-  "short_name": "D PWA",
-  "description": "This is a PWA! It works!",
+  "name": "Todo App - PWA",
+  "short_name": "Todo App",
+  "description": "A Todo App made with PWA Technology",
   "start_url": "/",
   "display": "fullscreen",
   "theme_color": "#B12A34",

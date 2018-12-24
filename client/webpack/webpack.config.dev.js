@@ -26,6 +26,9 @@ module.exports = {
 
   plugins: [
     ...common_config.plugins,
+    new webpack.EnvironmentPlugin({
+      APP_MODE: "development",
+    }),
     // new webpack.HotModuleReplacementPlugin()
   ],
 }

@@ -1,7 +1,5 @@
 import idb, { DB } from "idb"
 
-console.log("INDEX DB YE!")
-
 export const open = idb.open
 
 type Key = string | number
@@ -27,6 +25,7 @@ export function getObjectStore(db_promise: Promise<DB>, store_name: string) {
     },
 
     set(key: Key, val: any) {
+      console.log("SET", key, val)
       return db_promise.then(db => {
         const tx = db.transaction(store_name, "readwrite")
         tx.objectStore(store_name).put(val, key)
@@ -35,6 +34,7 @@ export function getObjectStore(db_promise: Promise<DB>, store_name: string) {
     },
 
     delete(key: Key) {
+      console.log("DELETE", key)
       return db_promise.then(db => {
         const tx = db.transaction(store_name, "readwrite")
         tx.objectStore(store_name).delete(key)
@@ -53,20 +53,8 @@ export function getObjectStore(db_promise: Promise<DB>, store_name: string) {
     keys() {
       return db_promise.then(db => {
         const tx = db.transaction(store_name)
-        // const keys = []
         const store = tx.objectStore(store_name)
-
         return store.getAllKeys()
-
-        // This would be store.getAllKeys(), but it isn't supported by Edge or Safari.
-        // openKeyCursor isn't supported by Safari, so we fall back
-        // ;(store.iterateKeyCursor || store.iterateCursor).call(store, cursor => {
-        //   if (!cursor) return
-        //   keys.push(cursor.key)
-        //   cursor.continue()
-        // })
-
-        // return tx.complete.then(() => keys)
       })
     },
   }

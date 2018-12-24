@@ -5,6 +5,8 @@ export type ExtractContextType<T> = T extends React.Context<infer R> ? R : never
 interface Config<S, A> {
   initial_state: StateType<S>
   actions: ActionFactory<S, A>
+  componentDidMount?: (updateState: UpdateState<S>) => void
+  componentWillUnmount?: () => void
 }
 
 type UpdateState<S> = (input: ((state: S) => Partial<S>) | Partial<S>) => void
@@ -26,25 +28,13 @@ type Context<S, A> = {
 }
 
 export function createStateContainer<S extends object, A extends object>(
-  config: Config<S, A>
+  config: Config<S, A>,
 ) {
   const Context = React.createContext<Context<S, A>>({} as any)
 
   class Provider extends React.Component<Props<S>, Context<S, A>> {
     constructor(props: Props<S>) {
       super(props)
-
-      const updateState = (input: ((state: S) => Partial<S>) | Partial<S>) => {
-        this.setState(
-          ({ state }) =>
-            ({
-              state: {
-                ...state,
-                ...(typeof input === "function" ? input(state) : input),
-              },
-            } as Context<S, A>)
-        )
-      }
 
       const initial_state = this.props.initial_state || config.initial_state
 
@@ -53,11 +43,23 @@ export function createStateContainer<S extends object, A extends object>(
         init_complete: !(typeof initial_state === "function"),
         state: typeof initial_state === "function" ? undefined! : initial_state,
         actions: {
-          ...config.actions(updateState),
-          updateState,
+          ...config.actions(this.updateState),
+          updateState: this.updateState,
         } as ContextActions<S, A>,
       }
       /* eslint-enable react/no-unused-state */
+    }
+
+    updateState = (input: ((state: S) => Partial<S>) | Partial<S>) => {
+      this.setState(
+        ({ state }) =>
+          ({
+            state: {
+              ...state,
+              ...(typeof input === "function" ? input(state) : input),
+            },
+          } as Context<S, A>),
+      )
     }
 
     componentDidMount() {
@@ -67,10 +69,17 @@ export function createStateContainer<S extends object, A extends object>(
           this.setState({
             init_complete: true,
             state,
-          })
+          }),
         )
       }
+
+      config.componentDidMount && config.componentDidMount(this.updateState)
     }
+
+    componentWillUnmount() {
+      config.componentWillUnmount && config.componentWillUnmount()
+    }
+
 
     render() {
       return (

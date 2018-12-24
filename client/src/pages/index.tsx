@@ -4,7 +4,7 @@ import { Route, Switch } from "react-router-dom"
 
 import { URLBreadcrumbs } from "lib/components"
 
-import TaskListPage from "pages/tasklist"
+import { Page as TodoAppPage } from "features/todo-app"
 
 const Container = styled.main``
 
@@ -13,8 +13,8 @@ export default class Root extends React.Component {
     return (
       <Container>
         <Switch>
-          <Route exact path="/" component={TaskListPage} />
-          <Route path="/tasklist" component={TaskListPage} />
+          <Route exact path="/" component={TodoAppPage} />
+          <Route path="/todo-app" component={TodoAppPage} />
           <Route render={() => <URLBreadcrumbs className="m-2" />} />
         </Switch>
       </Container>
