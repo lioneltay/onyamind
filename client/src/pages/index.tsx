@@ -9,6 +9,10 @@ import { Page as TodoAppPage } from "features/todo-app"
 const Container = styled.main``
 
 export default class Root extends React.Component {
+  componentDidMount() {
+    document.querySelector('#app-shell')!.remove()
+  }
+
   render() {
     return (
       <Container>

@@ -91,7 +91,7 @@
   <body>
     <noscript><h1>Javascript is required to run this page!</h1> </noscript>
 
-    <div id="app">
+    <div id="app-shell">
       <style>
         * {
           margin: 0;
@@ -99,16 +99,13 @@
         }
 
         #app-shell {
-          background: lightblue;
-          height: 100vh;
+          min-height: 100vh;
           width: 100%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
+          background: linear-gradient(#71afd1, #3ae7bb);
         }
       </style>
-
-      <div id="app-shell"><h1>App Shell</h1></div>
     </div>
+
+    <div id="app"></div>
   </body>
 </html>
