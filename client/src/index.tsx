@@ -6,6 +6,8 @@ import { BrowserRouter } from "react-router-dom"
 
 import "./service-worker/service.worker.ts"
 
+import "./ws"
+
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
@@ -17,17 +19,17 @@ if ("serviceWorker" in navigator) {
   })
 }
 
-let deferredPrompt
+// let deferredPrompt
 
-window.addEventListener("beforeinstallprompt", e => {
-  console.log("BEFORE INSTALL PROMPT")
-  // Prevent Chrome 67 and earlier from automatically showing the prompt
-  e.preventDefault()
-  // Stash the event so it can be triggered later.
-  deferredPrompt = e
+// window.addEventListener("beforeinstallprompt", e => {
+//   console.log("BEFORE INSTALL PROMPT")
+//   // Prevent Chrome 67 and earlier from automatically showing the prompt
+//   e.preventDefault()
+//   // Stash the event so it can be triggered later.
+//   deferredPrompt = e
 
-  e.prompt()
-})
+//   e.prompt()
+// })
 
 const container = document.getElementById("app")
 if (container) {

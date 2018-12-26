@@ -2,11 +2,10 @@ import { Express } from "express"
 import { query, sql } from "services/db"
 
 import { firestore, dataWithID } from "services/firestore"
+import { emitToOthers } from "lib/socket.io"
 
 export default (app: Express) => {
   app.post("/task/getTasks", (req, res, next) => {
-    console.log("getTasks")
-
     firestore
       .collection("tasks")
       .get()
@@ -36,7 +35,6 @@ export default (app: Express) => {
   })
 
   app.post("/task/addTask", (req, res, next) => {
-    console.log("addTask")
     const { task } = req.body
 
     if (!task || !task.title) {
@@ -57,7 +55,14 @@ export default (app: Express) => {
       .collection("tasks")
       .add(new_task)
       .then(result => result.get())
-      .then(result => res.send(dataWithID(result)))
+      .then(result => {
+        const payload = dataWithID(result)
+        emitToOthers(res.socketio, req.headers.authorization!, "tasks", {
+          type: "ADD",
+          payload: payload,
+        })
+        res.send(payload)
+      })
       .catch(next)
   })
 
@@ -68,7 +73,14 @@ export default (app: Express) => {
       .collection("tasks")
       .doc(task_id)
       .delete()
-      .then(() => res.send({ id: task_id }))
+      .then(() => {
+        const payload = { id: task_id }
+        emitToOthers(res.socketio, req.headers.authorization!, "tasks", {
+          type: "REMOVE",
+          payload,
+        })
+        res.send(payload)
+      })
       .catch(next)
   })
 
@@ -81,7 +93,14 @@ export default (app: Express) => {
       .doc(task_id)
       .update({ ...data, updated_at: Date.now() })
       .then(() => task_collection.doc(task_id).get())
-      .then(ref => res.send(dataWithID(ref)))
+      .then(result => {
+        const payload = dataWithID(result)
+        emitToOthers(res.socketio, req.headers.authorization!, "tasks", {
+          type: "EDIT",
+          payload,
+        })
+        res.send(payload)
+      })
       .catch(next)
   })
 

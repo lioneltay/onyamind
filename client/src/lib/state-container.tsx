@@ -2,16 +2,17 @@ import React from "react"
 
 export type ExtractContextType<T> = T extends React.Context<infer R> ? R : never
 
-interface Config<S, A> {
-  initial_state: StateType<S>
-  actions: ActionFactory<S, A>
-  componentDidMount?: (updateState: UpdateState<S>) => void
+type ConfigValue<A> = {
+  actions: A
+  componentDidMount?: () => void
   componentWillUnmount?: () => void
 }
 
-type UpdateState<S> = (input: ((state: S) => Partial<S>) | Partial<S>) => void
+type Config<S, A> =
+  | ConfigValue<A>
+  | ((updateState: UpdateState<S>) => ConfigValue<A>)
 
-type ActionFactory<S, A> = (updateState: UpdateState<S>) => A
+type UpdateState<S> = (input: ((state: S) => Partial<S>) | Partial<S>) => void
 
 type ContextActions<S, A> = A & { updateState: UpdateState<S> }
 
@@ -28,28 +29,12 @@ type Context<S, A> = {
 }
 
 export function createStateContainer<S extends object, A extends object>(
+  init_state: StateType<S>,
   config: Config<S, A>,
 ) {
   const Context = React.createContext<Context<S, A>>({} as any)
 
   class Provider extends React.Component<Props<S>, Context<S, A>> {
-    constructor(props: Props<S>) {
-      super(props)
-
-      const initial_state = this.props.initial_state || config.initial_state
-
-      /* eslint-disable react/no-unused-state */
-      this.state = {
-        init_complete: !(typeof initial_state === "function"),
-        state: typeof initial_state === "function" ? undefined! : initial_state,
-        actions: {
-          ...config.actions(this.updateState),
-          updateState: this.updateState,
-        } as ContextActions<S, A>,
-      }
-      /* eslint-enable react/no-unused-state */
-    }
-
     updateState = (input: ((state: S) => Partial<S>) | Partial<S>) => {
       this.setState(
         ({ state }) =>
@@ -62,8 +47,28 @@ export function createStateContainer<S extends object, A extends object>(
       )
     }
 
+    config: ConfigValue<A> =
+      typeof config === "function" ? config(this.updateState) : config
+
+    constructor(props: Props<S>) {
+      super(props)
+
+      const initial_state = this.props.initial_state || init_state
+
+      /* eslint-disable react/no-unused-state */
+      this.state = {
+        init_complete: !(typeof initial_state === "function"),
+        state: typeof initial_state === "function" ? undefined! : initial_state,
+        actions: {
+          ...this.config.actions,
+          updateState: this.updateState,
+        } as ContextActions<S, A>,
+      }
+      /* eslint-enable react/no-unused-state */
+    }
+
     componentDidMount() {
-      const initial_state = this.props.initial_state || config.initial_state
+      const initial_state = this.props.initial_state || init_state
       if (typeof initial_state !== "object") {
         initial_state().then(state =>
           this.setState({
@@ -73,13 +78,12 @@ export function createStateContainer<S extends object, A extends object>(
         )
       }
 
-      config.componentDidMount && config.componentDidMount(this.updateState)
+      this.config.componentDidMount && this.config.componentDidMount()
     }
 
     componentWillUnmount() {
-      config.componentWillUnmount && config.componentWillUnmount()
+      this.config.componentWillUnmount && this.config.componentWillUnmount()
     }
-
 
     render() {
       return (

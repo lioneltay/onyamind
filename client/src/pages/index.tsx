@@ -10,7 +10,7 @@ const Container = styled.main``
 
 export default class Root extends React.Component {
   componentDidMount() {
-    document.querySelector('#app-shell')!.remove()
+    document.querySelector("#app-shell")!.remove()
   }
 
   render() {

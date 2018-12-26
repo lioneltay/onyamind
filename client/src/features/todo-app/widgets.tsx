@@ -44,10 +44,11 @@ export class Checkbox extends React.Component<CheckboxProps, CheckboxState> {
   render() {
     return (
       <Label style={this.props.style} className={this.props.className}>
+        {/* Something is weird about checked + onChange for a radio input */}
+        {/* this input is not accessible */}
         <input
           style={{ display: "none" }}
           type="radio"
-          checked={this.props.checked}
           onClick={() => this.props.onChange(!this.props.checked)}
         />
 

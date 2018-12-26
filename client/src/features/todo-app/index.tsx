@@ -1,6 +1,9 @@
 import React from "react"
 import styled from "styled-components"
 
+import { Socket } from "socket.io-client"
+import { connect } from "ws"
+
 import { withContext } from "lib/react-context-hoc"
 import { StateContainer, ContextType } from "./state-container"
 import { Task } from "./api"
@@ -43,8 +46,13 @@ type Props = {
   context: ContextType
 }
 
-class TaskPageImplementation extends React.Component<Props, State> {
+class TaskPageImplementation extends React.Component<Props> {
   componentDidMount() {
+    this.socket = connect()
+    this.socket.on("tasks", msg => {
+      console.log(msg)
+    })
+
     this.props.context.actions.getTasks()
   }
 
@@ -82,7 +90,7 @@ class TaskPageImplementation extends React.Component<Props, State> {
                 />
               ))}
           </TaskContainer>
-        </Container>{" "}
+        </Container>
       </PageContainer>
     )
   }

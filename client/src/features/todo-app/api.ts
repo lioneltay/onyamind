@@ -1,4 +1,7 @@
 import axios from "axios"
+import uuid from "uuid/v4"
+
+axios.defaults.headers["Authorization"] = uuid()
 
 export type ID = string | number
 

@@ -25,7 +25,6 @@ export function getObjectStore(db_promise: Promise<DB>, store_name: string) {
     },
 
     set(key: Key, val: any) {
-      console.log("SET", key, val)
       return db_promise.then(db => {
         const tx = db.transaction(store_name, "readwrite")
         tx.objectStore(store_name).put(val, key)
@@ -34,7 +33,6 @@ export function getObjectStore(db_promise: Promise<DB>, store_name: string) {
     },
 
     delete(key: Key) {
-      console.log("DELETE", key)
       return db_promise.then(db => {
         const tx = db.transaction(store_name, "readwrite")
         tx.objectStore(store_name).delete(key)
