@@ -35,6 +35,7 @@ export default class TaskAdder extends React.Component<Props, State> {
 
         <Button
           className="ml-3"
+          disabled={this.props.title.length === 0}
           onClick={() => {
             this.setState({ saving: true })
             this.props

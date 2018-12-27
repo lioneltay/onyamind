@@ -76,7 +76,7 @@ class TaskPageImplementation extends React.Component<Props> {
             <div className="my-3" style={{ height: 1, background: "#eee" }} />
 
             {this.props.context.state.tasks
-              .sort((a, b) => (a.created_at < b.created_at ? -1 : 1))
+              .sort((a, b) => (a.created_at > b.created_at ? -1 : 1))
               .map(task => (
                 <TaskItem
                   key={task.id}

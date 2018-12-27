@@ -268,7 +268,12 @@ export const StateContainer = createStateContainer(
         addTask: async (task: Omit<Task, "id">): Promise<Task> => {
           if (navigator.onLine) {
             const temp_id = uuid()
-            const temp_task = { ...task, id: temp_id }
+            const temp_task = {
+              ...task,
+              id: temp_id,
+              created_at: Date.now(),
+              updated_at: Date.now(),
+            }
             updateState(state => ({
               title: "",
               tasks: [...state.tasks, temp_task],
