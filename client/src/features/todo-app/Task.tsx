@@ -1,6 +1,6 @@
 import React from "react"
 import styled from "styled-components"
-import { Task, ID } from "./api"
+import { Task, ID } from "./types"
 
 import { Button, Input, Checkbox } from "./widgets"
 

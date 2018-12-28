@@ -1,8 +1,8 @@
 import React from "react"
-import LoginWidget from "services/components/LoginWidget"
+import { LoginWidget } from "services/components"
 import styled from "styled-components"
 import { firebase, firestore, dataWithId } from "services/firebase"
-import { Task, ID } from "./api"
+import { Task, ID, User } from "./types"
 
 import TaskItem from "./Task"
 import TaskAdder from "./TaskAdder"
@@ -41,10 +41,6 @@ const TaskContainer = styled.div`
   background: white;
   padding: 20px 20px;
 `
-
-type User = {
-  uid: string
-}
 
 type Props = {
   tasks: Task[]
@@ -121,18 +117,23 @@ class TaskPage extends React.Component<Props, State> {
       <PageContainer>
         <Container>
           <HeaderContainer>
-            <Header className="fj-sb">
+            <Header className="fj-sb fa-c">
               <span>Tasks</span>
 
               {this.props.user && this.props.user.uid ? (
-                <button
-                  onClick={() => {
-                    console.log("logout")
-                    firebase.auth().signOut()
-                  }}
-                >
-                  Logout
-                </button>
+                <>
+                  <span>{this.props.user.email}</span>
+
+                  <button
+                    style={{ color: "white" }}
+                    onClick={() => {
+                      console.log("logout")
+                      firebase.auth().signOut()
+                    }}
+                  >
+                    Logout
+                  </button>
+                </>
               ) : (
                 <LoginWidget />
               )}
@@ -166,7 +167,7 @@ class TaskPage extends React.Component<Props, State> {
 }
 
 const auth_stream = new Observable<User | undefined>(observer => {
-  return  firebase
+  return firebase
     .auth()
     .onAuthStateChanged(user => observer.next(user ? user : undefined))
 })
@@ -198,9 +199,9 @@ const current_user_tasks_stream = auth_stream.pipe(
   switchMap(user => createTasksStream(user ? user.uid : undefined)),
 )
 
-current_user_tasks_stream.subscribe(tasks =>
-  console.log("current_user_tasks_stream", tasks),
-)
+// current_user_tasks_stream.subscribe(tasks =>
+//   console.log("current_user_tasks_stream", tasks),
+// )
 
 const props_stream: Observable<Props> = combineLatest(
   current_user_tasks_stream,

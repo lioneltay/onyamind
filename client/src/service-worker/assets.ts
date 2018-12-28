@@ -9,11 +9,6 @@ export function fetchHandler(evt: FetchEvent) {
     evt.respondWith(
       fetch(evt.request)
         .then(response => {
-          if (shouldCache(evt.request)) {
-            console.log("hello")
-            console.dir(evt)
-          }
-
           return shouldCache(evt.request)
             ? caches
                 .open(CACHE)
