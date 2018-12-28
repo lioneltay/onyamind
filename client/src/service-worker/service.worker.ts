@@ -1,9 +1,8 @@
 import * as taskSW from "./task"
-import * as assetsSW from './assets'
-import {VERSION} from './constants'
+import * as assetsSW from "./assets"
+import { VERSION } from "./constants"
 
 declare var self: ServiceWorkerGlobalScope
-
 
 const CACHE = {
   PREFETCHED: `${VERSION}_PREFETCHED`,
