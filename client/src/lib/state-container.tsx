@@ -3,14 +3,14 @@ import React from "react"
 export type ExtractContextType<T> = T extends React.Context<infer R> ? R : never
 
 type ConfigValue<A> = {
-  actions: A
+  actions?: A
   componentDidMount?: () => void
   componentWillUnmount?: () => void
 }
 
 type Config<S, A> =
   | ConfigValue<A>
-  | ((updateState: UpdateState<S>) => ConfigValue<A>)
+  | ((updateState: UpdateState<S>, context: Context<S, A>) => ConfigValue<A>)
 
 type UpdateState<S> = (input: ((state: S) => Partial<S>) | Partial<S>) => void
 
@@ -48,7 +48,9 @@ export function createStateContainer<S extends object, A extends object>(
     }
 
     config: ConfigValue<A> =
-      typeof config === "function" ? config(this.updateState) : config
+      typeof config === "function"
+        ? config(this.updateState, this.state)
+        : config
 
     constructor(props: Props<S>) {
       super(props)

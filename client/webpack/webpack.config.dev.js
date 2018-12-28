@@ -11,7 +11,7 @@ module.exports = {
   mode: "development",
 
   output: {
-    filename: "[name].js",
+    filename: "[name].[hash].js",
     path: relativeToRoot("./dist"),
     publicPath: "/",
   },

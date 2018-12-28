@@ -1,6 +1,7 @@
 import { VERSION } from "./constants"
 
 const CACHE = `${VERSION}_ASSET_CACHE`
+const PRECACHE = `${VERSION}_PREFETCHED`
 
 export function fetchHandler(evt: FetchEvent) {
   if (evt.request.method === "GET") {
@@ -8,6 +9,11 @@ export function fetchHandler(evt: FetchEvent) {
     evt.respondWith(
       fetch(evt.request)
         .then(response => {
+          if (shouldCache(evt.request)) {
+            console.log("hello")
+            console.dir(evt)
+          }
+
           return shouldCache(evt.request)
             ? caches
                 .open(CACHE)
@@ -21,12 +27,21 @@ export function fetchHandler(evt: FetchEvent) {
             .then(cache => cache.match(evt.request))
             .then(match => {
               if (!match) {
-                console.dir(evt)
-                throw Error("No match")
+                return caches
+                  .open(PRECACHE)
+                  .then(cache => cache.match(evt.request))
+                  .then(match => {
+                    if (!match) {
+                      console.dir(evt)
+                      throw Error("No match")
+                    }
+                    return match
+                  })
               }
+
               return match
-            })
-        )
+            }),
+        ),
     )
 
     // // Cache first
@@ -55,7 +70,13 @@ export function fetchHandler(evt: FetchEvent) {
 }
 
 function shouldCache(request: Request) {
-  const whitelist = [/.js$/, /.css$/, ""]
+  const uurl = new URL(request.url)
+
+  if (uurl.pathname === "/") {
+    return true
+  }
+
+  const whitelist = [/.js$/, /.css$/]
 
   const blacklist = [/sockjs-node\/info/]
 

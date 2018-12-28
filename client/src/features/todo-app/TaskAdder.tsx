@@ -23,6 +23,14 @@ export default class TaskAdder extends React.Component<Props, State> {
     saving: false,
   }
 
+  handleIt = () => {
+    this.setState({ saving: true })
+    this.props
+      .onAdd(this.props.title)
+      .then(() => this.setState({ saving: false }))
+      .catch(() => this.setState({ saving: false }))
+  }
+
   render() {
     return (
       <Container className={this.props.className} style={this.props.style}>
@@ -31,18 +39,17 @@ export default class TaskAdder extends React.Component<Props, State> {
           placeholder="Add a task"
           value={this.props.title}
           onChange={e => this.props.onChange(e.currentTarget.value)}
+          onKeyPress={e => {
+            if (e.key === "Enter") {
+              this.handleIt()
+            }
+          }}
         />
 
         <Button
           className="ml-3"
           disabled={this.props.title.length === 0}
-          onClick={() => {
-            this.setState({ saving: true })
-            this.props
-              .onAdd(this.props.title)
-              .then(() => this.setState({ saving: false }))
-              .catch(() => this.setState({ saving: false }))
-          }}
+          onClick={this.handleIt}
         >
           Add Task
         </Button>

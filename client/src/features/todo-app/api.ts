@@ -3,7 +3,7 @@ import uuid from "uuid/v4"
 
 axios.defaults.headers["Authorization"] = uuid()
 
-export type ID = string | number
+export type ID = string
 
 export type Task = {
   id: ID

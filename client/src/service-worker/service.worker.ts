@@ -14,13 +14,13 @@ self.addEventListener("install", evt => {
   console.log("Service Worker Installed")
   evt.waitUntil(precache())
   // Replace the existing service worker
-  // return self.skipWaiting()
+  return self.skipWaiting()
 })
 
 self.addEventListener("activate", evt => {
   console.log("Service Worker Activated")
   // Become the service worker for clients which do not already have a service worker
-  // return return self.clients.claim()
+  return self.clients.claim()
 })
 
 function precache() {
@@ -35,7 +35,7 @@ function precache() {
 
 self.addEventListener("fetch", evt => {
   assetsSW.fetchHandler(evt)
-  taskSW.fetchHandler(evt)
+  // taskSW.fetchHandler(evt)
 
   // evt.respondWith(
   //   caches
