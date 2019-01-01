@@ -39,6 +39,7 @@ export default class TaskItem extends React.Component<Props, State> {
     return (
       <Container key={task.id}>
         <Checkbox
+          data-testid="complete-checkbox"
           className="mr-3"
           checked={task.complete}
           onChange={complete => this.props.onEdit({ complete })}
@@ -62,6 +63,7 @@ export default class TaskItem extends React.Component<Props, State> {
         </Button> */}
 
         <Button
+          data-testid="delete-cross"
           className="ml-3"
           color="tomato"
           style={{ border: "none" }}

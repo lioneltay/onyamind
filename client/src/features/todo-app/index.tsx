@@ -1,5 +1,5 @@
 import React from "react"
-import { LoginWidget } from "services/components"
+import { LoginWidget, Modal } from "services/components"
 import styled from "styled-components"
 import { firebase, firestore, dataWithId } from "services/firebase"
 import { Task, ID, User } from "./types"
@@ -7,9 +7,11 @@ import { Task, ID, User } from "./types"
 import TaskItem from "./Task"
 import TaskAdder from "./TaskAdder"
 
-import { Observable, of, combineLatest } from "rxjs"
+import { Observable, combineLatest } from "rxjs"
 import { switchMap, map } from "rxjs/operators"
 import { withPropsStream } from "lib/hocs"
+
+import { Formik, Form } from "formik"
 
 const PageContainer = styled.div`
   display: flex;
@@ -49,20 +51,19 @@ type Props = {
 
 type State = {
   title: string
+  show_edit_modal: boolean
 }
 
 class TaskPage extends React.Component<Props, State> {
   state: State = {
     title: "",
+    show_edit_modal: true,
   }
 
   addTask = async (
     task: Omit<Task, "id" | "created_at" | "updated_at" | "complete">,
   ): Promise<Task> => {
     this.setState({ title: "" })
-
-    console.log("addTask", task)
-
     return firestore
       .collection("tasks")
       .add({
@@ -120,6 +121,10 @@ class TaskPage extends React.Component<Props, State> {
             <Header className="fj-sb fa-c">
               <span>Tasks</span>
 
+              <button onClick={() => this.setState({ show_edit_modal: true })}>
+                Edit yo
+              </button>
+
               {this.props.user && this.props.user.uid ? (
                 <>
                   <span>{this.props.user.email}</span>
@@ -161,6 +166,21 @@ class TaskPage extends React.Component<Props, State> {
               ))}
           </TaskContainer>
         </Container>
+
+        <Modal
+          open={this.state.show_edit_modal}
+          onClose={() => this.setState({ show_edit_modal: false })}
+          className="p-4"
+        >
+          <Formik
+            initialValues={{ shit: "yi" }}
+            onSubmit={values => {
+              console.log(values)
+            }}
+          >
+            {() => <Form>form</Form>}
+          </Formik>
+        </Modal>
       </PageContainer>
     )
   }
@@ -172,7 +192,7 @@ const auth_stream = new Observable<User | undefined>(observer => {
     .onAuthStateChanged(user => observer.next(user ? user : undefined))
 })
 
-auth_stream.subscribe(user => console.log("auth_stream", user))
+// auth_stream.subscribe(user => console.log("auth_stream", user))
 
 const createTasksStream = (user_id?: string) =>
   new Observable<Task[]>(observer => {
