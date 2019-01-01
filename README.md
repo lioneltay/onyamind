@@ -1,6 +1,6 @@
 # Project for personal development
 
-# Features
+## Features
 - [x] Deployment Pipeline with TravisCI
 - [x] Deploy To Google Cloud Platform
 - [x] Realtime with Firebase Firestore
