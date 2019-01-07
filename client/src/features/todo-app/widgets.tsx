@@ -38,40 +38,41 @@ type CheckboxProps = Stylable & {
   onChange: (checked: boolean) => void
 }
 
-type CheckboxState = {}
+export const Checkbox: React.FunctionComponent<CheckboxProps> = ({
+  style,
+  className,
+  checked,
+  onChange,
+}) => {
+  return (
+    <Label style={style} className={className}>
+      {/* Something is weird about checked + onChange for a radio input */}
+      {/* this input is not accessible */}
+      <input
+        style={{ display: "none" }}
+        type="radio"
+        onClick={() => onChange(!checked)}
+      />
 
-export class Checkbox extends React.Component<CheckboxProps, CheckboxState> {
-  render() {
-    return (
-      <Label style={this.props.style} className={this.props.className}>
-        {/* Something is weird about checked + onChange for a radio input */}
-        {/* this input is not accessible */}
-        <input
-          style={{ display: "none" }}
-          type="radio"
-          onClick={() => this.props.onChange(!this.props.checked)}
-        />
+      <i
+        className="far fa-check-circle"
+        style={{
+          fontSize: checked ? 20 : 0,
+          color: "lightgreen",
+          opacity: checked ? 1 : 0,
+          transition: "opacity 500ms",
+        }}
+      />
 
-        <i
-          className="far fa-check-circle"
-          style={{
-            fontSize: this.props.checked ? 20 : 0,
-            color: "lightgreen",
-            opacity: this.props.checked ? 1 : 0,
-            transition: "opacity 500ms",
-          }}
-        />
-
-        <i
-          className="far fa-circle"
-          style={{
-            fontSize: this.props.checked ? 0 : 20,
-            color: "black",
-            opacity: this.props.checked ? 0 : 1,
-            transition: "opacity 500ms",
-          }}
-        />
-      </Label>
-    )
-  }
+      <i
+        className="far fa-circle"
+        style={{
+          fontSize: checked ? 0 : 20,
+          color: "black",
+          opacity: checked ? 0 : 1,
+          transition: "opacity 500ms",
+        }}
+      />
+    </Label>
+  )
 }

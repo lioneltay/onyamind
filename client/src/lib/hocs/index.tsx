@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState, useEffect } from "react"
 import { Observable } from "rxjs"
 
 export const withPropsStream = <T extends object>(
@@ -7,25 +7,20 @@ export const withPropsStream = <T extends object>(
 ) => <P extends T>(WrappedComponent: React.ComponentType<P>) => {
   type Props = Omit<P, keyof T>
 
-  type State = {
-    props?: T
+  const ComponentFromObservable: React.FunctionComponent<Props> = props => {
+    const [observable_props, updateObservableProps] = useState(initial_props)
+
+    useEffect(() => {
+      const subscription = observable.subscribe(props => {
+        updateObservableProps(props)
+      })
+      return () => subscription.unsubscribe()
+    }, [])
+
+    return observable_props ? (
+      <WrappedComponent {...{ ...props, ...observable_props } as P} />
+    ) : null
   }
 
-  return class ComponentFromObservable extends React.Component<Props, State> {
-    state: State = {
-      props: initial_props,
-    }
-
-    constructor(props: P) {
-      super(props)
-
-      observable.subscribe(props => this.setState({ props }))
-    }
-
-    render() {
-      return this.state.props ? (
-        <WrappedComponent {...{ ...this.props, ...this.state.props } as P} />
-      ) : null
-    }
-  }
+  return ComponentFromObservable
 }

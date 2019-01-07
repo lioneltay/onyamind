@@ -24,20 +24,28 @@ type Props = Stylable & {
   children: React.ReactNode
 }
 
-export default class Modal extends React.Component<Props> {
-  render() {
-    return (
-      this.props.open && (
-        <Container onClick={this.props.onClose}>
-          <Content
-            onClick={e => e.stopPropagation()}
-            className={this.props.className}
-            style={this.props.style}
-          >
-            {this.props.children}
-          </Content>
-        </Container>
-      )
-    )
+const Modal: React.FunctionComponent<Props> = ({
+  children,
+  open,
+  onClose,
+  className,
+  style,
+}) => {
+  if (!open) {
+    return null
   }
+
+  return (
+    <Container onClick={onClose}>
+      <Content
+        onClick={e => e.stopPropagation()}
+        className={className}
+        style={style}
+      >
+        {children}
+      </Content>
+    </Container>
+  )
 }
+
+export default Modal
