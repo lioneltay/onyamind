@@ -52,7 +52,9 @@ const useObservable = <T extends any>(
 export const Provider: React.FunctionComponent = ({ children }) => {
   const [editing, setEditing] = useState(false)
   const [show_edit_modal, setShowEditModal] = useState(true)
-  const [editing_task_id, setEditingTaskId] = useState("Cb16f3XEAzq9IfxwWO0j" as ID | null)
+  const [editing_task_id, setEditingTaskId] = useState(
+    "Cb16f3XEAzq9IfxwWO0j" as ID | null,
+  )
   const [new_task_title, setNewTaskTitle] = useState("")
   const [selected_tasks, setSelectedTasks] = useState([] as ID[])
 
@@ -82,25 +84,55 @@ export const Provider: React.FunctionComponent = ({ children }) => {
           },
 
           deleteCompletedTasks: () => {
+            const batch = firestore.batch()
+
             tasks
               .filter(task => task.complete)
-              .forEach(task => removeTask(task.id))
+              .forEach(task => {
+                batch.delete(firestore.collection("tasks").doc(task.id))
+              })
+
+            batch.commit()
           },
 
           uncheckCompletedTasks: () => {
-            tasks
-              .filter(task => task.complete)
-              .forEach(task => editTask(task.id, { complete: false }))
+            const batch = firestore.batch()
+
+            selected_tasks.forEach(id => {
+              batch.update(firestore.collection("tasks").doc(id), {
+                complete: false,
+                updated_at: Date.now(),
+              })
+            })
+
+            batch.commit()
           },
 
           checkSelectedTasks: () => {
-            selected_tasks.forEach(id => editTask(id, { complete: true }))
+            const batch = firestore.batch()
+
+            selected_tasks.forEach(id => {
+              batch.update(firestore.collection("tasks").doc(id), {
+                complete: true,
+                updated_at: Date.now(),
+              })
+            })
+
+            batch.commit()
+
             setEditing(false)
             setSelectedTasks([])
           },
 
           deleteSelectedTasks: () => {
-            selected_tasks.forEach(id => removeTask(id))
+            const batch = firestore.batch()
+
+            selected_tasks.forEach(id => {
+              batch.delete(firestore.collection("tasks").doc(id))
+            })
+
+            batch.commit()
+
             setEditing(false)
             setSelectedTasks([])
           },

@@ -64,6 +64,7 @@ const TaskItem: React.FunctionComponent<Props> = (
 ) => {
   const {
     selected_tasks,
+    editing,
     actions: { startEditingTask, toggleTaskSelection },
   } = useAppState()
 
@@ -97,17 +98,19 @@ const TaskItem: React.FunctionComponent<Props> = (
         <TaskNotes>{task.notes}</TaskNotes>
       </TaskDetails>
 
-      <Overlay>
-        <IconButton
-          className={`fas fa-${task.complete ? "plus" : "check"}`}
-          onClick={() => editTask(task.id, { complete: !task.complete })}
-        />
+      {editing ? null : (
+        <Overlay>
+          <IconButton
+            className={`fas fa-${task.complete ? "plus" : "check"}`}
+            onClick={() => editTask(task.id, { complete: !task.complete })}
+          />
 
-        <IconButton
-          className="fas fa-trash"
-          onClick={() => removeTask(task.id)}
-        />
-      </Overlay>
+          <IconButton
+            className="fas fa-trash"
+            onClick={() => removeTask(task.id)}
+          />
+        </Overlay>
+      )}
     </Container>
   )
 }

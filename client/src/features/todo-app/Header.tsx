@@ -94,6 +94,7 @@ const Header: React.FunctionComponent<Props> = () => {
                 className="fas fa-check"
                 onClick={checkSelectedTasks}
               />
+
               <IconButton
                 className="fas fa-trash"
                 onClick={deleteSelectedTasks}
