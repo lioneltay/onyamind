@@ -9,6 +9,7 @@ import { Task } from "./types"
 import { IconButton } from "./widgets"
 import { grey_text } from "./constants"
 import { Divider } from "@material-ui/core"
+import { useAppState } from "./state"
 
 const Textarea = styled.textarea`
   resize: none;
@@ -48,6 +49,10 @@ const EditModal: React.FunctionComponent<Props> = ({
   initialValues,
   onSubmit,
 }) => {
+  const {
+    actions: { stopEditingTask },
+  } = useAppState()
+
   return (
     <Modal open={open} onClose={onClose} className={className} style={style}>
       <Formik<Values>
@@ -64,7 +69,7 @@ const EditModal: React.FunctionComponent<Props> = ({
                 {isSubmitting ? "Saving..." : "Saved"}
               </div>
 
-              <IconButton className="fas fa-times" />
+              <IconButton className="fas fa-times" onClick={stopEditingTask} />
             </div>
 
             <Divider />

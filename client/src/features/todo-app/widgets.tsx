@@ -10,7 +10,7 @@ export const Input = styled.input`
 
 export const Button = styled.button.attrs({})<{
   color?: string
-  disabled: boolean
+  disabled?: boolean
 }>`
   border-radius: 5px;
   color: ${({ color, disabled }) => (disabled ? "grey" : color || "#35aac2")};
@@ -37,7 +37,7 @@ export const IconButton = styled.button`
   align-items: center;
   height: 48px;
   width: 48px;
-  font-size: 24px;
+  font-size: 20px;
   color: #757575;
 
   &:focus {
