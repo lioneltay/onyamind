@@ -1,7 +1,7 @@
 {
-  "name": "tekktekk",
+  "name": "tekktekk-notes",
   "version": "1.0.0",
-  "repository": "https://github.com/lioneltay/my-website",
+  "repository": "https://github.com/lioneltay/tekktekk-notes",
   "homepage": "https://app.tekktekk.com",
   "description": "",
   "main": "index.js",
