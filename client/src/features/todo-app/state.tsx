@@ -7,6 +7,7 @@ import { editTask, removeTask } from "./api"
 import uniq from "ramda/es/uniq"
 
 type Context = {
+  touch_screen: boolean
   editing: boolean
   user: User | null
   tasks: Task[]
@@ -50,11 +51,18 @@ const useObservable = <T extends any>(
 }
 
 export const Provider: React.FunctionComponent = ({ children }) => {
+  const [touch_screen, setTouchScreen] = useState(false)
   const [editing, setEditing] = useState(false)
   const [show_edit_modal, setShowEditModal] = useState(false)
   const [editing_task_id, setEditingTaskId] = useState(null as ID | null)
   const [new_task_title, setNewTaskTitle] = useState("")
   const [selected_tasks, setSelectedTasks] = useState([] as ID[])
+
+  useEffect(() => {
+    const handler = () => setTouchScreen(true)
+    window.addEventListener("touchstart", handler)
+    return () => window.removeEventListener("touchstart", handler)
+  })
 
   const user = useObservable(user_stream, null)
   const tasks = useObservable(current_user_tasks_stream, [])
@@ -62,6 +70,7 @@ export const Provider: React.FunctionComponent = ({ children }) => {
   return (
     <Context.Provider
       value={{
+        touch_screen,
         editing,
         user,
         tasks,

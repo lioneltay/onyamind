@@ -63,6 +63,7 @@ const TaskItem: React.FunctionComponent<Props> = (
   ref,
 ) => {
   const {
+    touch_screen,
     selected_tasks,
     editing,
     actions: { startEditingTask, toggleTaskSelection },
@@ -98,7 +99,7 @@ const TaskItem: React.FunctionComponent<Props> = (
         <TaskNotes>{task.notes}</TaskNotes>
       </TaskDetails>
 
-      {editing ? null : (
+      {editing || touch_screen ? null : (
         <Overlay>
           <IconButton
             className={`fas fa-${task.complete ? "plus" : "check"}`}
@@ -110,6 +111,13 @@ const TaskItem: React.FunctionComponent<Props> = (
             onClick={() => removeTask(task.id)}
           />
         </Overlay>
+      )}
+
+      {editing || !touch_screen || !task.complete ? null : (
+        <IconButton
+          className={`fas fa-${task.complete ? "plus" : "check"}`}
+          onClick={() => editTask(task.id, { complete: !task.complete })}
+        />
       )}
     </Container>
   )
