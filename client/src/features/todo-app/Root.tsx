@@ -57,7 +57,6 @@ const TaskPage: React.FunctionComponent = () => {
           const task = tasks.find(task => task.id === editing_task_id)
           return task && editing_task_id ? (
             <EditModal
-              className="p-4"
               initialValues={task}
               open={show_edit_modal}
               onClose={stopEditingTask}

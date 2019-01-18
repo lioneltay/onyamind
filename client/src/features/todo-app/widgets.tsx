@@ -1,4 +1,3 @@
-import React from "react"
 import styled from "styled-components"
 
 export const Input = styled.input`
@@ -9,10 +8,14 @@ export const Input = styled.input`
   padding: 10px 18px;
 `
 
-export const Button = styled.button.attrs({})<{ color?: string }>`
+export const Button = styled.button.attrs({})<{
+  color?: string
+  disabled: boolean
+}>`
   border-radius: 5px;
-  color: ${({ color }) => color || "#35aac2"};
-  border: 1px solid ${({ color }) => color || "#35aac2"};
+  color: ${({ color, disabled }) => (disabled ? "grey" : color || "#35aac2")};
+  border: 1px solid
+    ${({ color, disabled }) => (disabled ? "grey" : color || "#35aac2")};
   padding: 10px 18px;
 
   cursor: pointer;

@@ -34,10 +34,10 @@ const Overlay = styled.div`
 const TaskDetails = styled.div`
   display: grid;
   padding: 0 18px;
+  cursor: pointer;
 `
 
 const TaskTitle = styled.div`
-  cursor: pointer;
   font-size: 16px;
   font-weight: 500;
   margin-bottom: 2px;
