@@ -9,7 +9,7 @@ export const Input = styled.input`
   padding: 10px 18px;
 `
 
-export const Button = styled.button<{ color?: string }>`
+export const Button = styled.button.attrs({})<{ color?: string }>`
   border-radius: 5px;
   color: ${({ color }) => color || "#35aac2"};
   border: 1px solid ${({ color }) => color || "#35aac2"};
@@ -27,52 +27,17 @@ export const Button = styled.button<{ color?: string }>`
   }
 `
 
-const Label = styled.label`
+export const IconButton = styled.button`
   cursor: pointer;
-  padding: 10px;
-  display: block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 48px;
+  width: 48px;
+  font-size: 24px;
+  color: #757575;
+
+  &:focus {
+    outline: none;
+  }
 `
-
-type CheckboxProps = Stylable & {
-  checked: boolean
-  onChange: (checked: boolean) => void
-}
-
-export const Checkbox: React.FunctionComponent<CheckboxProps> = ({
-  style,
-  className,
-  checked,
-  onChange,
-}) => {
-  return (
-    <Label style={style} className={className}>
-      {/* Something is weird about checked + onChange for a radio input */}
-      {/* this input is not accessible */}
-      <input
-        style={{ display: "none" }}
-        type="radio"
-        onClick={() => onChange(!checked)}
-      />
-
-      <i
-        className="far fa-check-circle"
-        style={{
-          fontSize: checked ? 20 : 0,
-          color: "lightgreen",
-          opacity: checked ? 1 : 0,
-          transition: "opacity 500ms",
-        }}
-      />
-
-      <i
-        className="far fa-circle"
-        style={{
-          fontSize: checked ? 0 : 20,
-          color: "black",
-          opacity: checked ? 0 : 1,
-          transition: "opacity 500ms",
-        }}
-      />
-    </Label>
-  )
-}

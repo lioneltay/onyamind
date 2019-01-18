@@ -1,76 +1,113 @@
 import React, { forwardRef } from "react"
 import styled from "styled-components"
-import { Task, ID } from "./types"
-import { noop } from "lib/typedash"
+import { Task } from "./types"
 
-import { Button, Input, Checkbox } from "./widgets"
+import { Button, IconButton } from "./widgets"
+import { useAppState } from "./state"
+import { removeTask, editTask } from "./api"
+import { highlight_color } from "./constants"
 
 const Container = styled.div`
-  display: flex;
+  position: relative;
+  max-width: 100%;
+
+  display: grid;
+  grid-template-columns: 0fr 1fr 0fr;
   align-items: center;
 
-  padding: 5px 0px;
+  padding-left: 8px;
 `
 
-const TodoTitle = styled.span`
+const Overlay = styled.div`
+  opacity: 0;
+  pointer-events: none;
+
+  display: none;
+
+  ${Container}:hover & {
+    display: flex;
+    opacity: 1;
+    pointer-events: all;
+  }
+`
+
+const TaskDetails = styled.div`
+  display: grid;
+  padding: 0 18px;
+`
+
+const TaskTitle = styled.div`
+  cursor: pointer;
   font-size: 16px;
-  padding: 10px 18px;
+  font-weight: 500;
+  margin-bottom: 2px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 `
 
-type Props = Stylable & {
-  onEdit?: (data: Partial<Omit<Task, "id">>) => void
-  onRequestEdit?: (id: ID) => void
-  onRemove?: (id: ID) => void
+const TaskNotes = styled.div`
+  color: grey;
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+`
+
+export type Props = Stylable & {
   task: Task
 }
 
 const TaskItem: React.FunctionComponent<Props> = (
-  {
-    onEdit = noop,
-    onRemove = noop,
-    onRequestEdit = noop,
-    task,
-    style,
-    className,
-  },
+  { task, style, className },
   ref,
 ) => {
+  const {
+    selected_tasks,
+    actions: { startEditingTask, toggleTaskSelection },
+  } = useAppState()
+
+  const selected = selected_tasks.findIndex(id => id === task.id) >= 0
+
   return (
-    <Container ref={ref} style={style} className={className}>
-      <Checkbox
-        data-testid="complete-checkbox"
-        className="mr-3"
-        checked={task.complete}
-        onChange={complete => onEdit({ complete })}
+    <Container
+      ref={ref}
+      className={className}
+      style={{
+        ...style,
+        backgroundColor: selected ? highlight_color : "transparent",
+      }}
+    >
+      <IconButton
+        className={`far fa-${selected ? "check-square" : "square"}`}
+        onClick={() => toggleTaskSelection(task.id)}
       />
 
-      <TodoTitle
-        className="fg-1"
-        style={{
-          textDecoration: task.complete ? "line-through" : "none",
-          color: task.complete ? "#a3a3a3" : "black",
-        }}
-      >
-        {task.title}
-      </TodoTitle>
+      <TaskDetails onClick={() => startEditingTask(task.id)}>
+        <TaskTitle
+          className="fg-1"
+          style={{
+            textDecoration: task.complete ? "line-through" : "none",
+            color: task.complete ? "#a3a3a3" : "black",
+          }}
+        >
+          {task.title}
+        </TaskTitle>
 
-      <Button
-        className="ml-3"
-        style={{ border: "none", margin: 0 }}
-        color="black"
-      >
-        <i className="fas fa-pen" onClick={() => onRequestEdit(task.id)} />
-      </Button>
+        <TaskNotes>{task.notes}</TaskNotes>
+      </TaskDetails>
 
-      <Button
-        data-testid="delete-cross"
-        className="ml-3"
-        color="tomato"
-        style={{ border: "none", margin: 0 }}
-        onClick={() => onRemove(task.id)}
-      >
-        <i className="fas fa-times" />
-      </Button>
+      <Overlay>
+        <IconButton
+          className={`fas fa-${task.complete ? "plus" : "check"}`}
+          onClick={() => editTask(task.id, { complete: !task.complete })}
+        />
+
+        <IconButton
+          className="fas fa-trash"
+          onClick={() => removeTask(task.id)}
+        />
+      </Overlay>
     </Container>
   )
 }

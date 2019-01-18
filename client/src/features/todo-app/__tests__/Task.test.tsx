@@ -14,7 +14,7 @@ test("Task callback handlers are called when triggered", () => {
       id: "12345",
       uid: null,
       title: "Test Task",
-      description: "Test Task Description",
+      notes: "Test Task Notes",
     },
   }
   const { container } = render(<Task {...props} />)

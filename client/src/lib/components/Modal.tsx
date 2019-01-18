@@ -2,6 +2,7 @@ import React from "react"
 import styled from "styled-components"
 
 const Container = styled.div`
+  z-index: 9000;
   display: flex;
   justify-content: center;
   align-items: center;

@@ -4,7 +4,7 @@ export type Task = {
   id: ID
   uid: ID | null
   title: string
-  description: string
+  notes: string
   complete: boolean
   created_at: number
   updated_at: number

@@ -1,59 +1,109 @@
-import React from "react"
+import React, { Fragment, useState } from "react"
 import styled from "styled-components"
 
-import { Button, Input } from "./widgets"
+import { HEIGHT as HEADER_HEIGHT } from "./Header"
+import { IconButton } from "./widgets"
+import { background_color, highlighted_text_color } from "./constants"
+import { useAppState } from "./state"
+import { addTask } from "./api"
 
-const Container = styled.div`
+export const HEIGHT = 81
+
+const OuterContainer = styled.div`
+  position: fixed;
+  z-index: 1100;
+  background: ${background_color};
+  top: ${HEADER_HEIGHT}px;
+  left: 0;
+  width: 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  padding-top: 24px;
+  height: ${HEIGHT}px;
 `
 
-type Props = Stylable & {
-  onAdd: (task: string) => Promise<void>
-  title: string
-  onChange: (title: string) => void
-}
+const Placeholder = styled.div`
+  height: ${HEIGHT}px;
+`
 
-type State = {
-  saving: boolean
-}
+const Container = styled.div`
+  width: 100%;
+  height: 100%;
+  max-width: 600px;
 
-export default class TaskAdder extends React.Component<Props, State> {
-  state: State = {
-    saving: false,
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: white;
+  padding: 0 8px;
+
+  border-bottom: 1px solid #ddd;
+`
+
+const Input = styled.input`
+  font-weight: 500;
+  font-size: 16px;
+  border: none;
+  outline: none;
+  padding: 10px 18px;
+`
+
+const SelectAllButton = styled.div`
+  color: ${highlighted_text_color};
+  font-weight: 500;
+  cursor: pointer;
+`
+
+type Props = Stylable & {}
+
+const TaskAdder: React.FunctionComponent<Props> = ({ className, style }) => {
+  const {
+    editing,
+    new_task_title,
+    user,
+    actions: { selectAllIncompleteTasks, setNewTaskTitle },
+  } = useAppState()
+
+  const handleIt = () => {
+    if (new_task_title.length === 0) {
+      return
+    }
+
+    setNewTaskTitle("")
+    addTask({ title: new_task_title, notes: "", uid: user ? user.uid : null })
   }
 
-  handleIt = () => {
-    this.setState({ saving: true })
-    this.props
-      .onAdd(this.props.title)
-      .then(() => this.setState({ saving: false }))
-      .catch(() => this.setState({ saving: false }))
-  }
+  return (
+    <Fragment>
+      <Placeholder />
 
-  render() {
-    return (
-      <Container className={this.props.className} style={this.props.style}>
-        <Input
-          className="fg-1"
-          placeholder="Add a task"
-          value={this.props.title}
-          onChange={e => this.props.onChange(e.currentTarget.value)}
-          onKeyPress={e => {
-            if (e.key === "Enter") {
-              this.handleIt()
-            }
-          }}
-        />
+      <OuterContainer className={className} style={style}>
+        <Container style={{ background: editing ? background_color : "white" }}>
+          {editing ? (
+            <SelectAllButton onClick={selectAllIncompleteTasks}>
+              Select All
+            </SelectAllButton>
+          ) : (
+            <Fragment>
+              <IconButton onClick={handleIt} className="fas fa-plus" />
 
-        <Button
-          className="ml-3"
-          disabled={this.props.title.length === 0}
-          onClick={this.handleIt}
-        >
-          Add Task
-        </Button>
-      </Container>
-    )
-  }
+              <Input
+                className="fg-1"
+                placeholder="Add item"
+                value={new_task_title}
+                onChange={e => setNewTaskTitle(e.currentTarget.value)}
+                onKeyPress={e => {
+                  if (e.key === "Enter") {
+                    handleIt()
+                  }
+                }}
+              />
+            </Fragment>
+          )}
+        </Container>
+      </OuterContainer>
+    </Fragment>
+  )
 }
+
+export default TaskAdder

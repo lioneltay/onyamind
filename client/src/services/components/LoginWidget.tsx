@@ -13,6 +13,7 @@ const GoogleButton = styled.button`
   font-weight: 500;
   height: 40px;
   cursor: pointer;
+  white-space: nowrap;
 `
 
 const GoogleIcon = styled.img`
