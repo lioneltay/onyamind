@@ -51,10 +51,8 @@ const useObservable = <T extends any>(
 
 export const Provider: React.FunctionComponent = ({ children }) => {
   const [editing, setEditing] = useState(false)
-  const [show_edit_modal, setShowEditModal] = useState(true)
-  const [editing_task_id, setEditingTaskId] = useState(
-    "Cb16f3XEAzq9IfxwWO0j" as ID | null,
-  )
+  const [show_edit_modal, setShowEditModal] = useState(false)
+  const [editing_task_id, setEditingTaskId] = useState(null as ID | null)
   const [new_task_title, setNewTaskTitle] = useState("")
   const [selected_tasks, setSelectedTasks] = useState([] as ID[])
 
