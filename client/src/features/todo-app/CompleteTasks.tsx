@@ -5,12 +5,13 @@ import Menu from "@material-ui/core/Menu"
 import MenuItem from "@material-ui/core/MenuItem"
 import { grey_text } from "./constants"
 import TaskList from "./TaskList"
-import { IconButton } from "./widgets"
+// import { IconButton } from "./widgets"
+import IconButton from "@material-ui/core/IconButton"
+import KeyboardArrowDown from "@material-ui/icons/KeyboardArrowDown"
+import MoreVert from "@material-ui/icons/MoreVert"
 import { useAppState } from "./state"
 
-const Icon = styled(IconButton).attrs({
-  className: "fas fa-chevron-down",
-})<{ rotate: boolean }>`
+const Rotate = styled.div.attrs({})<{ rotate: boolean }>`
   transform: rotate(${({ rotate }) => (rotate ? "-180deg" : "0")});
   transition: 300ms;
 `
@@ -40,19 +41,21 @@ const Toggler: React.FunctionComponent<Props> = ({ tasks }) => {
   return (
     <Fragment>
       <RowContainer>
-        <Icon rotate={show} onClick={() => setShow(show => !show)} />
+        <Rotate rotate={show}>
+          <IconButton onClick={() => setShow(show => !show)}>
+            <KeyboardArrowDown />
+          </IconButton>
+        </Rotate>
         <Text onClick={() => setShow(show => !show)}>
           {tasks.length} checked off
         </Text>
-        <IconButton
-          className="fas fa-ellipsis-v"
-          onClick={e => setAnchorEl(e.currentTarget)}
-        />
+        <IconButton onClick={e => setAnchorEl(e.currentTarget)}>
+          <MoreVert />
+        </IconButton>
         <Menu
           anchorEl={anchor_el}
           open={!!anchor_el}
           onClose={() => setAnchorEl(null)}
-          anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
         >
           <MenuItem
             onClick={() => {

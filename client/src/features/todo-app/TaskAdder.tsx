@@ -1,8 +1,10 @@
-import React, { Fragment, useState } from "react"
+import React, { Fragment } from "react"
 import styled from "styled-components"
 
 import { HEIGHT as HEADER_HEIGHT } from "./Header"
-import { IconButton } from "./widgets"
+// import { IconButton } from "./widgets"
+import  Add  from "@material-ui/icons/Add"
+import IconButton from "@material-ui/core/IconButton"
 import { background_color, highlighted_text_color } from "./constants"
 import { useAppState } from "./state"
 import { addTask } from "./api"
@@ -85,7 +87,9 @@ const TaskAdder: React.FunctionComponent<Props> = ({ className, style }) => {
             </SelectAllButton>
           ) : (
             <Fragment>
-              <IconButton onClick={handleIt} className="fas fa-plus" />
+              <IconButton onClick={handleIt}>
+                <Add />
+              </IconButton>
 
               <Input
                 className="fg-1"

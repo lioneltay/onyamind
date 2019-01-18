@@ -3,7 +3,9 @@ import styled from "styled-components"
 import { firebase } from "services/firebase"
 
 import { LoginWidget } from "services/components"
-import { Button, IconButton } from "./widgets"
+import { Button } from "./widgets"
+import IconButton from "@material-ui/core/IconButton"
+import Menu from "@material-ui/icons/Menu"
 import { useAppState } from "./state"
 import { highlight_color, highlighted_text_color, grey_text } from "./constants"
 
@@ -79,10 +81,9 @@ const Header: React.FunctionComponent<Props> = () => {
               </Fragment>
             ) : (
               <Fragment>
-                <IconButton
-                  style={{ display: "inline-block" }}
-                  className="fas fa-bars"
-                />
+                <IconButton style={{ display: "inline-block" }}>
+                  <Menu />
+                </IconButton>
                 <div style={{ paddingLeft: 18 }}>Tasks</div>
               </Fragment>
             )}

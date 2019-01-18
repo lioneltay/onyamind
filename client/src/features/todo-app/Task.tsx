@@ -2,7 +2,12 @@ import React, { forwardRef } from "react"
 import styled from "styled-components"
 import { Task } from "./types"
 
-import { Button, IconButton } from "./widgets"
+import IconButton from "@material-ui/core/IconButton"
+import Delete from "@material-ui/icons/Delete"
+import Add from "@material-ui/icons/Add"
+import Check from "@material-ui/icons/Check"
+import CheckBox from "@material-ui/icons/CheckBox"
+import CheckBoxOutlineBlank from "@material-ui/icons/CheckBoxOutlineBlank"
 import { useAppState } from "./state"
 import { removeTask, editTask } from "./api"
 import { highlight_color } from "./constants"
@@ -80,10 +85,9 @@ const TaskItem: React.FunctionComponent<Props> = (
         backgroundColor: selected ? highlight_color : "transparent",
       }}
     >
-      <IconButton
-        className={`far fa-${selected ? "check-square" : "square"}`}
-        onClick={() => toggleTaskSelection(task.id)}
-      />
+      <IconButton onClick={() => toggleTaskSelection(task.id)}>
+        {selected ? <CheckBox /> : <CheckBoxOutlineBlank />}
+      </IconButton>
 
       <TaskDetails onClick={() => startEditingTask(task.id)}>
         <TaskTitle
@@ -102,14 +106,14 @@ const TaskItem: React.FunctionComponent<Props> = (
       {editing || touch_screen ? null : (
         <Overlay>
           <IconButton
-            className={`fas fa-${task.complete ? "plus" : "check"}`}
             onClick={() => editTask(task.id, { complete: !task.complete })}
-          />
+          >
+            {task.complete ? <Add /> : <Check />}
+          </IconButton>
 
-          <IconButton
-            className="fas fa-trash"
-            onClick={() => removeTask(task.id)}
-          />
+          <IconButton onClick={() => removeTask(task.id)}>
+            <Delete />
+          </IconButton>
         </Overlay>
       )}
 

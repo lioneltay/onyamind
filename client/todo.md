@@ -6,6 +6,12 @@
 
 - [ ] only allow multiple check if selecting all completed or all incomplete
 
+- [ ] more spacing between items
+
+- [ ] remove unused code, refactor project
+
+- [ ] fix shadow
+
 - [x] show + button for completed tasks on mobile only
 
 - [ ] smoother animation (flip move? using id as flip id)

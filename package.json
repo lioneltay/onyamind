@@ -16,9 +16,5 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@types/ramda": "^0.25.45",
-    "ramda": "^0.26.1"
-  }
+  "license": "ISC"
 }
