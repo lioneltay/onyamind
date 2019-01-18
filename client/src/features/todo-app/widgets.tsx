@@ -22,7 +22,7 @@ export const Button = styled.button.attrs({})<{ color?: string }>`
     outline: none;
   }
 
-  &:hover {
+  body.hasHover &:hover {
     background: #f8f8f8;
   }
 `

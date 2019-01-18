@@ -24,7 +24,7 @@ const Overlay = styled.div`
 
   display: none;
 
-  ${Container}:hover & {
+  body.hasHover ${Container}:hover & {
     display: flex;
     opacity: 1;
     pointer-events: all;

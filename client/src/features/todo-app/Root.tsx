@@ -31,12 +31,10 @@ const Container = styled.div`
 
 const TaskPage: React.FunctionComponent = () => {
   const {
-    user,
     tasks,
     editing_task_id,
-    new_task_title,
     show_edit_modal,
-    actions: { setNewTaskTitle, stopEditingTask },
+    actions: { stopEditingTask },
   } = useAppState()
 
   return (
