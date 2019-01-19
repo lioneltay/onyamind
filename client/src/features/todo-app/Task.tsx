@@ -142,9 +142,10 @@ const TaskItem = forwardRef<HTMLDivElement, Props>(
 
           {editing || !touch_screen || !task.complete ? null : (
             <IconButton
-              className={`fas fa-${task.complete ? "plus" : "check"}`}
               onClick={() => editTask(task.id, { complete: !task.complete })}
-            />
+            >
+              <Add />
+            </IconButton>
           )}
 
           {editing ? (

@@ -65,7 +65,7 @@ const Drawer: React.FunctionComponent = () => {
         </ListItem>
 
         <Divider />
-        <ListItem className="fj-c fa-st p-0">
+        <ListItem className="fj-c fa-st p-0" button>
           <Button
             fullWidth
             color="primary"
@@ -79,6 +79,7 @@ const Drawer: React.FunctionComponent = () => {
 
         {user ? (
           <ListItem
+            button
             className="cursor-pointer"
             onClick={() => firebase.auth().signOut()}
           >
@@ -89,14 +90,14 @@ const Drawer: React.FunctionComponent = () => {
           </ListItem>
         ) : null}
 
-        <ListItem>
+        <ListItem button>
           <ListItemIcon>
             <Feedback />
           </ListItemIcon>
           <ListItemText primary={<Typography>Send feedback</Typography>} />
         </ListItem>
 
-        <ListItem>
+        <ListItem button>
           <ListItemIcon>
             <Help />
           </ListItemIcon>
