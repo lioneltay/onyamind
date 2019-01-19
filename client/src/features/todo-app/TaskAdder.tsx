@@ -69,7 +69,11 @@ const TaskAdder: React.FunctionComponent<Props> = ({ className, style }) => {
     }
 
     setNewTaskTitle("")
-    addTask({ title: new_task_title, notes: "", uid: user ? user.uid : null })
+    addTask({
+      title: new_task_title,
+      notes: "",
+      user_id: user ? user.uid : null,
+    })
   }
 
   return (

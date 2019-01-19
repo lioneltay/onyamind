@@ -21,7 +21,7 @@ const TaskList: React.FunctionComponent<Props> = ({
   return (
     <Container style={style} className={className}>
       {tasks
-        .sort(comparator((t1, t2) => t1.position > t2.position))
+        .sort(comparator((t1, t2) => t1.created_at > t2.created_at))
         .map(task => (
           <TaskItem key={task.id} task={task} />
         ))}

@@ -49,6 +49,9 @@ const Header: React.FunctionComponent<Props> = () => {
     user,
     editing,
     selected_tasks,
+    selected_task_list_id,
+    task_lists,
+
     actions: {
       checkSelectedTasks,
       deleteSelectedTasks,
@@ -56,6 +59,14 @@ const Header: React.FunctionComponent<Props> = () => {
       setShowDrawer,
     },
   } = useAppState()
+
+  const selected_task_list = task_lists.find(
+    list => list.id === selected_task_list_id,
+  )
+
+  if (!selected_task_list) {
+    return null
+  }
 
   return (
     <Fragment>
@@ -91,7 +102,9 @@ const Header: React.FunctionComponent<Props> = () => {
                   >
                     <Menu />
                   </IconButton>
-                  <div style={{ paddingLeft: 18, color: "black" }}>Tasks</div>
+                  <div style={{ paddingLeft: 18, color: "black" }}>
+                    {selected_task_list.name}
+                  </div>
                 </Fragment>
               )}
             </LeftSection>

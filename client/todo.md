@@ -19,8 +19,22 @@
 
 * [ ] animate saving text in edit modal
 
+- [ ] Refactor state management
+
+  - [ ] really think about a good way to integrate observables
+
 - [x] Drawer menu
+
   - [x] Account details
   - [x] login
-  - [ ] Multiple lists
-  - [ ] set primary list
+  - [x] Multiple lists
+  - [x] set primary list
+  - [x] Set current viewing list
+  - [x] If no list, create primary task list by default
+  - [x] when items are added, add them to the current list
+    - [x] increment task count
+  - [x] modify list observable to fetch a certain list
+  - [ ] when auth status changes, need to refresh current selected list id
+  - [ ] distinguish between completed and incompleted task counts
+
+- [ ] security

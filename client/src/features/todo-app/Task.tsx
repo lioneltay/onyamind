@@ -119,7 +119,6 @@ const TaskItem = forwardRef<HTMLDivElement, Props>(
                 color: task.complete ? "#a3a3a3" : "black",
               }}
             >
-              {/* <strong>{task.position}</strong> */}
               {task.title}
             </TaskTitle>
 

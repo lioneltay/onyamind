@@ -13,7 +13,7 @@ const RootWithContext: React.FunctionComponent = () => {
   const [complete, incomplete] = partition(task => task.complete, tasks)
   const process = (tasks: Task[]) =>
     tasks
-      .sort(comparator((t1, t2) => t1.position > t2.position))
+      .sort(comparator((t1, t2) => t1.created_at > t2.created_at))
       .map(prop("id"))
 
   const flipKey =
