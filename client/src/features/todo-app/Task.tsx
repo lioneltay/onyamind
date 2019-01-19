@@ -3,11 +3,18 @@ import styled from "styled-components"
 import { Task } from "./types"
 
 import IconButton from "@material-ui/core/IconButton"
+import Button from "@material-ui/core/Button"
+import Fab from "@material-ui/core/Fab"
+
+import Paper from "@material-ui/core/Paper"
 import Delete from "@material-ui/icons/Delete"
 import Add from "@material-ui/icons/Add"
+import DragHandle from "@material-ui/icons/DragHandle"
 import Check from "@material-ui/icons/Check"
 import CheckBox from "@material-ui/icons/CheckBox"
 import CheckBoxOutlineBlank from "@material-ui/icons/CheckBoxOutlineBlank"
+import Work from "@material-ui/icons/Work"
+import Assignment from "@material-ui/icons/Assignment"
 import { useAppState } from "./state"
 import { removeTask, editTask } from "./api"
 import { highlight_color } from "./constants"
@@ -21,6 +28,7 @@ const Container = styled.div`
   align-items: center;
 
   padding-left: 8px;
+  min-height: 72px;
 `
 
 const Overlay = styled.div`
@@ -85,9 +93,35 @@ const TaskItem: React.FunctionComponent<Props> = (
         backgroundColor: selected ? highlight_color : "transparent",
       }}
     >
-      <IconButton onClick={() => toggleTaskSelection(task.id)}>
-        {selected ? <CheckBox /> : <CheckBoxOutlineBlank />}
-      </IconButton>
+      {/* <Paper>
+        <IconButton onClick={() => toggleTaskSelection(task.id)}>
+          {selected ? <CheckBox /> : <CheckBoxOutlineBlank />}
+        </IconButton>
+        <IconButton onClick={() => toggleTaskSelection(task.id)}>
+          {<Work />}
+        </IconButton>
+      </Paper> */}
+
+      <Fab
+        style={{
+          borderRadius: editing ? "50%" : "5px",
+          transition: "300ms",
+          border: selected ? "1px solid blue" : "none",
+          background: "white",
+          marginLeft: 4,
+          color: "#ccc",
+        }}
+        onClick={() => toggleTaskSelection(task.id)}
+        size="small"
+      >
+        {/* <Work /> */}
+        <Assignment
+          style={{
+            transform: `scale(${editing ? 0.7 : 1})`,
+            transition: "300ms",
+          }}
+        />
+      </Fab>
 
       <TaskDetails onClick={() => startEditingTask(task.id)}>
         <TaskTitle
@@ -123,6 +157,12 @@ const TaskItem: React.FunctionComponent<Props> = (
           onClick={() => editTask(task.id, { complete: !task.complete })}
         />
       )}
+
+      {editing ? (
+        <IconButton disableRipple style={{ cursor: "move" }}>
+          <DragHandle />
+        </IconButton>
+      ) : null}
     </Container>
   )
 }
