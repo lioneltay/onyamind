@@ -107,7 +107,7 @@ const useSubject = <T extends any>(): [Subject<T>, (value: T) => void] => {
 export const Provider: React.FunctionComponent = ({ children }) => {
   const [touch_screen, setTouchScreen] = useState(false)
   const [editing, setEditing] = useState(false)
-  const [show_drawer, setShowDrawer] = useState(true)
+  const [show_drawer, setShowDrawer] = useState(false)
   const [show_edit_modal, setShowEditModal] = useState(false)
   const [editing_task_id, setEditingTaskId] = useState(null as ID | null)
   const [new_task_title, setNewTaskTitle] = useState("")
