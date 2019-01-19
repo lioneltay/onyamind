@@ -297,8 +297,6 @@ const user_stream = new Observable<User | null>(observer => {
   return firebase.auth().onAuthStateChanged(user => observer.next(user))
 })
 
-// auth_stream.subscribe(user => console.log("auth_stream", user))
-
 const createTasksStream = (user_id?: string) =>
   new Observable<Task[]>(observer => {
     if (typeof user_id === "undefined") {
@@ -323,7 +321,3 @@ const createTasksStream = (user_id?: string) =>
 const current_user_tasks_stream = user_stream.pipe(
   switchMap(user => createTasksStream(user ? user.uid : undefined)),
 )
-
-// current_user_tasks_stream.subscribe(tasks =>
-//   console.log("current_user_tasks_stream", tasks),
-// )

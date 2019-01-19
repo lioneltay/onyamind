@@ -31,14 +31,7 @@ export default class LoginPage extends React.Component {
   render() {
     return (
       <GoogleButton
-        onClick={() =>
-          firebase
-            .auth()
-            .signInWithPopup(google_provider)
-            .then(result => {
-              const user = result.user
-            })
-        }
+        onClick={() => firebase.auth().signInWithPopup(google_provider)}
       >
         <GoogleIcon src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" />
         Sign in with Google

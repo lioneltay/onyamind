@@ -2,9 +2,9 @@ import React, { Fragment } from "react"
 import styled from "styled-components"
 
 import { HEIGHT as HEADER_HEIGHT } from "./Header"
-// import { IconButton } from "./widgets"
-import  Add  from "@material-ui/icons/Add"
+import Add from "@material-ui/icons/Add"
 import IconButton from "@material-ui/core/IconButton"
+import TextField from "@material-ui/core/TextField"
 import { background_color, highlighted_text_color } from "./constants"
 import { useAppState } from "./state"
 
@@ -41,13 +41,11 @@ const Container = styled.div`
   border-bottom: 1px solid #ddd;
 `
 
-const Input = styled.input`
-  font-weight: 500;
-  font-size: 16px;
-  border: none;
-  outline: none;
-  padding: 10px 18px;
-`
+const AdderTextField = styled(TextField).attrs({ variant: "outlined" })`
+  & fieldset {
+    border: none;
+  }
+` as typeof TextField
 
 const SelectAllButton = styled.div`
   color: ${highlighted_text_color};
@@ -90,9 +88,9 @@ const TaskAdder: React.FunctionComponent<Props> = ({ className, style }) => {
                 <Add />
               </IconButton>
 
-              <Input
-                className="fg-1"
+              <AdderTextField
                 placeholder="Add item"
+                className="fg-1"
                 value={new_task_title}
                 onChange={e => setNewTaskTitle(e.currentTarget.value)}
                 onKeyPress={e => {

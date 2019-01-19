@@ -2,7 +2,7 @@ import React from "react"
 import { hot } from "react-hot-loader"
 
 import Root from "pages"
-import GlobalStyles from "css/global"
+import GlobalStyles from "styles/global"
 
 function watchForHover() {
   var hasHoverClass = false
@@ -43,10 +43,7 @@ class App extends React.Component {
     return (
       <>
         <GlobalStyles />
-
-        <div>
-          <Root />
-        </div>
+        <Root />
       </>
     )
   }

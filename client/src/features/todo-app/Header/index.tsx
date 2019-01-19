@@ -2,15 +2,15 @@ import React, { Fragment } from "react"
 import styled from "styled-components"
 import { firebase } from "services/firebase"
 
-import { LoginWidget } from "services/components"
-import { Button } from "./widgets"
+import LoginWidget from "./LoginWidget"
+import Button from "@material-ui/core/Button"
 import IconButton from "@material-ui/core/IconButton"
 import Menu from "@material-ui/icons/Menu"
 import ArrowBack from "@material-ui/icons/ArrowBack"
 import Delete from "@material-ui/icons/Delete"
 import Check from "@material-ui/icons/Check"
-import { useAppState } from "./state"
-import { highlight_color, highlighted_text_color } from "./constants"
+import { useAppState } from "../state"
+import { highlight_color, highlighted_text_color } from "../constants"
 
 export const HEIGHT = 64
 
@@ -104,7 +104,13 @@ const Header: React.FunctionComponent<Props> = () => {
               </IconButton>
             </div>
           ) : user && user.uid ? (
-            <Button onClick={() => firebase.auth().signOut()}>Logout</Button>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => firebase.auth().signOut()}
+            >
+              Logout
+            </Button>
           ) : (
             <LoginWidget />
           )}
