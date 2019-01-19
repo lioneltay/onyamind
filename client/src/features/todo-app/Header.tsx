@@ -102,13 +102,7 @@ const Header: React.FunctionComponent<Props> = () => {
               />
             </div>
           ) : user && user.uid ? (
-            <>
-              <span style={{ fontSize: 16, color: grey_text }}>
-                {user.email}
-              </span>
-
-              <Button onClick={() => firebase.auth().signOut()}>Logout</Button>
-            </>
+            <Button onClick={() => firebase.auth().signOut()}>Logout</Button>
           ) : (
             <LoginWidget />
           )}
