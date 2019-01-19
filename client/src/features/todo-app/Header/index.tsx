@@ -12,7 +12,7 @@ import Check from "@material-ui/icons/Check"
 import { useAppState } from "../state"
 import { highlight_color, highlighted_text_color } from "../constants"
 import AppBar from "@material-ui/core/AppBar"
-import ToolBar from "@material-ui/core/ToolBar"
+import Toolbar from "@material-ui/core/Toolbar"
 
 export const HEIGHT = 64
 
@@ -20,11 +20,11 @@ const Placeholder = styled.div`
   height: ${HEIGHT}px;
 `
 
-const Container = styled(ToolBar)`
+const Container = styled(Toolbar)`
   z-index: 2000;
   display: flex;
   justify-content: center;
-` as typeof ToolBar
+` as typeof Toolbar
 
 const Main = styled.div`
   max-width: 100%;

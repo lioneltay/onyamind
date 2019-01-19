@@ -3,6 +3,7 @@
     "target": "esnext",
     "module": "esnext",
     "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
     "lib": ["webworker", "esnext", "dom"],
     "baseUrl": ".",
     "paths": {
