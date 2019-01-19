@@ -19,6 +19,8 @@ import { useAppState } from "./state"
 import { removeTask, editTask } from "./api"
 import { highlight_color } from "./constants"
 
+import { Flipped } from "react-flip-toolkit"
+
 const Container = styled.div`
   position: relative;
   max-width: 100%;
@@ -85,15 +87,16 @@ const TaskItem: React.FunctionComponent<Props> = (
   const selected = selected_tasks.findIndex(id => id === task.id) >= 0
 
   return (
-    <Container
-      ref={ref}
-      className={className}
-      style={{
-        ...style,
-        backgroundColor: selected ? highlight_color : "transparent",
-      }}
-    >
-      {/* <Paper>
+    <Flipped flipId={task.id}>
+      <Container
+        ref={ref}
+        className={className}
+        style={{
+          ...style,
+          backgroundColor: selected ? highlight_color : "transparent",
+        }}
+      >
+        {/* <Paper>
         <IconButton onClick={() => toggleTaskSelection(task.id)}>
           {selected ? <CheckBox /> : <CheckBoxOutlineBlank />}
         </IconButton>
@@ -102,68 +105,69 @@ const TaskItem: React.FunctionComponent<Props> = (
         </IconButton>
       </Paper> */}
 
-      <Fab
-        style={{
-          borderRadius: editing ? "50%" : "5px",
-          transition: "300ms",
-          border: selected ? "1px solid blue" : "none",
-          background: "white",
-          marginLeft: 4,
-          color: "#ccc",
-        }}
-        onClick={() => toggleTaskSelection(task.id)}
-        size="small"
-      >
-        {/* <Work /> */}
-        <Assignment
+        <Fab
           style={{
-            transform: `scale(${editing ? 0.7 : 1})`,
+            borderRadius: editing ? "50%" : "5px",
             transition: "300ms",
+            border: selected ? "1px solid blue" : "none",
+            background: "white",
+            marginLeft: 4,
+            color: "#ccc",
           }}
-        />
-      </Fab>
-
-      <TaskDetails onClick={() => startEditingTask(task.id)}>
-        <TaskTitle
-          className="fg-1"
-          style={{
-            textDecoration: task.complete ? "line-through" : "none",
-            color: task.complete ? "#a3a3a3" : "black",
-          }}
+          onClick={() => toggleTaskSelection(task.id)}
+          size="small"
         >
-          {task.title}
-        </TaskTitle>
+          {/* <Work /> */}
+          <Assignment
+            style={{
+              transform: `scale(${editing ? 0.7 : 1})`,
+              transition: "300ms",
+            }}
+          />
+        </Fab>
 
-        <TaskNotes>{task.notes}</TaskNotes>
-      </TaskDetails>
-
-      {editing || touch_screen ? null : (
-        <Overlay>
-          <IconButton
-            onClick={() => editTask(task.id, { complete: !task.complete })}
+        <TaskDetails onClick={() => startEditingTask(task.id)}>
+          <TaskTitle
+            className="fg-1"
+            style={{
+              textDecoration: task.complete ? "line-through" : "none",
+              color: task.complete ? "#a3a3a3" : "black",
+            }}
           >
-            {task.complete ? <Add /> : <Check />}
+            {task.title}
+          </TaskTitle>
+
+          <TaskNotes>{task.notes}</TaskNotes>
+        </TaskDetails>
+
+        {editing || touch_screen ? null : (
+          <Overlay>
+            <IconButton
+              onClick={() => editTask(task.id, { complete: !task.complete })}
+            >
+              {task.complete ? <Add /> : <Check />}
+            </IconButton>
+
+            <IconButton onClick={() => removeTask(task.id)}>
+              <Delete />
+            </IconButton>
+          </Overlay>
+        )}
+
+        {editing || !touch_screen || !task.complete ? null : (
+          <IconButton
+            className={`fas fa-${task.complete ? "plus" : "check"}`}
+            onClick={() => editTask(task.id, { complete: !task.complete })}
+          />
+        )}
+
+        {editing ? (
+          <IconButton disableRipple style={{ cursor: "move" }}>
+            <DragHandle />
           </IconButton>
-
-          <IconButton onClick={() => removeTask(task.id)}>
-            <Delete />
-          </IconButton>
-        </Overlay>
-      )}
-
-      {editing || !touch_screen || !task.complete ? null : (
-        <IconButton
-          className={`fas fa-${task.complete ? "plus" : "check"}`}
-          onClick={() => editTask(task.id, { complete: !task.complete })}
-        />
-      )}
-
-      {editing ? (
-        <IconButton disableRipple style={{ cursor: "move" }}>
-          <DragHandle />
-        </IconButton>
-      ) : null}
-    </Container>
+        ) : null}
+      </Container>
+    </Flipped>
   )
 }
 

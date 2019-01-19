@@ -19,7 +19,7 @@ const TaskList: React.FunctionComponent<Props> = ({
 }) => {
   return (
     <Container style={style} className={className}>
-      <Transition
+      {/* <Transition
         config={{ duration: 100 }}
         items={tasks}
         keys={task => task.id}
@@ -28,11 +28,11 @@ const TaskList: React.FunctionComponent<Props> = ({
         leave={{ height: 0, opacity: 0 }}
       >
         {task => props => <TaskItem key={task.id} style={props} task={task} />}
-      </Transition>
+      </Transition> */}
 
-      {/* {tasks.map(task => (
+      {tasks.map(task => (
         <TaskItem key={task.id} task={task} />
-      ))} */}
+      ))}
     </Container>
   )
 }
