@@ -140,6 +140,7 @@ export const Provider: React.FunctionComponent = ({ children }) => {
             const upper = from > to ? from - 1 : to
             const lower = from > to ? to : from + 1
 
+            console.log(from, tasks)
             const from_task = tasks.find(task => task.position === from)
             if (!from_task) {
               throw Error("No such from task")
@@ -159,14 +160,12 @@ export const Provider: React.FunctionComponent = ({ children }) => {
               })
             }
 
-            const updated_tasks = tasks
+            tasks
               .filter(task => task.position >= lower && task.position <= upper)
               .map(task => ({ ...task, position: task.position + delta }))
               .forEach(task => updateTaskSync(task.id, task))
 
             updateTaskSync(from_task.id, { position: to })
-
-            console.log(updated_tasks)
           },
 
           endTaskRepositioning: async () => {

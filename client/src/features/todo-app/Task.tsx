@@ -14,7 +14,7 @@ import { useAppState } from "./state"
 
 import { Flipped } from "react-flip-toolkit"
 
-import { useDraggable, useDropzone } from "@tekktekk/react-dnd"
+import { highlight_color } from "./constants"
 
 const Container = styled.div`
   position: relative;
@@ -70,257 +70,92 @@ export type Props = Stylable & {
   task: Task
 }
 
-const TaskItem: React.FunctionComponent<Props> = (
-  { task, style, className },
-  ref,
-) => {
-  const {
-    touch_screen,
-    selected_tasks,
-    editing,
-    actions: {
-      startEditingTask,
-      toggleTaskSelection,
-      editTask,
-      removeTask,
-      moveTask,
-      endTaskRepositioning,
-    },
-  } = useAppState()
-
-  const selected = selected_tasks.findIndex(id => id === task.id) >= 0
-
-  const {
-    event_handlers: drag_handlers,
-    state: { data, is_dragging },
-  } = useDraggable({
-    type: `task:${task.complete ? "complete" : "incomplete"}`,
-    data: { task },
-    onDragEnd: () => endTaskRepositioning(),
-    renderDraggingItem: ({ data, dimensions }) => (
-      <div
-        style={{
-          width: dimensions.width,
-          height: dimensions.height,
-        }}
-      >
-        <TaskItemDisplay
-          style={{ background: "grey" }}
-          task={data.task}
-          selected={selected}
-          touch_screen={touch_screen}
-          editing={editing}
-        />
-      </div>
-    ),
-  })
-
-  const { event_handlers: drop_handlers } = useDropzone({
-    type: `task:${task.complete ? "complete" : "incomplete"}`,
-    onDragEnter: ({ data, type, updateData }) => {
-      if (data.task.position === task.position) {
-        return
-      }
-      moveTask(data.position, task.position)
-      updateData({ task })
-    },
-  })
-
-  return (
-    <Flipped flipId={task.id}>
-      <TaskItemDisplay
-        {...drop_handlers()}
-        style={{
-          visibility:
-            is_dragging && data.task.id === task.id ? "hidden" : "visible",
-          pointerEvents:
-            is_dragging && data.task.id === task.id ? "none" : "all",
-        }}
-        task={task}
-        selected={selected}
-        editing={editing}
-        touch_screen={touch_screen}
-        onIconClick={() => toggleTaskSelection(task.id)}
-        onDetailsClick={() => startEditingTask(task.id)}
-        onCompleteToggle={() => editTask(task.id, { complete: !task.complete })}
-        onDelete={() => removeTask(task.id)}
-        drag_handle_props={drag_handlers()}
-      />
-    </Flipped>
-  )
-}
-
-type TaskItemDisplayProps = React.HTMLAttributes<HTMLDivElement> & {
-  task: Task
-  touch_screen: boolean
-  selected: boolean
-  editing: boolean
-  onIconClick?: () => void
-  onDetailsClick?: () => void
-  onCompleteToggle?: () => void
-  onDelete?: () => void
-  drag_handle_props?: React.HTMLAttributes<HTMLElement>
-}
-
-const TaskItemDisplay = forwardRef<HTMLDivElement, TaskItemDisplayProps>(
-  (
-    {
-      task,
+const TaskItem = forwardRef<HTMLDivElement, Props>(
+  ({ task, style, className }, ref) => {
+    const {
       touch_screen,
-      selected,
+      selected_tasks,
       editing,
-      onDetailsClick,
-      onIconClick,
-      onCompleteToggle,
-      onDelete,
-      drag_handle_props = {},
-      ...rest
-    },
-    ref,
-  ) => {
+      actions: { startEditingTask, toggleTaskSelection, editTask, removeTask },
+    } = useAppState()
+
+    const selected = selected_tasks.findIndex(id => id === task.id) >= 0
+
     return (
-      <Container {...rest} ref={ref}>
-        <Fab
+      <Flipped flipId={task.id}>
+        <Container
+          ref={ref}
+          className={className}
           style={{
-            borderRadius: editing ? "50%" : "5px",
-            transition: "300ms",
-            border: selected ? "1px solid blue" : "none",
-            background: "white",
-            marginLeft: 4,
-            color: "#ccc",
+            ...style,
+            backgroundColor: selected ? highlight_color : "transparent",
           }}
-          onClick={onIconClick}
-          size="small"
         >
-          <Assignment
+          <Fab
             style={{
-              transform: `scale(${editing ? 0.7 : 1})`,
+              borderRadius: editing ? "50%" : "5px",
               transition: "300ms",
+              border: selected ? "1px solid blue" : "none",
+              background: "white",
+              marginLeft: 4,
+              color: "#ccc",
             }}
-          />
-        </Fab>
-
-        <TaskDetails onClick={onDetailsClick}>
-          <TaskTitle
-            className="fg-1"
-            style={{
-              textDecoration: task.complete ? "line-through" : "none",
-              color: task.complete ? "#a3a3a3" : "black",
-            }}
+            onClick={() => toggleTaskSelection(task.id)}
+            size="small"
           >
-            <strong>{task.position}</strong>
-            {task.title}
-          </TaskTitle>
+            <Assignment
+              style={{
+                transform: `scale(${editing ? 0.7 : 1})`,
+                transition: "300ms",
+              }}
+            />
+          </Fab>
 
-          <TaskNotes>{task.notes}</TaskNotes>
-        </TaskDetails>
+          <TaskDetails onClick={() => startEditingTask(task.id)}>
+            <TaskTitle
+              className="fg-1"
+              style={{
+                textDecoration: task.complete ? "line-through" : "none",
+                color: task.complete ? "#a3a3a3" : "black",
+              }}
+            >
+              <strong>{task.position}</strong>
+              {task.title}
+            </TaskTitle>
 
-        {editing || touch_screen ? null : (
-          <Overlay>
-            <IconButton onClick={onCompleteToggle}>
-              {task.complete ? <Add /> : <Check />}
-            </IconButton>
+            <TaskNotes>{task.notes}</TaskNotes>
+          </TaskDetails>
 
-            <IconButton onClick={onDelete}>
-              <Delete />
-            </IconButton>
-          </Overlay>
-        )}
+          {editing || touch_screen ? null : (
+            <Overlay>
+              <IconButton
+                onClick={() => editTask(task.id, { complete: !task.complete })}
+              >
+                {task.complete ? <Add /> : <Check />}
+              </IconButton>
 
-        {editing || !touch_screen || !task.complete ? null : (
-          <IconButton onClick={onCompleteToggle}>
-            <Add />
-          </IconButton>
-        )}
+              <IconButton onClick={() => removeTask(task.id)}>
+                <Delete />
+              </IconButton>
+            </Overlay>
+          )}
 
-        {editing ? (
-          <div {...drag_handle_props}>
+          {editing || !touch_screen || !task.complete ? null : (
+            <IconButton
+              className={`fas fa-${task.complete ? "plus" : "check"}`}
+              onClick={() => editTask(task.id, { complete: !task.complete })}
+            />
+          )}
+
+          {editing ? (
             <IconButton disableRipple style={{ cursor: "move" }}>
               <DragHandle />
             </IconButton>
-          </div>
-        ) : null}
-      </Container>
+          ) : null}
+        </Container>
+      </Flipped>
     )
   },
 )
 
-export default forwardRef(TaskItem)
-
-// {/* <Container
-//         {...drop_handlers()}
-//         ref={ref}
-//         className={className}
-//         style={{
-//           ...style,
-//           visibility:
-//             is_dragging && data.task.id === task.id ? "hidden" : "visible",
-//           pointerEvents:
-//             is_dragging && data.task.id === task.id ? "none" : "all",
-//           backgroundColor: selected ? highlight_color : "transparent",
-//         }}
-//       >
-//         <Fab
-//           style={{
-//             borderRadius: editing ? "50%" : "5px",
-//             transition: "300ms",
-//             border: selected ? "1px solid blue" : "none",
-//             background: "white",
-//             marginLeft: 4,
-//             color: "#ccc",
-//           }}
-//           onClick={() => toggleTaskSelection(task.id)}
-//           size="small"
-//         >
-//           <Assignment
-//             style={{
-//               transform: `scale(${editing ? 0.7 : 1})`,
-//               transition: "300ms",
-//             }}
-//           />
-//         </Fab>
-
-//         <TaskDetails onClick={() => startEditingTask(task.id)}>
-//           <TaskTitle
-//             className="fg-1"
-//             style={{
-//               textDecoration: task.complete ? "line-through" : "none",
-//               color: task.complete ? "#a3a3a3" : "black",
-//             }}
-//           >
-//             <strong>{task.position}</strong>
-//             {task.title}
-//           </TaskTitle>
-
-//           <TaskNotes>{task.notes}</TaskNotes>
-//         </TaskDetails>
-
-//         {editing || touch_screen ? null : (
-//           <Overlay>
-//             <IconButton
-//               onClick={() => editTask(task.id, { complete: !task.complete })}
-//             >
-//               {task.complete ? <Add /> : <Check />}
-//             </IconButton>
-
-//             <IconButton onClick={() => removeTask(task.id)}>
-//               <Delete />
-//             </IconButton>
-//           </Overlay>
-//         )}
-
-//         {editing || !touch_screen || !task.complete ? null : (
-//           <IconButton
-//             className={`fas fa-${task.complete ? "plus" : "check"}`}
-//             onClick={() => editTask(task.id, { complete: !task.complete })}
-//           />
-//         )}
-
-//         {editing ? (
-//           <div {...drag_handlers()}>
-//             <IconButton disableRipple style={{ cursor: "move" }}>
-//               <DragHandle />
-//             </IconButton>
-//           </div>
-//         ) : null}
-//       </Container> */}
+export default TaskItem
