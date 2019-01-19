@@ -3,6 +3,7 @@ import styled from "styled-components"
 import { Task } from "./types"
 import TaskItem from "./Task"
 import { Transition, config } from "react-spring"
+import { comparator } from "ramda"
 
 const Container = styled.div``
 
@@ -19,20 +20,11 @@ const TaskList: React.FunctionComponent<Props> = ({
 }) => {
   return (
     <Container style={style} className={className}>
-      {/* <Transition
-        config={{ duration: 100 }}
-        items={tasks}
-        keys={task => task.id}
-        from={{ height: 0, opacity: 0 }}
-        enter={{ height: "auto", opacity: 1 }}
-        leave={{ height: 0, opacity: 0 }}
-      >
-        {task => props => <TaskItem key={task.id} style={props} task={task} />}
-      </Transition> */}
-
-      {tasks.map(task => (
-        <TaskItem key={task.id} task={task} />
-      ))}
+      {tasks
+        .sort(comparator((t1, t2) => t1.position > t2.position))
+        .map(task => (
+          <TaskItem key={task.id} task={task} />
+        ))}
     </Container>
   )
 }

@@ -1,13 +1,16 @@
 import React from "react"
 
+import { Provider as DnDProvider } from "@tekktekk/react-dnd"
 import { Provider } from "./state"
 import Root from "./Root"
 
 const TodoApp: React.FunctionComponent = () => {
   return (
-    <Provider>
-      <Root />
-    </Provider>
+    <DnDProvider>
+      <Provider>
+        <Root />
+      </Provider>
+    </DnDProvider>
   )
 }
 

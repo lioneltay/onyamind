@@ -10,12 +10,13 @@ import CompleteTasks from "./CompleteTasks"
 
 import { useAppState } from "./state"
 
-import { addTask, editTask } from "./api"
 import { background_color } from "./constants"
 
 import { Flipper } from "react-flip-toolkit"
 import { partition } from "ramda"
 import prop from "ramda/es/prop"
+import comparator from "ramda/es/comparator"
+import { Task } from "./types"
 
 const PageContainer = styled.div`
   background: ${background_color};
@@ -38,15 +39,17 @@ const TaskPage: React.FunctionComponent = () => {
     tasks,
     editing_task_id,
     show_edit_modal,
-    actions: { stopEditingTask },
+    actions: { stopEditingTask, editTask },
   } = useAppState()
 
   const [complete, incomplete] = partition(task => task.complete, tasks)
-  const flipKey =
-    incomplete
+  const process = (tasks: Task[]) =>
+    tasks
+      .sort(comparator((t1, t2) => t1.position > t2.position))
       .map(prop("id"))
-      .concat(complete.map(prop("id")))
-      .join("") +
+
+  const flipKey =
+    [...process(incomplete), ...process(complete)].join("") +
     complete.length +
     incomplete.length
 

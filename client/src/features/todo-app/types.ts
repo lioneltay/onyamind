@@ -8,6 +8,7 @@ export type Task = {
   complete: boolean
   created_at: number
   updated_at: number
+  position: number
 }
 
 export type User = {

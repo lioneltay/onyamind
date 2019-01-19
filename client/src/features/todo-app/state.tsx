@@ -1,10 +1,16 @@
-import React, { createContext, useState, useEffect, useContext } from "react"
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  useContext,
+  useRef,
+} from "react"
 import { firebase, firestore, dataWithId } from "services/firebase"
 import { Observable } from "rxjs"
 import { switchMap } from "rxjs/operators"
 import { Task, User, ID } from "./types"
-import { editTask, removeTask } from "./api"
-import uniq from "ramda/es/uniq"
+import { uniq, max, update } from "ramda"
+import { addTask, removeTask, editTask } from "./api"
 
 type Context = {
   touch_screen: boolean
@@ -17,16 +23,31 @@ type Context = {
   selected_tasks: ID[]
 
   actions: {
+    addTask: (
+      task: Omit<
+        Task,
+        "id" | "created_at" | "updated_at" | "complete" | "position"
+      >,
+    ) => Promise<Task>
+    editTask: (
+      task_id: ID,
+      task_data: Partial<Omit<Task, "id">>,
+    ) => Promise<Task>
+    removeTask: (task_id: ID) => Promise<ID>
+
+    moveTask: (from: number, to: number) => void
+    endTaskRepositioning: () => Promise<void>
+
     selectAllIncompleteTasks: () => void
     toggleTaskSelection: (id: ID) => void
     setNewTaskTitle: (title: string) => void
     startEditingTask: (task_id: ID) => void
     stopEditingTask: () => void
-    checkSelectedTasks: () => void
-    deleteSelectedTasks: () => void
+    checkSelectedTasks: () => Promise<void>
+    deleteSelectedTasks: () => Promise<void>
     stopEditing: () => void
-    uncheckCompletedTasks: () => void
-    deleteCompletedTasks: () => void
+    uncheckCompletedTasks: () => Promise<void>
+    deleteCompletedTasks: () => Promise<void>
   }
 }
 
@@ -36,10 +57,10 @@ export const useAppState = () => {
   return useContext(Context)
 }
 
-const useObservable = <T extends any>(
+const useObservableState = <T extends any>(
   observable: Observable<T>,
   initial_value: T,
-): T => {
+): [T, React.Dispatch<React.SetStateAction<T>>] => {
   const [value, setValue] = useState(initial_value)
 
   useEffect(() => {
@@ -47,7 +68,7 @@ const useObservable = <T extends any>(
     return () => subscription.unsubscribe()
   }, [])
 
-  return value
+  return [value, setValue]
 }
 
 export const Provider: React.FunctionComponent = ({ children }) => {
@@ -64,8 +85,11 @@ export const Provider: React.FunctionComponent = ({ children }) => {
     return () => window.removeEventListener("touchstart", handler)
   })
 
-  const user = useObservable(user_stream, null)
-  const tasks = useObservable(current_user_tasks_stream, [])
+  const [user] = useObservableState(user_stream, null)
+  const [tasks, setTasks] = useObservableState(current_user_tasks_stream, [])
+
+  const tasks_ref = useRef(tasks)
+  tasks_ref.current = tasks
 
   return (
     <Context.Provider
@@ -80,6 +104,89 @@ export const Provider: React.FunctionComponent = ({ children }) => {
         selected_tasks,
 
         actions: {
+          addTask: data => {
+            const next_position =
+              tasks.reduce((acc, task) => max(acc, task.position), 0) + 1 || 1
+
+            return addTask({ ...data, position: next_position })
+          },
+
+          editTask,
+
+          removeTask: async id => {
+            const task = tasks.find(task => task.id === id)
+            if (!task) {
+              throw Error("No such task")
+            }
+            const position = task.position
+            const above_tasks = tasks.filter(task => task.position > position)
+
+            const batch = firestore.batch()
+
+            above_tasks.forEach(task => {
+              batch.update(firestore.collection("tasks").doc(task.id), {
+                position: task.position + 1,
+                updated_at: Date.now(),
+              })
+            })
+
+            await batch.commit()
+
+            return removeTask(id)
+          },
+
+          moveTask: async (from: number, to: number) => {
+            const delta = from > to ? 1 : -1
+            const upper = from > to ? from - 1 : to
+            const lower = from > to ? to : from + 1
+
+            const from_task = tasks.find(task => task.position === from)
+            if (!from_task) {
+              throw Error("No such from task")
+            }
+
+            const updateTaskSync = (id: ID, data: Partial<Task>): void => {
+              setTasks(tasks => {
+                const index = tasks.findIndex(task => task.id === id)
+                if (index < 0) {
+                  return tasks
+                }
+                return update(
+                  index,
+                  { ...tasks[index], ...data, updated_at: Date.now() },
+                  tasks,
+                )
+              })
+            }
+
+            const updated_tasks = tasks
+              .filter(task => task.position >= lower && task.position <= upper)
+              .map(task => ({ ...task, position: task.position + delta }))
+              .forEach(task => updateTaskSync(task.id, task))
+
+            updateTaskSync(from_task.id, { position: to })
+
+            console.log(updated_tasks)
+          },
+
+          endTaskRepositioning: async () => {
+            console.log("endTaskRepositioning")
+
+            const tasks = tasks_ref.current
+            console.log(tasks)
+
+            const batch = firestore.batch()
+
+            tasks.forEach(task => {
+              batch.update(firestore.collection("tasks").doc(task.id), {
+                position: task.position,
+                updated_at: Date.now(),
+              })
+            })
+
+            return batch.commit()
+          },
+
           selectAllIncompleteTasks: () => {
             setSelectedTasks(ids =>
               uniq(
@@ -90,7 +197,7 @@ export const Provider: React.FunctionComponent = ({ children }) => {
             )
           },
 
-          deleteCompletedTasks: () => {
+          deleteCompletedTasks: async () => {
             const batch = firestore.batch()
 
             tasks
@@ -99,23 +206,28 @@ export const Provider: React.FunctionComponent = ({ children }) => {
                 batch.delete(firestore.collection("tasks").doc(task.id))
               })
 
-            batch.commit()
+            return batch.commit()
           },
 
-          uncheckCompletedTasks: () => {
+          uncheckCompletedTasks: async () => {
             const batch = firestore.batch()
 
-            selected_tasks.forEach(id => {
-              batch.update(firestore.collection("tasks").doc(id), {
-                complete: false,
-                updated_at: Date.now(),
+            tasks
+              .filter(task => task.complete)
+              .forEach(task => {
+                batch.update(firestore.collection("tasks").doc(task.id), {
+                  complete: false,
+                  updated_at: Date.now(),
+                })
               })
-            })
 
-            batch.commit()
+            return batch.commit()
           },
 
-          checkSelectedTasks: () => {
+          checkSelectedTasks: async () => {
+            setEditing(false)
+            setSelectedTasks([])
+
             const batch = firestore.batch()
 
             selected_tasks.forEach(id => {
@@ -125,23 +237,20 @@ export const Provider: React.FunctionComponent = ({ children }) => {
               })
             })
 
-            batch.commit()
-
-            setEditing(false)
-            setSelectedTasks([])
+            return batch.commit()
           },
 
-          deleteSelectedTasks: () => {
+          deleteSelectedTasks: async () => {
+            setEditing(false)
+            setSelectedTasks([])
+
             const batch = firestore.batch()
 
             selected_tasks.forEach(id => {
               batch.delete(firestore.collection("tasks").doc(id))
             })
 
-            batch.commit()
-
-            setEditing(false)
-            setSelectedTasks([])
+            return batch.commit()
           },
 
           stopEditing: () => {

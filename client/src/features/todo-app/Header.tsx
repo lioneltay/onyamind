@@ -6,8 +6,11 @@ import { LoginWidget } from "services/components"
 import { Button } from "./widgets"
 import IconButton from "@material-ui/core/IconButton"
 import Menu from "@material-ui/icons/Menu"
+import ArrowBack from "@material-ui/icons/ArrowBack"
+import Delete from "@material-ui/icons/Delete"
+import Check from "@material-ui/icons/Check"
 import { useAppState } from "./state"
-import { highlight_color, highlighted_text_color, grey_text } from "./constants"
+import { highlight_color, highlighted_text_color } from "./constants"
 
 export const HEIGHT = 64
 
@@ -72,9 +75,10 @@ const Header: React.FunctionComponent<Props> = () => {
               <Fragment>
                 <IconButton
                   style={{ display: "inline-block" }}
-                  className="fas fa-arrow-left"
                   onClick={stopEditing}
-                />
+                >
+                  <ArrowBack />
+                </IconButton>
                 <div style={{ color: highlighted_text_color, paddingLeft: 18 }}>
                   {selected_tasks.length} selected
                 </div>
@@ -91,15 +95,13 @@ const Header: React.FunctionComponent<Props> = () => {
 
           {editing ? (
             <div style={{ display: "flex" }}>
-              <IconButton
-                className="fas fa-check"
-                onClick={checkSelectedTasks}
-              />
+              <IconButton onClick={checkSelectedTasks}>
+                <Check />
+              </IconButton>
 
-              <IconButton
-                className="fas fa-trash"
-                onClick={deleteSelectedTasks}
-              />
+              <IconButton onClick={deleteSelectedTasks}>
+                <Delete />
+              </IconButton>
             </div>
           ) : user && user.uid ? (
             <Button onClick={() => firebase.auth().signOut()}>Logout</Button>

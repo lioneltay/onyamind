@@ -7,7 +7,7 @@ import { grey_text } from "./constants"
 import TaskList from "./TaskList"
 // import { IconButton } from "./widgets"
 import IconButton from "@material-ui/core/IconButton"
-import KeyboardArrowDown from "@material-ui/icons/KeyboardArrowDown"
+import ExpandMore from "@material-ui/icons/ExpandMore"
 import MoreVert from "@material-ui/icons/MoreVert"
 import { useAppState } from "./state"
 
@@ -43,7 +43,7 @@ const Toggler: React.FunctionComponent<Props> = ({ tasks }) => {
       <RowContainer>
         <Rotate rotate={show}>
           <IconButton onClick={() => setShow(show => !show)}>
-            <KeyboardArrowDown />
+            <ExpandMore />
           </IconButton>
         </Rotate>
         <Text onClick={() => setShow(show => !show)}>

@@ -7,7 +7,6 @@ import  Add  from "@material-ui/icons/Add"
 import IconButton from "@material-ui/core/IconButton"
 import { background_color, highlighted_text_color } from "./constants"
 import { useAppState } from "./state"
-import { addTask } from "./api"
 
 export const HEIGHT = 81
 
@@ -63,7 +62,7 @@ const TaskAdder: React.FunctionComponent<Props> = ({ className, style }) => {
     editing,
     new_task_title,
     user,
-    actions: { selectAllIncompleteTasks, setNewTaskTitle },
+    actions: { selectAllIncompleteTasks, setNewTaskTitle, addTask },
   } = useAppState()
 
   const handleIt = () => {

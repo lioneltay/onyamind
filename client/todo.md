@@ -1,16 +1,21 @@
 # Tasks
 
-- [ ] Check how many times new tasks are provided after a batch update
-
-- [ ] Drag and drop reordering
-
 - [ ] only allow multiple check if selecting all completed or all incomplete
-
-- [ ] more spacing between items
 
 - [ ] remove unused code, refactor project
 
 - [ ] fix shadow
+
+- [ ] use material ui buttons
+
+- [ ] text truncate not working for title
+  - [ ] text truncate not working on mobile?
+
+- [ ] polish readme
+
+- [ ] performance review (laggy?)
+
+- [ ] animate saving text in edit modal
 
 - [x] show + button for completed tasks on mobile only
 

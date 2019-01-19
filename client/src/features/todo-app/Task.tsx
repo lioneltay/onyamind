@@ -3,23 +3,19 @@ import styled from "styled-components"
 import { Task } from "./types"
 
 import IconButton from "@material-ui/core/IconButton"
-import Button from "@material-ui/core/Button"
 import Fab from "@material-ui/core/Fab"
 
-import Paper from "@material-ui/core/Paper"
 import Delete from "@material-ui/icons/Delete"
 import Add from "@material-ui/icons/Add"
 import DragHandle from "@material-ui/icons/DragHandle"
 import Check from "@material-ui/icons/Check"
-import CheckBox from "@material-ui/icons/CheckBox"
-import CheckBoxOutlineBlank from "@material-ui/icons/CheckBoxOutlineBlank"
-import Work from "@material-ui/icons/Work"
 import Assignment from "@material-ui/icons/Assignment"
 import { useAppState } from "./state"
-import { removeTask, editTask } from "./api"
 import { highlight_color } from "./constants"
 
 import { Flipped } from "react-flip-toolkit"
+
+import { useDraggable, useDropzone } from "@tekktekk/react-dnd"
 
 const Container = styled.div`
   position: relative;
@@ -83,14 +79,39 @@ const TaskItem: React.FunctionComponent<Props> = (
     touch_screen,
     selected_tasks,
     editing,
-    actions: { startEditingTask, toggleTaskSelection },
+    actions: {
+      startEditingTask,
+      toggleTaskSelection,
+      editTask,
+      removeTask,
+      moveTask,
+      endTaskRepositioning
+    },
   } = useAppState()
 
   const selected = selected_tasks.findIndex(id => id === task.id) >= 0
 
+  const { event_handlers: drag_handlers } = useDraggable({
+    type: `task:${task.complete ? "complete" : "incomplete"}`,
+    data: { position: task.position },
+    onDragEnd: () => endTaskRepositioning()
+  })
+
+  const { event_handlers: drop_handlers } = useDropzone({
+    type: `task:${task.complete ? "complete" : "incomplete"}`,
+    onDragEnter: ({ data, type, updateData }) => {
+      if (data.position === task.position) {
+        return
+      }
+      moveTask(data.position, task.position)
+      updateData({ position: task.position })
+    },
+  })
+
   return (
     <Flipped flipId={task.id}>
       <Container
+        {...drop_handlers()}
         ref={ref}
         className={className}
         style={{
@@ -98,15 +119,6 @@ const TaskItem: React.FunctionComponent<Props> = (
           backgroundColor: selected ? highlight_color : "transparent",
         }}
       >
-        {/* <Paper>
-        <IconButton onClick={() => toggleTaskSelection(task.id)}>
-          {selected ? <CheckBox /> : <CheckBoxOutlineBlank />}
-        </IconButton>
-        <IconButton onClick={() => toggleTaskSelection(task.id)}>
-          {<Work />}
-        </IconButton>
-      </Paper> */}
-
         <Fab
           style={{
             borderRadius: editing ? "50%" : "5px",
@@ -119,7 +131,6 @@ const TaskItem: React.FunctionComponent<Props> = (
           onClick={() => toggleTaskSelection(task.id)}
           size="small"
         >
-          {/* <Work /> */}
           <Assignment
             style={{
               transform: `scale(${editing ? 0.7 : 1})`,
@@ -136,6 +147,7 @@ const TaskItem: React.FunctionComponent<Props> = (
               color: task.complete ? "#a3a3a3" : "black",
             }}
           >
+            <strong>{task.position}</strong>
             {task.title}
           </TaskTitle>
 
@@ -164,9 +176,11 @@ const TaskItem: React.FunctionComponent<Props> = (
         )}
 
         {editing ? (
-          <IconButton disableRipple style={{ cursor: "move" }}>
-            <DragHandle />
-          </IconButton>
+          <div {...drag_handlers()}>
+            <IconButton disableRipple style={{ cursor: "move" }}>
+              <DragHandle />
+            </IconButton>
+          </div>
         ) : null}
       </Container>
     </Flipped>
