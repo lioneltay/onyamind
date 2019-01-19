@@ -21,8 +21,11 @@ type Context = {
   editing_task_id: ID | null
   new_task_title: string
   selected_tasks: ID[]
+  show_drawer: boolean
 
   actions: {
+    setShowDrawer: (show: boolean) => void
+
     addTask: (
       task: Omit<
         Task,
@@ -74,6 +77,7 @@ const useObservableState = <T extends any>(
 export const Provider: React.FunctionComponent = ({ children }) => {
   const [touch_screen, setTouchScreen] = useState(false)
   const [editing, setEditing] = useState(false)
+  const [show_drawer, setShowDrawer] = useState(false)
   const [show_edit_modal, setShowEditModal] = useState(false)
   const [editing_task_id, setEditingTaskId] = useState(null as ID | null)
   const [new_task_title, setNewTaskTitle] = useState("")
@@ -102,8 +106,11 @@ export const Provider: React.FunctionComponent = ({ children }) => {
         editing_task_id,
         new_task_title,
         selected_tasks,
+        show_drawer,
 
         actions: {
+          setShowDrawer,
+
           addTask: data => {
             const next_position =
               tasks.reduce((acc, task) => max(acc, task.position), 0) + 1 || 1

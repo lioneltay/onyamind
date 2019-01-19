@@ -2,6 +2,7 @@ import React from "react"
 import styled from "styled-components"
 
 import Header from "./Header"
+import Drawer from "./Drawer"
 
 import TaskList from "./TaskList"
 import TaskAdder from "./TaskAdder"
@@ -11,12 +12,6 @@ import CompleteTasks from "./CompleteTasks"
 import { useAppState } from "./state"
 
 import { background_color } from "./constants"
-
-import { Flipper } from "react-flip-toolkit"
-import { partition } from "ramda"
-import prop from "ramda/es/prop"
-import comparator from "ramda/es/comparator"
-import { Task } from "./types"
 
 const PageContainer = styled.div`
   background: ${background_color};
@@ -42,51 +37,38 @@ const TaskPage: React.FunctionComponent = () => {
     actions: { stopEditingTask, editTask },
   } = useAppState()
 
-  const [complete, incomplete] = partition(task => task.complete, tasks)
-  const process = (tasks: Task[]) =>
-    tasks
-      .sort(comparator((t1, t2) => t1.position > t2.position))
-      .map(prop("id"))
-
-  const flipKey =
-    [...process(incomplete), ...process(complete)].join("") +
-    complete.length +
-    incomplete.length
-
   return (
-    <Flipper flipKey={flipKey}>
-      <PageContainer>
-        <Header />
+    <PageContainer>
+      <Header />
+      <TaskAdder />
+      <Drawer />
 
-        <TaskAdder />
+      <OldPageContainer>
+        <Container>
+          <TaskList
+            style={{ background: "white" }}
+            tasks={tasks.filter(task => !task.complete)}
+          />
 
-        <OldPageContainer>
-          <Container>
-            <TaskList
-              style={{ background: "white" }}
-              tasks={tasks.filter(task => !task.complete)}
+          <CompleteTasks tasks={tasks.filter(task => task.complete)} />
+        </Container>
+
+        {(() => {
+          const task = tasks.find(task => task.id === editing_task_id)
+          return task && editing_task_id ? (
+            <EditModal
+              initialValues={task}
+              open={show_edit_modal}
+              onClose={stopEditingTask}
+              onSubmit={async values => {
+                await editTask(editing_task_id, values)
+                stopEditingTask()
+              }}
             />
-
-            <CompleteTasks tasks={tasks.filter(task => task.complete)} />
-          </Container>
-
-          {(() => {
-            const task = tasks.find(task => task.id === editing_task_id)
-            return task && editing_task_id ? (
-              <EditModal
-                initialValues={task}
-                open={show_edit_modal}
-                onClose={stopEditingTask}
-                onSubmit={async values => {
-                  await editTask(editing_task_id, values)
-                  stopEditingTask()
-                }}
-              />
-            ) : null
-          })()}
-        </OldPageContainer>
-      </PageContainer>
-    </Flipper>
+          ) : null
+        })()}
+      </OldPageContainer>
+    </PageContainer>
   )
 }
 

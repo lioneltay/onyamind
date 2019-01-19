@@ -1,3 +1,5 @@
+import firebase from "firebase"
+
 export type ID = string
 
 export type Task = {
@@ -11,7 +13,10 @@ export type Task = {
   position: number
 }
 
-export type User = {
-  uid: ID
-  email: string | null
-}
+export type User = firebase.User
+//  {
+//   uid: ID
+//   email: string | null
+//   photoURL: string
+//   displayName: string | null
+// }

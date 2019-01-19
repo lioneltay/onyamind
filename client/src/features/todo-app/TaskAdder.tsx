@@ -12,7 +12,7 @@ export const HEIGHT = 81
 
 const OuterContainer = styled.div`
   position: fixed;
-  z-index: 1100;
+  z-index: 1000;
   background: ${background_color};
   top: ${HEADER_HEIGHT}px;
   left: 0;

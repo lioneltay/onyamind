@@ -17,20 +17,36 @@ if ("serviceWorker" in navigator) {
   })
 }
 
-import { MuiThemeProvider, createMuiTheme } from "@material-ui/core"
+import {
+  createGenerateClassName,
+  jssPreset,
+  MuiThemeProvider,
+  createMuiTheme,
+} from "@material-ui/core/styles"
+import { create } from "jss"
+import { JssProvider } from "react-jss"
 import { indigo } from "@material-ui/core/colors"
+
+const jss = create({
+  ...jssPreset(),
+  insertionPoint: document.getElementById("jss-insertion-point")!,
+})
 
 const theme = createMuiTheme({
   palette: { primary: indigo },
 })
 
+const generateClassName = createGenerateClassName()
+
 const container = document.getElementById("app")
 if (container) {
   render(
     <BrowserRouter>
-      <MuiThemeProvider theme={theme}>
-        <App />
-      </MuiThemeProvider>
+      <JssProvider jss={jss} generateClassName={generateClassName}>
+        <MuiThemeProvider theme={theme}>
+          <App />
+        </MuiThemeProvider>
+      </JssProvider>
     </BrowserRouter>,
     container,
   )

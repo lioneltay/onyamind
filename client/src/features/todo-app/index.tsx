@@ -1,13 +1,38 @@
 import React from "react"
 
-import { Provider } from "./state"
+import { Provider as StateProvider, useAppState } from "./state"
+import { Flipper } from "react-flip-toolkit"
+import { partition, prop, comparator } from "ramda"
+
 import Root from "./Root"
+import { Task } from "./types"
+
+const RootWithContext: React.FunctionComponent = () => {
+  const { tasks } = useAppState()
+
+  const [complete, incomplete] = partition(task => task.complete, tasks)
+  const process = (tasks: Task[]) =>
+    tasks
+      .sort(comparator((t1, t2) => t1.position > t2.position))
+      .map(prop("id"))
+
+  const flipKey =
+    [...process(incomplete), ...process(complete)].join("") +
+    complete.length +
+    incomplete.length
+
+  return (
+    <Flipper flipKey={flipKey}>
+      <Root />
+    </Flipper>
+  )
+}
 
 const TodoApp: React.FunctionComponent = () => {
   return (
-    <Provider>
-      <Root />
-    </Provider>
+    <StateProvider>
+      <RootWithContext />
+    </StateProvider>
   )
 }
 
