@@ -53,17 +53,19 @@ const TaskDetails = styled.div`
 `
 
 const TaskTitle = styled.div`
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 500;
   margin-bottom: 2px;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  color: #262728;
 `
 
 const TaskNotes = styled.div`
-  color: grey;
-  font-size: 14px;
+  color: #9aa0a6;
+  font-weight: 500;
+  font-size: 13px;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
