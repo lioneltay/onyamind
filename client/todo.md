@@ -7,7 +7,7 @@
 
 - [ ] only allow multiple check if selecting all completed or all incomplete
 
-- [ ] Swipeable drawer
+- [x] Swipeable drawer
 
 * [ ] polish readme
 
@@ -34,6 +34,12 @@
   - [x] modify list observable to fetch a certain list
   - [x] when auth status changes, need to refresh current selected list id
   - [ ] distinguish between completed and incompleted task counts
+
+- [ ] code splitting
+
+- [ ] bundle optimisation with webpack
+  - [ ] tree shaking
+  - [ ] minification
 
 - [ ] Performance review/analysis
 
