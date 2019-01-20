@@ -10,6 +10,14 @@ import { Task } from "./types"
 const RootWithContext: React.FunctionComponent = () => {
   const { tasks } = useAppState()
 
+  if (!tasks) {
+    return (
+      <Flipper flipKey="No tasks">
+        <Root />
+      </Flipper>
+    )
+  }
+
   const [complete, incomplete] = partition(task => task.complete, tasks)
   const process = (tasks: Task[]) =>
     tasks

@@ -17,7 +17,7 @@ import IconButtonMenu from "../../components/IconButtonMenu"
 import Task from "./Task"
 import EditModal from "./EditModal"
 
-const OldPageContainer = styled.div`
+const OuterContainer = styled.div`
   display: flex;
   justify-content: center;
   padding-bottom: 50px;
@@ -46,6 +46,16 @@ const MainView: React.FunctionComponent = () => {
     },
   } = useAppState()
 
+  if (!tasks) {
+    return (
+      <OuterContainer>
+        <Container>
+          <div>Loading...</div>
+        </Container>
+      </OuterContainer>
+    )
+  }
+
   const [show, setShow] = useState(false)
   const toggleShow = () => setShow(show => !show)
 
@@ -59,7 +69,7 @@ const MainView: React.FunctionComponent = () => {
   )
 
   return (
-    <OldPageContainer>
+    <OuterContainer>
       <Container>
         <List className="p-0" style={{ background: "white" }}>
           {incomplete_tasks.map(task => (
@@ -120,7 +130,7 @@ const MainView: React.FunctionComponent = () => {
           }}
         />
       ) : null}
-    </OldPageContainer>
+    </OuterContainer>
   )
 }
 

@@ -51,11 +51,12 @@ const Drawer: React.FunctionComponent = () => {
   const [show_rename_modal, setShowRenameModal] = useState(false)
   const [selected_id, setSelectedId] = useState(null as ID | null)
 
-  const selected_list = selected_id
-    ? task_lists.find(list => list.id === selected_id)
-    : null
+  const selected_list =
+    selected_id && task_lists
+      ? task_lists.find(list => list.id === selected_id)
+      : null
 
-  const primary_list = task_lists.find(list => list.primary)
+  const primary_list = task_lists ? task_lists.find(list => list.primary) : null
 
   return (
     <MDrawer
@@ -94,7 +95,7 @@ const Drawer: React.FunctionComponent = () => {
           </ListItemText>
         </ListItem>
 
-        {primary_list && (
+        {primary_list ? (
           <TaskList
             key={primary_list.id}
             task_list={primary_list}
@@ -109,6 +110,8 @@ const Drawer: React.FunctionComponent = () => {
               setShowRenameModal(true)
             }}
           />
+        ) : (
+          <div>Loading...</div>
         )}
 
         <Divider />
@@ -119,28 +122,32 @@ const Drawer: React.FunctionComponent = () => {
           </ListItemText>
         </ListItem>
 
-        {task_lists
-          .filter(list => !list.primary)
-          .sort(comparator((l1, l2) => l1.created_at > l2.created_at))
-          .map(list => (
-            <TaskList
-              key={list.id}
-              task_list={list}
-              selected={list.id === selected_task_list_id}
-              onBodyClick={id => selectTaskList(id)}
-              onDelete={id => {
-                setSelectedId(id)
-                setShowDeleteModal(true)
-              }}
-              onRename={id => {
-                setSelectedId(id)
-                setShowRenameModal(true)
-              }}
-              onMakePrimary={id => {
-                setPrimaryTaskList(id)
-              }}
-            />
-          ))}
+        {task_lists ? (
+          task_lists
+            .filter(list => !list.primary)
+            .sort(comparator((l1, l2) => l1.created_at > l2.created_at))
+            .map(list => (
+              <TaskList
+                key={list.id}
+                task_list={list}
+                selected={list.id === selected_task_list_id}
+                onBodyClick={id => selectTaskList(id)}
+                onDelete={id => {
+                  setSelectedId(id)
+                  setShowDeleteModal(true)
+                }}
+                onRename={id => {
+                  setSelectedId(id)
+                  setShowRenameModal(true)
+                }}
+                onMakePrimary={id => {
+                  setPrimaryTaskList(id)
+                }}
+              />
+            ))
+        ) : (
+          <div>Loading...</div>
+        )}
 
         <Divider />
         <ListItem className="fj-c fa-st p-0" button>

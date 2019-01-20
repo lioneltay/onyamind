@@ -60,9 +60,9 @@ const Header: React.FunctionComponent = () => {
     },
   } = useAppState()
 
-  const selected_task_list = task_lists.find(
-    list => list.id === selected_task_list_id,
-  )
+  const selected_task_list = task_lists
+    ? task_lists.find(list => list.id === selected_task_list_id)
+    : null
 
   const header_jsx = (
     <AppBar>

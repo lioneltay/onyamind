@@ -1,6 +1,14 @@
 import { firebase, firestore, dataWithId } from "features/todo-app/firebase"
 import { Task, ID, TaskList, User } from "../types"
 
+export const getTasks = async (list_id: ID): Promise<Task[]> => {
+  return firestore
+    .collection("tasks")
+    .where("list_id", "==", list_id)
+    .get()
+    .then(res => res.docs.map(dataWithId) as Task[])
+}
+
 export const addTask = async (
   task: Omit<Task, "id" | "created_at" | "updated_at" | "complete">,
 ): Promise<Task> => {
@@ -49,6 +57,23 @@ export const removeTask = async (task_id: ID): Promise<ID> => {
     .doc(task_id)
     .delete()
   return task_id
+}
+
+export const createDefaultTaskList = (user_id: ID | null) => {
+  return addTaskList({
+    name: "Tasks",
+    number_of_tasks: 0,
+    primary: true,
+    user_id,
+  })
+}
+
+export const getTaskLists = async (user_id: ID | null): Promise<TaskList[]> => {
+  return firestore
+    .collection("task_lists")
+    .where("user_id", "==", user_id)
+    .get()
+    .then(res => res.docs.map(dataWithId) as TaskList[])
 }
 
 export const addTaskList = async (
@@ -104,7 +129,7 @@ export const removeTaskList = async (list_id: ID): Promise<ID> => {
   return list_id
 }
 
-export const getPrimaryTaskList = async (
+const getPrimaryTaskList = async (
   user_id: ID | null,
 ): Promise<TaskList> => {
   const res = await firestore
