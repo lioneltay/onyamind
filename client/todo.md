@@ -1,10 +1,12 @@
 # Tasks
 
+- [ ] Double loading of list on page load
+
+- [ ] Responsive, drawer should be 100% screen on mobile
+
 - [ ] only allow multiple check if selecting all completed or all incomplete
 
-* [ ] text truncate not working for title
-
-  - [ ] text truncate not working on mobile?
+- [ ] Swipeable drawer
 
 * [ ] polish readme
 

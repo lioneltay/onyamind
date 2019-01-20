@@ -1,5 +1,6 @@
 import React, { useState } from "react"
-import MDrawer from "@material-ui/core/Drawer"
+// import MDrawer from "@material-ui/core/Drawer"
+import SwipeableDrawer from "@material-ui/core/SwipeableDrawer"
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemAvatar from "@material-ui/core/ListItemAvatar"
@@ -9,8 +10,10 @@ import Typography from "@material-ui/core/Typography"
 import Avatar from "@material-ui/core/Avatar"
 import Divider from "@material-ui/core/Divider"
 import Button from "@material-ui/core/Button"
+import IconButton from "@material-ui/core/IconButton"
 
 import Feedback from "@material-ui/icons/Feedback"
+import Clear from "@material-ui/icons/Clear"
 import Help from "@material-ui/icons/Help"
 import AccountCircle from "@material-ui/icons/AccountCircle"
 import ExitToApp from "@material-ui/icons/ExitToApp"
@@ -59,8 +62,9 @@ const Drawer: React.FunctionComponent = () => {
   const primary_list = task_lists ? task_lists.find(list => list.primary) : null
 
   return (
-    <MDrawer
+    <SwipeableDrawer
       open={show_drawer}
+      onOpen={() => setShowDrawer(true)}
       onClose={() => {
         setShowDrawer(false)
         setShowCreateModal(false)
@@ -68,7 +72,9 @@ const Drawer: React.FunctionComponent = () => {
     >
       <List className="py-0" style={{ width: 400, maxWidth: "100%" }}>
         {user ? (
-          <ListItem style={{ backgroundColor: background_color }}>
+          <ListItem
+            style={{ paddingRight: 4, backgroundColor: background_color }}
+          >
             <ListItemAvatar>
               {user.photoURL ? (
                 <Avatar src={user.photoURL} />
@@ -79,6 +85,9 @@ const Drawer: React.FunctionComponent = () => {
               )}
             </ListItemAvatar>
             <ListItemText primary={user.displayName} secondary={user.email} />
+            <IconButton>
+              <Clear onClick={() => setShowDrawer(false)} />
+            </IconButton>
           </ListItem>
         ) : (
           <ListItem
@@ -212,7 +221,7 @@ const Drawer: React.FunctionComponent = () => {
           }}
         />
       ) : null}
-    </MDrawer>
+    </SwipeableDrawer>
   )
 }
 

@@ -42,8 +42,8 @@ const SingleLineWithEllipsis: React.FunctionComponent<Stylable> = ({
   children,
 }) => {
   return (
-    <div className="flex">
-      <div
+    <span className="flex">
+      <span
         className={className}
         style={{
           ...style,
@@ -53,8 +53,8 @@ const SingleLineWithEllipsis: React.FunctionComponent<Stylable> = ({
         }}
       >
         {children}
-      </div>
-    </div>
+      </span>
+    </span>
   )
 }
 
@@ -79,6 +79,7 @@ const TaskItem: React.FunctionComponent<Props> = ({ task }) => {
         button
         style={{
           backgroundColor: selected ? highlight_color : undefined,
+          paddingRight: 4,
         }}
       >
         <ListItemIcon>
