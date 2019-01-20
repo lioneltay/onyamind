@@ -1,6 +1,6 @@
 import React from "react"
 import styled from "styled-components"
-import { Task } from "./types"
+import { Task } from "../../types"
 import TaskItem from "./Task"
 import { Transition, config } from "react-spring"
 import { comparator } from "ramda"

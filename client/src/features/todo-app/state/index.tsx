@@ -6,7 +6,7 @@ import React, {
   useRef,
   useMemo,
 } from "react"
-import { firebase, firestore, dataWithId } from "services/firebase"
+import { firebase, firestore, dataWithId } from "features/todo-app/firebase"
 import {
   Observable,
   Subject,
@@ -16,7 +16,7 @@ import {
   merge,
 } from "rxjs"
 import { switchMap, map } from "rxjs/operators"
-import { Task, User, ID, TaskList } from "./types"
+import { Task, User, ID, TaskList } from "../types"
 import { uniq, max, update } from "ramda"
 import {
   addTask,
@@ -43,6 +43,9 @@ type Context = {
   show_drawer: boolean
 
   actions: {
+    signOut: () => Promise<void>
+    signInWithGoogle: () => Promise<void>
+
     selectTaskList: (list_id: ID) => void
 
     setShowDrawer: (show: boolean) => void
@@ -238,6 +241,22 @@ export const Provider: React.FunctionComponent = ({ children }) => {
         selected_task_list_id,
 
         actions: {
+          signOut: async () => {
+            await firebase.auth().signOut()
+          },
+
+          signInWithGoogle: async () => {
+            const google_provider = new firebase.auth.GoogleAuthProvider()
+
+            google_provider.setCustomParameters({
+              prompt: "select_account",
+            })
+
+            const result = await firebase
+              .auth()
+              .signInWithPopup(google_provider)
+          },
+
           selectTaskList: setSelectedTaskListId,
           addTaskList,
           editTaskList,

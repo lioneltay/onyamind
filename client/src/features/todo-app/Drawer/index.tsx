@@ -8,8 +8,6 @@ import ListItemIcon from "@material-ui/core/ListItemIcon"
 import Typography from "@material-ui/core/Typography"
 import Avatar from "@material-ui/core/Avatar"
 import Divider from "@material-ui/core/Divider"
-import Modal from "@material-ui/core/Modal"
-import Paper from "@material-ui/core/Paper"
 import Button from "@material-ui/core/Button"
 
 import Feedback from "@material-ui/icons/Feedback"
@@ -17,19 +15,17 @@ import Help from "@material-ui/icons/Help"
 import AccountCircle from "@material-ui/icons/AccountCircle"
 import ExitToApp from "@material-ui/icons/ExitToApp"
 
-import LoginWidget from "../LoginWidget"
-
 import { useAppState } from "../state"
 import { background_color } from "../constants"
 
-import { firebase } from "services/firebase"
-
-import TaskList from "./TaskList"
-import CreateTaskListModal from "./CreateTaskListModal"
-import RenameTaskListModal from "./RenameTaskListModal"
-import { ID } from "services/rest-api"
+import TaskList from "./components/TaskList"
+import CreateTaskListModal from "./components/CreateTaskListModal"
+import RenameTaskListModal from "./components/RenameTaskListModal"
+import DeleteTaskListModal from "./components/DeleteTaskListModal"
+import { ID } from "../types"
 
 import { comparator } from "ramda"
+import GoogleSignInButton from "../components/GoogleSignInButton"
 
 const Drawer: React.FunctionComponent = () => {
   const {
@@ -39,6 +35,8 @@ const Drawer: React.FunctionComponent = () => {
     selected_task_list_id,
 
     actions: {
+      signOut,
+      signInWithGoogle,
       setShowDrawer,
       editTaskList,
       addTaskList,
@@ -86,7 +84,7 @@ const Drawer: React.FunctionComponent = () => {
             className="fj-c"
             style={{ backgroundColor: background_color }}
           >
-            <LoginWidget />
+            <GoogleSignInButton onClick={signInWithGoogle} />
           </ListItem>
         )}
 
@@ -158,102 +156,76 @@ const Drawer: React.FunctionComponent = () => {
         </ListItem>
         <Divider />
 
-        <CreateTaskListModal
+        {user && (
+          <OptionItem icon={<ExitToApp />} text="Sign out" onClick={signOut} />
+        )}
+        <OptionItem icon={<Feedback />} text="Send feedback" />
+        <OptionItem icon={<Help />} text="Help" />
+      </List>
+
+      <CreateTaskListModal
+        onSubmit={async values => {
+          const task_list = await addTaskList({
+            ...values,
+            user_id: user ? user.uid : null,
+            number_of_tasks: 0,
+          })
+
+          if (task_list.primary) {
+            await setPrimaryTaskList(task_list.id)
+          }
+
+          setShowCreateModal(false)
+        }}
+        open={show_create_modal}
+        onClose={() => setShowCreateModal(false)}
+      />
+
+      {selected_list && selected_id ? (
+        <RenameTaskListModal
+          task_list={selected_list}
           onSubmit={async values => {
-            const task_list = await addTaskList({
-              ...values,
-              user_id: user ? user.uid : null,
-              number_of_tasks: 0,
-            })
-
-            if (task_list.primary) {
-              await setPrimaryTaskList(task_list.id)
-            }
-
-            setShowCreateModal(false)
+            await editTaskList(selected_id, { ...values })
+            setShowRenameModal(false)
           }}
-          open={show_create_modal}
-          onClose={() => setShowCreateModal(false)}
+          open={show_rename_modal}
+          onClose={() => setShowRenameModal(false)}
         />
+      ) : null}
 
-        {selected_list && selected_id ? (
-          <RenameTaskListModal
-            task_list={selected_list}
-            onSubmit={async values => {
-              await editTaskList(selected_id, { ...values })
-              setShowRenameModal(false)
-            }}
-            open={show_rename_modal}
-            onClose={() => setShowRenameModal(false)}
-          />
-        ) : null}
-
-        <Modal
-          className="fj-c fa-c"
+      {selected_id && selected_list ? (
+        <DeleteTaskListModal
           open={show_delete_modal}
           onClose={() => setShowDeleteModal(false)}
-        >
-          {selected_id && selected_list ? (
-            <Paper className="p-3">
-              <Typography variant="h6">Delete {selected_list.name}</Typography>
-
-              <Typography className="mt-3" variant="caption">
-                Are you sure you want to delete this list?
-              </Typography>
-
-              <div className="fj-e mt-3">
-                <Button
-                  color="primary"
-                  onClick={() => setShowDeleteModal(false)}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  color="primary"
-                  onClick={async () => {
-                    await removeTaskList(selected_id)
-                    setSelectedId(null)
-                    setShowDeleteModal(false)
-                  }}
-                >
-                  Confirm
-                </Button>
-              </div>
-            </Paper>
-          ) : (
-            <div />
-          )}
-        </Modal>
-
-        {user ? (
-          <ListItem
-            button
-            className="cursor-pointer"
-            onClick={() => firebase.auth().signOut()}
-          >
-            <ListItemIcon>
-              <ExitToApp />
-            </ListItemIcon>
-            <ListItemText primary={<Typography>Sign out</Typography>} />
-          </ListItem>
-        ) : null}
-
-        <ListItem button>
-          <ListItemIcon>
-            <Feedback />
-          </ListItemIcon>
-          <ListItemText primary={<Typography>Send feedback</Typography>} />
-        </ListItem>
-
-        <ListItem button>
-          <ListItemIcon>
-            <Help />
-          </ListItemIcon>
-          <ListItemText primary={<Typography>Help</Typography>} />
-        </ListItem>
-      </List>
+          task_list_name={selected_list.name}
+          onConfirmDelete={async () => {
+            await removeTaskList(selected_id)
+            setSelectedId(null)
+            setShowDeleteModal(false)
+          }}
+        />
+      ) : null}
     </MDrawer>
   )
 }
 
 export default Drawer
+
+type OptionItemProps = {
+  icon: React.ReactElement<any>
+  text: React.ReactNode
+  onClick?: (e: React.MouseEvent) => void
+}
+
+const OptionItem: React.FunctionComponent<OptionItemProps> = ({
+  onClick,
+  icon,
+  text,
+}) => {
+  return (
+    <ListItem button className="cursor-pointer" onClick={onClick}>
+      <ListItemIcon>{icon}</ListItemIcon>
+      <ListItemText primary={<Typography>{text}</Typography>} />
+    </ListItem>
+  )
+}

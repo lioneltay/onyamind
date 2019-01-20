@@ -8,8 +8,7 @@ import MenuItem from "@material-ui/core/MenuItem"
 
 import MoreVert from "@material-ui/icons/MoreVert"
 
-import { TaskList } from "../types"
-import { ID } from "services/rest-api"
+import { TaskList, ID } from "../../types"
 
 type Props = {
   task_list: TaskList
