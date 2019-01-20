@@ -6,7 +6,7 @@ import React, {
   useMemo,
 } from "react"
 import { firebase, firestore, dataWithId } from "features/todo-app/firebase"
-import { Observable } from "rxjs"
+import { Observable, of } from "rxjs"
 import { switchMap } from "rxjs/operators"
 import { Task, User, ID, TaskList } from "../types"
 import { uniq, max } from "ramda"
@@ -94,7 +94,7 @@ const list$ = user$.pipe(
   switchMap(user => createCurrentListsStream(user ? user.uid : null)),
 )
 
-const createCurrentTasksStream = (list_id: ID | null) =>
+const createCurrentTasksStream = (list_id: ID) =>
   new Observable<Task[] | null>(observer => {
     observer.next(null)
     return firestore
@@ -143,9 +143,13 @@ export const Provider: React.FunctionComponent = ({ children }) => {
   const user = useObservable(user$, null)
   const task_lists = useObservable(list$, null)
   const tasks = useObservable(
-    useMemo(() => createCurrentTasksStream(selected_task_list_id), [
-      selected_task_list_id,
-    ]),
+    useMemo(
+      () =>
+        selected_task_list_id
+          ? createCurrentTasksStream(selected_task_list_id)
+          : of(null),
+      [selected_task_list_id],
+    ),
     null,
   )
 

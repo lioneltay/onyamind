@@ -1,6 +1,7 @@
 # Tasks
 
-- [ ] Double loading of list on page load
+- [x] Double loading of list on page load
+  - caused by stream getting tasks when list_id is null
 
 - [x] Responsive, drawer should be 100% screen on mobile
 
