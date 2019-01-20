@@ -17,9 +17,7 @@ firebase.initializeApp(config)
 
 export const firestore = firebase.firestore()
 
-firestore.settings({
-  timestampsInSnapshots: true,
-})
+firestore.settings({})
 
 firestore
   .enablePersistence({
