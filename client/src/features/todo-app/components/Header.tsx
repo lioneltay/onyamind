@@ -10,9 +10,12 @@ import Menu from "@material-ui/icons/Menu"
 import ArrowBack from "@material-ui/icons/ArrowBack"
 import Delete from "@material-ui/icons/Delete"
 import Check from "@material-ui/icons/Check"
+import Add from "@material-ui/icons/Add"
 import AppBar from "@material-ui/core/AppBar"
 import Toolbar from "@material-ui/core/Toolbar"
 import GoogleSignInButton from "../components/GoogleSignInButton"
+
+import { Task } from "../types"
 
 export const HEIGHT = 64
 
@@ -46,7 +49,8 @@ const Header: React.FunctionComponent = () => {
   const {
     user,
     editing,
-    selected_tasks,
+    selected_task_ids,
+    tasks,
     selected_task_list_id,
     task_lists,
 
@@ -54,6 +58,7 @@ const Header: React.FunctionComponent = () => {
       signOut,
       signInWithGoogle,
       checkSelectedTasks,
+      uncheckSelectedTasks,
       deleteSelectedTasks,
       stopEditing,
       setShowDrawer,
@@ -63,6 +68,14 @@ const Header: React.FunctionComponent = () => {
   const selected_task_list = task_lists
     ? task_lists.find(list => list.id === selected_task_list_id)
     : null
+
+  const selected_tasks = tasks
+    ? (selected_task_ids
+        .map(id => tasks.find(task => task.id === id))
+        .filter(task => !!task) as Task[])
+    : []
+  const all_complete = selected_tasks.every(task => task.complete)
+  const all_incomplete = selected_tasks.every(task => !task.complete)
 
   const header_jsx = (
     <AppBar>
@@ -82,7 +95,7 @@ const Header: React.FunctionComponent = () => {
                   <ArrowBack />
                 </IconButton>
                 <div style={{ color: highlighted_text_color, paddingLeft: 18 }}>
-                  {selected_tasks.length} selected
+                  {selected_task_ids.length} selected
                 </div>
               </Fragment>
             ) : (
@@ -102,9 +115,15 @@ const Header: React.FunctionComponent = () => {
 
           {editing ? (
             <div style={{ display: "flex" }}>
-              <IconButton onClick={checkSelectedTasks}>
-                <Check />
-              </IconButton>
+              {all_complete || all_incomplete ? (
+                <IconButton
+                  onClick={
+                    all_incomplete ? checkSelectedTasks : uncheckSelectedTasks
+                  }
+                >
+                  {all_incomplete ? <Check /> : <Add />}
+                </IconButton>
+              ) : null}
 
               <IconButton onClick={deleteSelectedTasks}>
                 <Delete />

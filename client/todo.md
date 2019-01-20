@@ -5,7 +5,7 @@
 
 - [x] Responsive, drawer should be 100% screen on mobile
 
-- [ ] only allow multiple check if selecting all completed or all incomplete
+- [x] only allow multiple check if selecting all completed or all incomplete
 
 - [x] Swipeable drawer
 

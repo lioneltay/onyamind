@@ -65,12 +65,12 @@ export type Props = {
 const TaskItem: React.FunctionComponent<Props> = ({ task }) => {
   const {
     touch_screen,
-    selected_tasks,
+    selected_task_ids,
     editing,
     actions: { startEditingTask, toggleTaskSelection, editTask, removeTask },
   } = useAppState()
 
-  const selected = selected_tasks.findIndex(id => id === task.id) >= 0
+  const selected = selected_task_ids.findIndex(id => id === task.id) >= 0
 
   return (
     <Flipped flipId={task.id}>

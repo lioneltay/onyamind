@@ -31,7 +31,7 @@ type Context = {
   show_edit_modal: boolean
   editing_task_id: ID | null
   new_task_title: string
-  selected_tasks: ID[]
+  selected_task_ids: ID[]
   show_drawer: boolean
 
   actions: {
@@ -65,6 +65,7 @@ type Context = {
     startEditingTask: (task_id: ID) => void
     stopEditingTask: () => void
     checkSelectedTasks: () => Promise<void>
+    uncheckSelectedTasks: () => Promise<void>
     deleteSelectedTasks: () => Promise<void>
     stopEditing: () => void
     uncheckCompletedTasks: () => Promise<void>
@@ -135,7 +136,7 @@ export const Provider: React.FunctionComponent = ({ children }) => {
   const [show_edit_modal, setShowEditModal] = useState(false)
   const [editing_task_id, setEditingTaskId] = useState(null as ID | null)
   const [new_task_title, setNewTaskTitle] = useState("")
-  const [selected_tasks, setSelectedTasks] = useState([] as ID[])
+  const [selected_task_ids, setSelectedTasks] = useState([] as ID[])
 
   const [selected_task_list_id, setSelectedTaskListId] = useState(
     null as ID | null,
@@ -186,7 +187,7 @@ export const Provider: React.FunctionComponent = ({ children }) => {
         show_edit_modal,
         editing_task_id,
         new_task_title,
-        selected_tasks,
+        selected_task_ids,
         show_drawer,
         selected_task_list_id,
 
@@ -376,9 +377,25 @@ export const Provider: React.FunctionComponent = ({ children }) => {
 
             const batch = firestore.batch()
 
-            selected_tasks.forEach(id => {
+            selected_task_ids.forEach(id => {
               batch.update(firestore.collection("tasks").doc(id), {
                 complete: true,
+                updated_at: Date.now(),
+              })
+            })
+
+            return batch.commit()
+          },
+
+          uncheckSelectedTasks: async () => {
+            setEditing(false)
+            setSelectedTasks([])
+
+            const batch = firestore.batch()
+
+            selected_task_ids.forEach(id => {
+              batch.update(firestore.collection("tasks").doc(id), {
+                complete: false,
                 updated_at: Date.now(),
               })
             })
@@ -396,7 +413,7 @@ export const Provider: React.FunctionComponent = ({ children }) => {
 
             const batch = firestore.batch()
 
-            selected_tasks.forEach(id => {
+            selected_task_ids.forEach(id => {
               batch.delete(firestore.collection("tasks").doc(id))
             })
 
@@ -414,7 +431,7 @@ export const Provider: React.FunctionComponent = ({ children }) => {
               batch.commit(),
               editTaskList(selected_task_list_id, {
                 number_of_tasks: max(
-                  task_list.number_of_tasks - selected_tasks.length,
+                  task_list.number_of_tasks - selected_task_ids.length,
                   0,
                 ),
               }),
