@@ -1,5 +1,6 @@
 import React, { useState } from "react"
-// import MDrawer from "@material-ui/core/Drawer"
+import { useMediaQuery } from "@tekktekk/react-media-query"
+
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer"
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
@@ -61,6 +62,10 @@ const Drawer: React.FunctionComponent = () => {
 
   const primary_list = task_lists ? task_lists.find(list => list.primary) : null
 
+  const mobile = useMediaQuery("(max-width: 500px)")
+
+  console.log({ mobile })
+
   return (
     <SwipeableDrawer
       open={show_drawer}
@@ -70,7 +75,10 @@ const Drawer: React.FunctionComponent = () => {
         setShowCreateModal(false)
       }}
     >
-      <List className="py-0" style={{ width: 400, maxWidth: "100%" }}>
+      <List
+        className="py-0"
+        style={{ width: mobile ? "100vw" : 400, maxWidth: "100%" }}
+      >
         {user ? (
           <ListItem
             style={{ paddingRight: 4, backgroundColor: background_color }}
