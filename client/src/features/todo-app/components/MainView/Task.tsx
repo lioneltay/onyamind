@@ -5,7 +5,6 @@ import { Task } from "../../types"
 import IconButton from "@material-ui/core/IconButton"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction"
 import Fab from "@material-ui/core/Fab"
 
 import Delete from "@material-ui/icons/Delete"
@@ -28,12 +27,36 @@ const Container = styled(ListItem)`
 const Overlay = styled.div`
   opacity: 0;
   pointer-events: none;
+  display: none;
 
   body.hasHover ${Container}:hover & {
+    display: flex;
     opacity: 1;
     pointer-events: all;
   }
 `
+
+const SingleLineWithEllipsis: React.FunctionComponent<Stylable> = ({
+  className,
+  style,
+  children,
+}) => {
+  return (
+    <div className="flex">
+      <div
+        className={className}
+        style={{
+          ...style,
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  )
+}
 
 export type Props = {
   task: Task
@@ -82,31 +105,31 @@ const TaskItem: React.FunctionComponent<Props> = ({ task }) => {
 
         <ListItemText
           primary={
-            <span
+            <SingleLineWithEllipsis
               style={{
                 textDecoration: task.complete ? "line-through" : "none",
               }}
             >
               {task.title}
-            </span>
+            </SingleLineWithEllipsis>
           }
-          secondary={task.notes}
+          secondary={
+            <SingleLineWithEllipsis>{task.notes}</SingleLineWithEllipsis>
+          }
           onClick={() => startEditingTask(task.id)}
         />
 
         {editing || touch_screen ? null : (
           <Overlay>
-            <ListItemSecondaryAction>
-              <IconButton
-                onClick={() => editTask(task.id, { complete: !task.complete })}
-              >
-                {task.complete ? <Add /> : <Check />}
-              </IconButton>
+            <IconButton
+              onClick={() => editTask(task.id, { complete: !task.complete })}
+            >
+              {task.complete ? <Add /> : <Check />}
+            </IconButton>
 
-              <IconButton onClick={() => removeTask(task.id)}>
-                <Delete />
-              </IconButton>
-            </ListItemSecondaryAction>
+            <IconButton onClick={() => removeTask(task.id)}>
+              <Delete />
+            </IconButton>
           </Overlay>
         )}
 

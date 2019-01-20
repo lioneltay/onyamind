@@ -1,10 +1,5 @@
 # Tasks
 
-- [ ] drag and drop
-
-  - [ ] drag doesnt work on mobile
-  - [ ] lock drag to vertical only
-
 - [ ] only allow multiple check if selecting all completed or all incomplete
 
 * [ ] text truncate not working for title
@@ -13,17 +8,15 @@
 
 * [ ] polish readme
 
-* [ ] performance review (laggy?)
-
-  - [ ] context actions references (in callbacks data can be stale)
-
 * [ ] animate saving text in edit modal
 
-- [ ] Refactor state management
+- [ ] rethink state management (context? redux? observables?)
 
-- [ ] remove observable by ensuring state changes like login go through the state instead of just firebase
+- [x] remove observable by ensuring state changes like login go through the state instead of just firebase
 
-- [ ] use material ui
+  - [x] Refactor state management to use observables where it makes sense in order to take advantage of firebase's reactive queries
+
+- [x] use material ui
 
 - [x] Drawer menu
 
@@ -36,7 +29,14 @@
   - [x] when items are added, add them to the current list
     - [x] increment task count
   - [x] modify list observable to fetch a certain list
-  - [ ] when auth status changes, need to refresh current selected list id
+  - [x] when auth status changes, need to refresh current selected list id
   - [ ] distinguish between completed and incompleted task counts
 
+- [ ] Performance review/analysis
+
 - [ ] security
+
+- [ ] drag and drop
+
+  - [ ] drag doesnt work on mobile
+  - [ ] lock drag to vertical only
