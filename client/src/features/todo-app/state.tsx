@@ -4,10 +4,18 @@ import React, {
   useEffect,
   useContext,
   useRef,
+  useMemo,
 } from "react"
 import { firebase, firestore, dataWithId } from "services/firebase"
-import { Observable, Subject, combineLatest, Subscription } from "rxjs"
-import { switchMap } from "rxjs/operators"
+import {
+  Observable,
+  Subject,
+  combineLatest,
+  Subscription,
+  from,
+  merge,
+} from "rxjs"
+import { switchMap, map } from "rxjs/operators"
 import { Task, User, ID, TaskList } from "./types"
 import { uniq, max, update } from "ramda"
 import {
@@ -104,7 +112,69 @@ const useSubject = <T extends any>(): [Subject<T>, (value: T) => void] => {
   ]
 }
 
+const createEventHandler = <T extends any>(): [
+  Subject<T>,
+  (value: T) => void
+] => {
+  const subject = new Subject<T>()
+  return [subject, (value: T) => subject.next(value)]
+}
+
+const createListsStream = (user_id: ID | null) =>
+  new Observable<TaskList[]>(observer => {
+    return firestore
+      .collection("task_lists")
+      .where("user_id", "==", user_id)
+      .onSnapshot(snapshot => {
+        const ists: TaskList[] = snapshot.docs.map(dataWithId) as TaskList[]
+        observer.next(ists)
+      })
+  })
+
+const createTasksStream = (list_id: ID | null) =>
+  new Observable<Task[]>(observer => {
+    return firestore
+      .collection("tasks")
+      .where("list_id", "==", list_id)
+      .onSnapshot(snapshot => {
+        const tasks: Task[] = snapshot.docs.map(dataWithId) as Task[]
+        observer.next(tasks)
+      })
+  })
+
+const user$ = new Observable<User | null>(observer => {
+  return firebase.auth().onAuthStateChanged(user => observer.next(user))
+})
+
+const task_lists_stream = user$.pipe(
+  switchMap(user => createListsStream(user ? user.uid : null)),
+)
+
+// Stream of user list selections
+const [
+  user_list_selection$,
+  setSelectedTaskListId,
+] = createEventHandler<ID | null>()
+
+// Stream of list selections due to auth status changes
+const auth_change_list_selection$ = user$.pipe(
+  switchMap(user => from(getPrimaryTaskList(user ? user.uid : null))),
+  map(list => list.id),
+)
+
+// Stream of current lists = selections + auth changes
+const selected_task_list$ = merge(
+  user_list_selection$,
+  auth_change_list_selection$,
+)
+
+// Stream of tasks
+const tasks_stream = selected_task_list$.pipe(
+  switchMap(list_id => createTasksStream(list_id)),
+)
+
 export const Provider: React.FunctionComponent = ({ children }) => {
+  // State
   const [touch_screen, setTouchScreen] = useState(false)
   const [editing, setEditing] = useState(false)
   const [show_drawer, setShowDrawer] = useState(false)
@@ -113,23 +183,10 @@ export const Provider: React.FunctionComponent = ({ children }) => {
   const [new_task_title, setNewTaskTitle] = useState("")
   const [selected_tasks, setSelectedTasks] = useState([] as ID[])
 
-  const [
-    selected_task_list_id_stream,
-    setSelectedTaskListId,
-  ] = useSubject<ID | null>()
-
-  const selected_task_list_id = useObservable(
-    selected_task_list_id_stream,
-    null,
-  )
-
-  const { current: tasks_stream } = useRef(
-    selected_task_list_id_stream.pipe(
-      switchMap(list_id => createTasksStream(list_id)),
-    ),
-  )
-
+  const selected_task_list_id = useObservable(selected_task_list$, null)
   const tasks = useObservable(tasks_stream, [] as Task[])
+  const user = useObservable(user$, null)
+  const task_lists = useObservable(task_lists_stream, [])
 
   const [ready, setReady] = useState(false)
 
@@ -154,9 +211,6 @@ export const Provider: React.FunctionComponent = ({ children }) => {
 
     initStuff()
   }, [])
-
-  const user = useObservable(user_stream, null)
-  const task_lists = useObservable(task_lists_stream, [])
 
   useEffect(() => {
     const handler = () => setTouchScreen(true)
@@ -404,33 +458,3 @@ export const Provider: React.FunctionComponent = ({ children }) => {
     </Context.Provider>
   )
 }
-
-const createListsStream = (user_id: ID | null) =>
-  new Observable<TaskList[]>(observer => {
-    return firestore
-      .collection("task_lists")
-      .where("user_id", "==", user_id)
-      .onSnapshot(snapshot => {
-        const ists: TaskList[] = snapshot.docs.map(dataWithId) as TaskList[]
-        observer.next(ists)
-      })
-  })
-
-const createTasksStream = (list_id: ID | null) =>
-  new Observable<Task[]>(observer => {
-    return firestore
-      .collection("tasks")
-      .where("list_id", "==", list_id)
-      .onSnapshot(snapshot => {
-        const tasks: Task[] = snapshot.docs.map(dataWithId) as Task[]
-        observer.next(tasks)
-      })
-  })
-
-const user_stream = new Observable<User | null>(observer => {
-  return firebase.auth().onAuthStateChanged(user => observer.next(user))
-})
-
-const task_lists_stream = user_stream.pipe(
-  switchMap(user => createListsStream(user ? user.uid : null)),
-)
