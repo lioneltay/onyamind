@@ -21,7 +21,9 @@
 
 - [ ] Refactor state management
 
-  - [ ] really think about a good way to integrate observables
+- [ ] remove observable by ensuring state changes like login go through the state instead of just firebase
+
+- [ ] use material ui
 
 - [x] Drawer menu
 

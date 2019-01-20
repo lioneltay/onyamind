@@ -1,8 +1,8 @@
 import React, { Fragment } from "react"
 import styled from "styled-components"
 
-import { useAppState } from "./state"
-import { highlight_color, highlighted_text_color } from "./constants"
+import { useAppState } from "../state"
+import { highlight_color, highlighted_text_color } from "../constants"
 
 import Button from "@material-ui/core/Button"
 import IconButton from "@material-ui/core/IconButton"
@@ -12,7 +12,7 @@ import Delete from "@material-ui/icons/Delete"
 import Check from "@material-ui/icons/Check"
 import AppBar from "@material-ui/core/AppBar"
 import Toolbar from "@material-ui/core/Toolbar"
-import GoogleSignInButton from "./components/GoogleSignInButton"
+import GoogleSignInButton from "../components/GoogleSignInButton"
 
 export const HEIGHT = 64
 

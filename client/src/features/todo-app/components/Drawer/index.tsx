@@ -15,17 +15,17 @@ import Help from "@material-ui/icons/Help"
 import AccountCircle from "@material-ui/icons/AccountCircle"
 import ExitToApp from "@material-ui/icons/ExitToApp"
 
-import { useAppState } from "../state"
-import { background_color } from "../constants"
+import { useAppState } from "../../state"
+import { background_color } from "../../constants"
 
-import TaskList from "./components/TaskList"
-import CreateTaskListModal from "./components/CreateTaskListModal"
-import RenameTaskListModal from "./components/RenameTaskListModal"
-import DeleteTaskListModal from "./components/DeleteTaskListModal"
-import { ID } from "../types"
+import TaskList from "./TaskList"
+import CreateTaskListModal from "./CreateTaskListModal"
+import RenameTaskListModal from "./RenameTaskListModal"
+import DeleteTaskListModal from "./DeleteTaskListModal"
+import { ID } from "../../types"
 
 import { comparator } from "ramda"
-import GoogleSignInButton from "../components/GoogleSignInButton"
+import GoogleSignInButton from "../../components/GoogleSignInButton"
 
 const Drawer: React.FunctionComponent = () => {
   const {

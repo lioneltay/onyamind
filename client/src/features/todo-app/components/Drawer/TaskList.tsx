@@ -31,7 +31,6 @@ const TaskList: React.FunctionComponent<Props> = ({
 
   return (
     <ListItem
-      className="cursor-pointer"
       selected={selected}
       button
       onClick={() => onBodyClick(task_list.id)}

@@ -24,8 +24,16 @@ const IconButtonMenu: React.FunctionComponent<IconButtonMenu> = ({
         open={!!anchor_el}
         onClose={() => setAnchorEl(null)}
       >
-        {items.map(config => (
-          <MenuItem onClick={config.action}>{config.label}</MenuItem>
+        {items.map((config, index) => (
+          <MenuItem
+            key={index}
+            onClick={() => {
+              config.action()
+              setAnchorEl(null)
+            }}
+          >
+            {config.label}
+          </MenuItem>
         ))}
       </Menu>
     </Fragment>

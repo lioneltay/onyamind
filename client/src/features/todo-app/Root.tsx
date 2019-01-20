@@ -1,10 +1,10 @@
 import React from "react"
 import styled from "styled-components"
 
-import Header from "./Header"
-import Drawer from "./Drawer"
-import TaskAdder from "./TaskAdder"
-import MainView from "./MainView"
+import Header from "./components/Header"
+import Drawer from "./components/Drawer"
+import TaskAdder from "./components/TaskAdder"
+import MainView from "./components/MainView"
 
 import { background_color } from "./constants"
 

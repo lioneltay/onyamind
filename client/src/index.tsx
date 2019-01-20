@@ -33,6 +33,9 @@ const jss = create({
 })
 
 const theme = createMuiTheme({
+  typography: {
+    useNextVariants: true,
+  },
   palette: { primary: indigo },
 })
 
