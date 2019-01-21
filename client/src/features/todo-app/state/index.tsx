@@ -9,7 +9,7 @@ import { firebase, firestore, dataWithId } from "features/todo-app/firebase"
 import { Observable, of } from "rxjs"
 import { switchMap } from "rxjs/operators"
 import { Task, User, ID, TaskList } from "../types"
-import { uniq } from "ramda"
+import { uniq, difference } from "ramda"
 import {
   createDefaultTaskList,
   getTaskLists,
@@ -62,6 +62,7 @@ type Context = {
     removeTask: (task_id: ID) => Promise<ID>
 
     selectAllIncompleteTasks: () => void
+    deselectAllIncompleteTasks: () => void
     toggleTaskSelection: (id: ID) => void
     setNewTaskTitle: (title: string) => void
     startEditingTask: (task_id: ID) => void
@@ -328,6 +329,18 @@ export const Provider: React.FunctionComponent = ({ children }) => {
                 ),
               ),
             )
+          },
+
+          deselectAllIncompleteTasks: () => {
+            if (!tasks) {
+              throw Error("No tasks")
+            }
+
+            const incomplete_tasks_ids = tasks
+              .filter(task => !task.complete)
+              .map(task => task.id)
+
+            setSelectedTasks(ids => uniq(difference(ids, incomplete_tasks_ids)))
           },
 
           deleteCompletedTasks: async () => {

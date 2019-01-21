@@ -38,6 +38,8 @@
 - [x] animate the warning footer
 - [x] update number_of_tasks with actual number instead of incrementing
 - [x] loader componenets
+- [x] readme / package.json
+- [x] select all should become deselect all if everything is selected
 
 - [ ] add created date to edit modal
 
@@ -50,9 +52,6 @@
 
 - [ ] non logged in version should store data localy
 - [ ] when signing in, if there are local notes ask if they would like them to be transfered, then delete the local notes
-
-* [ ] polish readme
-  - [ ] badges
 
 * [ ] animate saving text in edit modal
 
