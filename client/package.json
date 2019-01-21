@@ -29,6 +29,7 @@
     "@types/react-content-loader": "^3.1.4",
     "@types/react-dom": "^16.0.11",
     "@types/react-router-dom": "^4.3.1",
+    "@types/shallowequal": "^1.1.0",
     "@types/styled-components": "^4.1.6",
     "babel-core": "^7.0.0-bridge.0",
     "babel-loader": "^8.0.4",
@@ -72,6 +73,7 @@
     "react-spring": "^7.2.8",
     "react-testing-library": "^5.4.2",
     "rxjs": "^6.3.3",
+    "shallowequal": "^1.1.0",
     "styled-components": "^4.1.3"
   }
 }

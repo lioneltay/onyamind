@@ -5,6 +5,7 @@
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "lib": ["webworker", "esnext", "dom"],
+    "sourceMap": true,
     "baseUrl": ".",
     "paths": {
       "*": ["./src/*"]

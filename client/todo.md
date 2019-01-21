@@ -41,7 +41,8 @@
 - [x] readme / package.json
 - [x] select all should become deselect all if everything is selected
 
-- [ ] add created date to edit modal
+
+- [ ] refactor state
 
 - [ ] undo snackbar
 - [ ] implement max number of tasks per list
@@ -101,3 +102,5 @@
   - [ ] lock drag to vertical only
 
 * [ ] advertisements
+
+- [ ] add created date to edit modal
