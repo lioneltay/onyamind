@@ -2,12 +2,10 @@
 
 - [x] remove gap between adder and header on mobile
 - [x] use sticky instead of fixed postition
-
 - [x] styled components babel plugin
-
 - [x] hambuger not aligned with list icons
-
 - [x] icons in header need right padding
+- [x] drawer doesn't need to be full screen
 
 - [ ] non logged in version should be local
 
@@ -31,66 +29,64 @@
 
 - [ ] remove drag handlers
 
-- [ ] drawer doesn't need to be full screen
+* [ ] primary list tool tip in drawer
 
-- [ ] primary list tool tip in drawer
+* [ ] update number_of_tasks with actual number instead of incrementing
 
-- [ ] update number_of_tasks with actual number instead of incrementing
+* [ ] undo snackbar
 
-- [ ] undo snackbar
-
-- [x] Double loading of list on page load
+* [x] Double loading of list on page load
 
   - caused by stream getting tasks when list_id is null
 
-- [x] Responsive, drawer should be 100% screen on mobile
+* [x] Responsive, drawer should be 100% screen on mobile
 
-- [x] only allow multiple check if selecting all completed or all incomplete
+* [x] only allow multiple check if selecting all completed or all incomplete
 
-- [x] Swipeable drawer
+* [x] Swipeable drawer
 
-* [ ] polish readme
+- [ ] polish readme
   - [ ] badges
 
-- [ ] github license
+* [ ] github license
 
-* [ ] animate saving text in edit modal
+- [ ] animate saving text in edit modal
 
-- [ ] rethink state management (context? redux? observables?)
+* [ ] rethink state management (context? redux? observables?)
 
-- [ ] add search
+* [ ] add search
 
-- [ ] animated new item with temporary background color
+* [ ] animated new item with temporary background color
 
-- [ ] swipre ofr actions
+* [ ] swipre ofr actions
 
-- [ ] move task to another list
+* [ ] move task to another list
 
-- [ ] due dates
+* [ ] due dates
 
-- [ ] pinned tasks
+* [ ] pinned tasks
 
-- [ ] rich text editor
+* [ ] rich text editor
 
-- [ ] more space above drawer list headers
+* [ ] more space above drawer list headers
 
-- [ ] other lists should be collapsable
+* [ ] other lists should be collapsable
 
-- [ ] shared lists
+* [ ] shared lists
 
-- [ ] edit modal has different style than list modals
+* [ ] edit modal has different style than list modals
 
-- [ ] mobile modals should all be full width
+* [ ] mobile modals should all be full width
 
-- [ ] implement max number of tasks per list
+* [ ] implement max number of tasks per list
 
-* [x] remove observable by ensuring state changes like login go through the state instead of just firebase
+- [x] remove observable by ensuring state changes like login go through the state instead of just firebase
 
   - [x] Refactor state management to use observables where it makes sense in order to take advantage of firebase's reactive queries
 
-* [x] use material ui
+- [x] use material ui
 
-* [x] Drawer menu
+- [x] Drawer menu
 
   - [x] Account details
   - [x] login
@@ -104,29 +100,29 @@
   - [x] when auth status changes, need to refresh current selected list id
   - [ ] distinguish between completed and incompleted task counts
 
-* [ ] ensure service worker clears cache when initialising
+- [ ] ensure service worker clears cache when initialising
 
-* [ ] feedback
+- [ ] feedback
 
   - [ ] save feedback to firebase
   - [ ] screenshots
 
-* [ ] seo
+- [ ] seo
 
-* [ ] code splitting
+- [ ] code splitting
 
-* [ ] bundle optimisation with webpack
+- [ ] bundle optimisation with webpack
 
   - [ ] tree shaking
   - [ ] minification
 
-* [ ] Performance review/analysis
+- [ ] Performance review/analysis
 
-* [ ] security
+- [ ] security
 
-* [ ] drag and drop
+- [ ] drag and drop
 
   - [ ] drag doesnt work on mobile
   - [ ] lock drag to vertical only
 
-* [ ] advertisements
+- [ ] advertisements

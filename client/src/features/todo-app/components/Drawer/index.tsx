@@ -62,10 +62,6 @@ const Drawer: React.FunctionComponent = () => {
 
   const primary_list = task_lists ? task_lists.find(list => list.primary) : null
 
-  const mobile = useMediaQuery("(max-width: 500px)")
-
-  console.log({ mobile })
-
   return (
     <SwipeableDrawer
       open={show_drawer}
@@ -77,7 +73,7 @@ const Drawer: React.FunctionComponent = () => {
     >
       <List
         className="py-0"
-        style={{ width: mobile ? "100vw" : 400, maxWidth: "100%" }}
+        style={{ width: "80vw", maxWidth: 400, minWidth: 280 }}
       >
         {user ? (
           <ListItem
