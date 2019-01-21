@@ -1,5 +1,4 @@
 import React from "react"
-import './rxstate'
 
 const SandboxPage: React.FunctionComponent = () => {
   return (

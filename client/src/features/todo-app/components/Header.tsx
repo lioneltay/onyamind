@@ -4,7 +4,6 @@ import styled from "styled-components"
 import { useAppState } from "../state"
 import { highlight_color, highlighted_text_color } from "../constants"
 
-import Button from "@material-ui/core/Button"
 import IconButton from "@material-ui/core/IconButton"
 import Menu from "@material-ui/icons/Menu"
 import ArrowBack from "@material-ui/icons/ArrowBack"
@@ -13,7 +12,6 @@ import Check from "@material-ui/icons/Check"
 import Add from "@material-ui/icons/Add"
 import AppBar from "@material-ui/core/AppBar"
 import Toolbar from "@material-ui/core/Toolbar"
-import GoogleSignInButton from "../components/GoogleSignInButton"
 
 import { Task } from "../types"
 
@@ -43,7 +41,6 @@ const LeftSection = styled.div`
 
 const Header: React.FunctionComponent = () => {
   const {
-    user,
     editing,
     selected_task_ids,
     tasks,
@@ -51,8 +48,6 @@ const Header: React.FunctionComponent = () => {
     task_lists,
 
     actions: {
-      signOut,
-      signInWithGoogle,
       checkSelectedTasks,
       uncheckSelectedTasks,
       deleteSelectedTasks,
@@ -125,13 +120,7 @@ const Header: React.FunctionComponent = () => {
                 <Delete />
               </IconButton>
             </div>
-          ) : user && user.uid ? (
-            <Button variant="outlined" color="primary" onClick={signOut}>
-              Logout
-            </Button>
-          ) : (
-            <GoogleSignInButton onClick={signInWithGoogle} />
-          )}
+          ) : null}
         </Main>
       </Container>
     </AppBar>

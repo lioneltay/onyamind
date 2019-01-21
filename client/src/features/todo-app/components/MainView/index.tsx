@@ -28,8 +28,8 @@ const Container = styled.div`
   max-width: 600px;
 `
 
-const Rotate = styled.div.attrs({})<{ rotate: boolean }>`
-  transform: rotate(${({ rotate }) => (rotate ? "-180deg" : "0")});
+const Rotate = styled.div.attrs({})<{ flip: boolean }>`
+  transform: rotate(${({ flip }) => (flip ? "-180deg" : "0")});
   transition: 300ms;
 `
 
@@ -80,7 +80,7 @@ const MainView: React.FunctionComponent = () => {
         <List className="p-0">
           <ListItem button>
             <ListItemIcon>
-              <Rotate rotate={show}>
+              <Rotate flip={show}>
                 <IconButton onClick={toggleShow}>
                   <ExpandMore />
                 </IconButton>

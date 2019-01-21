@@ -1,5 +1,4 @@
 import React, { useState } from "react"
-import { useMediaQuery } from "@tekktekk/react-media-query"
 
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer"
 import List from "@material-ui/core/List"
@@ -7,20 +6,25 @@ import ListItem from "@material-ui/core/ListItem"
 import ListItemAvatar from "@material-ui/core/ListItemAvatar"
 import ListItemText from "@material-ui/core/ListItemText"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
+import Collapse from "@material-ui/core/Collapse"
 import Typography from "@material-ui/core/Typography"
 import Avatar from "@material-ui/core/Avatar"
 import Divider from "@material-ui/core/Divider"
 import Button from "@material-ui/core/Button"
 import IconButton from "@material-ui/core/IconButton"
 
+import Help from "@material-ui/icons/Help"
+import ExpandMore from "@material-ui/icons/ExpandMore"
+import ExpandLess from "@material-ui/icons/ExpandLess"
 import Feedback from "@material-ui/icons/Feedback"
 import Clear from "@material-ui/icons/Clear"
-import Help from "@material-ui/icons/Help"
 import AccountCircle from "@material-ui/icons/AccountCircle"
 import ExitToApp from "@material-ui/icons/ExitToApp"
 
 import { useAppState } from "../../state"
-import { background_color } from "../../constants"
+import { background_color, grey_text } from "../../constants"
+
+import Modal from "../Modal"
 
 import TaskList from "./TaskList"
 import CreateTaskListModal from "./CreateTaskListModal"
@@ -54,6 +58,8 @@ const Drawer: React.FunctionComponent = () => {
   const [show_delete_modal, setShowDeleteModal] = useState(false)
   const [show_rename_modal, setShowRenameModal] = useState(false)
   const [selected_id, setSelectedId] = useState(null as ID | null)
+  const [show_other_lists, setShowOtherLists] = useState(true)
+  const [show_help_modal, setShowHelpModal] = useState(false)
 
   const selected_list =
     selected_id && task_lists
@@ -94,19 +100,50 @@ const Drawer: React.FunctionComponent = () => {
             </IconButton>
           </ListItem>
         ) : (
-          <ListItem
-            className="fj-c"
-            style={{ backgroundColor: background_color }}
-          >
-            <GoogleSignInButton onClick={signInWithGoogle} />
+          <ListItem style={{ backgroundColor: background_color }}>
+            <ListItemText>
+              <GoogleSignInButton onClick={signInWithGoogle} />
+            </ListItemText>
+
+            <IconButton>
+              <Clear onClick={() => setShowDrawer(false)} />
+            </IconButton>
           </ListItem>
         )}
 
-        <ListItem className="pb-0" dense>
-          <ListItemText>
-            <Typography variant="subtitle2">Primary List</Typography>
+        <ListItem className="pb-0 pt-3" dense>
+          <ListItemText className="fa-c">
+            <Typography variant="subtitle2" className="fa-c">
+              <span className="mr-3">Primary List</span>
+              <Help
+                className="cursor-pointer"
+                style={{ color: grey_text }}
+                onClick={() => setShowHelpModal(true)}
+              />
+            </Typography>
           </ListItemText>
         </ListItem>
+
+        <Modal
+          open={show_help_modal}
+          onClose={() => setShowHelpModal(false)}
+          title="Primary List"
+          style={{ width: 500, maxWidth: "100%" }}
+          actions={
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => setShowHelpModal(false)}
+            >
+              Got it
+            </Button>
+          }
+        >
+          <Typography style={{ color: grey_text }}>
+            The primary list will be selected by default when you open the
+            application.
+          </Typography>
+        </Modal>
 
         {primary_list ? (
           <TaskList
@@ -129,38 +166,48 @@ const Drawer: React.FunctionComponent = () => {
 
         <Divider />
 
-        <ListItem className="pb-0" dense>
+        <ListItem
+          className="pb-0 pt-3"
+          dense
+          button
+          onClick={() => setShowOtherLists(show => !show)}
+        >
           <ListItemText>
             <Typography variant="subtitle2">Other Lists</Typography>
           </ListItemText>
+          <div style={{ color: grey_text }}>
+            {show_other_lists ? <ExpandLess /> : <ExpandMore />}
+          </div>
         </ListItem>
 
-        {task_lists ? (
-          task_lists
-            .filter(list => !list.primary)
-            .sort(comparator((l1, l2) => l1.created_at > l2.created_at))
-            .map(list => (
-              <TaskList
-                key={list.id}
-                task_list={list}
-                selected={list.id === selected_task_list_id}
-                onBodyClick={id => selectTaskList(id)}
-                onDelete={id => {
-                  setSelectedId(id)
-                  setShowDeleteModal(true)
-                }}
-                onRename={id => {
-                  setSelectedId(id)
-                  setShowRenameModal(true)
-                }}
-                onMakePrimary={id => {
-                  setPrimaryTaskList(id)
-                }}
-              />
-            ))
-        ) : (
-          <div>Loading...</div>
-        )}
+        <Collapse in={show_other_lists}>
+          {task_lists ? (
+            task_lists
+              .filter(list => !list.primary)
+              .sort(comparator((l1, l2) => l1.created_at > l2.created_at))
+              .map(list => (
+                <TaskList
+                  key={list.id}
+                  task_list={list}
+                  selected={list.id === selected_task_list_id}
+                  onBodyClick={id => selectTaskList(id)}
+                  onDelete={id => {
+                    setSelectedId(id)
+                    setShowDeleteModal(true)
+                  }}
+                  onRename={id => {
+                    setSelectedId(id)
+                    setShowRenameModal(true)
+                  }}
+                  onMakePrimary={id => {
+                    setPrimaryTaskList(id)
+                  }}
+                />
+              ))
+          ) : (
+            <div>Loading...</div>
+          )}
+        </Collapse>
 
         <Divider />
         <ListItem className="fj-c fa-st p-0" button>

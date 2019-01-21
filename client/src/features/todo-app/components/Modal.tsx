@@ -12,7 +12,7 @@ import Clear from "@material-ui/icons/Clear"
 type Props = Stylable & {
   open: boolean
   onClose: () => void
-  title: React.ReactNode
+  title?: React.ReactNode
   actions?: React.ReactNode
 }
 

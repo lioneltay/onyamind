@@ -9,7 +9,7 @@ import { firebase, firestore, dataWithId } from "features/todo-app/firebase"
 import { Observable, of } from "rxjs"
 import { switchMap } from "rxjs/operators"
 import { Task, User, ID, TaskList } from "../types"
-import { uniq, max } from "ramda"
+import { uniq } from "ramda"
 import {
   createDefaultTaskList,
   getTaskLists,
@@ -33,8 +33,10 @@ type Context = {
   new_task_title: string
   selected_task_ids: ID[]
   show_drawer: boolean
+  show_warning_footer: boolean
 
   actions: {
+    setShowWarningFooter: React.Dispatch<React.SetStateAction<boolean>>
     signOut: () => Promise<void>
     signInWithGoogle: () => Promise<void>
 
@@ -133,6 +135,7 @@ export const Provider: React.FunctionComponent = ({ children }) => {
   const [touch_screen, setTouchScreen] = useState(false)
   const [editing, setEditing] = useState(false)
   const [show_drawer, setShowDrawer] = useState(false)
+  const [show_warning_footer, setShowWarningFooter] = useState(false)
   const [show_edit_modal, setShowEditModal] = useState(false)
   const [editing_task_id, setEditingTaskId] = useState(null as ID | null)
   const [new_task_title, setNewTaskTitle] = useState("")
@@ -152,6 +155,16 @@ export const Provider: React.FunctionComponent = ({ children }) => {
       [selected_task_list_id],
     ),
     null,
+  )
+
+  useEffect(
+    () => {
+      const subscription = user$.subscribe(async user =>
+        setShowWarningFooter(!user),
+      )
+      return () => subscription.unsubscribe()
+    },
+    [user$],
   )
 
   useEffect(
@@ -190,10 +203,13 @@ export const Provider: React.FunctionComponent = ({ children }) => {
         selected_task_ids,
         show_drawer,
         selected_task_list_id,
+        show_warning_footer,
 
         actions: {
+          setShowWarningFooter,
           signOut: async () => {
             await firebase.auth().signOut()
+            setShowDrawer(false)
           },
 
           signInWithGoogle: async () => {
@@ -206,6 +222,8 @@ export const Provider: React.FunctionComponent = ({ children }) => {
             const { user } = await firebase
               .auth()
               .signInWithPopup(google_provider)
+
+            setShowDrawer(false)
           },
 
           selectTaskList: (id: ID) => {
@@ -244,13 +262,10 @@ export const Provider: React.FunctionComponent = ({ children }) => {
             if (!task_lists) {
               throw Error("No task lists")
             }
-
-            const task_list = task_lists.find(
-              list => list.id === selected_task_list_id,
-            )
-            if (!task_list) {
-              throw Error("No such task list")
+            if (!tasks) {
+              throw Error("No tasks")
             }
+
             if (!selected_task_list_id) {
               throw Error("No selected_task_list_id. Not initialised correctly")
             }
@@ -261,7 +276,7 @@ export const Provider: React.FunctionComponent = ({ children }) => {
                 list_id: selected_task_list_id,
               }),
               editTaskList(selected_task_list_id, {
-                number_of_tasks: task_list.number_of_tasks + 1,
+                number_of_tasks: tasks.length + 1,
               }),
             ])
 
@@ -297,7 +312,7 @@ export const Provider: React.FunctionComponent = ({ children }) => {
             const [deleted_id] = await Promise.all([
               removeTask(id),
               editTaskList(selected_task_list_id, {
-                number_of_tasks: max(task_list.number_of_tasks - 1, 0),
+                number_of_tasks: tasks.length - 1,
               }),
             ])
 
@@ -347,10 +362,7 @@ export const Provider: React.FunctionComponent = ({ children }) => {
             await Promise.all([
               batch.commit(),
               editTaskList(selected_task_list_id, {
-                number_of_tasks: max(
-                  task_list.number_of_tasks - completed_tasks.length,
-                  0,
-                ),
+                number_of_tasks: tasks.length - completed_tasks.length,
               }),
             ])
           },
@@ -410,6 +422,9 @@ export const Provider: React.FunctionComponent = ({ children }) => {
             if (!task_lists) {
               throw Error("No task lists")
             }
+            if (!tasks) {
+              throw Error("No tasks")
+            }
 
             setEditing(false)
             setSelectedTasks([])
@@ -433,10 +448,7 @@ export const Provider: React.FunctionComponent = ({ children }) => {
             await Promise.all([
               batch.commit(),
               editTaskList(selected_task_list_id, {
-                number_of_tasks: max(
-                  task_list.number_of_tasks - selected_task_ids.length,
-                  0,
-                ),
+                number_of_tasks: tasks.length - selected_task_ids.length,
               }),
             ])
           },

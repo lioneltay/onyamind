@@ -5,6 +5,7 @@ import Header from "./components/Header"
 import Drawer from "./components/Drawer"
 import TaskAdder from "./components/TaskAdder"
 import MainView from "./components/MainView"
+import WarningFooter from "./components/WarningFooter"
 
 import { background_color } from "./constants"
 
@@ -28,6 +29,7 @@ const TaskPage: React.FunctionComponent = () => {
       </StickySection>
       <Drawer />
       <MainView />
+      <WarningFooter />
     </PageContainer>
   )
 }
