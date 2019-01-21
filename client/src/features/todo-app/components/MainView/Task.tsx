@@ -146,12 +146,6 @@ const TaskItem: React.FunctionComponent<Props> = ({ task }) => {
             <Add />
           </IconButton>
         )}
-
-        {editing ? (
-          <IconButton disableRipple style={{ cursor: "move" }}>
-            <DragHandle />
-          </IconButton>
-        ) : null}
       </Container>
     </Flipped>
   )

@@ -1,9 +1,8 @@
 import React from "react"
 
-import Modal from "@material-ui/core/Modal"
+import Modal from "../Modal"
 import Typography from "@material-ui/core/Typography"
 import Button from "@material-ui/core/Button"
-import Paper from "@material-ui/core/Paper"
 
 type Props = {
   open: boolean
@@ -19,23 +18,20 @@ const DeleteTaskListModal: React.FunctionComponent<Props> = ({
   task_list_name = "list",
 }) => {
   return (
-    <Modal className="fj-c fa-c" open={open} onClose={onClose}>
-      <Paper className="p-3">
-        <Typography variant="h6">Delete {task_list_name}</Typography>
-
-        <Typography className="mt-3" variant="caption">
-          Are you sure you want to delete this list?
-        </Typography>
-
-        <div className="fj-e mt-3">
-          <Button color="primary" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button color="primary" onClick={onConfirmDelete}>
-            Confirm
-          </Button>
-        </div>
-      </Paper>
+    <Modal
+      style={{ width: 300, maxWidth: "100%" }}
+      open={open}
+      onClose={onClose}
+      title={`Delete ${task_list_name}`}
+      actions={
+        <Button variant="outlined" color="primary" onClick={onConfirmDelete}>
+          Confirm
+        </Button>
+      }
+    >
+      <Typography className="mt-3" variant="body2">
+        Are you sure you want to delete this list?
+      </Typography>
     </Modal>
   )
 }

@@ -7,43 +7,22 @@
 - [x] icons in header need right padding
 - [x] drawer doesn't need to be full screen
 - [x] clear text button to input
+- [x] on mobile rename modal is too big
+- [x] selecting list should close modal
+- [x] remove drag handlers
+- [x] FIX HMR
+* [ ] primary list tool tip in drawer
+* [ ] update number_of_tasks with actual number instead of incrementing
+- [ ] add created date to edit modal
+- [ ] loader componenets
+* [ ] undo snackbar
+* [ ] implement max number of tasks per list
 
 - [ ] non logged in version should be local
-
   - [ ] show warning at bottom (like the cookies warning)
-
-- [ ] add created date to edit modal
-
 - [ ] firegure out how to make modals and drawers work on mobile with back button
-
 - [ ] firegout how to put app on app store
-
-- [ ] loader componenets
-
-- [ ] selecting list should close modal
-
-- [ ] on mobile rename modal is too big
-
 - [ ] tests
-
-
-- [ ] remove drag handlers
-
-* [ ] primary list tool tip in drawer
-
-* [ ] update number_of_tasks with actual number instead of incrementing
-
-* [ ] undo snackbar
-
-* [x] Double loading of list on page load
-
-  - caused by stream getting tasks when list_id is null
-
-* [x] Responsive, drawer should be 100% screen on mobile
-
-* [x] only allow multiple check if selecting all completed or all incomplete
-
-* [x] Swipeable drawer
 
 - [ ] polish readme
   - [ ] badges
@@ -78,7 +57,6 @@
 
 * [ ] mobile modals should all be full width
 
-* [ ] implement max number of tasks per list
 
 - [x] remove observable by ensuring state changes like login go through the state instead of just firebase
 

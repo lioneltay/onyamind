@@ -14,12 +14,13 @@ module.exports = {
     filename: "[name].[hash].js",
     path: relativeToRoot("./dist"),
     publicPath: "/",
+    globalObject: "self",
   },
 
   devtool: "inline-source-map",
 
   devServer: {
-    hot: false,
+    hot: true,
     port: 3000,
     historyApiFallback: true,
   },
@@ -29,6 +30,6 @@ module.exports = {
     new webpack.EnvironmentPlugin({
       APP_MODE: "development",
     }),
-    // new webpack.HotModuleReplacementPlugin()
+    new webpack.HotModuleReplacementPlugin(),
   ],
 }

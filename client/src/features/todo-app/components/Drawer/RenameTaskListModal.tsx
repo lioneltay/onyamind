@@ -2,9 +2,7 @@ import React from "react"
 
 import { Form, Formik, FormikActions } from "formik"
 
-import Typography from "@material-ui/core/Typography"
-import Modal from "@material-ui/core/Modal"
-import Paper from "@material-ui/core/Paper"
+import Modal from "../Modal"
 import TextField from "@material-ui/core/TextField"
 import Button from "@material-ui/core/Button"
 
@@ -28,43 +26,39 @@ const RenameTaskListModal: React.FunctionComponent<Props> = ({
   task_list,
 }) => {
   return (
-    <Modal className="fj-c fa-c" open={open} onClose={onClose}>
-      <Formik<Values>
-        initialValues={{ name: task_list.name }}
-        onSubmit={async (values, actions) => {
-          await onSubmit(values, actions)
-          actions.setSubmitting(false)
-        }}
-      >
-        {({ values, setFieldValue, isSubmitting }) => (
+    <Formik<Values>
+      initialValues={{ name: task_list.name }}
+      onSubmit={async (values, actions) => {
+        await onSubmit(values, actions)
+        actions.setSubmitting(false)
+      }}
+    >
+      {({ values, setFieldValue, isSubmitting }) => (
+        <Modal
+          open={open}
+          onClose={onClose}
+          title="Rename list"
+          style={{ width: 500, maxWidth: "100%" }}
+        >
           <Form>
-            <Paper className="p-3" style={{ width: 500, maxWidth: "100%" }}>
-              <Typography variant="h6">Rename list</Typography>
+            <TextField
+              required
+              fullWidth
+              variant="outlined"
+              label="Name"
+              value={values.name}
+              onChange={e => setFieldValue("name", e.currentTarget.value)}
+            />
 
-              <div className="mt-3">
-                <TextField
-                  required
-                  fullWidth
-                  variant="outlined"
-                  label="Name"
-                  value={values.name}
-                  onChange={e => setFieldValue("name", e.currentTarget.value)}
-                />
-              </div>
-
-              <div className="fj-e">
-                <Button color="primary" onClick={onClose}>
-                  Cancel
-                </Button>
-                <Button disabled={isSubmitting} color="primary" type="submit">
-                  Rename
-                </Button>
-              </div>
-            </Paper>
+            <div className="fj-e mt-2">
+              <Button disabled={isSubmitting} color="primary" type="submit">
+                Rename
+              </Button>
+            </div>
           </Form>
-        )}
-      </Formik>
-    </Modal>
+        </Modal>
+      )}
+    </Formik>
   )
 }
 

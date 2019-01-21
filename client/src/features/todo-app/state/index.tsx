@@ -208,7 +208,10 @@ export const Provider: React.FunctionComponent = ({ children }) => {
               .signInWithPopup(google_provider)
           },
 
-          selectTaskList: setSelectedTaskListId,
+          selectTaskList: (id: ID) => {
+            setSelectedTaskListId(id)
+            setShowDrawer(false)
+          },
           addTaskList,
           editTaskList,
           removeTaskList,
