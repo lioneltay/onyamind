@@ -2,8 +2,8 @@
   "name": "tekktekk-notes",
   "version": "1.0.0",
   "repository": "https://github.com/lioneltay/tekktekk-notes",
-  "homepage": "https://app.tekktekk.com",
-  "description": "",
+  "homepage": "https://notes.tekktekk.com",
+  "description": "Simple note taking",
   "main": "index.js",
   "scripts": {
     "deploy:dev:dispatch": "gcloud app deploy dispatch.yaml --project=tekktekk --quiet",

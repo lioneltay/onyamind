@@ -37,8 +37,8 @@
 - [x] show warning at bottom when not logged in(like the cookies warning)
 - [x] animate the warning footer
 - [x] update number_of_tasks with actual number instead of incrementing
-
 - [x] loader componenets
+
 - [ ] add created date to edit modal
 
 - [ ] undo snackbar
@@ -53,8 +53,6 @@
 
 * [ ] polish readme
   - [ ] badges
-
-- [ ] github license
 
 * [ ] animate saving text in edit modal
 
