@@ -6,6 +6,7 @@
 - [x] hambuger not aligned with list icons
 - [x] icons in header need right padding
 - [x] drawer doesn't need to be full screen
+- [x] clear text button to input
 
 - [ ] non logged in version should be local
 
@@ -25,7 +26,6 @@
 
 - [ ] tests
 
-- [ ] clear text button to input
 
 - [ ] remove drag handlers
 
