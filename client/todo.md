@@ -38,8 +38,8 @@
 - [x] animate the warning footer
 - [x] update number_of_tasks with actual number instead of incrementing
 
+- [x] loader componenets
 - [ ] add created date to edit modal
-- [ ] loader componenets
 
 - [ ] undo snackbar
 - [ ] implement max number of tasks per list

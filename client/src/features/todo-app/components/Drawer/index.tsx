@@ -1,4 +1,5 @@
 import React, { useState } from "react"
+import ContentLoader from "react-content-loader"
 
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer"
 import List from "@material-ui/core/List"
@@ -12,6 +13,8 @@ import Avatar from "@material-ui/core/Avatar"
 import Divider from "@material-ui/core/Divider"
 import Button from "@material-ui/core/Button"
 import IconButton from "@material-ui/core/IconButton"
+import LinearProgress from "@material-ui/core/LinearProgress"
+import Fade from "@material-ui/core/Fade"
 
 import Help from "@material-ui/icons/Help"
 import ExpandMore from "@material-ui/icons/ExpandMore"
@@ -161,7 +164,11 @@ const Drawer: React.FunctionComponent = () => {
             }}
           />
         ) : (
-          <div>Loading...</div>
+          <Fade in={true} style={{ transitionDelay: "800ms" }}>
+            <div>
+              <TaskListLoader />
+            </div>
+          </Fade>
         )}
 
         <Divider />
@@ -205,7 +212,13 @@ const Drawer: React.FunctionComponent = () => {
                 />
               ))
           ) : (
-            <div>Loading...</div>
+            <ListItem>
+              <ListItemText>
+                <Fade in={true} style={{ transitionDelay: "800ms" }}>
+                  <LinearProgress />
+                </Fade>
+              </ListItemText>
+            </ListItem>
           )}
         </Collapse>
 
@@ -296,3 +309,17 @@ const OptionItem: React.FunctionComponent<OptionItemProps> = ({
     </ListItem>
   )
 }
+
+const TaskListLoader: React.FunctionComponent = () => (
+  <ContentLoader
+    style={{ height: 67, paddingLeft: 16 }}
+    height={50}
+    width={250}
+    speed={2}
+    primaryColor="#f3f3f3"
+    secondaryColor="#ecebeb"
+  >
+    <rect x="0" y="10" rx="4" ry="4" width="100" height="10" />
+    <rect x="0" y="30" rx="4" ry="4" width="50" height="7" />
+  </ContentLoader>
+)

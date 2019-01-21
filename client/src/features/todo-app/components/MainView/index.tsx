@@ -8,6 +8,9 @@ import ListItem from "@material-ui/core/ListItem"
 import ListItemText from "@material-ui/core/ListItemText"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction"
+import LinearProgress from "@material-ui/core/LinearProgress"
+import Fade from "@material-ui/core/Fade"
+
 import Collapse from "@material-ui/core/Collapse"
 import IconButton from "@material-ui/core/IconButton"
 import ExpandMore from "@material-ui/icons/ExpandMore"
@@ -50,7 +53,9 @@ const MainView: React.FunctionComponent = () => {
     return (
       <OuterContainer>
         <Container>
-          <div>Loading...</div>
+          <Fade in={true} style={{ transitionDelay: "800ms" }}>
+            <LinearProgress />
+          </Fade>
         </Container>
       </OuterContainer>
     )

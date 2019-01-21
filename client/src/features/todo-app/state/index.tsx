@@ -209,7 +209,6 @@ export const Provider: React.FunctionComponent = ({ children }) => {
           setShowWarningFooter,
           signOut: async () => {
             await firebase.auth().signOut()
-            setShowDrawer(false)
           },
 
           signInWithGoogle: async () => {
@@ -222,8 +221,6 @@ export const Provider: React.FunctionComponent = ({ children }) => {
             const { user } = await firebase
               .auth()
               .signInWithPopup(google_provider)
-
-            setShowDrawer(false)
           },
 
           selectTaskList: (id: ID) => {
