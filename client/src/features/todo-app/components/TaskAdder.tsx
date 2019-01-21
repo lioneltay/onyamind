@@ -1,7 +1,7 @@
 import React, { Fragment } from "react"
 import styled from "styled-components"
+import { useMediaQuery } from "@tekktekk/react-media-query"
 
-import { HEIGHT as HEADER_HEIGHT } from "./Header"
 import Add from "@material-ui/icons/Add"
 import IconButton from "@material-ui/core/IconButton"
 import TextField from "@material-ui/core/TextField"
@@ -13,25 +13,15 @@ import ListItem from "@material-ui/core/ListItem"
 import ListItemText from "@material-ui/core/ListItemText"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
 
-const PADDING_TOP = 24
-const CONTENT_HEIGHT = 70
-export const HEIGHT = CONTENT_HEIGHT + PADDING_TOP
-
 const OuterContainer = styled.div`
-  position: fixed;
-  z-index: 1000;
+  position: relative;
   background: ${background_color};
-  top: ${HEADER_HEIGHT}px;
-  left: 0;
   width: 100%;
   display: flex;
   justify-content: center;
-  padding-top: ${PADDING_TOP}px;
-  height: ${HEIGHT}px;
 `
 
 const Container = styled(List)`
-  height: ${CONTENT_HEIGHT}px;
   max-width: 600px;
   width: 100%;
   padding: 0;
@@ -64,59 +54,56 @@ const TaskAdder: React.FunctionComponent = () => {
     })
   }
 
-  return (
-    <Fragment>
-      <div style={{ height: HEIGHT }} />
-      <OuterContainer>
-        <Container>
-          <ListItem
-            className="py-0"
-            style={{
-              height: CONTENT_HEIGHT,
-              background: editing ? background_color : "white",
-            }}
-            divider
-          >
-            {editing ? (
-              <ListItemText
-                className="cursor-pointer"
-                onClick={selectAllIncompleteTasks}
-              >
-                <span
-                  style={{
-                    height: CONTENT_HEIGHT,
-                    color: highlighted_text_color,
-                    fontWeight: 500,
-                  }}
-                >
-                  Select All
-                </span>
-              </ListItemText>
-            ) : (
-              <Fragment>
-                <ListItemIcon>
-                  <IconButton onClick={handleIt}>
-                    <Add />
-                  </IconButton>
-                </ListItemIcon>
+  const mobile = useMediaQuery("(max-width: 800px)")
 
-                <AdderTextField
-                  placeholder="Add item"
-                  className="fg-1"
-                  value={new_task_title}
-                  onChange={e => setNewTaskTitle(e.currentTarget.value)}
-                  onKeyPress={e => {
-                    if (e.key === "Enter") {
-                      handleIt()
-                    }
-                  }}
-                />
-              </Fragment>
-            )}
-          </ListItem>
-        </Container>
-      </OuterContainer>
-    </Fragment>
+  return (
+    <OuterContainer style={{ paddingTop: mobile ? 0 : 24 }}>
+      <Container>
+        <ListItem
+          className="py-0"
+          style={{
+            background: editing ? background_color : "white",
+          }}
+          divider
+        >
+          {editing ? (
+            <ListItemText
+              className="cursor-pointer"
+              onClick={selectAllIncompleteTasks}
+            >
+              <span
+                style={{
+                  color: highlighted_text_color,
+                  fontWeight: 500,
+                }}
+              >
+                Select All
+              </span>
+            </ListItemText>
+          ) : (
+            <Fragment>
+              <ListItemIcon>
+                <IconButton onClick={handleIt}>
+                  <Add />
+                </IconButton>
+              </ListItemIcon>
+
+              <AdderTextField
+                placeholder="Add item"
+                className="fg-1"
+                value={new_task_title}
+                onChange={e => setNewTaskTitle(e.currentTarget.value)}
+                onKeyPress={e => {
+                  if (e.key === "Enter") {
+                    handleIt()
+                  }
+                }}
+              />
+            </Fragment>
+          )}
+        </ListItem>
+      </Container>
+    </OuterContainer>
   )
 }
 

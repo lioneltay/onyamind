@@ -2,6 +2,7 @@ import React from "react"
 import styled from "styled-components"
 import { Task } from "../../types"
 
+import Typography from "@material-ui/core/Typography"
 import IconButton from "@material-ui/core/IconButton"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
@@ -79,7 +80,6 @@ const TaskItem: React.FunctionComponent<Props> = ({ task }) => {
         button
         style={{
           backgroundColor: selected ? highlight_color : undefined,
-          paddingRight: 4,
         }}
       >
         <ListItemIcon>
@@ -108,14 +108,19 @@ const TaskItem: React.FunctionComponent<Props> = ({ task }) => {
           primary={
             <SingleLineWithEllipsis
               style={{
+                fontWeight: 500,
+                fontSize: "0.95rem",
                 textDecoration: task.complete ? "line-through" : "none",
+                color: "#202124",
               }}
             >
               {task.title}
             </SingleLineWithEllipsis>
           }
           secondary={
-            <SingleLineWithEllipsis>{task.notes}</SingleLineWithEllipsis>
+            <SingleLineWithEllipsis style={{ fontWeight: 500 }}>
+              {task.notes}
+            </SingleLineWithEllipsis>
           }
           onClick={() => startEditingTask(task.id)}
         />

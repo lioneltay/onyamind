@@ -17,25 +17,21 @@ import GoogleSignInButton from "../components/GoogleSignInButton"
 
 import { Task } from "../types"
 
-export const HEIGHT = 64
-
-const Placeholder = styled.div`
-  height: ${HEIGHT}px;
-`
-
 const Container = styled(Toolbar)`
-  z-index: 2000;
+  padding-left: 0;
+  padding-right: 0;
   display: flex;
   justify-content: center;
 ` as typeof Toolbar
 
 const Main = styled.div`
+  padding-left: 16px;
+  padding-right: 16px;
   max-width: 100%;
   width: 600px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 8px;
 `
 
 const LeftSection = styled.div`
@@ -77,8 +73,8 @@ const Header: React.FunctionComponent = () => {
   const all_complete = selected_tasks.every(task => task.complete)
   const all_incomplete = selected_tasks.every(task => !task.complete)
 
-  const header_jsx = (
-    <AppBar>
+  return (
+    <AppBar position="relative">
       <Container
         style={{
           backgroundColor: editing ? highlight_color : "white",
@@ -139,13 +135,6 @@ const Header: React.FunctionComponent = () => {
         </Main>
       </Container>
     </AppBar>
-  )
-
-  return (
-    <Fragment>
-      <Placeholder />
-      {header_jsx}
-    </Fragment>
   )
 }
 

@@ -13,11 +13,19 @@ const PageContainer = styled.div`
   min-height: 100vh;
 `
 
+const StickySection = styled.div`
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+`
+
 const TaskPage: React.FunctionComponent = () => {
   return (
     <PageContainer>
-      <Header />
-      <TaskAdder />
+      <StickySection>
+        <Header />
+        <TaskAdder />
+      </StickySection>
       <Drawer />
       <MainView />
     </PageContainer>
