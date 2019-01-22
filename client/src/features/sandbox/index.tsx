@@ -1,7 +1,7 @@
 import React, { useState, Fragment } from "react"
 import { Subject, merge, from, Observable } from "rxjs"
 import { map, concatMap } from "rxjs/operators"
-import { create, combineReducers } from "./rxstuff"
+import { create, combineReducers, createReducer } from "lib/rxstate"
 
 const wait = (ms: number) => {
   return new Promise(res => setTimeout(res, ms))
@@ -12,7 +12,10 @@ const inc$ = new Subject<void>()
 const dec$ = new Subject<void>()
 const reset$ = new Subject<void>()
 const delayedReset$ = new Subject<void>()
-const counterReducer$ = merge(
+const add$ = new Subject<number>()
+
+const counterReducer$ = createReducer<CounterState>(
+  add$.pipe(map(val => (state: CounterState) => state + val)),
   inc$.pipe(map(() => (state: CounterState) => state + 1)),
   dec$.pipe(map(() => (state: CounterState) => state - 1)),
   reset$.pipe(map(() => () => 10)),
@@ -136,14 +139,14 @@ const SandboxPage: React.FunctionComponent = () => {
   console.log("Page Render")
 
   return (
-    <Provider reducerStream={reducer_stream}>
+    <Provider>
       <div>
-        <h1>Sandbox Y!!!</h1>
+        <h1>Sandbox Nice!</h1>
         <button onClick={() => setShow(show => !show)}>Show</button>
 
         {show && (
           <Fragment>
-            <ConnectedCounter />
+            <ConnectedCounter ref={el => el} />
 
             <hr />
 

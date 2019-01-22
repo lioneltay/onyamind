@@ -41,6 +41,7 @@
 - [x] readme / package.json
 - [x] select all should become deselect all if everything is selected
 
+- [ ] clicking on task adder selects all items
 
 - [ ] refactor state
 
