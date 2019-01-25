@@ -1,3 +1,15 @@
+# RxState
+
+- [x] should be able to subscribe to anypart of the state...
+  - [ ] The stream should be available regardless of how you import it
+
+- [x] action creators need access to the current state
+  - [ ] have access if they choose to return a thunk as a payload (must connect)
+
+- [ ] don't know when async actions resolve since no returned promise
+  - [ ] could be solved by subscribing to the relevant part of the state? not really that is sort of connects job anyway
+
+
 # Tasks
 
 - [x] remove observable by ensuring state changes like login go through the state instead of just firebase
@@ -40,10 +52,11 @@
 - [x] loader componenets
 - [x] readme / package.json
 - [x] select all should become deselect all if everything is selected
+- [x] bug: clicking on task adder selects all items
 
-- [ ] clicking on task adder selects all items
+- [ ] refactor state to rxjs reducer style
 
-- [ ] refactor state
+- [ ] toggle row MoreVert icons are misaligned
 
 - [ ] undo snackbar
 - [ ] implement max number of tasks per list

@@ -1,24 +1,25 @@
 import React from "react"
 import styled from "styled-components"
-import { Task } from "../../types"
+import { Task, ID } from "../../../types"
 
-import Typography from "@material-ui/core/Typography"
-import IconButton from "@material-ui/core/IconButton"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
 import Fab from "@material-ui/core/Fab"
+import IconButton from "@material-ui/core/IconButton"
 
+import Assignment from "@material-ui/icons/Assignment"
 import Delete from "@material-ui/icons/Delete"
 import Add from "@material-ui/icons/Add"
-import DragHandle from "@material-ui/icons/DragHandle"
 import Check from "@material-ui/icons/Check"
-import Assignment from "@material-ui/icons/Assignment"
-import { useAppState } from "../../state"
 
 import { Flipped } from "react-flip-toolkit"
 
-import { highlight_color } from "../../constants"
+import { highlight_color } from "../../../constants"
 import { ListItemText } from "@material-ui/core"
+
+import { connect } from "services/state"
+import { toggleTaskSelection } from "services/state/modules/editing"
+import { editTask, removeTask } from "services/api"
 
 const Container = styled(ListItem)`
   position: relative;
@@ -61,16 +62,21 @@ const SingleLineWithEllipsis: React.FunctionComponent<Stylable> = ({
 
 export type Props = {
   task: Task
+  onItemClick: () => void
+  editing: boolean
+  selected_task_ids: ID[]
+  toggleTaskSelection: (id: ID) => void
+  touch_screen: boolean
 }
 
-const TaskItem: React.FunctionComponent<Props> = ({ task }) => {
-  const {
-    touch_screen,
-    selected_task_ids,
-    editing,
-    actions: { startEditingTask, toggleTaskSelection, editTask, removeTask },
-  } = useAppState()
-
+const TaskItem: React.FunctionComponent<Props> = ({
+  task,
+  onItemClick,
+  editing,
+  selected_task_ids,
+  toggleTaskSelection,
+  touch_screen,
+}) => {
   const selected = selected_task_ids.findIndex(id => id === task.id) >= 0
 
   return (
@@ -122,13 +128,18 @@ const TaskItem: React.FunctionComponent<Props> = ({ task }) => {
               {task.notes}
             </SingleLineWithEllipsis>
           }
-          onClick={() => startEditingTask(task.id)}
+          onClick={onItemClick}
         />
 
         {editing || touch_screen ? null : (
           <Overlay>
             <IconButton
-              onClick={() => editTask(task.id, { complete: !task.complete })}
+              onClick={() =>
+                editTask({
+                  task_id: task.id,
+                  task_data: { complete: !task.complete },
+                })
+              }
             >
               {task.complete ? <Add /> : <Check />}
             </IconButton>
@@ -141,7 +152,12 @@ const TaskItem: React.FunctionComponent<Props> = ({ task }) => {
 
         {editing || !touch_screen || !task.complete ? null : (
           <IconButton
-            onClick={() => editTask(task.id, { complete: !task.complete })}
+            onClick={() =>
+              editTask({
+                task_id: task.id,
+                task_data: { complete: !task.complete },
+              })
+            }
           >
             <Add />
           </IconButton>
@@ -151,4 +167,13 @@ const TaskItem: React.FunctionComponent<Props> = ({ task }) => {
   )
 }
 
-export default TaskItem
+export default connect(
+  state => ({
+    editing: state.editing,
+    selected_task_ids: state.selected_task_ids,
+    touch_screen: state.touch_screen,
+  }),
+  {
+    toggleTaskSelection,
+  },
+)(TaskItem)

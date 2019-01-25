@@ -14,31 +14,54 @@ import { useForceUpdate } from "./utils"
 export type Reducer<S> = (state: S) => S
 type Selector<S, R> = (state: S) => R
 
-export function create<S>(reducer$: Observable<Reducer<S>>, initial_state: S) {
+export function createObservableStateTools<S>(
+  reducer$: Observable<Reducer<S>>,
+  initial_state: S,
+) {
   const Context = createContext((null as unknown) as S)
   const reducer_stream = reducer$.pipe(shareReplay(1))
+  let current_state = initial_state
 
-  type SubjectMap<T = any> = { [key: string]: Subject<T> }
-  type ActionCreatorsResult<T extends SubjectMap> = {
-    [K in keyof T]: T[K] extends Subject<infer R> ? (payload: R) => void : never
-  }
+  type WrappedDispatcherMap<A> = { [K in keyof A]: ConnectedDispatcher<A[K]> }
+  type DispatcherMap = { [key: string]: Dispatcher<any> }
 
-  const connect = <A extends SubjectMap, R extends any>(
-    selector: Selector<S, R>,
-    actionSubjects: A,
-  ) => {
-    const actions = Object.keys(actionSubjects).reduce(
-      (akk, key) => {
-        return {
-          ...akk,
-          [key]: (value: any) => actionSubjects[key].next(value),
+  function connect<A extends DispatcherMap, R extends any>(
+    selector: Selector<S, R> | null,
+    _actions: A,
+  ) {
+    const actions = Object.keys(_actions).reduce(
+      (acc: any, key) => {
+        acc[key] = (...args: any[]) => {
+          const dispatcher = _actions[key]
+          const val = dispatcher(...args)
+
+          const payload = typeof val === "function" ? val(current_state) : val
+          dispatcher.output_s.next(payload)
+          return payload
         }
+
+        return acc
       },
-      {} as ActionCreatorsResult<A>,
+      {} as WrappedDispatcherMap<A>,
     )
 
+    if (!selector) {
+      return <P extends any>(WrappedComponent: React.ComponentType<P>) => {
+        type NewProps = Omit<P, keyof R | keyof A>
+
+        const Connect = forwardRef<typeof WrappedComponent, NewProps>(
+          (props, ref) => {
+            const Comp = WrappedComponent as React.ComponentType<any>
+            return <Comp ref={ref} {...props} {...actions} />
+          },
+        )
+
+        return Connect
+      }
+    }
+
     return <P extends any>(WrappedComponent: React.ComponentType<P>) => {
-      type NewProps = Omit<P, keyof R | keyof ActionCreatorsResult<A>>
+      type NewProps = Omit<P, keyof R | keyof A>
 
       const Connect = forwardRef<typeof WrappedComponent, NewProps>(
         (props, ref) => {
@@ -52,7 +75,6 @@ export function create<S>(reducer$: Observable<Reducer<S>>, initial_state: S) {
           >)
 
           if (shallowEquals(new_state, state_ref.current)) {
-            console.log("shallow equals", new_state, state_ref.current)
             return child_ref.current
           }
 
@@ -60,7 +82,7 @@ export function create<S>(reducer$: Observable<Reducer<S>>, initial_state: S) {
 
           const Comp = WrappedComponent as React.ComponentType<any>
           child_ref.current = (
-            <Comp {...new_state} {...props} {...actions} />
+            <Comp ref={ref} {...new_state} {...props} {...actions} />
           ) as React.ReactElement<NewProps>
 
           return child_ref.current
@@ -73,13 +95,11 @@ export function create<S>(reducer$: Observable<Reducer<S>>, initial_state: S) {
 
   const Provider: React.FunctionComponent = ({ children }) => {
     const forceUpdate = useForceUpdate()
-    const state_ref = useRef(initial_state)
-    const state = state_ref.current
 
     useEffect(
       () => {
         const subscription = reducer_stream.subscribe(reducer => {
-          state_ref.current = reducer(state_ref.current)
+          current_state = reducer(current_state)
           forceUpdate()
         })
         return () => subscription.unsubscribe()
@@ -87,7 +107,7 @@ export function create<S>(reducer$: Observable<Reducer<S>>, initial_state: S) {
       [reducer_stream],
     )
 
-    return <Context.Provider value={state}>{children}</Context.Provider>
+    return <Context.Provider value={current_state}>{children}</Context.Provider>
   }
 
   return {
@@ -139,8 +159,76 @@ export function combineReducers<T extends ObservableMap>(
   return reducer$
 }
 
-export const createReducer = <S extends any>(
-  ...streams: Observable<Reducer<S>>[]
-): Observable<Reducer<S>> => {
-  return merge(...streams)
+export function createReducer<S extends any>(
+  _state_subject: Subject<S> | Observable<Reducer<S>>[],
+  _streams?: Observable<Reducer<S>>[],
+): Observable<Reducer<S>> {
+  const state_subject = Array.isArray(_state_subject)
+    ? undefined
+    : _state_subject
+  const streams = (_streams ? _streams : _state_subject) as Observable<
+    Reducer<S>
+  >[]
+
+  return merge(...streams).pipe(
+    map(reducer => (state: S) => {
+      const new_state = reducer(state)
+      if (state_subject) {
+        state_subject.next(new_state)
+      }
+      return new_state
+    }),
+  )
+}
+
+type ThunkDispatcher<I extends any[] = any, R = any, S = any> = (
+  ...input: I
+) => (state: S) => R
+
+export type ConnectedDispatcher<D> = D extends ThunkDispatcher
+  ? UnwrapThunkDispatcher<D>
+  : D
+
+type UnwrapThunkDispatcher<AC extends FunctionType> = (
+  ...args: Arguments<AC>
+) => ReturnType<ReturnType<AC>>
+
+interface VoidDispatcher {
+  (): void
+  pipe: Observable<void>["pipe"]
+  output_s: Subject<void>
+}
+
+interface Dispatcher<AC extends FunctionType> {
+  (...args: Arguments<AC>): ReturnType<AC>
+  pipe: Observable<
+    ReturnType<AC> extends FunctionType
+      ? ReturnType<ReturnType<AC>>
+      : ReturnType<AC>
+  >["pipe"]
+  output_s: Subject<
+    ReturnType<AC> extends FunctionType
+      ? ReturnType<ReturnType<AC>>
+      : ReturnType<AC>
+  >
+}
+
+export function createDispatcher(): VoidDispatcher
+export function createDispatcher<AC extends FunctionType>(
+  creator: AC,
+): Dispatcher<AC>
+export function createDispatcher<AC extends FunctionType>(
+  _creator?: AC,
+): VoidDispatcher | Dispatcher<AC> {
+  const output_s = new Subject<ReturnType<AC>>()
+  const creator: any = _creator || (() => {})
+
+  const dispatcher: Dispatcher<AC> = (...input: Arguments<AC>) => {
+    return creator(...input)
+  }
+
+  dispatcher.output_s = output_s as any
+  dispatcher.pipe = (...args: any[]) => (output_s.pipe as any)(...args)
+
+  return dispatcher
 }

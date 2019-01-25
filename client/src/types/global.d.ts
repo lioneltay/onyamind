@@ -18,6 +18,14 @@ declare global {
     ? A
     : never
 
+  type MonoFunction<T extends any = any, R = any> = (arg: T) => R
+  export type FirstArg<T extends MonoFunction> = T extends MonoFunction<
+    infer A,
+    any
+  >
+    ? A
+    : never
+
   export type Merge<A, B> = Pick<A, Exclude<keyof A, keyof B>> & B
 
   export namespace NodeJS {

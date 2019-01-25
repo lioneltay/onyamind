@@ -1,8 +1,8 @@
 import React, { Fragment } from "react"
 import styled from "styled-components"
 
-import { useAppState } from "../state"
-import { highlight_color, highlighted_text_color } from "../constants"
+import { useAppState } from "../../services/state/oldappstate"
+import { highlight_color, highlighted_text_color } from "../../constants"
 
 import IconButton from "@material-ui/core/IconButton"
 import Menu from "@material-ui/icons/Menu"
@@ -13,7 +13,16 @@ import Add from "@material-ui/icons/Add"
 import AppBar from "@material-ui/core/AppBar"
 import Toolbar from "@material-ui/core/Toolbar"
 
-import { Task } from "../types"
+import { Task, ID, TaskList } from "../../types"
+
+import { connect, toggleDrawer } from "services/state"
+import {
+  uncheckSelectedTasks,
+  deleteSelectedTasks,
+  checkSelectedTasks,
+} from "services/state/modules/editing"
+import { ConnectedDispatcher } from "lib/rxstate"
+import { stopEditing } from "services/state/modules/editing"
 
 const Container = styled(Toolbar)`
   padding-left: 0;
@@ -39,23 +48,31 @@ const LeftSection = styled.div`
   font-size: 20px;
 `
 
-const Header: React.FunctionComponent = () => {
-  const {
-    editing,
-    selected_task_ids,
-    tasks,
-    selected_task_list_id,
-    task_lists,
+type Props = {
+  editing: boolean
+  selected_task_ids: ID[]
+  task_lists: TaskList[]
+  tasks: Task[]
+  selected_task_list_id: ID | null
+  toggleDrawer: ConnectedDispatcher<typeof toggleDrawer>
+  stopEditing: ConnectedDispatcher<typeof stopEditing>
+  checkSelectedTasks: ConnectedDispatcher<typeof checkSelectedTasks>
+  uncheckSelectedTasks: ConnectedDispatcher<typeof uncheckSelectedTasks>
+  deleteSelectedTasks: ConnectedDispatcher<typeof deleteSelectedTasks>
+}
 
-    actions: {
-      checkSelectedTasks,
-      uncheckSelectedTasks,
-      deleteSelectedTasks,
-      stopEditing,
-      setShowDrawer,
-    },
-  } = useAppState()
-
+const Header: React.FunctionComponent<Props> = ({
+  toggleDrawer,
+  editing,
+  stopEditing,
+  selected_task_ids,
+  task_lists,
+  tasks,
+  selected_task_list_id,
+  checkSelectedTasks,
+  uncheckSelectedTasks,
+  deleteSelectedTasks,
+}) => {
   const selected_task_list = task_lists
     ? task_lists.find(list => list.id === selected_task_list_id)
     : null
@@ -93,7 +110,7 @@ const Header: React.FunctionComponent = () => {
               <Fragment>
                 <IconButton
                   style={{ display: "inline-block" }}
-                  onClick={() => setShowDrawer(true)}
+                  onClick={toggleDrawer}
                 >
                   <Menu />
                 </IconButton>
@@ -127,4 +144,19 @@ const Header: React.FunctionComponent = () => {
   )
 }
 
-export default Header
+export default connect(
+  state => ({
+    editing: state.editing,
+    selected_task_ids: state.selected_task_ids,
+    task_lists: state.task_lists,
+    tasks: state.tasks,
+    selected_task_list_id: state.selected_task_list_id,
+  }),
+  {
+    toggleDrawer,
+    stopEditing,
+    checkSelectedTasks,
+    uncheckSelectedTasks,
+    deleteSelectedTasks,
+  },
+)(Header)

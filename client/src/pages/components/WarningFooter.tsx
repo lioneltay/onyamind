@@ -6,8 +6,10 @@ import Typography from "@material-ui/core/Typography"
 import Button from "@material-ui/core/Button"
 import Clear from "@material-ui/icons/Clear"
 import Modal from "./Modal"
-import { useAppState } from "../state"
-import { error_color, grey_text } from "../constants"
+import { error_color, grey_text } from "../../constants"
+import { connect } from "../../services/state"
+import { signIn } from "../../services/state/modules/auth"
+import { toggleWarningFooter } from "../../services/state/modules/warning-footer"
 
 const Container = styled.div`
   position: fixed;
@@ -33,18 +35,25 @@ const X = styled(Clear)`
   transform: translateY(-50%);
 ` as typeof Clear
 
-const WarningFooter: React.FunctionComponent = () => {
-  const {
-    user,
-    show_warning_footer,
-    actions: { signInWithGoogle, setShowWarningFooter },
-  } = useAppState()
+type Props = {
+  toggle: () => void
+  show: boolean
+  signIn: () => void
+}
 
+const WarningFooter: React.FunctionComponent<Props> = ({
+  show,
+  toggle,
+  signIn,
+}) => {
   const [show_modal, setShowModal] = useState(false)
+
+  console.log(show)
 
   return (
     <Transition
-      items={show_warning_footer && !user}
+      // items={show_warning_footer && !user}
+      items={show}
       from={{ transform: "translateY(100%)" }}
       enter={{ transform: "translateY(0)" }}
       leave={{ transform: "translateY(100%)" }}
@@ -53,11 +62,11 @@ const WarningFooter: React.FunctionComponent = () => {
         show ? (
           <Container style={style}>
             <Typography variant="caption" color="inherit" align="center">
-              <Action onClick={signInWithGoogle}>Sign in</Action> to backup and
-              sync your notes across devices.{" "}
+              <Action onClick={signIn}>Sign in</Action> to backup and sync your
+              notes across devices.{" "}
               <Action onClick={() => setShowModal(true)}>Learn more.</Action>
             </Typography>
-            <X fontSize="small" onClick={() => setShowWarningFooter(false)} />
+            <X fontSize="small" onClick={toggle} />
 
             <Modal
               style={{ width: 500, maxWith: "100%" }}
@@ -79,8 +88,7 @@ const WarningFooter: React.FunctionComponent = () => {
                 accessible directly on your device. Your data could be lost if
                 you delete the app damage your phone.
                 <div className="my-2">
-                  <Action onClick={signInWithGoogle}>Sign in</Action> now to
-                  enable:
+                  <Action onClick={signIn}>Sign in</Action> now to enable:
                 </div>
                 <ul className="my-2" style={{ listStyle: "disc inside" }}>
                   <li>Access to your tasks across all your devices</li>
@@ -94,4 +102,12 @@ const WarningFooter: React.FunctionComponent = () => {
   )
 }
 
-export default WarningFooter
+export default connect(
+  state => ({
+    show: state.show_warning_footer,
+  }),
+  {
+    toggle: toggleWarningFooter,
+    signIn,
+  },
+)(WarningFooter)

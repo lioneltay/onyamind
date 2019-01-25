@@ -1,62 +1,84 @@
 import React, { useState, Fragment } from "react"
-import { Subject, merge, from, Observable } from "rxjs"
-import { map, concatMap } from "rxjs/operators"
-import { create, combineReducers, createReducer } from "lib/rxstate"
+import { Subject, merge, from, Observable, interval, ReplaySubject } from "rxjs"
+import {
+  map,
+  delay,
+  concatMap,
+  shareReplay,
+  publishReplay,
+  tap,
+  switchMap,
+  refCount,
+  takeUntil,
+  multicast,
+} from "rxjs/operators"
+import {
+  createObservableStateTools,
+  combineReducers,
+  createReducer,
+  createDispatcher,
+  ConnectedDispatcher,
+} from "lib/rxstate"
 
-const wait = (ms: number) => {
+const wait = (ms: number): Promise<void> => {
   return new Promise(res => setTimeout(res, ms))
 }
 
-type CounterState = number
-const inc$ = new Subject<void>()
-const dec$ = new Subject<void>()
-const reset$ = new Subject<void>()
-const delayedReset$ = new Subject<void>()
-const add$ = new Subject<number>()
+type CounterState = { count: number }
+const inc = createDispatcher()
+const dec = createDispatcher()
 
-const counterReducer$ = createReducer<CounterState>(
-  add$.pipe(map(val => (state: CounterState) => state + val)),
-  inc$.pipe(map(() => (state: CounterState) => state + 1)),
-  dec$.pipe(map(() => (state: CounterState) => state - 1)),
-  reset$.pipe(map(() => () => 10)),
-  delayedReset$.pipe(
-    concatMap(() => {
-      return from(wait(3000).then(() => (): number => 10))
-    }),
+const counterState$ = new Subject<CounterState>()
+const counterReducer$ = createReducer<CounterState>(counterState$, [
+  inc.pipe(
+    map(() => (state: CounterState) => ({ ...state, count: state.count + 1 })),
   ),
-)
+  dec.pipe(
+    map(() => (state: CounterState) => ({ ...state, count: state.count - 1 })),
+  ),
+])
 
-type ItemsState = string[]
-const append$ = new Subject<string>()
-const itemsReducer$ = append$.pipe(
-  map(item => (state: ItemsState) => state.concat(item)),
-)
-
-type AppAState = {
-  counter: CounterState
-  items: ItemsState
+type FormState = {
+  value: number
 }
-const appAReducer$ = combineReducers({
-  counter: counterReducer$,
-  items: itemsReducer$,
+
+const getValue = createDispatcher(() => {
+  return (state: TotalState) => {
+    return wait(2000).then(() => state.counter_app.count)
+  }
 })
+
+const formState$ = new Subject<FormState>()
+const formReducer$ = createReducer<FormState>(formState$, [
+  getValue.pipe(
+    switchMap(val => from(val).pipe(takeUntil(counterState$))),
+    map(count => (state: FormState) => ({ ...state, value: count })),
+  ),
+])
 
 type TotalState = {
-  appA: AppAState
+  counter_app: CounterState
+  form_app: FormState
 }
 
-const rootReducer$ = combineReducers({
-  appA: appAReducer$,
-})
-
 const initial_state: TotalState = {
-  appA: {
-    counter: 10,
-    items: ["first"],
+  counter_app: {
+    count: 0,
+  },
+  form_app: {
+    value: 0,
   },
 }
 
-const { reducer_stream, connect, Provider } = create(
+const rootReducer$ = combineReducers({
+  counter_app: counterReducer$,
+  form_app: formReducer$,
+})
+
+counterState$.subscribe(val => console.log("CounterState: ", val))
+formState$.subscribe(val => console.log("FormState: ", val))
+
+const { reducer_stream, connect, Provider } = createObservableStateTools(
   rootReducer$,
   initial_state,
 )
@@ -64,20 +86,14 @@ const { reducer_stream, connect, Provider } = create(
 type CounterProps = {
   increment: () => void
   decrement: () => void
-  reset: () => void
-  delayedReset: () => void
-  counter: number
+  count: number
 }
 
 const Counter: React.FunctionComponent<CounterProps> = ({
   increment,
   decrement,
-  counter,
-  reset,
-  delayedReset,
+  count,
 }) => {
-  console.log("Counter Render")
-
   return (
     <div>
       <div>
@@ -86,57 +102,53 @@ const Counter: React.FunctionComponent<CounterProps> = ({
       <div>
         <button onClick={decrement}>Decrement</button>
       </div>
-      <div>
-        <button onClick={reset}>Reset</button>
-      </div>
-      <div>
-        <button onClick={delayedReset}>Delayed Reset</button>
-      </div>
-      <h1>{counter}</h1>
+      <h1>{count}</h1>
     </div>
   )
 }
 
 const ConnectedCounter = connect(
-  state => {
-    return { counter: state.appA.counter }
-  },
+  state => ({ count: state.counter_app.count }),
   {
-    increment: inc$,
-    decrement: dec$,
-    reset: reset$,
-    delayedReset: delayedReset$,
+    increment: inc,
+    decrement: dec,
   },
 )(Counter)
 
-type ItemsProps = {
-  items: string[]
-  addItem: (item: string) => void
+type FormProps = {
+  value: number
+  getValue: ConnectedDispatcher<typeof getValue>
 }
 
-const Items: React.FunctionComponent<ItemsProps> = ({ items, addItem }) => {
-  console.log("Items Render")
+const Form: React.FunctionComponent<FormProps> = ({ value, getValue }) => {
+  const [submitting, setSubmitting] = useState(false)
 
   return (
     <div>
-      <button onClick={() => addItem(Math.random().toString())}>Add</button>
-
-      {items.map(item => (
-        <div>{item}</div>
-      ))}
+      <h1>{value}</h1>
+      <button
+        disabled={submitting}
+        onClick={async () => {
+          setSubmitting(true)
+          getValue().then(() => setSubmitting(false))
+        }}
+      >
+        Submit
+      </button>
+      <div>{submitting ? "SUBMITTING" : "IDLE"}</div>
     </div>
   )
 }
 
-const ConnectedItems = connect(
-  state => ({ items: state.appA.items }),
-  { addItem: append$ },
-)(Items)
+const ConnectedForm = connect(
+  state => ({ value: state.form_app.value }),
+  {
+    getValue,
+  },
+)(Form)
 
 const SandboxPage: React.FunctionComponent = () => {
   const [show, setShow] = useState(true)
-
-  console.log("Page Render")
 
   return (
     <Provider>
@@ -146,15 +158,11 @@ const SandboxPage: React.FunctionComponent = () => {
 
         {show && (
           <Fragment>
-            <ConnectedCounter ref={el => el} />
-
-            <hr />
-
             <ConnectedCounter />
 
             <hr />
 
-            <ConnectedItems />
+            <ConnectedForm />
           </Fragment>
         )}
       </div>
@@ -163,3 +171,27 @@ const SandboxPage: React.FunctionComponent = () => {
 }
 
 export default SandboxPage
+
+// const stream = interval(1000).pipe(
+//   tap(val => console.log("Tap: ", val)),
+//   // shareReplay(1),
+//   publishReplay(1),
+//   // multicast(() => new ReplaySubject(1)),
+//   refCount(),
+// )
+
+// let subA = stream.subscribe(val => console.log("A: ", val))
+// let subB
+
+// setTimeout(() => {
+//   subB = stream.subscribe(val => console.log("B: ", val))
+// }, 4500)
+
+// setTimeout(() => {
+//   subA.unsubscribe()
+//   subB.unsubscribe()
+// }, 8000)
+
+// setTimeout(() => {
+//   stream.subscribe(val => console.log("C: ", val))
+// }, 11000)

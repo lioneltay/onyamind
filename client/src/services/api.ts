@@ -1,5 +1,5 @@
-import { firebase, firestore, dataWithId } from "features/todo-app/firebase"
-import { Task, ID, TaskList, User } from "../types"
+import { firebase, firestore, dataWithId } from "services/firebase"
+import { Task, ID, TaskList, User } from "types"
 
 export const getTasks = async (list_id: ID): Promise<Task[]> => {
   return firestore
@@ -30,10 +30,14 @@ export const addTask = async (
     })
 }
 
-export const editTask = async (
-  task_id: ID,
-  task_data: Partial<Omit<Task, "id">>,
-): Promise<Task> => {
+type EditTaskPayload = {
+  task_id: ID
+  task_data: Partial<Omit<Task, "id">>
+}
+export const editTask = async ({
+  task_id,
+  task_data,
+}: EditTaskPayload): Promise<Task> => {
   await firestore
     .collection("tasks")
     .doc(task_id)
@@ -129,9 +133,7 @@ export const removeTaskList = async (list_id: ID): Promise<ID> => {
   return list_id
 }
 
-const getPrimaryTaskList = async (
-  user_id: ID | null,
-): Promise<TaskList> => {
+const getPrimaryTaskList = async (user_id: ID | null): Promise<TaskList> => {
   const res = await firestore
     .collection("task_lists")
     .where("primary", "==", true)

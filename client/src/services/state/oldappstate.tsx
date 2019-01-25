@@ -5,74 +5,64 @@ import React, {
   useContext,
   useMemo,
 } from "react"
-import { firebase, firestore, dataWithId } from "features/todo-app/firebase"
+import { firebase, firestore, dataWithId } from "services/firebase"
 import { Observable, of } from "rxjs"
 import { switchMap } from "rxjs/operators"
-import { Task, User, ID, TaskList } from "../types"
+import { Task, User, ID, TaskList } from "../../types"
 import { uniq, difference } from "ramda"
-import {
-  createDefaultTaskList,
-  getTaskLists,
-  addTask,
-  removeTask,
-  editTask,
-  addTaskList,
-  editTaskList,
-  removeTaskList,
-} from "./api"
+import { editTaskList } from "services/api"
 
 type Context = {
-  selected_task_list_id: ID | null
-  touch_screen: boolean
-  editing: boolean
-  user: User | null
-  tasks: Task[] | null
-  task_lists: TaskList[] | null
-  show_edit_modal: boolean
-  editing_task_id: ID | null
-  new_task_title: string
-  selected_task_ids: ID[]
-  show_drawer: boolean
-  show_warning_footer: boolean
+  // selected_task_list_id: ID | null
+  // touch_screen: boolean
+  // editing: boolean
+  // user: User | null
+  // tasks: Task[] | null
+  // task_lists: TaskList[] | null
+  // show_edit_modal: boolean
+  // editing_task_id: ID | null
+  // new_task_title: string
+  // selected_task_ids: ID[]
+  // show_drawer: boolean
+  // show_warning_footer: boolean
 
   actions: {
-    setShowWarningFooter: React.Dispatch<React.SetStateAction<boolean>>
-    signOut: () => Promise<void>
-    signInWithGoogle: () => Promise<void>
+    // setShowWarningFooter: React.Dispatch<React.SetStateAction<boolean>>
+    // signOut: () => Promise<void>
+    // signInWithGoogle: () => Promise<void>
 
-    selectTaskList: (list_id: ID) => void
+    // selectTaskList: (list_id: ID) => void
 
-    setShowDrawer: (show: boolean) => void
+    // setShowDrawer: (show: boolean) => void
 
-    addTaskList: typeof addTaskList
-    removeTaskList: typeof removeTaskList
-    editTaskList: typeof editTaskList
-    setPrimaryTaskList: (id: ID) => Promise<void>
+    // addTaskList: typeof addTaskList
+    // removeTaskList: typeof removeTaskList
+    // editTaskList: typeof editTaskList
+    // setPrimaryTaskList: (id: ID) => Promise<void>
+    // addTask: (
+    //   task: Omit<
+    //     Task,
+    //     "id" | "created_at" | "updated_at" | "complete" | "list_id"
+    //   >,
+    // ) => Promise<Task>
+    // editTask: (
+    //   task_id: ID,
+    //   task_data: Partial<Omit<Task, "id">>,
+    // ) => Promise<Task>
+    // removeTask: (task_id: ID) => Promise<ID>
+    // checkSelectedTasks: () => Promise<void>
+    // uncheckSelectedTasks: () => Promise<void>
+    // deleteSelectedTasks: () => Promise<void>
+    // uncheckCompletedTasks: () => Promise<void>
+    // deleteCompletedTasks: () => Promise<void>
 
-    addTask: (
-      task: Omit<
-        Task,
-        "id" | "created_at" | "updated_at" | "complete" | "list_id"
-      >,
-    ) => Promise<Task>
-    editTask: (
-      task_id: ID,
-      task_data: Partial<Omit<Task, "id">>,
-    ) => Promise<Task>
-    removeTask: (task_id: ID) => Promise<ID>
-
-    selectAllIncompleteTasks: () => void
-    deselectAllIncompleteTasks: () => void
-    toggleTaskSelection: (id: ID) => void
-    setNewTaskTitle: (title: string) => void
-    startEditingTask: (task_id: ID) => void
-    stopEditingTask: () => void
-    checkSelectedTasks: () => Promise<void>
-    uncheckSelectedTasks: () => Promise<void>
-    deleteSelectedTasks: () => Promise<void>
-    stopEditing: () => void
-    uncheckCompletedTasks: () => Promise<void>
-    deleteCompletedTasks: () => Promise<void>
+    // selectAllIncompleteTasks: () => void
+    // deselectAllIncompleteTasks: () => void
+    // toggleTaskSelection: (id: ID) => void
+    // setNewTaskTitle: (title: string) => void
+    // startEditingTask: (task_id: ID) => void
+    // stopEditingTask: () => void
+    // stopEditing: () => void
   }
 }
 
@@ -158,37 +148,37 @@ export const Provider: React.FunctionComponent = ({ children }) => {
     null,
   )
 
-  useEffect(
-    () => {
-      const subscription = user$.subscribe(async user =>
-        setShowWarningFooter(!user),
-      )
-      return () => subscription.unsubscribe()
-    },
-    [user$],
-  )
+  // useEffect(
+  //   () => {
+  //     const subscription = user$.subscribe(async user =>
+  //       setShowWarningFooter(!user),
+  //     )
+  //     return () => subscription.unsubscribe()
+  //   },
+  //   [user$],
+  // )
 
-  useEffect(
-    () => {
-      const subscription = user$.subscribe(async user => {
-        const user_id = user ? user.uid : null
-        const lists = await getTaskLists(user_id)
-        let primary_list = lists.find(list => list.primary)
-        if (!primary_list) {
-          primary_list = await createDefaultTaskList(user_id)
-        }
-        setSelectedTaskListId(primary_list.id)
-      })
-      return () => subscription.unsubscribe()
-    },
-    [user$],
-  )
+  // useEffect(
+  //   () => {
+  //     const subscription = user$.subscribe(async user => {
+  //       const user_id = user ? user.uid : null
+  //       const lists = await getTaskLists(user_id)
+  //       let primary_list = lists.find(list => list.primary)
+  //       if (!primary_list) {
+  //         primary_list = await createDefaultTaskList(user_id)
+  //       }
+  //       setSelectedTaskListId(primary_list.id)
+  //     })
+  //     return () => subscription.unsubscribe()
+  //   },
+  //   [user$],
+  // )
 
-  useEffect(() => {
-    const handler = () => setTouchScreen(true)
-    window.addEventListener("touchstart", handler)
-    return () => window.removeEventListener("touchstart", handler)
-  })
+  // useEffect(() => {
+  //   const handler = () => setTouchScreen(true)
+  //   window.addEventListener("touchstart", handler)
+  //   return () => window.removeEventListener("touchstart", handler)
+  // })
 
   return (
     <Context.Provider
@@ -196,7 +186,7 @@ export const Provider: React.FunctionComponent = ({ children }) => {
         task_lists,
         touch_screen,
         editing,
-        user,
+        // user,
         tasks,
         show_edit_modal,
         editing_task_id,
@@ -204,33 +194,34 @@ export const Provider: React.FunctionComponent = ({ children }) => {
         selected_task_ids,
         show_drawer,
         selected_task_list_id,
-        show_warning_footer,
+        // show_warning_footer,
 
         actions: {
-          setShowWarningFooter,
-          signOut: async () => {
-            await firebase.auth().signOut()
-          },
+          // setShowWarningFooter,
 
-          signInWithGoogle: async () => {
-            const google_provider = new firebase.auth.GoogleAuthProvider()
+          // signOut: async () => {
+          //   await firebase.auth().signOut()
+          // },
 
-            google_provider.setCustomParameters({
-              prompt: "select_account",
-            })
+          // signInWithGoogle: async () => {
+          //   const google_provider = new firebase.auth.GoogleAuthProvider()
 
-            const { user } = await firebase
-              .auth()
-              .signInWithPopup(google_provider)
-          },
+          //   google_provider.setCustomParameters({
+          //     prompt: "select_account",
+          //   })
+
+          //   const { user } = await firebase
+          //     .auth()
+          //     .signInWithPopup(google_provider)
+          // },
 
           selectTaskList: (id: ID) => {
             setSelectedTaskListId(id)
             setShowDrawer(false)
           },
-          addTaskList,
-          editTaskList,
-          removeTaskList,
+          // addTaskList,
+          // editTaskList,
+          // removeTaskList,
 
           setPrimaryTaskList: async (id: ID) => {
             if (!task_lists) {
@@ -256,66 +247,66 @@ export const Provider: React.FunctionComponent = ({ children }) => {
 
           setShowDrawer,
 
-          addTask: async data => {
-            if (!task_lists) {
-              throw Error("No task lists")
-            }
-            if (!tasks) {
-              throw Error("No tasks")
-            }
+          // addTask: async data => {
+          //   if (!task_lists) {
+          //     throw Error("No task lists")
+          //   }
+          //   if (!tasks) {
+          //     throw Error("No tasks")
+          //   }
 
-            if (!selected_task_list_id) {
-              throw Error("No selected_task_list_id. Not initialised correctly")
-            }
+          //   if (!selected_task_list_id) {
+          //     throw Error("No selected_task_list_id. Not initialised correctly")
+          //   }
 
-            const [task] = await Promise.all([
-              addTask({
-                ...data,
-                list_id: selected_task_list_id,
-              }),
-              editTaskList(selected_task_list_id, {
-                number_of_tasks: tasks.length + 1,
-              }),
-            ])
+          //   const [task] = await Promise.all([
+          //     addTask({
+          //       ...data,
+          //       list_id: selected_task_list_id,
+          //     }),
+          //     editTaskList(selected_task_list_id, {
+          //       number_of_tasks: tasks.length + 1,
+          //     }),
+          //   ])
 
-            return task
-          },
+          //   return task
+          // },
 
-          editTask,
+          // editTask,
 
-          removeTask: async id => {
-            if (!tasks) {
-              throw Error("No tasks")
-            }
-            if (!task_lists) {
-              throw Error("No task lists")
-            }
+          // removeTask: async id => {
+          //   if (!tasks) {
+          //     throw Error("No tasks")
+          //   }
+          //   if (!task_lists) {
+          //     throw Error("No task lists")
+          //   }
 
-            const task = tasks.find(task => task.id === id)
-            if (!task) {
-              throw Error("No such task")
-            }
+          //   const task = tasks.find(task => task.id === id)
+          //   if (!task) {
+          //     throw Error("No such task")
+          //   }
 
-            // Task List stuff
-            const task_list = task_lists.find(
-              list => list.id === selected_task_list_id,
-            )
-            if (!task_list) {
-              throw Error("No such task list")
-            }
-            if (!selected_task_list_id) {
-              throw Error("No selected_task_list_id. Not initialised correctly")
-            }
+          //   // Task List stuff
+          //   const task_list = task_lists.find(
+          //     list => list.id === selected_task_list_id,
+          //   )
+          //   if (!task_list) {
+          //     throw Error("No such task list")
+          //   }
+          //   if (!selected_task_list_id) {
+          //     throw Error("No selected_task_list_id. Not initialised correctly")
+          //   }
 
-            const [deleted_id] = await Promise.all([
-              removeTask(id),
-              editTaskList(selected_task_list_id, {
-                number_of_tasks: tasks.length - 1,
-              }),
-            ])
+          //   const [deleted_id] = await Promise.all([
+          //     removeTask(id),
+          //     editTaskList(selected_task_list_id, {
+          //       number_of_tasks: tasks.length - 1,
+          //     }),
+          //   ])
 
-            return deleted_id
-          },
+          //   return deleted_id
+          // },
 
           selectAllIncompleteTasks: () => {
             if (!tasks) {
@@ -468,34 +459,34 @@ export const Provider: React.FunctionComponent = ({ children }) => {
             setSelectedTasks([])
           },
 
-          toggleTaskSelection: id =>
-            setSelectedTasks(selected_tasks => {
-              setEditing(true)
-              const index = selected_tasks.findIndex(task_id => task_id === id)
-              const new_selected_tasks =
-                index >= 0
-                  ? selected_tasks.filter(task_id => task_id !== id)
-                  : [...selected_tasks, id]
+          // toggleTaskSelection: id =>
+          //   setSelectedTasks(selected_task_ids => {
+          //     setEditing(true)
+          //     const index = selected_task_ids.findIndex(task_id => task_id === id)
+          //     const new_selected_tasks =
+          //       index >= 0
+          //         ? selected_task_ids.filter(task_id => task_id !== id)
+          //         : [...selected_task_ids, id]
 
-              if (new_selected_tasks.length === 0) {
-                setEditing(false)
-                return []
-              }
+          //     if (new_selected_tasks.length === 0) {
+          //       setEditing(false)
+          //       return []
+          //     }
 
-              return new_selected_tasks
-            }),
+          //     return new_selected_tasks
+          //   }),
 
           setNewTaskTitle,
 
-          startEditingTask: id => {
-            setShowEditModal(true)
-            setEditingTaskId(id)
-          },
+          // startEditingTask: id => {
+          //   setShowEditModal(true)
+          //   setEditingTaskId(id)
+          // },
 
-          stopEditingTask: () => {
-            setShowEditModal(false)
-            setEditingTaskId(null)
-          },
+          // stopEditingTask: () => {
+          //   setShowEditModal(false)
+          //   setEditingTaskId(null)
+          // },
         },
       }}
     >

@@ -1,4 +1,4 @@
-import React, { Fragment } from "react"
+import React, { useState } from "react"
 import styled from "styled-components"
 import { useMediaQuery } from "@tekktekk/react-media-query"
 
@@ -9,13 +9,20 @@ import CheckBoxOutlineBlank from "@material-ui/icons/CheckBoxOutlineBlank"
 import IconButton from "@material-ui/core/IconButton"
 import TextField from "@material-ui/core/TextField"
 import InputAdornment from "@material-ui/core/InputAdornment"
-import { background_color, highlighted_text_color } from "../constants"
-import { useAppState } from "../state"
+import { background_color, highlighted_text_color } from "../../constants"
 
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemText from "@material-ui/core/ListItemText"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
+import { User, ID, Task } from "types"
+
+import {
+  selectAllIncompleteTasks,
+  deselectAllIncompleteTasks,
+} from "services/state/modules/editing"
+import { connect } from "services/state"
+import { addTask } from "services/state/modules/tasks"
 
 const OuterContainer = styled.div`
   position: relative;
@@ -37,20 +44,27 @@ const AdderTextField = styled(TextField).attrs({ variant: "outlined" })`
   }
 ` as typeof TextField
 
-const TaskAdder: React.FunctionComponent = () => {
-  const {
-    editing,
-    new_task_title,
-    user,
-    tasks,
-    selected_task_ids,
-    actions: {
-      selectAllIncompleteTasks,
-      deselectAllIncompleteTasks,
-      setNewTaskTitle,
-      addTask,
-    },
-  } = useAppState()
+type Props = {
+  tasks: Task[]
+  user: User
+  editing: boolean
+  selected_task_ids: ID[]
+  selectAllIncompleteTasks: () => void
+  deselectAllIncompleteTasks: () => void
+  addTask: typeof addTask
+  selected_task_list_id: ID | null
+}
+
+const TaskAdder: React.FunctionComponent<Props> = ({
+  user,
+  editing,
+  selected_task_ids,
+  selectAllIncompleteTasks,
+  deselectAllIncompleteTasks,
+  tasks,
+  selected_task_list_id,
+}) => {
+  const [new_task_title, setNewTaskTitle] = useState("")
 
   const handleIt = () => {
     if (new_task_title.length === 0) {
@@ -59,6 +73,7 @@ const TaskAdder: React.FunctionComponent = () => {
 
     setNewTaskTitle("")
     addTask({
+      list_id: selected_task_list_id,
       title: new_task_title,
       notes: "",
       user_id: user ? user.uid : null,
@@ -71,9 +86,6 @@ const TaskAdder: React.FunctionComponent = () => {
     tasks
       .filter(task => !task.complete)
       .every(task => selected_task_ids.includes(task.id))
-  // selected_task_ids.every(id => !!tasks.find(task => task.id === id))
-
-  console.log(selected_task_ids, all_selected)
 
   const mobile = useMediaQuery("(max-width: 800px)")
 
@@ -157,4 +169,17 @@ const TaskAdder: React.FunctionComponent = () => {
   )
 }
 
-export default TaskAdder
+export default connect(
+  state => ({
+    user: state.user,
+    editing: state.editing,
+    selected_task_ids: state.selected_task_ids,
+    tasks: state.tasks,
+    selected_task_list_id: state.selected_task_list_id,
+  }),
+  {
+    selectAllIncompleteTasks,
+    deselectAllIncompleteTasks,
+    addTask,
+  },
+)(TaskAdder)

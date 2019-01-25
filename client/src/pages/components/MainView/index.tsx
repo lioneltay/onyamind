@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import styled from "styled-components"
-import { useAppState } from "../../state"
+import { useAppState } from "../../../services/state/oldappstate"
 import { comparator, partition } from "ramda"
 
 import List from "@material-ui/core/List"
@@ -16,9 +16,18 @@ import IconButton from "@material-ui/core/IconButton"
 import ExpandMore from "@material-ui/icons/ExpandMore"
 import MoreVert from "@material-ui/icons/MoreVert"
 
-import IconButtonMenu from "../../components/IconButtonMenu"
+import IconButtonMenu from "../IconButtonMenu"
 import Task from "./Task"
 import EditModal from "./EditModal"
+import { ID, Task as ITask } from "types"
+
+import { connect } from "services/state"
+import { editTask } from "services/api"
+import {
+  uncheckCompletedTasks,
+  deleteCompletedTasks,
+} from "services/state/modules/editing"
+import { ConnectedDispatcher } from "lib/rxstate"
 
 const OuterContainer = styled.div`
   display: flex;
@@ -36,18 +45,35 @@ const Rotate = styled.div.attrs({})<{ flip: boolean }>`
   transition: 300ms;
 `
 
-const MainView: React.FunctionComponent = () => {
+type Props = {
+  tasks: ITask[]
+  uncheckCompletedTasks: ConnectedDispatcher<typeof uncheckCompletedTasks>
+  deleteCompletedTasks: ConnectedDispatcher<typeof deleteCompletedTasks>
+}
+
+const MainView: React.FunctionComponent<Props> = ({
+  tasks,
+  uncheckCompletedTasks,
+  deleteCompletedTasks,
+}) => {
   const {
-    tasks,
-    editing_task_id,
-    show_edit_modal,
-    actions: {
-      stopEditingTask,
-      editTask,
-      uncheckCompletedTasks,
-      deleteCompletedTasks,
-    },
+    actions: {},
   } = useAppState()
+
+  const [editing_task_id, setEditingTaskId] = useState(null as ID | null)
+  const [show_edit_modal, setShowEditModal] = useState(false)
+  const [show_complete_tasks, setShowCompleteTasks] = useState(false)
+
+  const toggleShowCompleteTasks = () => setShowCompleteTasks(show => !show)
+
+  const stopEditingTask = () => {
+    setEditingTaskId(null)
+    setShowEditModal(false)
+  }
+  const startEditingTask = (id: ID) => {
+    setEditingTaskId(id)
+    setShowEditModal(true)
+  }
 
   if (!tasks) {
     return (
@@ -60,9 +86,6 @@ const MainView: React.FunctionComponent = () => {
       </OuterContainer>
     )
   }
-
-  const [show, setShow] = useState(false)
-  const toggleShow = () => setShow(show => !show)
 
   const editing_task = tasks.find(task => task.id === editing_task_id)
 
@@ -78,22 +101,26 @@ const MainView: React.FunctionComponent = () => {
       <Container>
         <List className="p-0" style={{ background: "white" }}>
           {incomplete_tasks.map(task => (
-            <Task key={task.id} task={task} />
+            <Task
+              key={task.id}
+              task={task}
+              onItemClick={() => startEditingTask(task.id)}
+            />
           ))}
         </List>
 
         <List className="p-0">
           <ListItem button>
             <ListItemIcon>
-              <Rotate flip={show}>
-                <IconButton onClick={toggleShow}>
+              <Rotate flip={show_complete_tasks}>
+                <IconButton onClick={toggleShowCompleteTasks}>
                   <ExpandMore />
                 </IconButton>
               </Rotate>
             </ListItemIcon>
 
             <ListItemText
-              onClick={toggleShow}
+              onClick={toggleShowCompleteTasks}
               primary={`${complete_tasks.length} checked off`}
             />
 
@@ -115,10 +142,14 @@ const MainView: React.FunctionComponent = () => {
           </ListItem>
         </List>
 
-        <Collapse in={show}>
+        <Collapse in={show_complete_tasks}>
           <List className="p-0">
             {complete_tasks.map(task => (
-              <Task key={task.id} task={task} />
+              <Task
+                key={task.id}
+                task={task}
+                onItemClick={() => startEditingTask(task.id)}
+              />
             ))}
           </List>
         </Collapse>
@@ -130,7 +161,7 @@ const MainView: React.FunctionComponent = () => {
           open={show_edit_modal}
           onClose={stopEditingTask}
           onSubmit={async values => {
-            await editTask(editing_task.id, values)
+            await editTask({ task_id: editing_task.id, task_data: values })
             stopEditingTask()
           }}
         />
@@ -139,4 +170,7 @@ const MainView: React.FunctionComponent = () => {
   )
 }
 
-export default MainView
+export default connect(
+  state => ({ tasks: state.tasks }),
+  { uncheckCompletedTasks, deleteCompletedTasks },
+)(MainView)
