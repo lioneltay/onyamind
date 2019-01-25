@@ -4,7 +4,7 @@ import { firestore, dataWithId } from "services/firebase"
 import { Observable } from "rxjs"
 import { map, switchMap } from "rxjs/operators"
 
-import { user$ } from "./auth"
+import { user_s } from "./auth"
 import { State } from "services/state"
 import { createDispatcher } from "services/state/tools"
 
@@ -26,7 +26,7 @@ export const selectTaskList = createDispatcher(
   (task_list_id: ID) => task_list_id,
 )
 
-const lists_s = user$.pipe(
+const lists_s = user_s.pipe(
   switchMap(user => createCurrentListsStream(user ? user.uid : null)),
 )
 

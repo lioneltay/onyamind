@@ -9,9 +9,6 @@ import WarningFooter from "./components/WarningFooter"
 
 import { background_color } from "../constants"
 
-import { firebase } from "services/firebase"
-import { Observable } from "rxjs"
-
 import { connect, setTouchEnabled, selectTaskList } from "services/state"
 import { showWarningFooter } from "services/state/modules/warning-footer"
 
@@ -19,6 +16,7 @@ import {
   getTaskLists,
   createDefaultTaskList,
 } from "services/state/modules/task-lists"
+import { user_s } from "services/state/modules/auth"
 import { ConnectedDispatcher } from "lib/rxstate"
 
 const PageContainer = styled.div`
@@ -31,10 +29,6 @@ const StickySection = styled.div`
   top: 0;
   z-index: 1000;
 `
-
-const user$ = new Observable<User | null>(observer => {
-  return firebase.auth().onAuthStateChanged(user => observer.next(user))
-})
 
 type Props = {
   setTouchEnabled: (enabled: boolean) => void
@@ -53,17 +47,17 @@ const Root: React.FunctionComponent<Props> = ({
 }) => {
   useEffect(
     () => {
-      const subscription = user$.subscribe(async user =>
+      const subscription = user_s.subscribe(async user =>
         showWarningFooter(!user),
       )
       return () => subscription.unsubscribe()
     },
-    [user$],
+    [user_s],
   )
 
   useEffect(
     () => {
-      const subscription = user$.subscribe(async user => {
+      const subscription = user_s.subscribe(async user => {
         const user_id = user ? user.uid : null
         const lists = await getTaskLists(user_id)
         let primary_list = lists.find(list => list.primary)
@@ -74,7 +68,7 @@ const Root: React.FunctionComponent<Props> = ({
       })
       return () => subscription.unsubscribe()
     },
-    [user$],
+    [user_s],
   )
 
   useEffect(() => {

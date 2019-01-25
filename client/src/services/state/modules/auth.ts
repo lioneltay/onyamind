@@ -8,12 +8,12 @@ import { firebase } from "services/firebase"
 export const signIn = createDispatcher()
 export const signOut = createDispatcher()
 
-export const user$ = new Observable<User | null>(observer => {
+export const user_s = new Observable<User | null>(observer => {
   return firebase.auth().onAuthStateChanged(user => observer.next(user))
 })
 
 export const reducer_s = createReducer<State>([
-  user$.pipe(map(user => (state: State) => ({ ...state, user }))),
+  user_s.pipe(map(user => (state: State) => ({ ...state, user }))),
 
   signIn.pipe(
     map(() => {

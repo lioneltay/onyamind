@@ -4,7 +4,7 @@ import { map } from "rxjs/operators"
 import { State } from ".."
 import { createDispatcher } from "services/state/tools"
 
-import { user$ } from "./auth"
+import { user_s } from "./auth"
 
 const openWarningFooter = createDispatcher()
 const closeWarningFooter = createDispatcher()
@@ -12,7 +12,7 @@ export const toggleWarningFooter = createDispatcher()
 export const showWarningFooter = createDispatcher((show: boolean) => show)
 
 export const reducer_s = createReducer<State>([
-  user$.pipe(
+  user_s.pipe(
     map(user => (state: State) => ({
       ...state,
       show_warning_footer: !user,

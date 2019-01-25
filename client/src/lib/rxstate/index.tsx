@@ -29,7 +29,6 @@ export function createObservableStateTools<S>() {
   ): Dispatcher<AC> {
     const output_s = new Subject<ReturnType<AC>>()
     const dispatcher: any = _dispatcher || (() => {})
-    console.log(dispatcher)
 
     const wrappedDispatcher: Dispatcher<AC> = (...input: Arguments<AC>) => {
       const val = dispatcher(...input)

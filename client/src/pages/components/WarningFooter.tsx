@@ -48,8 +48,6 @@ const WarningFooter: React.FunctionComponent<Props> = ({
 }) => {
   const [show_modal, setShowModal] = useState(false)
 
-  console.log(show)
-
   return (
     <Transition
       // items={show_warning_footer && !user}

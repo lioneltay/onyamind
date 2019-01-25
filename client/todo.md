@@ -44,6 +44,9 @@
 - [x] refactor state to rxjs reducer style
 - [x] toggle row MoreVert icons are misaligned
 
+- [x] hmr is a bit dodgy with new state system
+  - [x] we were just causing the useEffect at the root to retrigger
+
 - [ ] undo snackbar
 - [ ] implement max number of tasks per list
 
