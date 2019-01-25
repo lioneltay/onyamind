@@ -1,11 +1,9 @@
 import React from "react"
 
-import { Provider as StateProvider } from "../services/state/oldappstate"
 import { Flipper } from "react-flip-toolkit"
 import { partition, prop, comparator } from "ramda"
 
 import Root from "./Root"
-import { Task } from "../types"
 
 import { Provider as RxStateProvider, connect } from "../services/state"
 import { Route, Switch, Redirect } from "react-router-dom"
@@ -56,9 +54,7 @@ const TodoApp: React.FunctionComponent = () => {
         path="/"
         render={() => (
           <RxStateProvider>
-            <StateProvider>
-              <ConnectedRootWithContext />
-            </StateProvider>
+            <ConnectedRootWithContext />
           </RxStateProvider>
         )}
       />

@@ -1,5 +1,4 @@
 import { firebase, firestore, dataWithId } from "services/firebase"
-import { Task, ID, TaskList, User } from "types"
 
 export const addTask = async (
   task: Omit<Task, "id" | "created_at" | "updated_at" | "complete">,

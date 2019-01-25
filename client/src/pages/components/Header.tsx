@@ -1,7 +1,6 @@
 import React, { Fragment } from "react"
 import styled from "styled-components"
 
-import { useAppState } from "../../services/state/oldappstate"
 import { highlight_color, highlighted_text_color } from "../../constants"
 
 import IconButton from "@material-ui/core/IconButton"
@@ -13,7 +12,6 @@ import Add from "@material-ui/icons/Add"
 import AppBar from "@material-ui/core/AppBar"
 import Toolbar from "@material-ui/core/Toolbar"
 
-import { Task, ID, TaskList } from "../../types"
 
 import { connect, toggleDrawer } from "services/state"
 import {

@@ -1,6 +1,5 @@
 import { CSSProperties } from "react"
 
-export {}
 declare global {
   export interface Stylable {
     className?: string

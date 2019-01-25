@@ -16,13 +16,16 @@ import {
   createObservableStateTools,
   combineReducers,
   createReducer,
-  createDispatcher,
   ConnectedDispatcher,
 } from "lib/rxstate"
 
 const wait = (ms: number): Promise<void> => {
   return new Promise(res => setTimeout(res, ms))
 }
+
+const { connect, Provider, createDispatcher } = createObservableStateTools<
+  TotalState
+>()
 
 type CounterState = { count: number }
 const inc = createDispatcher()
@@ -77,11 +80,6 @@ const rootReducer$ = combineReducers({
 
 counterState$.subscribe(val => console.log("CounterState: ", val))
 formState$.subscribe(val => console.log("FormState: ", val))
-
-const { reducer_stream, connect, Provider } = createObservableStateTools(
-  rootReducer$,
-  initial_state,
-)
 
 type CounterProps = {
   increment: () => void
@@ -151,7 +149,7 @@ const SandboxPage: React.FunctionComponent = () => {
   const [show, setShow] = useState(true)
 
   return (
-    <Provider>
+    <Provider initialState={initial_state} reducerStream={rootReducer$}>
       <div>
         <h1>Sandbox Nice!</h1>
         <button onClick={() => setShow(show => !show)}>Show</button>

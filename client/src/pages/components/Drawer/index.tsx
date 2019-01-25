@@ -31,7 +31,6 @@ import Modal from "../Modal"
 import CreateTaskListModal from "./CreateTaskListModal"
 import RenameTaskListModal from "./RenameTaskListModal"
 import DeleteTaskListModal from "./DeleteTaskListModal"
-import { ID, User, TaskList as TaskListType } from "../../../types"
 
 import { comparator } from "ramda"
 import GoogleSignInButton from "../GoogleSignInButton"
@@ -53,7 +52,7 @@ type Props = {
   user: User
   signIn: () => void
   signOut: () => void
-  task_lists: TaskListType[]
+  task_lists: TaskList[]
   selectTaskList: (id: ID) => void
   selected_task_list_id: ID | null
   editTaskList: ConnectedDispatcher<typeof editTaskList>

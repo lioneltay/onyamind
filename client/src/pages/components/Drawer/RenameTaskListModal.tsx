@@ -6,7 +6,6 @@ import Modal from "../Modal"
 import TextField from "@material-ui/core/TextField"
 import Button from "@material-ui/core/Button"
 
-import { TaskList } from "../../../types"
 
 type Values = {
   name: string

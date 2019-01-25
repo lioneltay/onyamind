@@ -1,16 +1,15 @@
-import { createDispatcher, createReducer } from "lib/rxstate"
-import { ID } from "types"
+import { createReducer } from "lib/rxstate"
 import { State } from "services/state"
+import { createDispatcher } from "services/state/tools"
 
 import { merge } from "rxjs"
 import { map, tap } from "rxjs/operators"
 import { uniq, difference } from "ramda"
 
+import { updateCurrentTaskListTaskCount } from "../task-lists"
 import * as api from "./api"
 
 export const stopEditing = createDispatcher()
-console.log("why")
-console.dir(stopEditing)
 export const toggleTaskSelection = createDispatcher((id: ID) => id)
 export const selectAllIncompleteTasks = createDispatcher()
 export const deselectAllIncompleteTasks = createDispatcher()
@@ -30,18 +29,24 @@ export const uncheckCompletedTasks = createDispatcher(() => (state: State) => {
     .map(task => task.id)
   return api.uncheckTasks(completed_tasks_ids)
 })
-export const deleteSelectedTasks = createDispatcher(() => (state: State) =>
-  api.deleteTasks(state.selected_task_ids),
+export const deleteSelectedTasks = createDispatcher(
+  () => async (state: State) => {
+    await api.deleteTasks(state.selected_task_ids)
+    await updateCurrentTaskListTaskCount()
+  },
 )
-export const deleteCompletedTasks = createDispatcher(() => (state: State) => {
-  if (!state.tasks) {
-    throw Error("No Tasks")
-  }
-  const completed_tasks_ids = state.tasks
-    .filter(task => task.complete)
-    .map(task => task.id)
-  return api.deleteTasks(completed_tasks_ids)
-})
+export const deleteCompletedTasks = createDispatcher(
+  () => async (state: State) => {
+    if (!state.tasks) {
+      throw Error("No Tasks")
+    }
+    const completed_tasks_ids = state.tasks
+      .filter(task => task.complete)
+      .map(task => task.id)
+    await api.deleteTasks(completed_tasks_ids)
+    await updateCurrentTaskListTaskCount()
+  },
+)
 
 export const reducer_s = createReducer<State>([
   merge(

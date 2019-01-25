@@ -15,7 +15,6 @@ import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemText from "@material-ui/core/ListItemText"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
-import { User, ID, Task } from "types"
 
 import {
   selectAllIncompleteTasks,
@@ -23,6 +22,7 @@ import {
 } from "services/state/modules/editing"
 import { connect } from "services/state"
 import { addTask } from "services/state/modules/tasks"
+import { ConnectedDispatcher } from "lib/rxstate"
 
 const OuterContainer = styled.div`
   position: relative;
@@ -51,18 +51,17 @@ type Props = {
   selected_task_ids: ID[]
   selectAllIncompleteTasks: () => void
   deselectAllIncompleteTasks: () => void
-  addTask: typeof addTask
+  addTask: ConnectedDispatcher<typeof addTask>
   selected_task_list_id: ID | null
 }
 
 const TaskAdder: React.FunctionComponent<Props> = ({
-  user,
   editing,
   selected_task_ids,
   selectAllIncompleteTasks,
   deselectAllIncompleteTasks,
   tasks,
-  selected_task_list_id,
+  addTask,
 }) => {
   const [new_task_title, setNewTaskTitle] = useState("")
 
@@ -72,12 +71,7 @@ const TaskAdder: React.FunctionComponent<Props> = ({
     }
 
     setNewTaskTitle("")
-    addTask({
-      list_id: selected_task_list_id,
-      title: new_task_title,
-      notes: "",
-      user_id: user ? user.uid : null,
-    })
+    addTask(new_task_title)
   }
 
   const all_selected =

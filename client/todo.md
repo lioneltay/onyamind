@@ -1,15 +1,3 @@
-# RxState
-
-- [x] should be able to subscribe to anypart of the state...
-  - [ ] The stream should be available regardless of how you import it
-
-- [x] action creators need access to the current state
-  - [ ] have access if they choose to return a thunk as a payload (must connect)
-
-- [ ] don't know when async actions resolve since no returned promise
-  - [ ] could be solved by subscribing to the relevant part of the state? not really that is sort of connects job anyway
-
-
 # Tasks
 
 - [x] remove observable by ensuring state changes like login go through the state instead of just firebase
@@ -53,16 +41,14 @@
 - [x] readme / package.json
 - [x] select all should become deselect all if everything is selected
 - [x] bug: clicking on task adder selects all items
-
-- [ ] refactor state to rxjs reducer style
-
-- [ ] toggle row MoreVert icons are misaligned
+- [x] refactor state to rxjs reducer style
+- [x] toggle row MoreVert icons are misaligned
 
 - [ ] undo snackbar
 - [ ] implement max number of tasks per list
 
-- [ ] firegure out how to make modals and drawers work on mobile with back button
-- [ ] firegout how to put app on app store
+- [ ] firegure out how to make modals and drawers work on mobile with back button (you can block back button, add an event handgler instead?)
+- [ ] firegout how to put app on app store (pwa builder)
 - [ ] tests
 
 - [ ] non logged in version should store data localy
@@ -70,13 +56,11 @@
 
 * [ ] animate saving text in edit modal
 
-- [ ] rethink state management (context? redux? observables?)
-
 - [ ] add search
 
 - [ ] animated new item with temporary background color
 
-- [ ] swipre ofr actions
+- [ ] swipre for actions
 
 - [ ] move task to another list
 

@@ -1,6 +1,8 @@
+import React from "react"
 import { createObservableStateTools, createReducer } from "lib/rxstate"
-import { ID, User, Task, TaskList } from "../../types"
 import { Subject } from "rxjs"
+
+import { tools } from "./tools"
 
 import { reducer_s as warningFooterReducer } from "./modules/warning-footer"
 import { reducer_s as authReducer } from "./modules/auth"
@@ -51,7 +53,12 @@ export const reducer_s = createReducer<State>(state_s, [
   editingReducer,
 ])
 
-export const { Provider, connect } = createObservableStateTools(
-  reducer_s,
-  initial_state,
-)
+export const connect = tools.connect
+
+export const Provider: React.FunctionComponent = ({ children }) => {
+  return (
+    <tools.Provider initialState={initial_state} reducerStream={reducer_s}>
+      {children}
+    </tools.Provider>
+  )
+}

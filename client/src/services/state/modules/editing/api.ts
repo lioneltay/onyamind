@@ -1,5 +1,4 @@
 import { firestore, dataWithId } from "services/firebase"
-import { ID } from "types"
 
 export const checkTasks = (task_ids: ID[]) => {
   const batch = firestore.batch()

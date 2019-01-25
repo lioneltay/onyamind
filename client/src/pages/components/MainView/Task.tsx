@@ -1,6 +1,5 @@
 import React from "react"
 import styled from "styled-components"
-import { Task, ID } from "../../../types"
 
 import ListItem from "@material-ui/core/ListItem"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
@@ -19,7 +18,8 @@ import { ListItemText } from "@material-ui/core"
 
 import { connect } from "services/state"
 import { toggleTaskSelection } from "services/state/modules/editing"
-import { editTask, removeTask } from "services/api"
+import { removeTask, editTask } from "services/state/modules/tasks"
+import { ConnectedDispatcher } from "lib/rxstate"
 
 const Container = styled(ListItem)`
   position: relative;
@@ -67,6 +67,8 @@ export type Props = {
   selected_task_ids: ID[]
   toggleTaskSelection: (id: ID) => void
   touch_screen: boolean
+  removeTask: ConnectedDispatcher<typeof removeTask>
+  editTask: ConnectedDispatcher<typeof editTask>
 }
 
 const TaskItem: React.FunctionComponent<Props> = ({
@@ -76,6 +78,8 @@ const TaskItem: React.FunctionComponent<Props> = ({
   selected_task_ids,
   toggleTaskSelection,
   touch_screen,
+  removeTask,
+  editTask,
 }) => {
   const selected = selected_task_ids.findIndex(id => id === task.id) >= 0
 
@@ -175,5 +179,7 @@ export default connect(
   }),
   {
     toggleTaskSelection,
+    editTask,
+    removeTask,
   },
 )(TaskItem)

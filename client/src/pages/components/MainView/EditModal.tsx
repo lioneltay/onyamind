@@ -5,7 +5,6 @@ import Button from "@material-ui/core/Button"
 import TextField from "@material-ui/core/TextField"
 import Modal from "../Modal"
 
-import { Task } from "../../../types"
 import { grey_text } from "../../../constants"
 
 type Values = Omit<Task, "id">

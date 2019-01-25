@@ -1,6 +1,5 @@
 import React, { useState } from "react"
 import styled from "styled-components"
-import { useAppState } from "../../../services/state/oldappstate"
 import { comparator, partition } from "ramda"
 
 import List from "@material-ui/core/List"
@@ -19,10 +18,9 @@ import MoreVert from "@material-ui/icons/MoreVert"
 import IconButtonMenu from "../IconButtonMenu"
 import Task from "./Task"
 import EditModal from "./EditModal"
-import { ID, Task as ITask } from "types"
 
 import { connect } from "services/state"
-import { editTask } from "services/api"
+import { editTask } from "services/state/modules/tasks"
 import {
   uncheckCompletedTasks,
   deleteCompletedTasks,
@@ -46,9 +44,10 @@ const Rotate = styled.div.attrs({})<{ flip: boolean }>`
 `
 
 type Props = {
-  tasks: ITask[]
+  tasks: Task[]
   uncheckCompletedTasks: ConnectedDispatcher<typeof uncheckCompletedTasks>
   deleteCompletedTasks: ConnectedDispatcher<typeof deleteCompletedTasks>
+  editTask: ConnectedDispatcher<typeof editTask>
 }
 
 const MainView: React.FunctionComponent<Props> = ({
@@ -56,10 +55,6 @@ const MainView: React.FunctionComponent<Props> = ({
   uncheckCompletedTasks,
   deleteCompletedTasks,
 }) => {
-  const {
-    actions: {},
-  } = useAppState()
-
   const [editing_task_id, setEditingTaskId] = useState(null as ID | null)
   const [show_edit_modal, setShowEditModal] = useState(false)
   const [show_complete_tasks, setShowCompleteTasks] = useState(false)
@@ -124,21 +119,19 @@ const MainView: React.FunctionComponent<Props> = ({
               primary={`${complete_tasks.length} checked off`}
             />
 
-            <ListItemSecondaryAction>
-              <IconButtonMenu
-                icon={<MoreVert />}
-                items={[
-                  {
-                    label: "Uncheck all items",
-                    action: uncheckCompletedTasks,
-                  },
-                  {
-                    label: "Delete completed items",
-                    action: deleteCompletedTasks,
-                  },
-                ]}
-              />
-            </ListItemSecondaryAction>
+            <IconButtonMenu
+              icon={<MoreVert />}
+              items={[
+                {
+                  label: "Uncheck all items",
+                  action: uncheckCompletedTasks,
+                },
+                {
+                  label: "Delete completed items",
+                  action: deleteCompletedTasks,
+                },
+              ]}
+            />
           </ListItem>
         </List>
 
@@ -172,5 +165,5 @@ const MainView: React.FunctionComponent<Props> = ({
 
 export default connect(
   state => ({ tasks: state.tasks }),
-  { uncheckCompletedTasks, deleteCompletedTasks },
+  { uncheckCompletedTasks, deleteCompletedTasks, editTask },
 )(MainView)

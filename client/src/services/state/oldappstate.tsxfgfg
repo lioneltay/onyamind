@@ -10,7 +10,7 @@ import { Observable, of } from "rxjs"
 import { switchMap } from "rxjs/operators"
 import { Task, User, ID, TaskList } from "../../types"
 import { uniq, difference } from "ramda"
-import { editTaskList } from "services/api"
+// import { editTaskList } from "services/api"
 
 type Context = {
   // selected_task_list_id: ID | null

@@ -10,13 +10,16 @@ import WarningFooter from "./components/WarningFooter"
 import { background_color } from "../constants"
 
 import { firebase } from "services/firebase"
-import { User, ID } from "types"
 import { Observable } from "rxjs"
 
 import { connect, setTouchEnabled, selectTaskList } from "services/state"
 import { showWarningFooter } from "services/state/modules/warning-footer"
 
-import { getTaskLists, createDefaultTaskList } from "services/api"
+import {
+  getTaskLists,
+  createDefaultTaskList,
+} from "services/state/modules/task-lists"
+import { ConnectedDispatcher } from "lib/rxstate"
 
 const PageContainer = styled.div`
   background: ${background_color};
@@ -37,12 +40,16 @@ type Props = {
   setTouchEnabled: (enabled: boolean) => void
   showWarningFooter: (show: boolean) => void
   selectTaskList: (id: ID) => void
+  getTaskLists: ConnectedDispatcher<typeof getTaskLists>
+  createDefaultTaskList: ConnectedDispatcher<typeof createDefaultTaskList>
 }
 
 const Root: React.FunctionComponent<Props> = ({
   setTouchEnabled,
   showWarningFooter,
   selectTaskList,
+  getTaskLists,
+  createDefaultTaskList,
 }) => {
   useEffect(
     () => {
@@ -91,5 +98,11 @@ const Root: React.FunctionComponent<Props> = ({
 
 export default connect(
   null,
-  { setTouchEnabled, showWarningFooter, selectTaskList },
+  {
+    setTouchEnabled,
+    showWarningFooter,
+    selectTaskList,
+    createDefaultTaskList,
+    getTaskLists,
+  },
 )(Root)

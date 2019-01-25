@@ -1,9 +1,9 @@
-import { createReducer, createDispatcher } from "lib/rxstate"
+import { createReducer } from "lib/rxstate"
 import { State } from ".."
+import { createDispatcher } from "services/state/tools"
 import { Observable } from "rxjs"
 import { map } from "rxjs/operators"
 import { firebase } from "services/firebase"
-import { User } from "types"
 
 export const signIn = createDispatcher()
 export const signOut = createDispatcher()
