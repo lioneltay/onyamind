@@ -94,6 +94,7 @@ const Drawer: React.FunctionComponent<Props> = ({
       open={show}
       onOpen={toggle}
       onClose={() => {
+        console.log("close")
         toggle()
         setShowCreateModal(false)
       }}
@@ -215,7 +216,10 @@ const Drawer: React.FunctionComponent<Props> = ({
                   key={list.id}
                   task_list={list}
                   selected={list.id === selected_task_list_id}
-                  onBodyClick={id => selectTaskList(id)}
+                  onBodyClick={id => {
+                    console.log("SELECTING", id)
+                    selectTaskList(id)
+                  }}
                   onDelete={id => {
                     setSelectedId(id)
                     setShowDeleteModal(true)
@@ -266,11 +270,7 @@ const Drawer: React.FunctionComponent<Props> = ({
 
       <CreateTaskListModal
         onSubmit={async values => {
-          const task_list = await addTaskList({
-            ...values,
-            user_id: user ? user.uid : null,
-            number_of_tasks: 0,
-          })
+          await addTaskList({ ...values })
           setShowCreateModal(false)
         }}
         open={show_create_modal}

@@ -31,15 +31,14 @@ type CounterState = { count: number }
 const inc = createDispatcher()
 const dec = createDispatcher()
 
-const counterState$ = new Subject<CounterState>()
-const counterReducer$ = createReducer<CounterState>(counterState$, [
+const counterReducer$ = createReducer<CounterState>(
   inc.pipe(
     map(() => (state: CounterState) => ({ ...state, count: state.count + 1 })),
   ),
   dec.pipe(
     map(() => (state: CounterState) => ({ ...state, count: state.count - 1 })),
   ),
-])
+)
 
 type FormState = {
   value: number
@@ -51,13 +50,11 @@ const getValue = createDispatcher(() => {
   }
 })
 
-const formState$ = new Subject<FormState>()
-const formReducer$ = createReducer<FormState>(formState$, [
-  getValue.pipe(
-    switchMap(val => from(val).pipe(takeUntil(counterState$))),
-    map(count => (state: FormState) => ({ ...state, value: count })),
-  ),
-])
+const formReducer$ = createReducer<FormState>()
+// getValue.pipe(
+//   switchMap(val => from(val).pipe(takeUntil(counterState$))),
+//   map(count => (state: FormState) => ({ ...state, value: count })),
+// ),
 
 type TotalState = {
   counter_app: CounterState
@@ -77,9 +74,6 @@ const rootReducer$ = combineReducers({
   counter_app: counterReducer$,
   form_app: formReducer$,
 })
-
-counterState$.subscribe(val => console.log("CounterState: ", val))
-formState$.subscribe(val => console.log("FormState: ", val))
 
 type CounterProps = {
   increment: () => void

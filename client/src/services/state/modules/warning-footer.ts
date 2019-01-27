@@ -11,7 +11,7 @@ const closeWarningFooter = createDispatcher()
 export const toggleWarningFooter = createDispatcher()
 export const showWarningFooter = createDispatcher((show: boolean) => show)
 
-export const reducer_s = createReducer<State>([
+export const reducer_s = createReducer<State>(
   user_s.pipe(
     map(user => (state: State) => ({
       ...state,
@@ -40,4 +40,4 @@ export const reducer_s = createReducer<State>([
       show_warning_footer,
     })),
   ),
-])
+)

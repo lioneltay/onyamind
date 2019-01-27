@@ -36,12 +36,13 @@ const CreateTaskListModal: React.FunctionComponent<Props> = ({
         }}
       >
         {({ values, setFieldValue, isSubmitting }) => (
-          <Form>
-            <Paper className="p-3" style={{ width: 500, maxWidth: "100%" }}>
+          <Paper className="p-3" style={{ width: 500, maxWidth: "100%" }}>
+            <Form>
               <Typography variant="h6">Create a new list</Typography>
 
               <div className="mt-3">
                 <TextField
+                  autoFocus
                   required
                   fullWidth
                   variant="outlined"
@@ -74,8 +75,8 @@ const CreateTaskListModal: React.FunctionComponent<Props> = ({
                   Create
                 </Button>
               </div>
-            </Paper>
-          </Form>
+            </Form>
+          </Paper>
         )}
       </Formik>
     </Modal>

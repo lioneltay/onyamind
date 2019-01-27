@@ -43,15 +43,14 @@ export const initial_state: State = {
 
 export * from "./modules/misc"
 
-export const state_s = new Subject<State>()
-export const reducer_s = createReducer<State>(state_s, [
+export const reducer_s = createReducer<State>(
   miscReducer,
   tasksReducer,
   taskListsReducer,
   warningFooterReducer,
   authReducer,
   editingReducer,
-])
+)
 
 export const connect = tools.connect
 

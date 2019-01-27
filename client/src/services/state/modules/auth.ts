@@ -12,7 +12,7 @@ export const user_s = new Observable<User | null>(observer => {
   return firebase.auth().onAuthStateChanged(user => observer.next(user))
 })
 
-export const reducer_s = createReducer<State>([
+export const reducer_s = createReducer<State>(
   user_s.pipe(map(user => (state: State) => ({ ...state, user }))),
 
   signIn.pipe(
@@ -35,4 +35,4 @@ export const reducer_s = createReducer<State>([
       return (state: State) => state
     }),
   ),
-])
+)

@@ -1,11 +1,12 @@
 import { firebase, firestore, dataWithId } from "services/firebase"
 
-type AddTaskListInput = Omit<TaskList, "id" | "created_at" | "updated_at">
+type AddTaskListInput = Omit<
+  TaskList,
+  "id" | "created_at" | "updated_at" | "number_of_tasks"
+>
 export const addTaskList = async (
   list: AddTaskListInput,
 ): Promise<TaskList> => {
-  console.log("addTaskList", list)
-
   return firestore
     .collection("task_lists")
     .add({
@@ -61,7 +62,6 @@ export const removeTaskList = async (list_id: ID): Promise<ID> => {
 export const createDefaultTaskList = (user_id: ID | null) => {
   return addTaskList({
     name: "Tasks",
-    number_of_tasks: 0,
     primary: true,
     user_id,
   })

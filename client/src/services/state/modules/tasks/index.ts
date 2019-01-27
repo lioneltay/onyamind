@@ -9,7 +9,7 @@ import * as api from "./api"
 import { selectTaskList } from "../misc"
 
 import { Observable } from "rxjs"
-import { switchMap, map } from "rxjs/operators"
+import { switchMap, map, distinctUntilChanged } from "rxjs/operators"
 
 export const addTask = createDispatcher(
   (title: string) => async (state: State) => {
@@ -46,9 +46,15 @@ const createCurrentTasksStream = (list_id: ID) =>
   })
 
 const tasks_s = selectTaskList.pipe(
+  distinctUntilChanged(),
   switchMap(list_id => createCurrentTasksStream(list_id)),
 )
 
-export const reducer_s = createReducer<State>([
-  tasks_s.pipe(map(tasks => (state: State) => ({ ...state, tasks }))),
-])
+export const reducer_s = createReducer<State>(
+  tasks_s.pipe(
+    map(tasks => (state: State) => {
+      console.log("tasks_s", tasks, state)
+      return { ...state, tasks }
+    }),
+  ),
+)

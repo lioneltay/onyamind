@@ -29,7 +29,7 @@ const DeleteTaskListModal: React.FunctionComponent<Props> = ({
         </Button>
       }
     >
-      <Typography className="mt-3" variant="body2">
+      <Typography variant="body2">
         Are you sure you want to delete this list?
       </Typography>
     </Modal>

@@ -48,7 +48,7 @@ export const deleteCompletedTasks = createDispatcher(
   },
 )
 
-export const reducer_s = createReducer<State>([
+export const reducer_s = createReducer<State>(
   merge(
     stopEditing.output_s,
     checkSelectedTasks.output_s,
@@ -112,4 +112,4 @@ export const reducer_s = createReducer<State>([
       }
     }),
   ),
-])
+)

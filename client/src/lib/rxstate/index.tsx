@@ -19,6 +19,7 @@ export function createObservableStateTools<S>() {
 
   const Context = createContext((null as unknown) as S)
   let current_state: S
+  let state_s = new Subject<S>()
 
   function createDispatcher(): VoidDispatcher
   function createDispatcher<AC extends FunctionType>(
@@ -130,6 +131,7 @@ export function createObservableStateTools<S>() {
       () => {
         const subscription = reducerStream.subscribe(reducer => {
           current_state = reducer(current_state)
+          state_s.next(current_state)
           forceUpdate()
         })
         return () => subscription.unsubscribe()
@@ -144,6 +146,7 @@ export function createObservableStateTools<S>() {
     connect,
     Provider,
     createDispatcher,
+    state_s,
   }
 }
 
@@ -190,25 +193,9 @@ export function combineReducers<T extends ObservableMap>(
 }
 
 export function createReducer<S extends any>(
-  _state_subject: Subject<S> | Observable<Reducer<S>>[],
-  _streams?: Observable<Reducer<S>>[],
+  ...streams: Observable<Reducer<S>>[]
 ): Observable<Reducer<S>> {
-  const state_subject = Array.isArray(_state_subject)
-    ? undefined
-    : _state_subject
-  const streams = (_streams ? _streams : _state_subject) as Observable<
-    Reducer<S>
-  >[]
-
-  return merge(...streams).pipe(
-    map(reducer => (state: S) => {
-      const new_state = reducer(state)
-      if (state_subject) {
-        state_subject.next(new_state)
-      }
-      return new_state
-    }),
-  )
+  return merge(...streams)
 }
 
 type ThunkDispatcher<I extends any[] = any, R = any, S = any> = (

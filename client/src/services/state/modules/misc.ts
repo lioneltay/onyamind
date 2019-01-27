@@ -2,11 +2,12 @@ import { createReducer } from "lib/rxstate"
 import { firestore, dataWithId } from "services/firebase"
 
 import { Observable } from "rxjs"
-import { map, switchMap } from "rxjs/operators"
+import { map, switchMap, distinctUntilChanged } from "rxjs/operators"
 
 import { user_s } from "./auth"
 import { State } from "services/state"
 import { createDispatcher } from "services/state/tools"
+import { state_s } from "services/state/tools"
 
 const createCurrentListsStream = (user_id: ID | null) =>
   new Observable<TaskList[] | null>(observer => {
@@ -30,7 +31,19 @@ const lists_s = user_s.pipe(
   switchMap(user => createCurrentListsStream(user ? user.uid : null)),
 )
 
-export const reducer_s = createReducer<State>([
+const selected_task_list_s = state_s.pipe(
+  map(state => state.selected_task_list_id),
+  distinctUntilChanged(),
+)
+
+export const reducer_s = createReducer<State>(
+  selected_task_list_s.pipe(
+    map(() => (state: State) => ({
+      ...state,
+      show_drawer: false,
+    })),
+  ),
+
   lists_s.pipe(map(task_lists => (state: State) => ({ ...state, task_lists }))),
 
   setTouchEnabled.pipe(
@@ -48,7 +61,6 @@ export const reducer_s = createReducer<State>([
     map(selected_task_list_id => (state: State) => ({
       ...state,
       selected_task_list_id,
-      show_drawer: false,
     })),
   ),
-])
+)

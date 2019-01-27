@@ -16,36 +16,46 @@
   - [x] modify list observable to fetch a certain list
   - [x] when auth status changes, need to refresh current selected list id
 
+* [x] remove gap between adder and header on mobile
+* [x] use sticky instead of fixed postition
+* [x] styled components babel plugin
+* [x] hambuger not aligned with list icons
+* [x] icons in header need right padding
+* [x] drawer doesn't need to be full screen
+* [x] clear text button to input
+* [x] on mobile rename modal is too big
+* [x] selecting list should close modal
+* [x] remove drag handlers
+* [x] fix hmr
+* [x] more space above drawer list headers
+* [x] other lists should be collapsable
+* [x] edit modal has different style than list modals
+* [x] primary list tool tip in drawer
+* [x] remove login button from header
+* [x] show warning at bottom when not logged in(like the cookies warning)
+* [x] animate the warning footer
+* [x] update number_of_tasks with actual number instead of incrementing
+* [x] loader componenets
+* [x] readme / package.json
+* [x] select all should become deselect all if everything is selected
+* [x] bug: clicking on task adder selects all items
+* [x] refactor state to rxjs reducer style
+* [x] toggle row MoreVert icons are misaligned
+
+* [x] hmr is a bit dodgy with new state system
+  - [x] we were just causing the useEffect at the root to retrigger
+
 # TODAY
 
-- [x] remove gap between adder and header on mobile
-- [x] use sticky instead of fixed postition
-- [x] styled components babel plugin
-- [x] hambuger not aligned with list icons
-- [x] icons in header need right padding
-- [x] drawer doesn't need to be full screen
-- [x] clear text button to input
-- [x] on mobile rename modal is too big
-- [x] selecting list should close modal
-- [x] remove drag handlers
-- [x] fix hmr
-- [x] more space above drawer list headers
-- [x] other lists should be collapsable
-- [x] edit modal has different style than list modals
-- [x] primary list tool tip in drawer
-- [x] remove login button from header
-- [x] show warning at bottom when not logged in(like the cookies warning)
-- [x] animate the warning footer
-- [x] update number_of_tasks with actual number instead of incrementing
-- [x] loader componenets
-- [x] readme / package.json
-- [x] select all should become deselect all if everything is selected
-- [x] bug: clicking on task adder selects all items
-- [x] refactor state to rxjs reducer style
-- [x] toggle row MoreVert icons are misaligned
+- [x] when creating a new list it should be selected as well
+  - [x] solved state bug, new state was being pushed onto stream before the new state was actually updated
+- [x] delete modal has too much space above text
+- [x] creat elist modal too big
 
-- [x] hmr is a bit dodgy with new state system
-  - [x] we were just causing the useEffect at the root to retrigger
+- [ ] hooks api?
+- [ ] laggy
+
+- [ ] add notification to kill service worker
 
 - [ ] undo snackbar
 - [ ] implement max number of tasks per list

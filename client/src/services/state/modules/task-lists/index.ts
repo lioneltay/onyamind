@@ -1,5 +1,5 @@
 import { createReducer } from "lib/rxstate"
-import { State, state_s as all_state_s } from "services/state"
+import { State } from "services/state"
 import { createDispatcher } from "services/state/tools"
 import { firestore, dataWithId } from "services/firebase"
 import { map, switchMap, withLatestFrom } from "rxjs/operators"
@@ -7,7 +7,27 @@ import { map, switchMap, withLatestFrom } from "rxjs/operators"
 import * as api from "./api"
 import { from } from "rxjs"
 
-export const addTaskList = createDispatcher(api.addTaskList)
+// export const addTaskList = createDispatcher(api.addTaskList)
+export const addTaskList = createDispatcher(
+  ({ name, primary }: { name: string; primary: boolean }) => async (
+    state: State,
+  ) => {
+    const list = await api.addTaskList({
+      name,
+      primary,
+      user_id: state.user ? state.user.uid : null,
+    })
+
+    if (list.primary) {
+      await api.setPrimaryTaskList({
+        user_id: list.user_id,
+        task_list_id: list.id,
+      })
+    }
+
+    return list
+  },
+)
 
 export const removeTaskList = createDispatcher(api.removeTaskList)
 
@@ -38,18 +58,12 @@ export const updateCurrentTaskListTaskCount = createDispatcher(
 
 export const setPrimaryTaskList = createDispatcher(api.setPrimaryTaskList)
 
-export const reducer_s = createReducer<State>([
+export const reducer_s = createReducer<State>(
   addTaskList.pipe(
     switchMap(val => from(val)),
-    map(list => {
-      if (list.primary) {
-        api.setPrimaryTaskList({
-          user_id: list.user_id,
-          task_list_id: list.id,
-        })
-      }
-
-      return (state: State) => state
-    }),
+    map(list => (state: State) => ({
+      ...state,
+      selected_task_list_id: list.id,
+    })),
   ),
-])
+)
