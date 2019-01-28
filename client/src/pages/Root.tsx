@@ -85,7 +85,7 @@ const Root: React.FunctionComponent<Props> = ({
       </StickySection>
       <Drawer />
       <MainView />
-      <WarningFooter />
+      {/* <WarningFooter /> */}
     </PageContainer>
   )
 }

@@ -84,7 +84,7 @@ const WarningFooter: React.FunctionComponent<Props> = ({
               <Typography style={{ color: grey_text }}>
                 As you are not signed in your tasks are stored and only
                 accessible directly on your device. Your data could be lost if
-                you delete the app damage your phone.
+                you delete the app or lose your phone.
                 <div className="my-2">
                   <Action onClick={signIn}>Sign in</Action> now to enable:
                 </div>

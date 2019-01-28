@@ -12,7 +12,6 @@ import Add from "@material-ui/icons/Add"
 import AppBar from "@material-ui/core/AppBar"
 import Toolbar from "@material-ui/core/Toolbar"
 
-
 import { connect, toggleDrawer } from "services/state"
 import {
   uncheckSelectedTasks,
@@ -47,11 +46,11 @@ const LeftSection = styled.div`
 `
 
 type Props = {
+  all_selected_tasks_complete: boolean
+  all_selected_tasks_incomplete: boolean
   editing: boolean
-  selected_task_ids: ID[]
-  task_lists: TaskList[]
-  tasks: Task[]
-  selected_task_list_id: ID | null
+  selected_task_list_name: string
+  number_of_selected_tasks: number
   toggleDrawer: ConnectedDispatcher<typeof toggleDrawer>
   stopEditing: ConnectedDispatcher<typeof stopEditing>
   checkSelectedTasks: ConnectedDispatcher<typeof checkSelectedTasks>
@@ -60,29 +59,17 @@ type Props = {
 }
 
 const Header: React.FunctionComponent<Props> = ({
+  selected_task_list_name,
+  all_selected_tasks_complete,
+  all_selected_tasks_incomplete,
+  number_of_selected_tasks,
   toggleDrawer,
   editing,
   stopEditing,
-  selected_task_ids,
-  task_lists,
-  tasks,
-  selected_task_list_id,
   checkSelectedTasks,
   uncheckSelectedTasks,
   deleteSelectedTasks,
 }) => {
-  const selected_task_list = task_lists
-    ? task_lists.find(list => list.id === selected_task_list_id)
-    : null
-
-  const selected_tasks = tasks
-    ? (selected_task_ids
-        .map(id => tasks.find(task => task.id === id))
-        .filter(task => !!task) as Task[])
-    : []
-  const all_complete = selected_tasks.every(task => task.complete)
-  const all_incomplete = selected_tasks.every(task => !task.complete)
-
   return (
     <AppBar position="relative">
       <Container
@@ -101,7 +88,7 @@ const Header: React.FunctionComponent<Props> = ({
                   <ArrowBack />
                 </IconButton>
                 <div style={{ color: highlighted_text_color, paddingLeft: 18 }}>
-                  {selected_task_ids.length} selected
+                  {number_of_selected_tasks} selected
                 </div>
               </Fragment>
             ) : (
@@ -113,7 +100,7 @@ const Header: React.FunctionComponent<Props> = ({
                   <Menu />
                 </IconButton>
                 <div style={{ paddingLeft: 18, color: "black" }}>
-                  {selected_task_list ? selected_task_list.name : ""}
+                  {selected_task_list_name}
                 </div>
               </Fragment>
             )}
@@ -121,13 +108,15 @@ const Header: React.FunctionComponent<Props> = ({
 
           {editing ? (
             <div style={{ display: "flex" }}>
-              {all_complete || all_incomplete ? (
+              {all_selected_tasks_complete || all_selected_tasks_incomplete ? (
                 <IconButton
                   onClick={
-                    all_incomplete ? checkSelectedTasks : uncheckSelectedTasks
+                    all_selected_tasks_incomplete
+                      ? checkSelectedTasks
+                      : uncheckSelectedTasks
                   }
                 >
-                  {all_incomplete ? <Check /> : <Add />}
+                  {all_selected_tasks_incomplete ? <Check /> : <Add />}
                 </IconButton>
               ) : null}
 
@@ -143,13 +132,40 @@ const Header: React.FunctionComponent<Props> = ({
 }
 
 export default connect(
-  state => ({
-    editing: state.editing,
-    selected_task_ids: state.selected_task_ids,
-    task_lists: state.task_lists,
-    tasks: state.tasks,
-    selected_task_list_id: state.selected_task_list_id,
-  }),
+  ({
+    task_lists,
+    selected_task_ids,
+    selected_task_list_id,
+    tasks,
+    editing,
+  }) => {
+    const selected_task_list = task_lists
+      ? task_lists.find(list => list.id === selected_task_list_id)
+      : undefined
+
+    const selected_tasks = tasks
+      ? (selected_task_ids
+          .map(id => tasks.find(task => task.id === id))
+          .filter(task => !!task) as Task[])
+      : []
+
+    const all_selected_tasks_complete = selected_tasks.every(
+      task => task.complete,
+    )
+    const all_selected_tasks_incomplete = selected_tasks.every(
+      task => !task.complete,
+    )
+
+    return {
+      all_selected_tasks_complete,
+      all_selected_tasks_incomplete,
+      editing,
+      selected_task_list_name: selected_task_list
+        ? selected_task_list.name
+        : "",
+      number_of_selected_tasks: selected_task_ids.length,
+    }
+  },
   {
     toggleDrawer,
     stopEditing,

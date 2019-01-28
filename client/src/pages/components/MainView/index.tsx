@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useCallback } from "react"
 import styled from "styled-components"
 import { comparator, partition } from "ramda"
 
@@ -59,16 +59,20 @@ const MainView: React.FunctionComponent<Props> = ({
   const [show_edit_modal, setShowEditModal] = useState(false)
   const [show_complete_tasks, setShowCompleteTasks] = useState(false)
 
-  const toggleShowCompleteTasks = () => setShowCompleteTasks(show => !show)
+  const toggleShowCompleteTasks = useCallback(
+    () => setShowCompleteTasks(show => !show),
+    [],
+  )
 
-  const stopEditingTask = () => {
+  const stopEditingTask = useCallback(() => {
     setEditingTaskId(null)
     setShowEditModal(false)
-  }
-  const startEditingTask = (id: ID) => {
+  }, [])
+
+  const startEditingTask = useCallback((id: ID) => {
     setEditingTaskId(id)
     setShowEditModal(true)
-  }
+  }, [])
 
   if (!tasks) {
     return (
@@ -96,11 +100,7 @@ const MainView: React.FunctionComponent<Props> = ({
       <Container>
         <List className="p-0" style={{ background: "white" }}>
           {incomplete_tasks.map(task => (
-            <Task
-              key={task.id}
-              task={task}
-              onItemClick={() => startEditingTask(task.id)}
-            />
+            <Task key={task.id} task={task} onItemClick={startEditingTask} />
           ))}
         </List>
 
@@ -138,11 +138,7 @@ const MainView: React.FunctionComponent<Props> = ({
         <Collapse in={show_complete_tasks}>
           <List className="p-0">
             {complete_tasks.map(task => (
-              <Task
-                key={task.id}
-                task={task}
-                onItemClick={() => startEditingTask(task.id)}
-              />
+              <Task key={task.id} task={task} onItemClick={startEditingTask} />
             ))}
           </List>
         </Collapse>

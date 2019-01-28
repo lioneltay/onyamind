@@ -7,6 +7,7 @@ import ListItem from "@material-ui/core/ListItem"
 import ListItemAvatar from "@material-ui/core/ListItemAvatar"
 import ListItemText from "@material-ui/core/ListItemText"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction"
 import Collapse from "@material-ui/core/Collapse"
 import Typography from "@material-ui/core/Typography"
 import Avatar from "@material-ui/core/Avatar"
@@ -105,7 +106,7 @@ const Drawer: React.FunctionComponent<Props> = ({
       >
         {user ? (
           <ListItem
-            style={{ paddingRight: 4, backgroundColor: background_color }}
+            style={{backgroundColor: background_color }}
           >
             <ListItemAvatar>
               {user.photoURL ? (
@@ -117,9 +118,11 @@ const Drawer: React.FunctionComponent<Props> = ({
               )}
             </ListItemAvatar>
             <ListItemText primary={user.displayName} secondary={user.email} />
-            <IconButton>
-              <Clear onClick={toggle} />
-            </IconButton>
+            <ListItemSecondaryAction>
+              <IconButton>
+                <Clear onClick={toggle} />
+              </IconButton>
+            </ListItemSecondaryAction>
           </ListItem>
         ) : (
           <ListItem style={{ backgroundColor: background_color }}>
@@ -127,9 +130,9 @@ const Drawer: React.FunctionComponent<Props> = ({
               <GoogleSignInButton onClick={signIn} />
             </ListItemText>
 
-            <IconButton>
+            <ListItemSecondaryAction><IconButton>
               <Clear onClick={toggle} />
-            </IconButton>
+            </IconButton></ListItemSecondaryAction>
           </ListItem>
         )}
 

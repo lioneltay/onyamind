@@ -52,8 +52,11 @@
 - [x] delete modal has too much space above text
 - [x] creat elist modal too big
 
-- [ ] hooks api?
-- [ ] laggy
+- [x] laggy
+  - [x] optimisation
+  - [x] Header should not rely on props it doesnt use (tasks)
+  - [x] add memo to connect
+
 
 - [ ] add notification to kill service worker
 
@@ -115,3 +118,10 @@
 * [ ] advertisements
 
 - [ ] add created date to edit modal
+
+# Future
+- [ ] hooks api?
+  - Not feasible since we want to also impletement shouldcomponentupdate for you although there is an issue around it
+
+- [ ] Stop the connect component from rerendering
+  - [ ] Not possbile at the moment since there is not way to stop the rendering triggered by a context update.

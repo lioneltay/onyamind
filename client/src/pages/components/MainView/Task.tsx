@@ -1,4 +1,4 @@
-import React from "react"
+import React, { memo } from "react"
 import styled from "styled-components"
 
 import ListItem from "@material-ui/core/ListItem"
@@ -62,7 +62,7 @@ const SingleLineWithEllipsis: React.FunctionComponent<Stylable> = ({
 
 export type Props = {
   task: Task
-  onItemClick: () => void
+  onItemClick: (id: ID) => void
   editing: boolean
   selected_task_ids: ID[]
   toggleTaskSelection: (id: ID) => void
@@ -132,7 +132,7 @@ const TaskItem: React.FunctionComponent<Props> = ({
               {task.notes}
             </SingleLineWithEllipsis>
           }
-          onClick={onItemClick}
+          onClick={() => onItemClick(task.id)}
         />
 
         {editing || touch_screen ? null : (

@@ -51,10 +51,5 @@ const tasks_s = selectTaskList.pipe(
 )
 
 export const reducer_s = createReducer<State>(
-  tasks_s.pipe(
-    map(tasks => (state: State) => {
-      console.log("tasks_s", tasks, state)
-      return { ...state, tasks }
-    }),
-  ),
+  tasks_s.pipe(map(tasks => (state: State) => ({ ...state, tasks }))),
 )

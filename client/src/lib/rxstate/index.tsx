@@ -1,4 +1,5 @@
 import React, {
+  memo,
   useEffect,
   useContext,
   createContext,
@@ -49,26 +50,14 @@ export function createObservableStateTools<S>() {
   type DispatcherMap = { [key: string]: Dispatcher<any> }
 
   function connect<A extends DispatcherMap, R extends any>(
-    selector: Selector<S, R> | null,
+    _selector: Selector<S, R> | null,
     dispatchers: A,
   ) {
-    if (!selector) {
-      return <P extends any>(WrappedComponent: React.ComponentType<P>) => {
-        type NewProps = Omit<P, keyof R | keyof A>
-
-        const Connect = forwardRef<typeof WrappedComponent, NewProps>(
-          (props, ref) => {
-            const Comp = WrappedComponent as React.ComponentType<any>
-            return <Comp ref={ref} {...props} {...dispatchers} />
-          },
-        )
-
-        return Connect
-      }
-    }
+    const selector = _selector || (() => ({} as R))
 
     return <P extends any>(WrappedComponent: React.ComponentType<P>) => {
       type NewProps = Omit<P, keyof R | keyof A>
+      const Comp = memo(WrappedComponent) as React.ComponentType<any>
 
       const Connect = forwardRef<typeof WrappedComponent, NewProps>(
         (props, ref) => {
@@ -87,7 +76,6 @@ export function createObservableStateTools<S>() {
 
           state_ref.current = new_state
 
-          const Comp = WrappedComponent as React.ComponentType<any>
           child_ref.current = (
             <Comp ref={ref} {...new_state} {...props} {...dispatchers} />
           ) as React.ReactElement<NewProps>
