@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useCallback, useState } from "react"
+import React from "react"
 import {
   Subject,
   timer,
@@ -69,37 +69,26 @@ const eventPosition = (e: { clientX: number; clientY: number }): Vector => [
 ]
 
 export const useGesture = ({
-  onPress = () => {},
-  onPointerDown = () => {},
-  onPointerMove = () => {},
-  onPointerUp = () => {},
-  onHold = () => {},
-  onPull = () => {},
-  onSwipeLeft = () => {},
-  onSwipeRight = () => {},
+  onPress,
+  onPointerDown,
+  onPointerMove,
+  onPointerUp,
+  onHold,
+  onPull,
+  onSwipeLeft,
+  onSwipeRight,
 }: UseGestureInput): Bind => {
-  const down_s = useMemo(() => new Subject<React.PointerEvent>(), [])
-  const up_s = useMemo(() => new Subject<React.PointerEvent>(), [])
-  const move_s = useMemo(() => new Subject<React.PointerEvent>(), [])
+  return (input = {}) => {
+    /**
+     * We rely on the fact that a ref will get called twice, once when the element first mounts, and once when the element unmounts.
+     * This gives us the opportunty to hold state in a closure which allows us to maintain subscribe/unsubscribe logic.
+     */
+    const gg = calls++
 
-  const onPointerUpRef = useRef(onPointerUp)
-  onPointerUpRef.current = onPointerUp
-  const onPointerDownRef = useRef(onPointerDown)
-  onPointerDownRef.current = onPointerDown
-  const onPointerMoveRef = useRef(onPointerMove)
-  onPointerMoveRef.current = onPointerMove
-  const onPressRef = useRef(onPress)
-  onPressRef.current = onPress
-  const onHoldRef = useRef(onHold)
-  onHoldRef.current = onHold
-  const onPullRef = useRef(onPull)
-  onPullRef.current = onPull
-  const onSwipeLeftRef = useRef(onSwipeLeft)
-  onSwipeLeftRef.current = onSwipeLeft
-  const onSwipeRightRef = useRef(onSwipeRight)
-  onSwipeRightRef.current = onSwipeRight
+    const down_s = new Subject<React.PointerEvent>()
+    const up_s = new Subject<React.PointerEvent>()
+    const move_s = new Subject<React.PointerEvent>()
 
-  useEffect(() => {
     const down_data_s = down_s.pipe(
       map(down_e => ({
         down_e,
@@ -236,134 +225,130 @@ export const useGesture = ({
 
     const subscriptions: Subscription[] = []
 
-    subscriptions.push(swipe_left_s.subscribe(val => onSwipeLeftRef.current()))
-    subscriptions.push(
-      swipe_right_s.subscribe(val => onSwipeRightRef.current()),
-    )
-    subscriptions.push(down_s.subscribe(val => onPointerDownRef.current(val)))
-    subscriptions.push(up_s.subscribe(val => onPointerUpRef.current(val)))
-    subscriptions.push(move_s.subscribe(val => onPointerMoveRef.current(val)))
-    subscriptions.push(press_s.subscribe(val => onPressRef.current()))
-    subscriptions.push(hold_s.subscribe(val => onHoldRef.current()))
-    subscriptions.push(pull_s.subscribe(val => onPullRef.current(val)))
+    const subscribe = () => {
+      onSwipeLeft && subscriptions.push(swipe_left_s.subscribe(onSwipeLeft))
+      onSwipeRight && subscriptions.push(swipe_right_s.subscribe(onSwipeRight))
+      onPointerDown && subscriptions.push(down_s.subscribe(onPointerDown))
+      onPointerUp && subscriptions.push(up_s.subscribe(onPointerUp))
+      onPointerMove && subscriptions.push(move_s.subscribe(onPointerMove))
+      onPress && subscriptions.push(press_s.subscribe(onPress))
+      onHold && subscriptions.push(hold_s.subscribe(onHold))
+      onPull && subscriptions.push(pull_s.subscribe(onPull))
+    }
 
-    return () => subscriptions.forEach(sub => sub.unsubscribe())
-  }, [])
+    const unsubscribe = () => subscriptions.forEach(sub => sub.unsubscribe())
 
-  const [ref, setRef] = useState(null as null | HTMLElement)
-  type RegisteredHandler = {
-    node: HTMLElement
-    type: string
-    listener: EventListener
+    type RegisteredHandler = {
+      node: HTMLElement
+      type: string
+      listener: EventListener
+    }
+    let registered_handlers: RegisteredHandler[] = []
+
+    return {
+      /**
+       * We put all the ref logic in here so that the bind function is hook free and reusable amongst multiple elements
+       */
+      onPointerDown: e => {
+        e.persist()
+        down_s.next(e)
+        input.onPointerDown && input.onPointerDown(e)
+      },
+
+      onPointerUp: e => {
+        e.persist()
+        up_s.next(e)
+        input.onPointerUp && input.onPointerUp(e)
+      },
+
+      onPointerMove: e => {
+        e.persist()
+        move_s.next(e)
+        input.onPointerMove && input.onPointerMove(e)
+      },
+
+      ref: (el: HTMLElement | null) => {
+        if (typeof input.ref === "function") {
+          input.ref(el)
+        }
+
+        if (typeof input.ref === "object" && input.ref !== null) {
+          ;(input.ref as any).current = el
+        }
+
+        const addEventListener = <K extends keyof HTMLElementEventMap>(
+          node: HTMLElement,
+          type: K,
+          listener: (ev: HTMLElementEventMap[K]) => any,
+        ) => {
+          node.addEventListener(type, listener)
+          registered_handlers.push({
+            node,
+            type,
+            listener,
+          })
+        }
+
+        const registerHandlers = (node: HTMLElement) => {
+          let down_p: Vector | null
+          let noscroll = false
+
+          const touchStartHandler = (e: TouchEvent) => {
+            down_p = eventPosition(e.touches[0])
+          }
+
+          const touchMoveHandler = (e: TouchEvent) => {
+            if (!e.cancelable) {
+              return
+            }
+
+            if (noscroll) {
+              e.preventDefault()
+              return
+            }
+
+            if (!down_p) {
+              return e.preventDefault()
+            }
+
+            const move_p = eventPosition(e.touches[0])
+            const dir = direction(down_p, move_p)
+            const delta = (1 / 4) * Math.PI
+
+            if (
+              (onSwipeRight && Math.abs(dir) < delta) ||
+              (onSwipeLeft && Math.abs(dir) > Math.PI - delta)
+            ) {
+              e.preventDefault()
+              noscroll = true
+            }
+          }
+
+          const touchEndHandler = (e: TouchEvent) => {
+            noscroll = false
+            down_p = null
+          }
+
+          addEventListener(node, "touchstart", touchStartHandler)
+          addEventListener(node, "touchmove", touchMoveHandler)
+          addEventListener(node, "touchend", touchEndHandler)
+        }
+
+        const deregisterHandlers = () => {
+          registered_handlers.forEach(({ node, type, listener }) => {
+            node.removeEventListener(type, listener)
+          })
+          registered_handlers = []
+        }
+
+        if (el) {
+          registerHandlers(el)
+          subscribe()
+        } else {
+          unsubscribe()
+          deregisterHandlers()
+        }
+      },
+    }
   }
-  const handlers_ref = useRef([] as RegisteredHandler[])
-
-  const addEventListener = useCallback(
-    <K extends keyof HTMLElementEventMap>(
-      node: HTMLElement,
-      type: K,
-      listener: (ev: HTMLElementEventMap[K]) => any,
-    ) => {
-      node.addEventListener(type, listener)
-      handlers_ref.current.push({
-        node,
-        type,
-        listener,
-      })
-    },
-    [],
-  )
-
-  const removeEventListeners = () => {
-    handlers_ref.current.forEach(({ node, type, listener }) => {
-      node.removeEventListener(type, listener)
-    })
-    handlers_ref.current = []
-  }
-
-  useEffect(
-    () => {
-      const node = ref
-      if (!node) {
-        return
-      }
-
-      let down_p: Vector | null
-      let noscroll = false
-
-      const touchStartHandler = (e: TouchEvent) => {
-        down_p = eventPosition(e.touches[0])
-      }
-
-      const touchMoveHandler = (e: TouchEvent) => {
-        if (!e.cancelable) {
-          return
-        }
-
-        if (noscroll) {
-          e.preventDefault()
-          return
-        }
-
-        if (!down_p) {
-          return e.preventDefault()
-        }
-
-        const move_p = eventPosition(e.touches[0])
-        const dir = direction(down_p, move_p)
-        const delta = (1 / 4) * Math.PI
-
-        if (Math.abs(dir) < delta || Math.abs(dir) > Math.PI - delta) {
-          e.preventDefault()
-          noscroll = true
-        }
-      }
-
-      const touchEndHandler = (e: TouchEvent) => {
-        noscroll = false
-        down_p = null
-      }
-
-      addEventListener(node, "touchstart", touchStartHandler)
-      addEventListener(node, "touchmove", touchMoveHandler)
-      addEventListener(node, "touchend", touchEndHandler)
-
-      return () => removeEventListeners()
-    },
-    [ref, onSwipeLeft, onSwipeRight],
-  )
-
-  return (input = {}) => ({
-    onPointerDown: e => {
-      e.persist()
-      down_s.next(e)
-      input.onPointerDown && input.onPointerDown(e)
-    },
-
-    onPointerUp: e => {
-      e.persist()
-      up_s.next(e)
-      input.onPointerUp && input.onPointerUp(e)
-    },
-
-    onPointerMove: e => {
-      e.persist()
-      move_s.next(e)
-      input.onPointerMove && input.onPointerMove(e)
-    },
-
-    ref: (el: HTMLElement | null) => {
-      if (el && ref !== el) {
-        setRef(el)
-      }
-
-      if (typeof input.ref === "function") {
-        input.ref(el)
-      }
-
-      if (typeof input.ref === "object" && input.ref !== null) {
-        ;(input.ref as any).current = el
-      }
-    },
-  })
 }

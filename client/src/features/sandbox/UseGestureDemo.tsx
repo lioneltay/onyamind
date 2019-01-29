@@ -55,8 +55,8 @@ export default () => {
       console.log("onSwipeRight")
     },
 
-    onPull: ({ distance, delta }) => {
-      // console.log("onPull", distance, delta)
+    onPull: ({ distance, displacement }) => {
+      console.log("onPull", distance, displacement)
     },
   })
 
