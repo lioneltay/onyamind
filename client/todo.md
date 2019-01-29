@@ -57,7 +57,6 @@
   - [x] Header should not rely on props it doesnt use (tasks)
   - [x] add memo to connect
 
-
 - [ ] add notification to kill service worker
 
 - [ ] undo snackbar
