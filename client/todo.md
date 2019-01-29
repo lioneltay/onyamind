@@ -45,8 +45,6 @@
 * [x] hmr is a bit dodgy with new state system
   - [x] we were just causing the useEffect at the root to retrigger
 
-# TODAY
-
 - [x] when creating a new list it should be selected as well
   - [x] solved state bug, new state was being pushed onto stream before the new state was actually updated
 - [x] delete modal has too much space above text
@@ -56,6 +54,10 @@
   - [x] optimisation
   - [x] Header should not rely on props it doesnt use (tasks)
   - [x] add memo to connect
+
+# TODAY
+
+- [x] Gestures for task delete/check
 
 - [ ] add notification to kill service worker
 
@@ -119,7 +121,9 @@
 - [ ] add created date to edit modal
 
 # Future
+
 - [ ] hooks api?
+
   - Not feasible since we want to also impletement shouldcomponentupdate for you although there is an issue around it
 
 - [ ] Stop the connect component from rerendering
