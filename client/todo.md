@@ -58,6 +58,7 @@
 # TODAY
 
 - [x] Gestures for task delete/check
+- [ ] pulling should prevent edit click
 
 - [ ] add notification to kill service worker
 
@@ -70,14 +71,6 @@
 
 - [ ] non logged in version should store data localy
 - [ ] when signing in, if there are local notes ask if they would like them to be transfered, then delete the local notes
-
-* [ ] animate saving text in edit modal
-
-- [ ] add search
-
-- [ ] animated new item with temporary background color
-
-- [ ] swipre for actions
 
 - [ ] move task to another list
 

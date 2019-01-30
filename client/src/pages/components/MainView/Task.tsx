@@ -117,13 +117,11 @@ const Task = forwardRef<any, Props>(
       },
 
       onSwipeLeft: () => {
-        console.log("swipeLeft")
         setStatus("left")
         setPercent(-100)
       },
 
       onSwipeRight: () => {
-        console.log("swipeRight")
         setStatus("right")
         setPercent(100)
       },
@@ -137,32 +135,9 @@ const Task = forwardRef<any, Props>(
     })
 
     return (
-      <Spring
-        config={config.stiff}
-        from={{ percent }}
-        to={{ percent }}
-        onRest={() => {
-          console.log("rest", status)
-          switch (
-            status
-            // case "left": {
-            //   removeTask(task.id)
-            //   break
-            // }
-            // case "right": {
-            //   editTask({
-            //     task_id: task.id,
-            //     task_data: { complete: !task.complete },
-            //   })
-            //   break
-            // }
-          ) {
-          }
-        }}
-      >
+      <Spring config={config.stiff} from={{ percent }} to={{ percent }}>
         {spring => {
           if (Math.abs(spring.percent) > 95 && !done) {
-            console.log("GOGO")
             if (status === "left" && spring.percent) {
               removeTask(task.id)
               setDone(true)
@@ -175,6 +150,7 @@ const Task = forwardRef<any, Props>(
               setDone(true)
             }
           }
+
           return (
             <Container>
               <ListItem
