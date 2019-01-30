@@ -1,21 +1,18 @@
-import React, { memo, useState, useMemo, useRef } from "react"
+import React, { useState, useRef, forwardRef } from "react"
 import styled from "styled-components"
 
-import { Spring, Transition, config } from "react-spring"
+import { Spring, config } from "react-spring"
 import { useGesture } from "lib/useGesture"
 
 import ListItem from "@material-ui/core/ListItem"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
 import Fab from "@material-ui/core/Fab"
 import IconButton from "@material-ui/core/IconButton"
-import RootRef from "@material-ui/core/RootRef"
 
 import Assignment from "@material-ui/icons/Assignment"
 import Delete from "@material-ui/icons/Delete"
 import Add from "@material-ui/icons/Add"
 import Check from "@material-ui/icons/Check"
-
-import { Flipped } from "react-flip-toolkit"
 
 import { highlight_color } from "../../../constants"
 import { ListItemText } from "@material-ui/core"
@@ -85,176 +82,214 @@ export type Props = {
   editTask: ConnectedDispatcher<typeof editTask>
 }
 
-const TaskItem: React.FunctionComponent<Props> = ({
-  task,
-  onItemClick,
-  editing,
-  selected_task_ids,
-  toggleTaskSelection,
-  touch_screen,
-  removeTask,
-  editTask,
-}) => {
-  const selected = selected_task_ids.findIndex(id => id === task.id) >= 0
-
-  const [percent, setPercent] = useState(0)
-  const [status, setStatus] = useState("default" as
-    | "default"
-    | "pulling"
-    | "left"
-    | "right")
-  const ref = useRef(null as null | HTMLElement)
-
-  const bind = useGesture({
-    onPull: ({ displacement: [dx] }) => {
-      setStatus("pulling")
-      if (ref.current) {
-        const box = ref.current.getBoundingClientRect()
-        setPercent((dx / box.width) * 100)
-      }
+const Task = forwardRef<any, Props>(
+  (
+    {
+      task,
+      onItemClick,
+      editing,
+      selected_task_ids,
+      toggleTaskSelection,
+      touch_screen,
+      removeTask,
+      editTask,
     },
+    ref,
+  ) => {
+    const selected = selected_task_ids.findIndex(id => id === task.id) >= 0
 
-    onSwipeLeft: () => {
-      console.log("swipeLeft")
-      setStatus("left")
-      setPercent(-100)
-    },
+    const [percent, setPercent] = useState(0)
+    const [status, setStatus] = useState("default" as
+      | "default"
+      | "pulling"
+      | "left"
+      | "right")
+    const container_ref = useRef(null as null | HTMLElement)
+    const [done, setDone] = useState(false)
 
-    onSwipeRight: () => {
-      console.log("swipeRight")
-      setStatus("right")
-      setPercent(100)
-    },
-
-    onPointerUp: () => {
-      if (status === "pulling") {
-        setStatus("default")
-        setPercent(0)
-      }
-    },
-  })
-
-  return (
-    <Spring
-      config={config.stiff}
-      from={{ percent }}
-      to={{ percent }}
-      onRest={() => {
-        console.log("rest", status)
-        switch (status) {
-          case "default": {
-            setPercent(0)
-            break
-          }
-          case "left": {
-            removeTask(task.id)
-            break
-          }
-          case "right": {
-            editTask({
-              task_id: task.id,
-              task_data: { complete: !task.complete },
-            })
-            break
-          }
+    const bind = useGesture({
+      onPull: ({ displacement: [dx] }) => {
+        setStatus("pulling")
+        if (container_ref.current) {
+          const box = container_ref.current.getBoundingClientRect()
+          setPercent((dx / box.width) * 100)
         }
-      }}
-    >
-      {spring => (
-        <Flipped flipId={task.id}>
-          <Container>
-            <ListItem
-              className={
-                percent > 0 ? "fj-s" : percent < 0 ? "fj-e" : undefined
-              }
-              style={{
-                position: "absolute",
-                width: "100%",
-                height: "100%",
-                top: 0,
-                left: 0,
-                backgroundColor:
-                  spring.percent > 0
-                    ? "dodgerblue"
-                    : spring.percent < 0
-                    ? "tomato"
-                    : undefined,
-              }}
-            >
-              <IconButton style={{ color: "white" }}>
-                {spring.percent > 0 ? (
-                  <Check />
-                ) : spring.percent < 0 ? (
-                  <Delete />
-                ) : (
-                  undefined
-                )}
-              </IconButton>
-            </ListItem>
-            <div
-              {...bind({ ref })}
-              style={{
-                transform:
-                  status === "pulling"
-                    ? `translateX(${percent}%)`
-                    : `translateX(${spring.percent}%)`,
-              }}
-            >
-              <ItemContainer>
-                <StyledListItem
-                  selected={selected}
-                  button
-                  style={{
-                    backgroundColor: selected ? highlight_color : undefined,
-                  }}
-                >
-                  <ListItemIcon>
-                    <Fab
-                      style={{
-                        borderRadius: editing ? "50%" : "5px",
-                        transition: "300ms",
-                        border: selected ? "1px solid blue" : "none",
-                        background: "white",
-                        marginLeft: 4,
-                        color: "#ccc",
-                      }}
-                      onClick={() => toggleTaskSelection(task.id)}
-                      size="small"
-                    >
-                      <Assignment
+      },
+
+      onSwipeLeft: () => {
+        console.log("swipeLeft")
+        setStatus("left")
+        setPercent(-100)
+      },
+
+      onSwipeRight: () => {
+        console.log("swipeRight")
+        setStatus("right")
+        setPercent(100)
+      },
+
+      onPointerUp: () => {
+        if (status === "pulling") {
+          setStatus("default")
+          setPercent(0)
+        }
+      },
+    })
+
+    return (
+      <Spring
+        config={config.stiff}
+        from={{ percent }}
+        to={{ percent }}
+        onRest={() => {
+          console.log("rest", status)
+          switch (
+            status
+            // case "left": {
+            //   removeTask(task.id)
+            //   break
+            // }
+            // case "right": {
+            //   editTask({
+            //     task_id: task.id,
+            //     task_data: { complete: !task.complete },
+            //   })
+            //   break
+            // }
+          ) {
+          }
+        }}
+      >
+        {spring => {
+          if (Math.abs(spring.percent) > 95 && !done) {
+            console.log("GOGO")
+            if (status === "left" && spring.percent) {
+              removeTask(task.id)
+              setDone(true)
+            }
+            if (status === "right") {
+              editTask({
+                task_id: task.id,
+                task_data: { complete: !task.complete },
+              })
+              setDone(true)
+            }
+          }
+          return (
+            <Container>
+              <ListItem
+                className={
+                  percent > 0 ? "fj-s" : percent < 0 ? "fj-e" : undefined
+                }
+                style={{
+                  position: "absolute",
+                  width: "100%",
+                  height: "100%",
+                  top: 0,
+                  left: 0,
+                  backgroundColor:
+                    spring.percent > 0
+                      ? "dodgerblue"
+                      : spring.percent < 0
+                      ? "tomato"
+                      : undefined,
+                }}
+              >
+                <IconButton style={{ color: "white" }}>
+                  {spring.percent > 0 ? (
+                    <Check />
+                  ) : spring.percent < 0 ? (
+                    <Delete />
+                  ) : (
+                    undefined
+                  )}
+                </IconButton>
+              </ListItem>
+              <div
+                {...bind({ ref: container_ref })}
+                style={{
+                  transform:
+                    status === "pulling"
+                      ? `translateX(${percent}%)`
+                      : `translateX(${spring.percent}%)`,
+                }}
+              >
+                <ItemContainer>
+                  <StyledListItem
+                    ref={ref}
+                    style={{
+                      opacity: 1,
+                      height: "auto",
+                      backgroundColor: selected ? highlight_color : undefined,
+                    }}
+                    selected={selected}
+                    button
+                  >
+                    <ListItemIcon>
+                      <Fab
                         style={{
-                          transform: `scale(${editing ? 0.7 : 1})`,
+                          borderRadius: editing ? "50%" : "5px",
                           transition: "300ms",
+                          border: selected ? "1px solid blue" : "none",
+                          background: "white",
+                          marginLeft: 4,
+                          color: "#ccc",
                         }}
-                      />
-                    </Fab>
-                  </ListItemIcon>
-
-                  <ListItemText
-                    primary={
-                      <SingleLineWithEllipsis
-                        style={{
-                          fontWeight: 500,
-                          fontSize: "0.95rem",
-                          textDecoration: task.complete
-                            ? "line-through"
-                            : "none",
-                          color: "#202124",
-                        }}
+                        onClick={() => toggleTaskSelection(task.id)}
+                        size="small"
                       >
-                        {task.title}
-                      </SingleLineWithEllipsis>
-                    }
-                    secondary={
-                      <SingleLineWithEllipsis style={{ fontWeight: 500 }}>
-                        {task.notes}
-                      </SingleLineWithEllipsis>
-                    }
-                    onClick={() => onItemClick(task.id)}
-                  />
+                        <Assignment
+                          style={{
+                            transform: `scale(${editing ? 0.7 : 1})`,
+                            transition: "300ms",
+                          }}
+                        />
+                      </Fab>
+                    </ListItemIcon>
 
-                  {editing || touch_screen ? null : (
-                    <Overlay>
+                    <ListItemText
+                      primary={
+                        <SingleLineWithEllipsis
+                          style={{
+                            fontWeight: 500,
+                            fontSize: "0.95rem",
+                            textDecoration: task.complete
+                              ? "line-through"
+                              : "none",
+                            color: "#202124",
+                          }}
+                        >
+                          {task.title}
+                        </SingleLineWithEllipsis>
+                      }
+                      secondary={
+                        <SingleLineWithEllipsis style={{ fontWeight: 500 }}>
+                          {task.notes}
+                        </SingleLineWithEllipsis>
+                      }
+                      onClick={() => onItemClick(task.id)}
+                    />
+
+                    {editing || touch_screen ? null : (
+                      <Overlay>
+                        <IconButton
+                          onClick={() =>
+                            editTask({
+                              task_id: task.id,
+                              task_data: { complete: !task.complete },
+                            })
+                          }
+                        >
+                          {task.complete ? <Add /> : <Check />}
+                        </IconButton>
+
+                        <IconButton onClick={() => removeTask(task.id)}>
+                          <Delete />
+                        </IconButton>
+                      </Overlay>
+                    )}
+
+                    {editing || !touch_screen || !task.complete ? null : (
                       <IconButton
                         onClick={() =>
                           editTask({
@@ -263,36 +298,19 @@ const TaskItem: React.FunctionComponent<Props> = ({
                           })
                         }
                       >
-                        {task.complete ? <Add /> : <Check />}
+                        <Add />
                       </IconButton>
-
-                      <IconButton onClick={() => removeTask(task.id)}>
-                        <Delete />
-                      </IconButton>
-                    </Overlay>
-                  )}
-
-                  {editing || !touch_screen || !task.complete ? null : (
-                    <IconButton
-                      onClick={() =>
-                        editTask({
-                          task_id: task.id,
-                          task_data: { complete: !task.complete },
-                        })
-                      }
-                    >
-                      <Add />
-                    </IconButton>
-                  )}
-                </StyledListItem>
-              </ItemContainer>
-            </div>
-          </Container>
-        </Flipped>
-      )}
-    </Spring>
-  )
-}
+                    )}
+                  </StyledListItem>
+                </ItemContainer>
+              </div>
+            </Container>
+          )
+        }}
+      </Spring>
+    )
+  },
+)
 
 export default connect(
   state => ({
@@ -305,4 +323,4 @@ export default connect(
     editTask,
     removeTask,
   },
-)(TaskItem)
+)(Task)

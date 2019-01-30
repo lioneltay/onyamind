@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react"
 import styled from "styled-components"
 import { comparator, partition } from "ramda"
+import { Transition, animated } from "react-spring"
 
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
@@ -99,9 +100,26 @@ const MainView: React.FunctionComponent<Props> = ({
     <OuterContainer>
       <Container>
         <List className="p-0" style={{ background: "white" }}>
-          {incomplete_tasks.map(task => (
-            <Task key={task.id} task={task} onItemClick={startEditingTask} />
-          ))}
+          <Transition
+            items={incomplete_tasks}
+            keys={task => task.id}
+            initial={{ height: "auto", opacity: 1 }}
+            from={{ height: 0, opacity: 0 }}
+            enter={{ height: "auto", opacity: 1 }}
+            leave={{ height: 0, opacity: 0 }}
+          >
+            {task => style => {
+              return (
+                <animated.div style={style}>
+                  <Task
+                    key={task.id}
+                    task={task}
+                    onItemClick={startEditingTask}
+                  />
+                </animated.div>
+              )
+            }}
+          </Transition>
         </List>
 
         <List className="p-0">
@@ -136,11 +154,26 @@ const MainView: React.FunctionComponent<Props> = ({
         </List>
 
         <Collapse in={show_complete_tasks}>
-          <List className="p-0">
-            {complete_tasks.map(task => (
-              <Task key={task.id} task={task} onItemClick={startEditingTask} />
-            ))}
-          </List>
+          <Transition
+            items={complete_tasks}
+            keys={task => task.id}
+            initial={{ height: "auto", opacity: 1 }}
+            from={{ height: 0, opacity: 0 }}
+            enter={{ height: "auto", opacity: 1 }}
+            leave={{ height: 0, opacity: 0 }}
+          >
+            {task => style => {
+              return (
+                <animated.div style={style}>
+                  <Task
+                    key={task.id}
+                    task={task}
+                    onItemClick={startEditingTask}
+                  />
+                </animated.div>
+              )
+            }}
+          </Transition>
         </Collapse>
       </Container>
 

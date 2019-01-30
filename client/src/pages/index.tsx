@@ -1,50 +1,15 @@
 import React from "react"
 
-import { Flipper } from "react-flip-toolkit"
-import { partition, prop, comparator } from "ramda"
-
 import Root from "./Root"
 
 import { Provider as RxStateProvider, connect } from "../services/state"
 import { Route, Switch, Redirect } from "react-router-dom"
 import SandboxPage from "features/sandbox"
 
-type RootWithContextProps = {
-  tasks: Task[]
-}
-const RootWithContext: React.FunctionComponent<RootWithContextProps> = ({
-  tasks,
-}) => {
-  if (!tasks) {
-    return (
-      <Flipper flipKey="No tasks">
-        <Root />
-      </Flipper>
-    )
-  }
-
-  const [complete, incomplete] = partition(task => task.complete, tasks)
-  const process = (tasks: Task[]) =>
-    tasks
-      .sort(comparator((t1, t2) => t1.created_at > t2.created_at))
-      .map(prop("id"))
-
-  const flipKey =
-    [...process(incomplete), ...process(complete)].join("") +
-    complete.length +
-    incomplete.length
-
-  return (
-    <Flipper flipKey={flipKey}>
-      <Root />
-    </Flipper>
-  )
-}
-
-const ConnectedRootWithContext = connect(
+const ConnectedRoot = connect(
   state => ({ tasks: state.tasks }),
   {},
-)(RootWithContext)
+)(Root)
 
 const TodoApp: React.FunctionComponent = () => {
   return (
@@ -54,7 +19,7 @@ const TodoApp: React.FunctionComponent = () => {
         path="/"
         render={() => (
           <RxStateProvider>
-            <ConnectedRootWithContext />
+            <ConnectedRoot />
           </RxStateProvider>
         )}
       />
