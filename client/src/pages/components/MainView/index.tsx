@@ -7,7 +7,6 @@ import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemText from "@material-ui/core/ListItemText"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction"
 import LinearProgress from "@material-ui/core/LinearProgress"
 import Fade from "@material-ui/core/Fade"
 
@@ -22,6 +21,7 @@ import EditModal from "./EditModal"
 
 import { connect } from "services/state"
 import { editTask } from "services/state/modules/tasks"
+import { tasks } from "services/state/modules/tasks/selectors"
 import {
   uncheckCompletedTasks,
   deleteCompletedTasks,
@@ -193,6 +193,6 @@ const MainView: React.FunctionComponent<Props> = ({
 }
 
 export default connect(
-  state => ({ tasks: state.tasks }),
+  state => ({ tasks: tasks(state) }),
   { uncheckCompletedTasks, deleteCompletedTasks, editTask },
 )(MainView)

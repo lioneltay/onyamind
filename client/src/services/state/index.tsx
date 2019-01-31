@@ -12,10 +12,12 @@ import { reducer_s as tasksReducer } from "./modules/tasks"
 import { reducer_s as taskListsReducer } from "./modules/task-lists"
 
 export type State = {
+  show_undo: boolean
   selected_task_list_id: ID | null
   touch_screen: boolean
   editing: boolean
   user: User | null
+  task_delete_markers: { [key: string]: ID }
   tasks: Task[] | null
   task_lists: TaskList[] | null
   show_edit_modal: boolean
@@ -27,6 +29,8 @@ export type State = {
 }
 
 export const initial_state: State = {
+  task_delete_markers: {},
+  show_undo: false,
   selected_task_list_id: null,
   touch_screen: false,
   editing: false,

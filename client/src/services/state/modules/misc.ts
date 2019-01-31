@@ -36,7 +36,15 @@ const selected_task_list_s = state_s.pipe(
   distinctUntilChanged(),
 )
 
+export const openUndo = createDispatcher()
+export const closeUndo = createDispatcher()
+export const undo = createDispatcher()
+
 export const reducer_s = createReducer<State>(
+  openUndo.pipe(map(() => (state: State) => ({ ...state, show_undo: true }))),
+  closeUndo.pipe(map(() => (state: State) => ({ ...state, show_undo: false }))),
+  undo.pipe(map(() => (state: State) => ({ ...state, show_undo: false }))),
+
   selected_task_list_s.pipe(
     map(() => (state: State) => ({
       ...state,

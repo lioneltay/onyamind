@@ -58,60 +58,69 @@
 # TODAY
 
 - [x] Gestures for task delete/check
-- [ ] pulling should prevent edit click
+- [x] undo snackbar for deleting tasks
 
-- [ ] add notification to kill service worker
+- [ ] refactor again!
+- [ ] optimise gesture animation compnents (children)
 
-- [ ] undo snackbar
-- [ ] implement max number of tasks per list
+- [ ] deleted tasks should go to trash and be automatically deleted after a week
 
-- [ ] firegure out how to make modals and drawers work on mobile with back button (you can block back button, add an event handgler instead?)
-- [ ] firegout how to put app on app store (pwa builder)
-- [ ] tests
+  - [ ] add routes, trash page
 
-- [ ] non logged in version should store data localy
-- [ ] when signing in, if there are local notes ask if they would like them to be transfered, then delete the local notes
+- [ ] add settings collection
+- [ ] add dark theme
 
-- [ ] move task to another list
+* [ ] add notification to kill service worker
 
-- [ ] due dates
+* [ ] implement max number of tasks per list
 
-- [ ] pinned tasks
+* [ ] firegure out how to make modals and drawers work on mobile with back button (you can block back button, add an event handgler instead?)
+* [ ] firegout how to put app on app store (pwa builder)
+* [ ] tests
 
-- [ ] rich text editor
+* [ ] non logged in version should store data localy
+* [ ] when signing in, if there are local notes ask if they would like them to be transfered, then delete the local notes
 
-- [ ] shared lists
+* [ ] move task to another list
 
-* [ ] distinguish between completed and incompleted task counts in list's task count
+* [ ] due dates
 
-* [ ] ensure service worker clears cache when initialising
+* [ ] pinned tasks
 
-* [ ] feedback
+* [ ] rich text editor
+
+* [ ] shared lists
+
+- [ ] distinguish between completed and incompleted task counts in list's task count
+
+- [ ] ensure service worker clears cache when initialising
+
+- [ ] feedback
 
   - [ ] save feedback to firebase
   - [ ] screenshots
 
-* [ ] seo
+- [ ] seo
 
-* [ ] code splitting
+- [ ] code splitting
 
-* [ ] bundle optimisation with webpack
+- [ ] bundle optimisation with webpack
 
   - [ ] tree shaking
   - [ ] minification
 
-* [ ] Performance review/analysis
+- [ ] Performance review/analysis
 
-* [ ] security
+- [ ] security
 
-* [ ] drag and drop
+- [ ] drag and drop
 
   - [ ] drag doesnt work on mobile
   - [ ] lock drag to vertical only
 
-* [ ] advertisements
+- [ ] advertisements
 
-- [ ] add created date to edit modal
+* [ ] add created date to edit modal
 
 # Future
 

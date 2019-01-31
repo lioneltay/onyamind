@@ -6,6 +6,7 @@ import Drawer from "./components/Drawer"
 import TaskAdder from "./components/TaskAdder"
 import MainView from "./components/MainView"
 import WarningFooter from "./components/WarningFooter"
+import UndoSnackbar from "./components/UndoSnackbar"
 
 import { background_color } from "../constants"
 
@@ -86,6 +87,7 @@ const Root: React.FunctionComponent<Props> = ({
       <Drawer />
       <MainView />
       {/* <WarningFooter /> */}
+      <UndoSnackbar />
     </PageContainer>
   )
 }
