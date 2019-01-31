@@ -8,7 +8,6 @@ import MenuItem from "@material-ui/core/MenuItem"
 
 import MoreVert from "@material-ui/icons/MoreVert"
 
-
 type Props = {
   task_list: TaskList
   selected: boolean
@@ -28,6 +27,9 @@ const TaskList: React.FunctionComponent<Props> = ({
 }) => {
   const [anchor_el, setAnchorEl] = useState(null as HTMLElement | null)
 
+  const total_tasks =
+    task_list.number_of_complete_tasks + task_list.number_of_incomplete_tasks
+
   return (
     <ListItem
       selected={selected}
@@ -36,7 +38,13 @@ const TaskList: React.FunctionComponent<Props> = ({
     >
       <ListItemText
         primary={task_list.name}
-        secondary={`${task_list.number_of_tasks} items`}
+        secondary={
+          total_tasks > 0
+            ? `${
+                task_list.number_of_complete_tasks
+              }/${total_tasks} tasks complete`
+            : "No tasks"
+        }
       />
       <ListItemSecondaryAction>
         <IconButton onClick={e => setAnchorEl(e.currentTarget)}>

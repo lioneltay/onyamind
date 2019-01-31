@@ -24,9 +24,8 @@ import { editTask } from "services/state/modules/tasks"
 import { tasks } from "services/state/modules/tasks/selectors"
 import {
   uncheckCompletedTasks,
-  deleteCompletedTasks,
+  archiveCompletedTasks,
 } from "services/state/modules/editing"
-import { ConnectedDispatcher } from "lib/rxstate"
 
 const OuterContainer = styled.div`
   display: flex;
@@ -46,16 +45,9 @@ const Rotate = styled.div.attrs({})<{ flip: boolean }>`
 
 type Props = {
   tasks: Task[]
-  uncheckCompletedTasks: ConnectedDispatcher<typeof uncheckCompletedTasks>
-  deleteCompletedTasks: ConnectedDispatcher<typeof deleteCompletedTasks>
-  editTask: ConnectedDispatcher<typeof editTask>
 }
 
-const MainView: React.FunctionComponent<Props> = ({
-  tasks,
-  uncheckCompletedTasks,
-  deleteCompletedTasks,
-}) => {
+const MainView: React.FunctionComponent<Props> = ({ tasks }) => {
   const [editing_task_id, setEditingTaskId] = useState(null as ID | null)
   const [show_edit_modal, setShowEditModal] = useState(false)
   const [show_complete_tasks, setShowCompleteTasks] = useState(false)
@@ -146,7 +138,7 @@ const MainView: React.FunctionComponent<Props> = ({
                 },
                 {
                   label: "Delete completed items",
-                  action: deleteCompletedTasks,
+                  action: archiveCompletedTasks,
                 },
               ]}
             />
@@ -192,7 +184,4 @@ const MainView: React.FunctionComponent<Props> = ({
   )
 }
 
-export default connect(
-  state => ({ tasks: tasks(state) }),
-  { uncheckCompletedTasks, deleteCompletedTasks, editTask },
-)(MainView)
+export default connect(state => ({ tasks: tasks(state) }))(MainView)

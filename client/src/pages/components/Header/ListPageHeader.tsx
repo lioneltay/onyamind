@@ -16,10 +16,9 @@ import { connect } from "services/state"
 import { toggleDrawer } from "services/state/modules/misc"
 import {
   uncheckSelectedTasks,
-  deleteSelectedTasks,
+  archiveSelectedTasks,
   checkSelectedTasks,
 } from "services/state/modules/editing"
-import { ConnectedDispatcher } from "lib/rxstate"
 import { stopEditing } from "services/state/modules/editing"
 
 const Container = styled(Toolbar)`
@@ -52,24 +51,14 @@ type Props = {
   editing: boolean
   selected_task_list_name: string
   number_of_selected_tasks: number
-  toggleDrawer: ConnectedDispatcher<typeof toggleDrawer>
-  stopEditing: ConnectedDispatcher<typeof stopEditing>
-  checkSelectedTasks: ConnectedDispatcher<typeof checkSelectedTasks>
-  uncheckSelectedTasks: ConnectedDispatcher<typeof uncheckSelectedTasks>
-  deleteSelectedTasks: ConnectedDispatcher<typeof deleteSelectedTasks>
 }
 
-const Header: React.FunctionComponent<Props> = ({
+const ListPageHeader: React.FunctionComponent<Props> = ({
   selected_task_list_name,
   all_selected_tasks_complete,
   all_selected_tasks_incomplete,
   number_of_selected_tasks,
-  toggleDrawer,
   editing,
-  stopEditing,
-  checkSelectedTasks,
-  uncheckSelectedTasks,
-  deleteSelectedTasks,
 }) => {
   return (
     <AppBar position="relative">
@@ -121,7 +110,7 @@ const Header: React.FunctionComponent<Props> = ({
                 </IconButton>
               ) : null}
 
-              <IconButton onClick={deleteSelectedTasks}>
+              <IconButton onClick={archiveSelectedTasks}>
                 <Delete />
               </IconButton>
             </div>
@@ -167,11 +156,4 @@ export default connect(
       number_of_selected_tasks: selected_task_ids.length,
     }
   },
-  {
-    toggleDrawer,
-    stopEditing,
-    checkSelectedTasks,
-    uncheckSelectedTasks,
-    deleteSelectedTasks,
-  },
-)(Header)
+)(ListPageHeader)

@@ -36,16 +36,10 @@ const X = styled(Clear)`
 ` as typeof Clear
 
 type Props = {
-  toggle: () => void
   show: boolean
-  signIn: () => void
 }
 
-const WarningFooter: React.FunctionComponent<Props> = ({
-  show,
-  toggle,
-  signIn,
-}) => {
+const WarningFooter: React.FunctionComponent<Props> = ({ show }) => {
   const [show_modal, setShowModal] = useState(false)
 
   return (
@@ -64,7 +58,7 @@ const WarningFooter: React.FunctionComponent<Props> = ({
               notes across devices.{" "}
               <Action onClick={() => setShowModal(true)}>Learn more.</Action>
             </Typography>
-            <X fontSize="small" onClick={toggle} />
+            <X fontSize="small" onClick={toggleWarningFooter} />
 
             <Modal
               style={{ width: 500, maxWith: "100%" }}
@@ -100,12 +94,6 @@ const WarningFooter: React.FunctionComponent<Props> = ({
   )
 }
 
-export default connect(
-  state => ({
-    show: state.show_warning_footer,
-  }),
-  {
-    toggle: toggleWarningFooter,
-    signIn,
-  },
-)(WarningFooter)
+export default connect(state => ({
+  show: state.show_warning_footer,
+}))(WarningFooter)

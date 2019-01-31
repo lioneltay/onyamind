@@ -49,19 +49,13 @@ type Props = {
   user: User
   editing: boolean
   selected_task_ids: ID[]
-  selectAllIncompleteTasks: () => void
-  deselectAllIncompleteTasks: () => void
-  addTask: ConnectedDispatcher<typeof addTask>
   selected_task_list_id: ID | null
 }
 
 const TaskAdder: React.FunctionComponent<Props> = ({
   editing,
   selected_task_ids,
-  selectAllIncompleteTasks,
-  deselectAllIncompleteTasks,
   tasks,
-  addTask,
 }) => {
   const [new_task_title, setNewTaskTitle] = useState("")
 
@@ -163,17 +157,10 @@ const TaskAdder: React.FunctionComponent<Props> = ({
   )
 }
 
-export default connect(
-  state => ({
-    user: state.user,
-    editing: state.editing,
-    selected_task_ids: state.selected_task_ids,
-    tasks: state.tasks,
-    selected_task_list_id: state.selected_task_list_id,
-  }),
-  {
-    selectAllIncompleteTasks,
-    deselectAllIncompleteTasks,
-    addTask,
-  },
-)(TaskAdder)
+export default connect(state => ({
+  user: state.user,
+  editing: state.editing,
+  selected_task_ids: state.selected_task_ids,
+  tasks: state.tasks,
+  selected_task_list_id: state.selected_task_list_id,
+}))(TaskAdder)

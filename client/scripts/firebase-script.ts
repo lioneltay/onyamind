@@ -1,4 +1,4 @@
-import { firestore, dataWithId } from "./firebase"
+import { firebase, firestore, dataWithId } from "./firebase"
 
 // firestore
 //   .collection("tasks")
@@ -11,9 +11,11 @@ import { firestore, dataWithId } from "./firebase"
 
 //     tasks.forEach(task => {
 //       batch.update(firestore.collection("tasks").doc(task.id), {
-//         archived: false,
+//         number_of_incomplete_tasks: firebase.firestore.FieldValue.delete(),
+//         number_of_complete_tasks: firebase.firestore.FieldValue.delete(),
 //       })
 //     })
 
 //     return batch.commit()
 //   })
+//   .then(() => console.log("done"))

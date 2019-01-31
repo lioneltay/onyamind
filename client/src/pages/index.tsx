@@ -13,6 +13,7 @@ import { background_color } from "theme"
 
 import Header from "./components/Header"
 import Drawer from "./components/Drawer"
+import UndoSnackbar from "./components/UndoSnackbar"
 
 const Container = styled.div`
   background: ${background_color};
@@ -31,6 +32,7 @@ const RootRoute: React.FunctionComponent = () => {
       <Container>
         <Header />
         <Drawer />
+        <UndoSnackbar />
 
         <Switch>
           <Route exact path="/" component={RootPage} />} />

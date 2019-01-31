@@ -7,7 +7,8 @@ declare global {
     id: ID
     user_id: ID | null
     name: string
-    number_of_tasks: number
+    number_of_incomplete_tasks: number
+    number_of_complete_tasks: number
     primary: boolean
     created_at: number
     updated_at: number

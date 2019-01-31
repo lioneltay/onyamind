@@ -1,35 +1,14 @@
 import { createReducer } from "lib/rxstate"
-import { firestore, dataWithId } from "services/firebase"
+import { map, distinctUntilChanged } from "rxjs/operators"
 
-import { Observable } from "rxjs"
-import { map, switchMap, distinctUntilChanged, tap } from "rxjs/operators"
-
-import { user_s } from "./auth"
 import { State } from "services/state"
 import { createDispatcher } from "services/state/tools"
 import { state_s } from "services/state/tools"
 
-const createCurrentListsStream = (user_id: ID | null) =>
-  new Observable<TaskList[] | null>(observer => {
-    observer.next(null)
-    return firestore
-      .collection("task_lists")
-      .where("user_id", "==", user_id)
-      .onSnapshot(snapshot => {
-        const lists: TaskList[] = snapshot.docs.map(dataWithId) as TaskList[]
-        observer.next(lists)
-      })
-  })
-
 export const toggleDrawer = createDispatcher()
 export const setTouchEnabled = createDispatcher((enabled: boolean) => enabled)
-export const selectTaskList = createDispatcher((task_list_id: ID) => {
-  console.log("GOGO", task_list_id)
-  return task_list_id
-})
-
-const lists_s = user_s.pipe(
-  switchMap(user => createCurrentListsStream(user ? user.uid : null)),
+export const selectTaskList = createDispatcher(
+  (task_list_id: ID | null) => task_list_id,
 )
 
 const selected_task_list_s = state_s.pipe(
@@ -52,8 +31,6 @@ export const reducer_s = createReducer<State>(
       show_drawer: false,
     })),
   ),
-
-  lists_s.pipe(map(task_lists => (state: State) => ({ ...state, task_lists }))),
 
   setTouchEnabled.pipe(
     map(touch_screen => (state: State) => ({ ...state, touch_screen })),

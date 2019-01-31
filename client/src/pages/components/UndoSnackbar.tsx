@@ -45,9 +45,6 @@ const UndoSnackbar: React.FunctionComponent<Props> = ({ show }) => {
   )
 }
 
-export default connect(
-  state => ({
-    show: state.show_undo,
-  }),
-  {},
-)(UndoSnackbar)
+export default connect(state => ({
+  show: state.show_undo,
+}))(UndoSnackbar)

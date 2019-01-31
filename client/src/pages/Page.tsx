@@ -43,6 +43,5 @@ export default withRouter(
     state => ({
       primary_task_list: primaryTaskList(state),
     }),
-    {},
   )(Root),
 )

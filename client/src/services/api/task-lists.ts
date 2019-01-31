@@ -2,7 +2,11 @@ import { firebase, firestore, dataWithId } from "services/firebase"
 
 type AddTaskListInput = Omit<
   TaskList,
-  "id" | "created_at" | "updated_at" | "number_of_tasks"
+  | "id"
+  | "created_at"
+  | "updated_at"
+  | "number_of_incomplete_tasks"
+  | "number_of_complete_tasks"
 >
 export const addTaskList = async (
   list: AddTaskListInput,
@@ -10,7 +14,8 @@ export const addTaskList = async (
   return firestore
     .collection("task_lists")
     .add({
-      number_of_tasks: 0,
+      number_of_incomplete_tasks: 0,
+      number_of_complete_tasks: 0,
       primary: false,
       user_id: null,
       ...list,

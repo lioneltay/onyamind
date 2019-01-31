@@ -2,7 +2,6 @@ import React, { Fragment, useEffect } from "react"
 import { RouteComponentProps } from "react-router-dom"
 
 import MainView from "./components/MainView"
-import UndoSnackbar from "./components/UndoSnackbar"
 import TaskAdder from "./components/TaskAdder"
 
 import { selectTaskList } from "services/state/modules/misc"
@@ -13,6 +12,7 @@ const ListsPage: React.FunctionComponent<Props> = ({ match }) => {
   useEffect(
     () => {
       selectTaskList(match.params.list_id)
+      return () => selectTaskList(null)
     },
     [match.params.list_id],
   )
@@ -20,7 +20,6 @@ const ListsPage: React.FunctionComponent<Props> = ({ match }) => {
   return (
     <Fragment>
       <TaskAdder />
-      <UndoSnackbar />
       <MainView />
     </Fragment>
   )

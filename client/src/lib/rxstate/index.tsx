@@ -13,7 +13,7 @@ import shallowEquals from "shallowequal"
 import { useForceUpdate } from "./utils"
 
 export type Reducer<S> = (state: S) => S
-type Selector<S, R> = (state: S) => R
+type Selector<S, R, P = any> = (state: S, props: P) => R
 
 export function createObservableStateTools<S>() {
   let provider_mounted = false
@@ -29,55 +29,53 @@ export function createObservableStateTools<S>() {
   function createDispatcher<AC extends FunctionType>(
     _dispatcher?: AC,
   ): Dispatcher<AC> {
-    const output_s = new Subject<ReturnType<AC>>()
+    const stream = new Subject<ReturnType<AC>>()
     const dispatcher: any = _dispatcher || (() => {})
 
     const wrappedDispatcher: Dispatcher<AC> = (...input: Arguments<AC>) => {
       const val = dispatcher(...input)
 
       const payload = typeof val === "function" ? val(current_state) : val
-      output_s.next(payload)
+      stream.next(payload)
       return payload
     }
 
-    wrappedDispatcher.output_s = output_s as any
-    wrappedDispatcher.pipe = (...args: any[]) => (output_s.pipe as any)(...args)
+    wrappedDispatcher.stream = stream as any
+    wrappedDispatcher.pipe = (...args: any[]) => (stream.pipe as any)(...args)
 
     return wrappedDispatcher
   }
 
-  type WrappedDispatcherMap<A> = { [K in keyof A]: ConnectedDispatcher<A[K]> }
-  type DispatcherMap = { [key: string]: Dispatcher<any> }
-
-  function connect<A extends DispatcherMap, R extends any>(
-    _selector: Selector<S, R> | null,
-    dispatchers: A,
-  ) {
+  function connect<R extends any>(_selector: Selector<S, R>) {
     const selector = _selector || (() => ({} as R))
 
     return <P extends any>(WrappedComponent: React.ComponentType<P>) => {
-      type NewProps = Omit<P, keyof R | keyof A>
+      type NewProps = Omit<P, keyof R>
       const Comp = memo(WrappedComponent) as React.ComponentType<any>
 
       const Connect = forwardRef<typeof WrappedComponent, NewProps>(
         (props, ref) => {
           const context = useContext(Context)
 
+          const props_ref = useRef((null as unknown) as NewProps)
           const state_ref = useRef((null as unknown) as R)
-          const new_state = selector(context)
+          const new_state = selector(context, props)
 
           const child_ref = useRef((null as unknown) as React.ReactElement<
             NewProps
           >)
 
-          if (shallowEquals(new_state, state_ref.current)) {
+          if (
+            shallowEquals(new_state, state_ref.current) &&
+            shallowEquals(props, props_ref.current)
+          ) {
             return child_ref.current
           }
 
           state_ref.current = new_state
 
           child_ref.current = (
-            <Comp ref={ref} {...new_state} {...props} {...dispatchers} />
+            <Comp ref={ref} {...new_state} {...props} />
           ) as React.ReactElement<NewProps>
 
           return child_ref.current
@@ -202,7 +200,7 @@ type UnwrapThunkDispatcher<AC extends FunctionType> = (
 interface VoidDispatcher {
   (): void
   pipe: Observable<void>["pipe"]
-  output_s: Subject<void>
+  stream: Subject<void>
 }
 
 type DispatcherReturnType<AC extends FunctionType> = ReturnType<
@@ -214,5 +212,5 @@ type DispatcherReturnType<AC extends FunctionType> = ReturnType<
 interface Dispatcher<AC extends FunctionType> {
   (...args: Arguments<AC>): DispatcherReturnType<AC>
   pipe: Observable<DispatcherReturnType<AC>>["pipe"]
-  output_s: Subject<DispatcherReturnType<AC>>
+  stream: Subject<DispatcherReturnType<AC>>
 }

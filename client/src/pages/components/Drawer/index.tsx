@@ -343,13 +343,10 @@ const TaskListLoader: React.FunctionComponent = () => (
 )
 
 export default withRouter(
-  connect(
-    state => ({
-      user: state.user,
-      show: state.show_drawer,
-      task_lists: state.task_lists,
-      selected_task_list_id: state.selected_task_list_id,
-    }),
-    {},
-  )(Drawer),
+  connect(state => ({
+    user: state.user,
+    show: state.show_drawer,
+    task_lists: state.task_lists,
+    selected_task_list_id: state.selected_task_list_id,
+  }))(Drawer),
 )

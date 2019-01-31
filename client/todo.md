@@ -60,70 +60,96 @@
 - [x] Gestures for task delete/check
 - [x] undo snackbar for deleting tasks
 
-- [ ] add routes
-  - [ ] / needs to get primary list and redirect to /list
-  - [ ] /trash
-  - [ ] /list/3/rando-list
+- [x] add routes
 
-- [ ] refactor again!
-- [ ] optimise gesture animation compnents (children)
+  - [x] / needs to get primary list and redirect to /list
+  - [x] /trash
+  - [x] /list/3/rando-list
+
+- [x] subscribe to current tasks stream, if number is different, edit current task list
+- [x] distinguish between complete and incomplete tasks
+
+- [x] optimise gesture animation compnents (children)
+
+  - [x] separate gesture from task
+    - [x] reusable for trash task
+
+- [x] when list unmounts, deselect tasklist (eg going to trash)
+
+- [x] multi select for trash items
+
+- [x] empty trash
+- [x] delete selected trash tasks
+
+* [x] Need to have a different header for trash
+  - [x] or header needs to adapt to route
+
+- [x] why does undo bar vanish when leaving, and then reappear for ever?
+
+# Goal
+
+- [ ] change favicon to pencil
+
+* [ ] refactor again!
+
+- [ ] add settings collection
+- [ ] add dark theme
+
+# TODO
 
 - [ ] deleted tasks should go to trash and be automatically deleted after a week
 
-* [ ] add settings collection
-* [ ] add dark theme
+* [ ] add notification to kill service worker
 
-- [ ] add notification to kill service worker
+* [ ] implement max number of tasks per list
 
-- [ ] implement max number of tasks per list
+* [ ] firegure out how to make modals and drawers work on mobile with back button (you can block back button, add an event handgler instead?)
+* [ ] firegout how to put app on app store (pwa builder)
+* [ ] tests
 
-- [ ] firegure out how to make modals and drawers work on mobile with back button (you can block back button, add an event handgler instead?)
-- [ ] firegout how to put app on app store (pwa builder)
-- [ ] tests
+* [ ] non logged in version should store data localy
+* [ ] when signing in, if there are local notes ask if they would like them to be transfered, then delete the local notes
 
-- [ ] non logged in version should store data localy
-- [ ] when signing in, if there are local notes ask if they would like them to be transfered, then delete the local notes
+* [ ] move task to another list
 
-- [ ] move task to another list
+* [ ] due dates
 
-- [ ] due dates
+* [ ] pinned tasks
 
-- [ ] pinned tasks
+* [ ] rich text editor
 
-- [ ] rich text editor
+* [ ] shared lists
 
-- [ ] shared lists
+- [ ] distinguish between completed and incompleted task counts in list's task count
 
-* [ ] distinguish between completed and incompleted task counts in list's task count
+- [ ] ensure service worker clears cache when initialising
 
-* [ ] ensure service worker clears cache when initialising
-
-* [ ] feedback
+- [ ] feedback
 
   - [ ] save feedback to firebase
   - [ ] screenshots
 
-* [ ] seo
+- [ ] seo
 
-* [ ] code splitting
+- [ ] code splitting
 
-* [ ] bundle optimisation with webpack
+- [ ] bundle optimisation with webpack
 
   - [ ] tree shaking
   - [ ] minification
 
-* [ ] Performance review/analysis
+- [ ] Performance review/analysis
 
-* [ ] security
+- [ ] security
 
-* [ ] drag and drop
+- [ ] drag and drop
 
   - [ ] drag doesnt work on mobile
   - [ ] lock drag to vertical only
 
-* [ ] advertisements
+- [ ] advertisements
 
-- [ ] add created date to edit modal
+* [ ] add created date to edit modal
 
 # Future
 

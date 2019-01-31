@@ -1,12 +1,14 @@
 import React from "react"
 import styled from "styled-components"
 
+import { useMediaQuery } from "@tekktekk/react-media-query"
 import { Transition, animated } from "react-spring"
 import { connect } from "services/state"
 
 import List from "@material-ui/core/List"
 
 import Task from "./components/Task"
+import { toggleTaskSelection } from "services/state/modules/trash"
 
 const OuterContainer = styled.div`
   display: flex;
@@ -20,22 +22,22 @@ const Container = styled.div`
 `
 
 type Props = {
-  archived_tasks: null | Task[]
+  tasks: null | Task[]
 }
 
-const Trash: React.FunctionComponent<Props> = ({ archived_tasks }) => {
-  if (!archived_tasks) {
+const Trash: React.FunctionComponent<Props> = ({ tasks }) => {
+  const mobile = useMediaQuery("(max-width: 800px)")
+
+  if (!tasks) {
     return null
   }
 
-  console.log(archived_tasks)
-
   return (
-    <OuterContainer>
+    <OuterContainer style={{ paddingTop: mobile ? 0 : 24 }}>
       <Container>
         <List className="p-0" style={{ background: "white" }}>
           <Transition
-            items={archived_tasks}
+            items={tasks}
             keys={task => task.id}
             initial={{ height: "auto", opacity: 1 }}
             from={{ height: 0, opacity: 0 }}
@@ -45,7 +47,11 @@ const Trash: React.FunctionComponent<Props> = ({ archived_tasks }) => {
             {task => style => {
               return (
                 <animated.div style={style}>
-                  <Task key={task.id} task={task} />
+                  <Task
+                    key={task.id}
+                    task={task}
+                    onSelectTask={id => toggleTaskSelection(id)}
+                  />
                 </animated.div>
               )
             }}
@@ -56,9 +62,6 @@ const Trash: React.FunctionComponent<Props> = ({ archived_tasks }) => {
   )
 }
 
-export default connect(
-  state => ({
-    archived_tasks: state.trash.archived_tasks,
-  }),
-  {},
-)(Trash)
+export default connect(state => ({
+  tasks: state.trash.tasks,
+}))(Trash)

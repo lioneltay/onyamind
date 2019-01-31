@@ -1,61 +1,72 @@
 import { createReducer } from "lib/rxstate"
-import { State } from "services/state"
+import { State as AppState } from "services/state"
 import { createDispatcher } from "services/state/tools"
 
-import { merge } from "rxjs"
-import { map, tap } from "rxjs/operators"
-import { uniq, difference } from "ramda"
+import { Observable, merge, of, timer, from } from "rxjs"
+import {
+  switchMap,
+  map,
+  distinctUntilChanged,
+  takeUntil,
+  mergeMap,
+  take,
+} from "rxjs/operators"
+import { uniq, difference, omit } from "ramda"
+import { openUndo, undo, closeUndo } from "services/state/modules/misc"
+import { archiveTasks } from "services/state/modules/tasks"
 
-import { updateCurrentTaskListTaskCount } from "../task-lists"
-import * as api from "./api"
+import * as api from "services/api"
 
 export const stopEditing = createDispatcher()
 export const toggleTaskSelection = createDispatcher((id: ID) => id)
 export const selectAllIncompleteTasks = createDispatcher()
 export const deselectAllIncompleteTasks = createDispatcher()
 
-export const checkSelectedTasks = createDispatcher(() => (state: State) =>
+export const checkSelectedTasks = createDispatcher(() => (state: AppState) =>
   api.checkTasks(state.selected_task_ids),
 )
-export const uncheckSelectedTasks = createDispatcher(() => (state: State) =>
+export const uncheckSelectedTasks = createDispatcher(() => (state: AppState) =>
   api.uncheckTasks(state.selected_task_ids),
 )
-export const uncheckCompletedTasks = createDispatcher(() => (state: State) => {
-  if (!state.tasks) {
-    throw Error("No Tasks")
-  }
-  const completed_tasks_ids = state.tasks
-    .filter(task => task.complete)
-    .map(task => task.id)
-  return api.uncheckTasks(completed_tasks_ids)
-})
-export const deleteSelectedTasks = createDispatcher(
-  () => async (state: State) => {
-    await api.deleteTasks(state.selected_task_ids)
-    await updateCurrentTaskListTaskCount()
-  },
-)
-export const deleteCompletedTasks = createDispatcher(
-  () => async (state: State) => {
+export const uncheckCompletedTasks = createDispatcher(
+  () => (state: AppState) => {
     if (!state.tasks) {
       throw Error("No Tasks")
     }
     const completed_tasks_ids = state.tasks
       .filter(task => task.complete)
       .map(task => task.id)
-    await api.deleteTasks(completed_tasks_ids)
-    await updateCurrentTaskListTaskCount()
+    return api.uncheckTasks(completed_tasks_ids)
   },
 )
 
-export const reducer_s = createReducer<State>(
+export const archiveSelectedTasks = createDispatcher(
+  () => (state: AppState) => {
+    archiveTasks(state.selected_task_ids)
+  },
+)
+
+export const archiveCompletedTasks = createDispatcher(
+  () => async (state: AppState) => {
+    if (!state.tasks) {
+      throw Error("No Tasks")
+    }
+    const completed_tasks_ids = state.tasks
+      .filter(task => task.complete)
+      .map(task => task.id)
+
+    archiveTasks(completed_tasks_ids)
+  },
+)
+
+export const reducer_s = createReducer<AppState>(
   merge(
-    stopEditing.output_s,
-    checkSelectedTasks.output_s,
-    uncheckSelectedTasks.output_s,
-    deleteSelectedTasks.output_s,
+    stopEditing.stream,
+    checkSelectedTasks.stream,
+    uncheckSelectedTasks.stream,
+    archiveSelectedTasks.stream,
   ).pipe(
-    map(() => (state: State) => ({
+    map(() => (state: AppState) => ({
       ...state,
       editing: false,
       selected_task_ids: [],
@@ -63,7 +74,7 @@ export const reducer_s = createReducer<State>(
   ),
 
   toggleTaskSelection.pipe(
-    map(task_id => (state: State) => {
+    map(task_id => (state: AppState) => {
       const { selected_task_ids } = state
 
       const index = selected_task_ids.findIndex(id => id === task_id)
@@ -81,7 +92,7 @@ export const reducer_s = createReducer<State>(
   ),
 
   selectAllIncompleteTasks.pipe(
-    map(() => (state: State) => {
+    map(() => (state: AppState) => {
       if (!state.tasks) {
         throw Error("No Tasks")
       }
@@ -98,7 +109,7 @@ export const reducer_s = createReducer<State>(
   ),
 
   deselectAllIncompleteTasks.pipe(
-    map(() => (state: State) => {
+    map(() => (state: AppState) => {
       if (!state.tasks) {
         throw Error("No Tasks")
       }
