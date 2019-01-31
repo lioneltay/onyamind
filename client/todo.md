@@ -86,6 +86,8 @@
 
 - [x] why does undo bar vanish when leaving, and then reappear for ever?
 
+- [x] Check that header/taskadder is still fixed
+
 # Goal
 
 - [ ] change favicon to pencil
@@ -97,20 +99,25 @@
 
 # TODO
 
-- [ ] deleted tasks should go to trash and be automatically deleted after a week
+- [ ] move task to another list
 
-* [ ] add notification to kill service worker
+* [ ] multiselect
 
-* [ ] implement max number of tasks per list
+  - [ ] drag on mobile
+  - [ ] shift click on keyboard
 
-* [ ] firegure out how to make modals and drawers work on mobile with back button (you can block back button, add an event handgler instead?)
-* [ ] firegout how to put app on app store (pwa builder)
-* [ ] tests
+* [ ] deleted tasks should go to trash and be automatically deleted after a week
 
-* [ ] non logged in version should store data localy
-* [ ] when signing in, if there are local notes ask if they would like them to be transfered, then delete the local notes
+- [ ] add notification to kill service worker
 
-* [ ] move task to another list
+- [ ] implement max number of tasks per list
+
+- [ ] firegure out how to make modals and drawers work on mobile with back button (you can block back button, add an event handgler instead?)
+- [ ] firegout how to put app on app store (pwa builder)
+- [ ] tests
+
+- [ ] non logged in version should store data localy
+- [ ] when signing in, if there are local notes ask if they would like them to be transfered, then delete the local notes
 
 * [ ] due dates
 

@@ -1,8 +1,8 @@
 import React, { Fragment, useEffect } from "react"
+import styled from "styled-components"
 import { RouteComponentProps } from "react-router-dom"
 
 import MainView from "./components/MainView"
-import TaskAdder from "./components/TaskAdder"
 
 import { selectTaskList } from "services/state/modules/misc"
 
@@ -19,7 +19,6 @@ const ListsPage: React.FunctionComponent<Props> = ({ match }) => {
 
   return (
     <Fragment>
-      <TaskAdder />
       <MainView />
     </Fragment>
   )

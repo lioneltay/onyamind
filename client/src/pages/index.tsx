@@ -20,11 +20,6 @@ const Container = styled.div`
   min-height: 100vh;
 `
 
-const StickySection = styled.div`
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-`
 
 const RootRoute: React.FunctionComponent = () => {
   return (

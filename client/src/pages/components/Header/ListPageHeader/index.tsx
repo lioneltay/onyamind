@@ -21,6 +21,8 @@ import {
 } from "services/state/modules/editing"
 import { stopEditing } from "services/state/modules/editing"
 
+import TaskAdder from "./TaskAdder"
+
 const Container = styled(Toolbar)`
   padding-left: 0;
   padding-right: 0;
@@ -61,63 +63,69 @@ const ListPageHeader: React.FunctionComponent<Props> = ({
   editing,
 }) => {
   return (
-    <AppBar position="relative">
-      <Container
-        style={{
-          backgroundColor: editing ? highlight_color : "white",
-        }}
-      >
-        <Main>
-          <LeftSection>
+    <Fragment>
+      <AppBar position="relative">
+        <Container
+          style={{
+            backgroundColor: editing ? highlight_color : "white",
+          }}
+        >
+          <Main>
+            <LeftSection>
+              {editing ? (
+                <Fragment>
+                  <IconButton
+                    style={{ display: "inline-block" }}
+                    onClick={stopEditing}
+                  >
+                    <ArrowBack />
+                  </IconButton>
+                  <div
+                    style={{ color: highlighted_text_color, paddingLeft: 18 }}
+                  >
+                    {number_of_selected_tasks} selected
+                  </div>
+                </Fragment>
+              ) : (
+                <Fragment>
+                  <IconButton
+                    style={{ display: "inline-block" }}
+                    onClick={toggleDrawer}
+                  >
+                    <Menu />
+                  </IconButton>
+                  <div style={{ paddingLeft: 18, color: "black" }}>
+                    {selected_task_list_name}
+                  </div>
+                </Fragment>
+              )}
+            </LeftSection>
+
             {editing ? (
-              <Fragment>
-                <IconButton
-                  style={{ display: "inline-block" }}
-                  onClick={stopEditing}
-                >
-                  <ArrowBack />
-                </IconButton>
-                <div style={{ color: highlighted_text_color, paddingLeft: 18 }}>
-                  {number_of_selected_tasks} selected
-                </div>
-              </Fragment>
-            ) : (
-              <Fragment>
-                <IconButton
-                  style={{ display: "inline-block" }}
-                  onClick={toggleDrawer}
-                >
-                  <Menu />
-                </IconButton>
-                <div style={{ paddingLeft: 18, color: "black" }}>
-                  {selected_task_list_name}
-                </div>
-              </Fragment>
-            )}
-          </LeftSection>
+              <div style={{ display: "flex" }}>
+                {all_selected_tasks_complete ||
+                all_selected_tasks_incomplete ? (
+                  <IconButton
+                    onClick={
+                      all_selected_tasks_incomplete
+                        ? checkSelectedTasks
+                        : uncheckSelectedTasks
+                    }
+                  >
+                    {all_selected_tasks_incomplete ? <Check /> : <Add />}
+                  </IconButton>
+                ) : null}
 
-          {editing ? (
-            <div style={{ display: "flex" }}>
-              {all_selected_tasks_complete || all_selected_tasks_incomplete ? (
-                <IconButton
-                  onClick={
-                    all_selected_tasks_incomplete
-                      ? checkSelectedTasks
-                      : uncheckSelectedTasks
-                  }
-                >
-                  {all_selected_tasks_incomplete ? <Check /> : <Add />}
+                <IconButton onClick={archiveSelectedTasks}>
+                  <Delete />
                 </IconButton>
-              ) : null}
-
-              <IconButton onClick={archiveSelectedTasks}>
-                <Delete />
-              </IconButton>
-            </div>
-          ) : null}
-        </Main>
-      </Container>
-    </AppBar>
+              </div>
+            ) : null}
+          </Main>
+        </Container>
+      </AppBar>
+      <TaskAdder />
+    </Fragment>
   )
 }
 
