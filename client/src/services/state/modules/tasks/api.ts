@@ -1,7 +1,10 @@
 import { firebase, firestore, dataWithId } from "services/firebase"
 
 export const addTask = async (
-  task: Omit<Task, "id" | "created_at" | "updated_at" | "complete">,
+  task: Omit<
+    Task,
+    "id" | "created_at" | "updated_at" | "complete" | "archived"
+  >,
 ): Promise<Task> => {
   return firestore
     .collection("tasks")
@@ -9,6 +12,7 @@ export const addTask = async (
       ...task,
       user_id: task.user_id || null,
       completed: false,
+      archived: false,
       created_at: Date.now(),
       updated_at: Date.now(),
     })

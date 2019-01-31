@@ -1,7 +1,7 @@
 import React, { Fragment } from "react"
 import styled from "styled-components"
 
-import { highlight_color, highlighted_text_color } from "../../constants"
+import { highlight_color, highlighted_text_color } from "theme"
 
 import IconButton from "@material-ui/core/IconButton"
 import Menu from "@material-ui/icons/Menu"
@@ -12,7 +12,8 @@ import Add from "@material-ui/icons/Add"
 import AppBar from "@material-ui/core/AppBar"
 import Toolbar from "@material-ui/core/Toolbar"
 
-import { connect, toggleDrawer } from "services/state"
+import { connect } from "services/state"
+import { toggleDrawer } from "services/state/modules/misc"
 import {
   uncheckSelectedTasks,
   deleteSelectedTasks,

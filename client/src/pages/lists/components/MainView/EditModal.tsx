@@ -3,9 +3,9 @@ import React from "react"
 import { Formik, Form } from "formik"
 import Button from "@material-ui/core/Button"
 import TextField from "@material-ui/core/TextField"
-import Modal from "../Modal"
+import Modal from "lib/components/Modal"
 
-import { grey_text } from "../../../constants"
+import { grey_text } from "theme"
 
 type Values = Omit<Task, "id">
 

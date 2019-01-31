@@ -9,7 +9,7 @@ import CheckBoxOutlineBlank from "@material-ui/icons/CheckBoxOutlineBlank"
 import IconButton from "@material-ui/core/IconButton"
 import TextField from "@material-ui/core/TextField"
 import InputAdornment from "@material-ui/core/InputAdornment"
-import { background_color, highlighted_text_color } from "../../constants"
+import { background_color, highlighted_text_color } from "theme"
 
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"

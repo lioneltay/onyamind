@@ -24,10 +24,11 @@ import Feedback from "@material-ui/icons/Feedback"
 import Clear from "@material-ui/icons/Clear"
 import AccountCircle from "@material-ui/icons/AccountCircle"
 import ExitToApp from "@material-ui/icons/ExitToApp"
+import Delete from "@material-ui/icons/Delete"
 
-import { background_color, grey_text } from "../../../constants"
+import { background_color, grey_text } from "theme"
 
-import Modal from "../Modal"
+import Modal from "lib/components/Modal"
 
 import CreateTaskListModal from "./CreateTaskListModal"
 import RenameTaskListModal from "./RenameTaskListModal"
@@ -37,7 +38,8 @@ import { comparator } from "ramda"
 import GoogleSignInButton from "../GoogleSignInButton"
 import TaskList from "./TaskList"
 
-import { connect, toggleDrawer, selectTaskList } from "services/state"
+import { connect } from "services/state"
+import { toggleDrawer } from "services/state/modules/misc"
 import { signIn, signOut } from "services/state/modules/auth"
 import {
   addTaskList,
@@ -46,35 +48,21 @@ import {
   setPrimaryTaskList,
 } from "services/state/modules/task-lists"
 import { ConnectedDispatcher } from "lib/rxstate"
+import { withRouter, RouteComponentProps } from "react-router"
 
-type Props = {
+type Props = RouteComponentProps & {
   show: boolean
-  toggle: () => void
   user: User
-  signIn: () => void
-  signOut: () => void
   task_lists: TaskList[]
-  selectTaskList: (id: ID) => void
   selected_task_list_id: ID | null
-  editTaskList: ConnectedDispatcher<typeof editTaskList>
-  removeTaskList: ConnectedDispatcher<typeof removeTaskList>
-  addTaskList: ConnectedDispatcher<typeof addTaskList>
-  setPrimaryTaskList: ConnectedDispatcher<typeof setPrimaryTaskList>
 }
 
 const Drawer: React.FunctionComponent<Props> = ({
   user,
-  signIn,
-  signOut,
   show,
-  toggle,
   task_lists,
-  selectTaskList,
   selected_task_list_id,
-  editTaskList,
-  addTaskList,
-  removeTaskList,
-  setPrimaryTaskList,
+  history,
 }) => {
   const [show_create_modal, setShowCreateModal] = useState(false)
   const [show_delete_modal, setShowDeleteModal] = useState(false)
@@ -90,13 +78,16 @@ const Drawer: React.FunctionComponent<Props> = ({
 
   const primary_list = task_lists ? task_lists.find(list => list.primary) : null
 
+  const selectTaskList = (list: TaskList) => {
+    history.push(`/lists/${list.id}/${list.name}`)
+  }
+
   return (
     <SwipeableDrawer
       open={show}
-      onOpen={toggle}
+      onOpen={toggleDrawer}
       onClose={() => {
-        console.log("close")
-        toggle()
+        toggleDrawer()
         setShowCreateModal(false)
       }}
     >
@@ -105,9 +96,7 @@ const Drawer: React.FunctionComponent<Props> = ({
         style={{ width: "80vw", maxWidth: 400, minWidth: 280 }}
       >
         {user ? (
-          <ListItem
-            style={{backgroundColor: background_color }}
-          >
+          <ListItem style={{ backgroundColor: background_color }}>
             <ListItemAvatar>
               {user.photoURL ? (
                 <Avatar src={user.photoURL} />
@@ -120,7 +109,7 @@ const Drawer: React.FunctionComponent<Props> = ({
             <ListItemText primary={user.displayName} secondary={user.email} />
             <ListItemSecondaryAction>
               <IconButton>
-                <Clear onClick={toggle} />
+                <Clear onClick={toggleDrawer} />
               </IconButton>
             </ListItemSecondaryAction>
           </ListItem>
@@ -130,9 +119,11 @@ const Drawer: React.FunctionComponent<Props> = ({
               <GoogleSignInButton onClick={signIn} />
             </ListItemText>
 
-            <ListItemSecondaryAction><IconButton>
-              <Clear onClick={toggle} />
-            </IconButton></ListItemSecondaryAction>
+            <ListItemSecondaryAction>
+              <IconButton>
+                <Clear onClick={toggleDrawer} />
+              </IconButton>
+            </ListItemSecondaryAction>
           </ListItem>
         )}
 
@@ -175,7 +166,7 @@ const Drawer: React.FunctionComponent<Props> = ({
             key={primary_list.id}
             task_list={primary_list}
             selected={primary_list.id === selected_task_list_id}
-            onBodyClick={id => selectTaskList(id)}
+            onBodyClick={() => selectTaskList(primary_list)}
             onDelete={id => {
               setSelectedId(id)
               setShowDeleteModal(true)
@@ -219,9 +210,8 @@ const Drawer: React.FunctionComponent<Props> = ({
                   key={list.id}
                   task_list={list}
                   selected={list.id === selected_task_list_id}
-                  onBodyClick={id => {
-                    console.log("SELECTING", id)
-                    selectTaskList(id)
+                  onBodyClick={() => {
+                    selectTaskList(list)
                   }}
                   onDelete={id => {
                     setSelectedId(id)
@@ -264,6 +254,14 @@ const Drawer: React.FunctionComponent<Props> = ({
         </ListItem>
         <Divider />
 
+        <OptionItem
+          icon={<Delete />}
+          text="Trash"
+          onClick={() => {
+            history.push("/trash")
+            toggleDrawer()
+          }}
+        />
         {user && (
           <OptionItem icon={<ExitToApp />} text="Sign out" onClick={signOut} />
         )}
@@ -344,21 +342,14 @@ const TaskListLoader: React.FunctionComponent = () => (
   </ContentLoader>
 )
 
-export default connect(
-  state => ({
-    user: state.user,
-    show: state.show_drawer,
-    task_lists: state.task_lists,
-    selected_task_list_id: state.selected_task_list_id,
-  }),
-  {
-    signIn,
-    signOut,
-    toggle: toggleDrawer,
-    selectTaskList,
-    editTaskList,
-    addTaskList,
-    removeTaskList,
-    setPrimaryTaskList,
-  },
-)(Drawer)
+export default withRouter(
+  connect(
+    state => ({
+      user: state.user,
+      show: state.show_drawer,
+      task_lists: state.task_lists,
+      selected_task_list_id: state.selected_task_list_id,
+    }),
+    {},
+  )(Drawer),
+)

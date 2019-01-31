@@ -14,7 +14,7 @@ import Delete from "@material-ui/icons/Delete"
 import Add from "@material-ui/icons/Add"
 import Check from "@material-ui/icons/Check"
 
-import { highlight_color } from "../../../constants"
+import { highlight_color } from "theme"
 import { ListItemText } from "@material-ui/core"
 
 import { connect } from "services/state"
@@ -73,7 +73,7 @@ const SingleLineWithEllipsis: React.FunctionComponent<Stylable> = ({
 
 export type Props = {
   task: Task
-  onItemClick: (id: ID) => void
+  onItemClick?: (id: ID) => void
   editing: boolean
   selected_task_ids: ID[]
   toggleTaskSelection: (id: ID) => void
@@ -86,7 +86,7 @@ const Task = forwardRef<any, Props>(
   (
     {
       task,
-      onItemClick,
+      onItemClick = () => {},
       editing,
       selected_task_ids,
       toggleTaskSelection,

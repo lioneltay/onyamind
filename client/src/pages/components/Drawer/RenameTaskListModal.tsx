@@ -2,7 +2,7 @@ import React from "react"
 
 import { Form, Formik, FormikActions } from "formik"
 
-import Modal from "../Modal"
+import Modal from "lib/components/Modal"
 import TextField from "@material-ui/core/TextField"
 import Button from "@material-ui/core/Button"
 

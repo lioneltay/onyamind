@@ -2,7 +2,7 @@ import { createReducer } from "lib/rxstate"
 import { firestore, dataWithId } from "services/firebase"
 
 import { Observable } from "rxjs"
-import { map, switchMap, distinctUntilChanged } from "rxjs/operators"
+import { map, switchMap, distinctUntilChanged, tap } from "rxjs/operators"
 
 import { user_s } from "./auth"
 import { State } from "services/state"
@@ -23,9 +23,10 @@ const createCurrentListsStream = (user_id: ID | null) =>
 
 export const toggleDrawer = createDispatcher()
 export const setTouchEnabled = createDispatcher((enabled: boolean) => enabled)
-export const selectTaskList = createDispatcher(
-  (task_list_id: ID) => task_list_id,
-)
+export const selectTaskList = createDispatcher((task_list_id: ID) => {
+  console.log("GOGO", task_list_id)
+  return task_list_id
+})
 
 const lists_s = user_s.pipe(
   switchMap(user => createCurrentListsStream(user ? user.uid : null)),

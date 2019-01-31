@@ -1,6 +1,5 @@
 import React from "react"
-import { createObservableStateTools, createReducer } from "lib/rxstate"
-import { Subject } from "rxjs"
+import { createReducer, combineReducers } from "lib/rxstate"
 
 import { tools } from "./tools"
 
@@ -10,8 +9,14 @@ import { reducer_s as editingReducer } from "./modules/editing"
 import { reducer_s as miscReducer } from "./modules/misc"
 import { reducer_s as tasksReducer } from "./modules/tasks"
 import { reducer_s as taskListsReducer } from "./modules/task-lists"
+import {
+  reducer_s as trashReducer,
+  State as TrashState,
+  initial_state as trash_initial_state,
+} from "./modules/trash"
 
 export type State = {
+  trash: TrashState
   show_undo: boolean
   selected_task_list_id: ID | null
   touch_screen: boolean
@@ -29,6 +34,7 @@ export type State = {
 }
 
 export const initial_state: State = {
+  trash: trash_initial_state,
   task_delete_markers: {},
   show_undo: false,
   selected_task_list_id: null,
@@ -45,7 +51,9 @@ export const initial_state: State = {
   show_warning_footer: false,
 }
 
-export * from "./modules/misc"
+const combinedTrashReducer = combineReducers({
+  trash: trashReducer,
+}) as any
 
 export const reducer_s = createReducer<State>(
   miscReducer,
@@ -54,6 +62,7 @@ export const reducer_s = createReducer<State>(
   warningFooterReducer,
   authReducer,
   editingReducer,
+  combinedTrashReducer,
 )
 
 export const connect = tools.connect

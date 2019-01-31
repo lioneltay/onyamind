@@ -50,6 +50,7 @@ const createCurrentTasksStream = (list_id: ID) =>
     return firestore
       .collection("tasks")
       .where("list_id", "==", list_id)
+      .where("archived", "==", false)
       .onSnapshot(snapshot => {
         const tasks: Task[] = snapshot.docs.map(dataWithId) as Task[]
         observer.next(tasks)
@@ -82,10 +83,9 @@ export const reducer_s = createReducer<State>(
 
       const deleteTask = () =>
         from(
-          Promise.all([
-            api.removeTask(task_id),
-            updateCurrentTaskListTaskCount(),
-          ]),
+          api
+            .editTask({ task_id, task_data: { archived: true } })
+            .then(updateCurrentTaskListTaskCount),
         )
 
       return merge(

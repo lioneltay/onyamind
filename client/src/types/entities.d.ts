@@ -22,6 +22,7 @@ declare global {
     complete: boolean
     created_at: number
     updated_at: number
+    archived: boolean
   }
 
   export type User = firebase.User

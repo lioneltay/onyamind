@@ -5,11 +5,11 @@ import { Transition } from "react-spring"
 import Typography from "@material-ui/core/Typography"
 import Button from "@material-ui/core/Button"
 import Clear from "@material-ui/icons/Clear"
-import Modal from "./Modal"
-import { error_color, grey_text } from "../../constants"
-import { connect } from "../../services/state"
-import { signIn } from "../../services/state/modules/auth"
-import { toggleWarningFooter } from "../../services/state/modules/warning-footer"
+import Modal from "lib/components/Modal"
+import { error_color, grey_text } from "theme"
+import { connect } from "services/state"
+import { signIn } from "services/state/modules/auth"
+import { toggleWarningFooter } from "services/state/modules/warning-footer"
 
 const Container = styled.div`
   position: fixed;
