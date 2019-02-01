@@ -40,6 +40,15 @@ export const uncheckCompletedTasks = createDispatcher(
   },
 )
 
+export const moveTasksToList = createDispatcher(
+  (list_id: ID) => (state: AppState) => {
+    return api.editTasks({
+      task_ids: state.selected_task_ids,
+      task_data: { list_id },
+    })
+  },
+)
+
 export const archiveSelectedTasks = createDispatcher(
   () => (state: AppState) => {
     archiveTasks(state.selected_task_ids)
@@ -65,6 +74,7 @@ export const reducer_s = createReducer<AppState>(
     checkSelectedTasks.stream,
     uncheckSelectedTasks.stream,
     archiveSelectedTasks.stream,
+    moveTasksToList.stream,
   ).pipe(
     map(() => (state: AppState) => ({
       ...state,

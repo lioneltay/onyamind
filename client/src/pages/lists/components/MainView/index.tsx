@@ -15,7 +15,7 @@ import IconButton from "@material-ui/core/IconButton"
 import ExpandMore from "@material-ui/icons/ExpandMore"
 import MoreVert from "@material-ui/icons/MoreVert"
 
-import IconButtonMenu from "../IconButtonMenu"
+import IconButtonMenu from "lib/components/IconButtonMenu"
 import Task from "./Task"
 import EditModal from "./EditModal"
 
@@ -26,7 +26,6 @@ import {
   uncheckCompletedTasks,
   archiveCompletedTasks,
 } from "services/state/modules/editing"
-import { themeListener } from "theming"
 
 const OuterContainer = styled.div`
   display: flex;

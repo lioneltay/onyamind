@@ -41,6 +41,16 @@ export const archiveTasks = createDispatcher((task_ids: ID[]) => {
   return task_ids
 })
 
+type MoveTaskToListInput = {
+  task_id: ID
+  list_id: ID
+}
+export const moveTaskToList = createDispatcher(
+  ({ task_id, list_id }: MoveTaskToListInput) => {
+    return api.editTask({ task_id, task_data: { list_id } })
+  },
+)
+
 export const deleteTask = createDispatcher(api.deleteTask)
 
 export const editTask = createDispatcher(api.editTask)

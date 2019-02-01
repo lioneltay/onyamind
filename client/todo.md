@@ -111,13 +111,15 @@
 
 - [x] task needs a background color otherwise it shoulds gesture background color
 
+- [x] move task to another list
+  - [x] 3rd option in editing header
+  - [x] 3rd option in hover
+
 # Goal
 
-- [ ] move task to another list
-  - [ ] 3rd option in editing header
-  - [ ] 3rd option in hover
+- [ ] could predefine the AppState type in createDispatcher
 
-* [ ] could predefine the AppState type in createDispatcher
+* [ ] Moving items to other list should increment task counts appropriately (there was never a way to affect anything but the current task list previously)
 
 # TODO
 

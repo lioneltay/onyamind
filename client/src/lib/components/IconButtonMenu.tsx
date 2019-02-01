@@ -5,7 +5,10 @@ import IconButton from "@material-ui/core/IconButton"
 
 type IconButtonMenu = {
   icon: React.ReactNode
-  items: { label: string; action: () => void }[]
+  items: {
+    label: string
+    action?: () => void
+  }[]
 }
 
 const IconButtonMenu: React.FunctionComponent<IconButtonMenu> = ({
@@ -33,7 +36,7 @@ const IconButtonMenu: React.FunctionComponent<IconButtonMenu> = ({
           <MenuItem
             key={index}
             onClick={() => {
-              config.action()
+              config.action && config.action()
               setAnchorEl(null)
             }}
           >

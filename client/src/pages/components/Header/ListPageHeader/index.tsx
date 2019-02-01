@@ -4,6 +4,7 @@ import IconButton from "@material-ui/core/IconButton"
 import Delete from "@material-ui/icons/Delete"
 import Check from "@material-ui/icons/Check"
 import Add from "@material-ui/icons/Add"
+import SwapHoriz from "@material-ui/icons/SwapHoriz"
 
 import { connect } from "services/state"
 import {
@@ -11,8 +12,9 @@ import {
   archiveSelectedTasks,
   checkSelectedTasks,
 } from "services/state/modules/editing"
-import { stopEditing } from "services/state/modules/editing"
+import { stopEditing, moveTasksToList } from "services/state/modules/editing"
 
+import IconButtonMenu from "lib/components/IconButtonMenu"
 import TaskAdder from "./TaskAdder"
 import HeaderBase from "../HeaderBase"
 
@@ -22,6 +24,7 @@ type Props = {
   editing: boolean
   selected_task_list_name: string
   number_of_selected_tasks: number
+  task_lists: TaskList[] | null
 }
 
 const ListPageHeader: React.FunctionComponent<Props> = ({
@@ -30,7 +33,12 @@ const ListPageHeader: React.FunctionComponent<Props> = ({
   all_selected_tasks_incomplete,
   number_of_selected_tasks,
   editing,
+  task_lists,
 }) => {
+  if (!task_lists) {
+    return null
+  }
+
   return (
     <Fragment>
       <HeaderBase
@@ -51,6 +59,14 @@ const ListPageHeader: React.FunctionComponent<Props> = ({
                 {all_selected_tasks_incomplete ? <Check /> : <Add />}
               </IconButton>
             ) : null}
+
+            <IconButtonMenu
+              icon={<SwapHoriz />}
+              items={task_lists.map(list => ({
+                label: list.name,
+                action: () => moveTasksToList(list.id),
+              }))}
+            />
 
             <IconButton onClick={archiveSelectedTasks}>
               <Delete />
@@ -90,6 +106,7 @@ export default connect(
     )
 
     return {
+      task_lists,
       all_selected_tasks_complete,
       all_selected_tasks_incomplete,
       editing,
