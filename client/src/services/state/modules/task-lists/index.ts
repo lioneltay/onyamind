@@ -86,8 +86,6 @@ tasks_s.pipe(withLatestFrom(state_s)).subscribe(([tasks, state]) => {
     task => task.complete,
   ).length
 
-  console.log("UPDATEING", number_of_complete_tasks, number_of_incomplete_tasks)
-
   editTaskList({
     list_id: selected_task_list_id,
     list_data: {

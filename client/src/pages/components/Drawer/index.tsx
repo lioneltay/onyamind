@@ -373,7 +373,7 @@ const TaskListLoader: React.FunctionComponent = () => (
 export default withRouter(
   connect(state => ({
     theme: state.settings.theme,
-    dark_mode: state.settings.dark,
+    dark_mode: state.settings.user_settings.dark,
     user: state.user,
     show: state.show_drawer,
     task_lists: state.task_lists,

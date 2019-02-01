@@ -30,6 +30,14 @@ declare global {
   }
 
   export type User = firebase.User
+
+  export type Settings = {
+    id: ID
+    user_id: ID | null
+    dark: boolean
+    created_at: number
+    updated_at: number
+  }
 }
 
 export {}

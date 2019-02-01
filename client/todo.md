@@ -101,17 +101,19 @@
 * [x] add settings state in store
 * [x] add theme toggle button in drawer
 
+- [x] refactor again!
+
+  - [x] modularise headers
+
+- [x] add settings collection
+  - [x] store what theme the user is using
+
 # Goal
-
-- [ ] refactor again!
-  - [ ] modularise headers
-
-* [ ] add settings collection
-  - [ ] store what theme the user is using
 
 - [ ] move task to another list
 
 - [ ] order by fields
+
   - [ ] date added
   - [ ] last updated
   - [ ] priority
@@ -123,6 +125,8 @@
 
 - [ ] pwa push notifications on due dates
   - [ ] 1 hour before notification
+
+* [ ] could predefine the AppState type in createDispatcher
 
 # TODO
 
@@ -143,8 +147,6 @@
 
 * [ ] non logged in version should store data localy
 * [ ] when signing in, if there are local notes ask if they would like them to be transfered, then delete the local notes
-
-
 
 - [ ] rich text editor
 

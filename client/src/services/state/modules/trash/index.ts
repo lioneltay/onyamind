@@ -64,8 +64,6 @@ export const reducer_s = createReducer<State>(
 
   toggleTaskSelection.pipe(
     map(task_id => (state: State) => {
-      console.log(state.selected_task_ids.includes(task_id))
-
       if (state.selected_task_ids.includes(task_id)) {
         return {
           ...state,

@@ -85,11 +85,8 @@ const _ThemeProvider: React.FunctionComponent<ThemeProps> = ({
   )
 }
 
-export const ThemeProvider = connect(state => {
-  console.log("wut", state)
-  return {
-    dark: state.settings.dark,
-  }
-})(_ThemeProvider)
+export const ThemeProvider = connect(state => ({
+  dark: state.settings.user_settings.dark,
+}))(_ThemeProvider)
 
 export const styled = baseStyled as ThemedStyledInterface<Theme>
