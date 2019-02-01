@@ -20,13 +20,10 @@ import {
   tap,
 } from "rxjs/operators"
 
-let calls = 0
-
 type Vector = [number, number]
 
 type UseGestureInput = {
   onPointerDown?: (e: React.PointerEvent) => void
-  onPointerUp?: (e: React.PointerEvent) => void
   onPointerMove?: (e: React.PointerEvent) => void
 
   onSwipe?: (input: { direction: Vector }) => void
@@ -36,6 +33,7 @@ type UseGestureInput = {
   onSwipeDown?: () => void
 
   onPull?: (input: { displacement: Vector; distance: number }) => void
+  onPullEnd?: () => void
 
   onPress?: () => void
 
@@ -45,7 +43,6 @@ type UseGestureInput = {
 type Handlers = {
   ref: React.Ref<any>
   onPointerDown: (e: React.PointerEvent) => void
-  onPointerUp: (e: React.PointerEvent) => void
   onPointerMove: (e: React.PointerEvent) => void
 }
 
@@ -68,22 +65,25 @@ const eventPosition = (e: { clientX: number; clientY: number }): Vector => [
   e.clientY,
 ]
 
+const up_s = new Subject<PointerEvent>()
+const handler = (e: PointerEvent) => {
+  up_s.next(e)
+}
+let listeners = 0
+
 export const useGesture = ({
   onPress = () => {},
   onPointerDown = () => {},
   onPointerMove = () => {},
-  onPointerUp = () => {},
   onHold = () => {},
   onPull = () => {},
+  onPullEnd = () => {},
   onSwipeLeft = () => {},
   onSwipeRight = () => {},
 }: UseGestureInput): Bind => {
   const down_s = useMemo(() => new Subject<React.PointerEvent>(), [])
-  const up_s = useMemo(() => new Subject<React.PointerEvent>(), [])
   const move_s = useMemo(() => new Subject<React.PointerEvent>(), [])
 
-  const onPointerUpRef = useRef(onPointerUp)
-  onPointerUpRef.current = onPointerUp
   const onPointerDownRef = useRef(onPointerDown)
   onPointerDownRef.current = onPointerDown
   const onPointerMoveRef = useRef(onPointerMove)
@@ -94,10 +94,24 @@ export const useGesture = ({
   onHoldRef.current = onHold
   const onPullRef = useRef(onPull)
   onPullRef.current = onPull
+  const onPullEndRef = useRef(onPullEnd)
+  onPullEndRef.current = onPullEnd
   const onSwipeLeftRef = useRef(onSwipeLeft)
   onSwipeLeftRef.current = onSwipeLeft
   const onSwipeRightRef = useRef(onSwipeRight)
   onSwipeRightRef.current = onSwipeRight
+
+  useEffect(() => {
+    if (listeners <= 0) {
+      document.addEventListener("pointerup", handler)
+    }
+    listeners++
+    return () => {
+      if (--listeners <= 0) {
+        document.removeEventListener("pointerup", handler)
+      }
+    }
+  }, [])
 
   useEffect(() => {
     const down_data_s = down_s.pipe(
@@ -144,6 +158,14 @@ export const useGesture = ({
         )
       }),
     )
+
+    // this should work but rxjs is dodgy...
+    // const pull_end_s = down_s.pipe(
+    //   switchMap(() => up_s.pipe(skipUntil(pull_s))),
+    // )
+
+    // this is a dodgy work around...
+    const pull_end_s = down_s.pipe(switchMap(() => up_s.pipe(take(1))))
 
     const press_s = down_data_s.pipe(
       switchMap(({ down_e, down_time }) =>
@@ -241,11 +263,11 @@ export const useGesture = ({
       swipe_right_s.subscribe(val => onSwipeRightRef.current()),
     )
     subscriptions.push(down_s.subscribe(val => onPointerDownRef.current(val)))
-    subscriptions.push(up_s.subscribe(val => onPointerUpRef.current(val)))
     subscriptions.push(move_s.subscribe(val => onPointerMoveRef.current(val)))
     subscriptions.push(press_s.subscribe(val => onPressRef.current()))
     subscriptions.push(hold_s.subscribe(val => onHoldRef.current()))
     subscriptions.push(pull_s.subscribe(val => onPullRef.current(val)))
+    subscriptions.push(pull_end_s.subscribe(val => onPullEndRef.current()))
 
     return () => subscriptions.forEach(sub => sub.unsubscribe())
   }, [])
@@ -340,11 +362,11 @@ export const useGesture = ({
       input.onPointerDown && input.onPointerDown(e)
     },
 
-    onPointerUp: e => {
-      e.persist()
-      up_s.next(e)
-      input.onPointerUp && input.onPointerUp(e)
-    },
+    // onPointerUp: e => {
+    //   e.persist()
+    //   up_s.next(e)
+    //   input.onPointerUp && input.onPointerUp(e)
+    // },
 
     onPointerMove: e => {
       e.persist()

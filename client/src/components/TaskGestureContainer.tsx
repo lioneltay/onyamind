@@ -49,6 +49,13 @@ const TaskGestureContainer: React.FunctionComponent<GestureContainerProps> = ({
       }
     },
 
+    onPullEnd: () => {
+      if (status === "pulling") {
+        setStatus("default")
+        setPercent(0)
+      }
+    },
+
     onSwipeLeft: () => {
       setStatus("left")
       setPercent(-100)
@@ -57,13 +64,6 @@ const TaskGestureContainer: React.FunctionComponent<GestureContainerProps> = ({
     onSwipeRight: () => {
       setStatus("right")
       setPercent(100)
-    },
-
-    onPointerUp: () => {
-      if (status === "pulling") {
-        setStatus("default")
-        setPercent(0)
-      }
     },
   })
 

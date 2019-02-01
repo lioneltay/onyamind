@@ -117,14 +117,15 @@
   - [x] 3rd option in hover
 
 - [x] could predefine the AppState type in createDispatcher
+- [x] useGesture should take pointerup from document not item
 
 # Goal
-
-- [ ] useGesture should take pointerup from document not item
 
 - [ ] Moving items to other list should increment task counts appropriately (there was never a way to affect anything but the current task list previously)
 
 * [ ] pull should not trigger edit modal
+
+- [ ] figure out whats wrong with rxjs
 
 # TODO
 
