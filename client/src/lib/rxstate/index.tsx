@@ -22,7 +22,12 @@ export function createObservableStateTools<S>() {
   let current_state: S
   let state_s = new Subject<S>()
 
+  type WithStateDispatcher<A extends any[], R> = (...args: A) => (state: S) => R
+
   function createDispatcher(): VoidDispatcher
+  function createDispatcher<AC extends WithStateDispatcher<any, any>>(
+    dispatcher: AC,
+  ): Dispatcher<AC>
   function createDispatcher<AC extends FunctionType>(
     dispatcher: AC,
   ): Dispatcher<AC>

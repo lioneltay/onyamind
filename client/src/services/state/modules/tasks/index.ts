@@ -1,5 +1,5 @@
 import { createReducer } from "lib/rxstate"
-import { State } from "services/state"
+import { State as AppState } from "services/state"
 import { createDispatcher } from "services/state/tools"
 
 import { firestore, dataWithId } from "services/firebase"
@@ -21,14 +21,13 @@ import { openUndo, undo, closeUndo } from "services/state/modules/misc"
 
 import { uniq, omit } from "ramda"
 
-export const addTask = createDispatcher(
-  (title: string) => async (state: State) =>
-    api.addTask({
-      list_id: state.selected_task_list_id,
-      notes: "",
-      title,
-      user_id: state.user ? state.user.uid : null,
-    }),
+export const addTask = createDispatcher((title: string) => async state =>
+  api.addTask({
+    list_id: state.selected_task_list_id,
+    notes: "",
+    title,
+    user_id: state.user ? state.user.uid : null,
+  }),
 )
 
 export const archiveTask = createDispatcher((task_id: ID) => {
@@ -75,13 +74,13 @@ export const tasks_s = selectTaskList.pipe(
   switchMap(list_id => createCurrentTasksStream(list_id)),
 )
 
-export const reducer_s = createReducer<State>(
+export const reducer_s = createReducer<AppState>(
   archiveTask.pipe(
     mergeMap(task_id => {
       const commit_s = merge(timer(7000), openUndo.stream, closeUndo.stream)
       const revert_s = undo.stream
 
-      const addDeleteMarkerReducer = (state: State) => ({
+      const addDeleteMarkerReducer = (state: AppState) => ({
         ...state,
         task_delete_markers: {
           ...state.task_delete_markers,
@@ -89,7 +88,7 @@ export const reducer_s = createReducer<State>(
         },
       })
 
-      const removeDeleteMarkerReducer = (state: State) => ({
+      const removeDeleteMarkerReducer = (state: AppState) => ({
         ...state,
         task_delete_markers: omit([task_id], state.task_delete_markers),
       })
@@ -118,7 +117,7 @@ export const reducer_s = createReducer<State>(
       const commit_s = merge(timer(7000), openUndo.stream, closeUndo.stream)
       const revert_s = undo.stream
 
-      const addDeleteMarkersReducer = (state: State) => ({
+      const addDeleteMarkersReducer = (state: AppState) => ({
         ...state,
         task_delete_markers: task_ids.reduce((markers, id) => {
           markers[id] = id
@@ -126,7 +125,7 @@ export const reducer_s = createReducer<State>(
         }, state.task_delete_markers),
       })
 
-      const removeDeleteMarkersReducer = (state: State) => ({
+      const removeDeleteMarkersReducer = (state: AppState) => ({
         ...state,
         task_delete_markers: omit(task_ids, state.task_delete_markers),
       })
@@ -150,5 +149,5 @@ export const reducer_s = createReducer<State>(
     }),
   ),
 
-  tasks_s.pipe(map(tasks => (state: State) => ({ ...state, tasks }))),
+  tasks_s.pipe(map(tasks => (state: AppState) => ({ ...state, tasks }))),
 )

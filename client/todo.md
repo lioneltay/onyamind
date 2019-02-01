@@ -112,18 +112,21 @@
 - [x] task needs a background color otherwise it shoulds gesture background color
 
 - [x] move task to another list
+
   - [x] 3rd option in editing header
   - [x] 3rd option in hover
 
+- [x] could predefine the AppState type in createDispatcher
+
 # Goal
 
-- [ ] could predefine the AppState type in createDispatcher
+- [ ] useGesture should take pointerup from document not item
 
-* [ ] Moving items to other list should increment task counts appropriately (there was never a way to affect anything but the current task list previously)
+- [ ] Moving items to other list should increment task counts appropriately (there was never a way to affect anything but the current task list previously)
+
+* [ ] pull should not trigger edit modal
 
 # TODO
-
-- [ ] pull should not trigger edit modal
 
 - [ ] add notification to kill service worker
 - [ ] firegure out how to make modals and drawers work on mobile with back button (you can block back button, add an event handgler instead?)
