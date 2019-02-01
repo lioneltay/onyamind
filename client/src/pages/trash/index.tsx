@@ -22,10 +22,11 @@ const Container = styled.div`
 `
 
 type Props = {
+  theme: Theme
   tasks: null | Task[]
 }
 
-const Trash: React.FunctionComponent<Props> = ({ tasks }) => {
+const Trash: React.FunctionComponent<Props> = ({ tasks, theme }) => {
   const mobile = useMediaQuery("(max-width: 800px)")
 
   if (!tasks) {
@@ -35,7 +36,7 @@ const Trash: React.FunctionComponent<Props> = ({ tasks }) => {
   return (
     <OuterContainer style={{ paddingTop: mobile ? 0 : 24 }}>
       <Container>
-        <List className="p-0" style={{ background: "white" }}>
+        <List className="p-0" style={{ background: theme.background_color }}>
           <Transition
             items={tasks}
             keys={task => task.id}
@@ -63,5 +64,6 @@ const Trash: React.FunctionComponent<Props> = ({ tasks }) => {
 }
 
 export default connect(state => ({
+  theme: state.settings.theme,
   tasks: state.trash.tasks,
 }))(Trash)

@@ -1,9 +1,8 @@
 import React, { Fragment } from "react"
-import styled from "styled-components"
-
-import { highlight_color, highlighted_text_color } from "theme"
+import { styled } from "theme"
 
 import IconButton from "@material-ui/core/IconButton"
+import Typography from "@material-ui/core/Typography"
 import Menu from "@material-ui/icons/Menu"
 import ArrowBack from "@material-ui/icons/ArrowBack"
 import Delete from "@material-ui/icons/Delete"
@@ -48,6 +47,7 @@ const LeftSection = styled.div`
 `
 
 type Props = {
+  theme: Theme
   all_selected_tasks_complete: boolean
   all_selected_tasks_incomplete: boolean
   editing: boolean
@@ -61,13 +61,14 @@ const ListPageHeader: React.FunctionComponent<Props> = ({
   all_selected_tasks_incomplete,
   number_of_selected_tasks,
   editing,
+  theme,
 }) => {
   return (
     <Fragment>
       <AppBar position="relative">
         <Container
           style={{
-            backgroundColor: editing ? highlight_color : "white",
+            backgroundColor: editing ? theme.highlight_color : undefined,
           }}
         >
           <Main>
@@ -81,7 +82,10 @@ const ListPageHeader: React.FunctionComponent<Props> = ({
                     <ArrowBack />
                   </IconButton>
                   <div
-                    style={{ color: highlighted_text_color, paddingLeft: 18 }}
+                    style={{
+                      color: theme.highlighted_text_color,
+                      paddingLeft: 18,
+                    }}
                   >
                     {number_of_selected_tasks} selected
                   </div>
@@ -94,9 +98,9 @@ const ListPageHeader: React.FunctionComponent<Props> = ({
                   >
                     <Menu />
                   </IconButton>
-                  <div style={{ paddingLeft: 18, color: "black" }}>
+                  <Typography variant="h5" style={{ paddingLeft: 18 }}>
                     {selected_task_list_name}
-                  </div>
+                  </Typography>
                 </Fragment>
               )}
             </LeftSection>
@@ -136,6 +140,7 @@ export default connect(
     selected_task_list_id,
     tasks,
     editing,
+    settings: { theme },
   }) => {
     const selected_task_list = task_lists
       ? task_lists.find(list => list.id === selected_task_list_id)
@@ -155,6 +160,7 @@ export default connect(
     )
 
     return {
+      theme,
       all_selected_tasks_complete,
       all_selected_tasks_incomplete,
       editing,

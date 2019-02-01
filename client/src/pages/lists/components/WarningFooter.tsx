@@ -6,7 +6,6 @@ import Typography from "@material-ui/core/Typography"
 import Button from "@material-ui/core/Button"
 import Clear from "@material-ui/icons/Clear"
 import Modal from "lib/components/Modal"
-import { error_color, grey_text } from "theme"
 import { connect } from "services/state"
 import { signIn } from "services/state/modules/auth"
 import { toggleWarningFooter } from "services/state/modules/warning-footer"
@@ -16,7 +15,7 @@ const Container = styled.div`
   width: 100%;
   bottom: 0;
   left: 0;
-  background: ${error_color};
+  background: ${({ theme }) => theme.error_color};
   color: white;
   padding: 5px;
 `
@@ -36,10 +35,11 @@ const X = styled(Clear)`
 ` as typeof Clear
 
 type Props = {
+  theme: Theme
   show: boolean
 }
 
-const WarningFooter: React.FunctionComponent<Props> = ({ show }) => {
+const WarningFooter: React.FunctionComponent<Props> = ({ show, theme }) => {
   const [show_modal, setShowModal] = useState(false)
 
   return (
@@ -75,7 +75,7 @@ const WarningFooter: React.FunctionComponent<Props> = ({ show }) => {
               }
               title="You are not signed in"
             >
-              <Typography style={{ color: grey_text }}>
+              <Typography style={{ color: theme.grey_text }}>
                 As you are not signed in your tasks are stored and only
                 accessible directly on your device. Your data could be lost if
                 you delete the app or lose your phone.
@@ -95,5 +95,6 @@ const WarningFooter: React.FunctionComponent<Props> = ({ show }) => {
 }
 
 export default connect(state => ({
+  theme: state.settings.theme,
   show: state.show_warning_footer,
 }))(WarningFooter)

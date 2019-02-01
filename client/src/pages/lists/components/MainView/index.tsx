@@ -26,6 +26,7 @@ import {
   uncheckCompletedTasks,
   archiveCompletedTasks,
 } from "services/state/modules/editing"
+import { themeListener } from "theming"
 
 const OuterContainer = styled.div`
   display: flex;
@@ -44,10 +45,11 @@ const Rotate = styled.div.attrs({})<{ flip: boolean }>`
 `
 
 type Props = {
+  theme: Theme
   tasks: Task[]
 }
 
-const MainView: React.FunctionComponent<Props> = ({ tasks }) => {
+const MainView: React.FunctionComponent<Props> = ({ tasks, theme }) => {
   const [editing_task_id, setEditingTaskId] = useState(null as ID | null)
   const [show_edit_modal, setShowEditModal] = useState(false)
   const [show_complete_tasks, setShowCompleteTasks] = useState(false)
@@ -91,7 +93,7 @@ const MainView: React.FunctionComponent<Props> = ({ tasks }) => {
   return (
     <OuterContainer>
       <Container>
-        <List className="p-0" style={{ background: "white" }}>
+        <List className="p-0" style={{ background: theme.background_color }}>
           <Transition
             items={incomplete_tasks}
             keys={task => task.id}
@@ -184,4 +186,7 @@ const MainView: React.FunctionComponent<Props> = ({ tasks }) => {
   )
 }
 
-export default connect(state => ({ tasks: tasks(state) }))(MainView)
+export default connect(state => ({
+  tasks: tasks(state),
+  theme: state.settings.theme,
+}))(MainView)

@@ -1,7 +1,5 @@
 import React, { Fragment } from "react"
-import styled from "styled-components"
-
-import { highlight_color, highlighted_text_color } from "theme"
+import { styled } from "theme"
 
 import IconButton from "@material-ui/core/IconButton"
 import Menu from "@material-ui/icons/Menu"
@@ -10,6 +8,7 @@ import Delete from "@material-ui/icons/Delete"
 import DeleteSweep from "@material-ui/icons/DeleteSweep"
 import AppBar from "@material-ui/core/AppBar"
 import Toolbar from "@material-ui/core/Toolbar"
+import Typography from "@material-ui/core/Typography"
 
 import { connect } from "services/state"
 import { toggleDrawer } from "services/state/modules/misc"
@@ -44,6 +43,7 @@ const LeftSection = styled.div`
 `
 
 type Props = {
+  theme: Theme
   editing: boolean
   number_of_selected_tasks: number
 }
@@ -51,12 +51,13 @@ type Props = {
 const TrashPageHeader: React.FunctionComponent<Props> = ({
   number_of_selected_tasks,
   editing,
+  theme,
 }) => {
   return (
     <AppBar position="relative">
       <Container
         style={{
-          backgroundColor: editing ? highlight_color : "white",
+          backgroundColor: editing ? theme.highlight_color : undefined,
         }}
       >
         <Main>
@@ -69,7 +70,12 @@ const TrashPageHeader: React.FunctionComponent<Props> = ({
                 >
                   <ArrowBack />
                 </IconButton>
-                <div style={{ color: highlighted_text_color, paddingLeft: 18 }}>
+                <div
+                  style={{
+                    color: theme.highlighted_text_color,
+                    paddingLeft: 18,
+                  }}
+                >
                   {number_of_selected_tasks} selected
                 </div>
               </Fragment>
@@ -81,7 +87,9 @@ const TrashPageHeader: React.FunctionComponent<Props> = ({
                 >
                   <Menu />
                 </IconButton>
-                <div style={{ paddingLeft: 18, color: "black" }}>Trash</div>
+                <Typography variant="h5" style={{ paddingLeft: 18 }}>
+                  Trash
+                </Typography>
               </Fragment>
             )}
           </LeftSection>
@@ -105,6 +113,7 @@ export default connect(state => {
   const { selected_task_ids } = state.trash
 
   return {
+    theme: state.settings.theme,
     editing: selected_task_ids.length > 0,
     number_of_selected_tasks: selected_task_ids.length,
   }

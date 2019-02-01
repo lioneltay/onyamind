@@ -14,8 +14,14 @@ import {
   State as TrashState,
   initial_state as trash_initial_state,
 } from "./modules/trash"
+import {
+  reducer_s as settingsReducer,
+  State as SettingsState,
+  initial_state as settings_initial_state,
+} from "./modules/settings"
 
 export type State = {
+  settings: SettingsState
   trash: TrashState
   show_undo: boolean
   selected_task_list_id: ID | null
@@ -34,6 +40,7 @@ export type State = {
 }
 
 export const initial_state: State = {
+  settings: settings_initial_state,
   trash: trash_initial_state,
   task_delete_markers: {},
   show_undo: false,
@@ -51,18 +58,19 @@ export const initial_state: State = {
   show_warning_footer: false,
 }
 
-const combinedTrashReducer = combineReducers({
+const combinedReducers = combineReducers({
   trash: trashReducer,
+  settings: settingsReducer,
 }) as any
 
 export const reducer_s = createReducer<State>(
+  combinedReducers,
   miscReducer,
   tasksReducer,
   taskListsReducer,
   warningFooterReducer,
   authReducer,
   editingReducer,
-  combinedTrashReducer,
 )
 
 export const connect = tools.connect

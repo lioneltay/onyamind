@@ -1,11 +1,16 @@
 import React from "react"
+import { styled } from "theme"
 
 import { Formik, Form } from "formik"
 import Button from "@material-ui/core/Button"
 import TextField from "@material-ui/core/TextField"
 import Modal from "lib/components/Modal"
 
-import { grey_text } from "theme"
+const StatusText = styled.div`
+  color: ${({ theme }) => theme.grey_text};
+  font-size: 1rem;
+  font-weight: 400;
+`
 
 type Values = Omit<Task, "id">
 
@@ -36,11 +41,7 @@ const EditModal: React.FunctionComponent<Props> = ({
           onClose={onClose}
           style={{ width: 500, maxWidth: "100%" }}
           title={
-            <div
-              style={{ color: grey_text, fontSize: "1rem", fontWeight: 400 }}
-            >
-              {isSubmitting ? "Saving..." : "Saved"}
-            </div>
+            <StatusText>{isSubmitting ? "Saving..." : "Saved"}</StatusText>
           }
         >
           <Form>

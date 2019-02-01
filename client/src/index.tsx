@@ -17,26 +17,13 @@ if ("serviceWorker" in navigator) {
   })
 }
 
-import {
-  createGenerateClassName,
-  jssPreset,
-  MuiThemeProvider,
-  createMuiTheme,
-} from "@material-ui/core/styles"
+import { createGenerateClassName, jssPreset } from "@material-ui/core/styles"
 import { create } from "jss"
 import { JssProvider } from "react-jss"
-import { indigo } from "@material-ui/core/colors"
 
 const jss = create({
   ...jssPreset(),
   insertionPoint: document.getElementById("jss-insertion-point")!,
-})
-
-const theme = createMuiTheme({
-  typography: {
-    useNextVariants: true,
-  },
-  palette: { primary: indigo },
 })
 
 const generateClassName = createGenerateClassName()
@@ -46,9 +33,7 @@ if (container) {
   render(
     <BrowserRouter>
       <JssProvider jss={jss} generateClassName={generateClassName}>
-        <MuiThemeProvider theme={theme}>
-          <App />
-        </MuiThemeProvider>
+        <App />
       </JssProvider>
     </BrowserRouter>,
     container,

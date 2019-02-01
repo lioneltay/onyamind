@@ -87,15 +87,27 @@
 - [x] why does undo bar vanish when leaving, and then reappear for ever?
 
 - [x] Check that header/taskadder is still fixed
+- [x] change favicon to pencil
+
+- [x] add dark theme
+
+  - [x] put theme in store
+    - [x] Whenever settings (dark mode for now) change, update theme
+  - [x] mui theme (takes dark/light prop)
+  - [x] styled componenets theme (takes dark/light prop)
+
+* [x] text colors
+* [x] background colors
+* [x] add settings state in store
+* [x] add theme toggle button in drawer
 
 # Goal
 
-- [ ] change favicon to pencil
+- [ ] add settings collection
+  - [ ] store what theme the user is using
 
 * [ ] refactor again!
-
-- [ ] add settings collection
-- [ ] add dark theme
+  - [ ] modularise headers
 
 # TODO
 

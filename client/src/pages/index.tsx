@@ -1,29 +1,27 @@
 import React from "react"
-import styled from "styled-components"
+import { styled } from "theme"
 
 import RootPage from "./Page"
 import ListPage from "./lists"
 import TrashPage from "./trash"
 
-import { Provider as RxStateProvider } from "../services/state"
 import { Route, Switch, Redirect } from "react-router-dom"
 import SandboxPage from "features/sandbox"
-
-import { background_color } from "theme"
 
 import Header from "./components/Header"
 import Drawer from "./components/Drawer"
 import UndoSnackbar from "./components/UndoSnackbar"
 
+import { ThemeProvider } from "theme"
+
 const Container = styled.div`
-  background: ${background_color};
+  background: ${({ theme }) => theme.background_faded_color};
   min-height: 100vh;
 `
 
-
 const RootRoute: React.FunctionComponent = () => {
   return (
-    <RxStateProvider>
+    <ThemeProvider>
       <Container>
         <Header />
         <Drawer />
@@ -37,7 +35,7 @@ const RootRoute: React.FunctionComponent = () => {
           <Route render={() => <Redirect to="/" />} />
         </Switch>
       </Container>
-    </RxStateProvider>
+    </ThemeProvider>
   )
 }
 

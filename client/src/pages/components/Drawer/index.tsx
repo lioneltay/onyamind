@@ -16,6 +16,7 @@ import Button from "@material-ui/core/Button"
 import IconButton from "@material-ui/core/IconButton"
 import LinearProgress from "@material-ui/core/LinearProgress"
 import Fade from "@material-ui/core/Fade"
+import Switch from "@material-ui/core/Switch"
 
 import Help from "@material-ui/icons/Help"
 import ExpandMore from "@material-ui/icons/ExpandMore"
@@ -25,8 +26,6 @@ import Clear from "@material-ui/icons/Clear"
 import AccountCircle from "@material-ui/icons/AccountCircle"
 import ExitToApp from "@material-ui/icons/ExitToApp"
 import Delete from "@material-ui/icons/Delete"
-
-import { background_color, grey_text } from "theme"
 
 import Modal from "lib/components/Modal"
 
@@ -47,10 +46,13 @@ import {
   removeTaskList,
   setPrimaryTaskList,
 } from "services/state/modules/task-lists"
-import { ConnectedDispatcher } from "lib/rxstate"
 import { withRouter, RouteComponentProps } from "react-router"
 
+import { toggleDarkMode } from "services/state/modules/settings"
+
 type Props = RouteComponentProps & {
+  theme: Theme
+  dark_mode: boolean
   show: boolean
   user: User
   task_lists: TaskList[]
@@ -58,6 +60,8 @@ type Props = RouteComponentProps & {
 }
 
 const Drawer: React.FunctionComponent<Props> = ({
+  theme,
+  dark_mode,
   user,
   show,
   task_lists,
@@ -93,10 +97,24 @@ const Drawer: React.FunctionComponent<Props> = ({
     >
       <List
         className="py-0"
-        style={{ width: "80vw", maxWidth: 400, minWidth: 280 }}
+        style={{
+          width: "80vw",
+          maxWidth: 400,
+          minWidth: 280,
+          minHeight: "100vh",
+          backgroundColor: dark_mode
+            ? theme.background_faded_color
+            : theme.background_color,
+        }}
       >
         {user ? (
-          <ListItem style={{ backgroundColor: background_color }}>
+          <ListItem
+            style={{
+              backgroundColor: dark_mode
+                ? theme.background_color
+                : theme.background_faded_color,
+            }}
+          >
             <ListItemAvatar>
               {user.photoURL ? (
                 <Avatar src={user.photoURL} />
@@ -114,7 +132,7 @@ const Drawer: React.FunctionComponent<Props> = ({
             </ListItemSecondaryAction>
           </ListItem>
         ) : (
-          <ListItem style={{ backgroundColor: background_color }}>
+          <ListItem style={{ backgroundColor: theme.background_color }}>
             <ListItemText>
               <GoogleSignInButton onClick={signIn} />
             </ListItemText>
@@ -126,20 +144,18 @@ const Drawer: React.FunctionComponent<Props> = ({
             </ListItemSecondaryAction>
           </ListItem>
         )}
-
         <ListItem className="pb-0 pt-3" dense>
           <ListItemText className="fa-c">
             <Typography variant="subtitle2" className="fa-c">
               <span className="mr-3">Primary List</span>
               <Help
                 className="cursor-pointer"
-                style={{ color: grey_text }}
+                style={{ color: theme.icon_color }}
                 onClick={() => setShowHelpModal(true)}
               />
             </Typography>
           </ListItemText>
         </ListItem>
-
         <Modal
           open={show_help_modal}
           onClose={() => setShowHelpModal(false)}
@@ -155,12 +171,11 @@ const Drawer: React.FunctionComponent<Props> = ({
             </Button>
           }
         >
-          <Typography style={{ color: grey_text }}>
+          <Typography style={{ color: theme.grey_text }}>
             The primary list will be selected by default when you open the
             application.
           </Typography>
         </Modal>
-
         {primary_list ? (
           <TaskList
             key={primary_list.id}
@@ -183,9 +198,7 @@ const Drawer: React.FunctionComponent<Props> = ({
             </div>
           </Fade>
         )}
-
         <Divider />
-
         <ListItem
           className="pb-0 pt-3"
           dense
@@ -195,11 +208,10 @@ const Drawer: React.FunctionComponent<Props> = ({
           <ListItemText>
             <Typography variant="subtitle2">Other Lists</Typography>
           </ListItemText>
-          <div style={{ color: grey_text }}>
+          <div style={{ color: theme.grey_text }}>
             {show_other_lists ? <ExpandLess /> : <ExpandMore />}
           </div>
         </ListItem>
-
         <Collapse in={show_other_lists}>
           {task_lists ? (
             task_lists
@@ -239,7 +251,6 @@ const Drawer: React.FunctionComponent<Props> = ({
             </ListItem>
           )}
         </Collapse>
-
         <Divider />
         <ListItem className="fj-c fa-st p-0" button>
           <Button
@@ -253,7 +264,6 @@ const Drawer: React.FunctionComponent<Props> = ({
           </Button>
         </ListItem>
         <Divider />
-
         <OptionItem
           icon={<Delete />}
           text="Trash"
@@ -267,6 +277,24 @@ const Drawer: React.FunctionComponent<Props> = ({
         )}
         <OptionItem icon={<Feedback />} text="Send feedback" />
         <OptionItem icon={<Help />} text="Help" />
+        <Divider />
+        <ListItem className="pb-0 pt-3" dense>
+          <ListItemText>
+            <Typography variant="subtitle2">Settings</Typography>
+          </ListItemText>
+        </ListItem>
+
+        <ListItem button onClick={toggleDarkMode}>
+          <ListItemText>Dark mode</ListItemText>
+          <ListItemSecondaryAction>
+            <Switch
+              checked={dark_mode}
+              value="checkedB"
+              color="primary"
+              onChange={toggleDarkMode}
+            />
+          </ListItemSecondaryAction>
+        </ListItem>
       </List>
 
       <CreateTaskListModal
@@ -344,6 +372,8 @@ const TaskListLoader: React.FunctionComponent = () => (
 
 export default withRouter(
   connect(state => ({
+    theme: state.settings.theme,
+    dark_mode: state.settings.dark,
     user: state.user,
     show: state.show_drawer,
     task_lists: state.task_lists,

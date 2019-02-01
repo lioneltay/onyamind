@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import styled from "styled-components"
+import { styled } from "theme"
 import { useMediaQuery } from "@tekktekk/react-media-query"
 
 import Add from "@material-ui/icons/Add"
@@ -9,8 +9,8 @@ import CheckBoxOutlineBlank from "@material-ui/icons/CheckBoxOutlineBlank"
 import IconButton from "@material-ui/core/IconButton"
 import TextField from "@material-ui/core/TextField"
 import InputAdornment from "@material-ui/core/InputAdornment"
-import { background_color, highlighted_text_color } from "theme"
 
+import Checkbox from "@material-ui/core/Checkbox"
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemText from "@material-ui/core/ListItemText"
@@ -22,11 +22,10 @@ import {
 } from "services/state/modules/editing"
 import { connect } from "services/state"
 import { addTask } from "services/state/modules/tasks"
-import { ConnectedDispatcher } from "lib/rxstate"
 
 const OuterContainer = styled.div`
   position: relative;
-  background: ${background_color};
+  background: ${({ theme }) => theme.background_faded_color};
   width: 100%;
   display: flex;
   justify-content: center;
@@ -45,6 +44,7 @@ const AdderTextField = styled(TextField).attrs({ variant: "outlined" })`
 ` as typeof TextField
 
 type Props = {
+  theme: Theme
   tasks: Task[]
   user: User
   editing: boolean
@@ -56,6 +56,7 @@ const TaskAdder: React.FunctionComponent<Props> = ({
   editing,
   selected_task_ids,
   tasks,
+  theme,
 }) => {
   const [new_task_title, setNewTaskTitle] = useState("")
 
@@ -82,7 +83,9 @@ const TaskAdder: React.FunctionComponent<Props> = ({
       <Container
         style={{
           height: 57,
-          background: editing ? background_color : "white",
+          background: editing
+            ? theme.background_faded_color
+            : theme.background_color,
         }}
       >
         {editing ? (
@@ -100,14 +103,12 @@ const TaskAdder: React.FunctionComponent<Props> = ({
             }
           >
             <ListItemIcon>
-              <IconButton>
-                {all_selected ? <CheckBox /> : <CheckBoxOutlineBlank />}
-              </IconButton>
+              <Checkbox color="primary" checked={all_selected} />
             </ListItemIcon>
             <ListItemText className="cursor-pointer">
               <span
                 style={{
-                  color: highlighted_text_color,
+                  color: theme.highlighted_text_color,
                   fontWeight: 500,
                 }}
               >
@@ -158,6 +159,7 @@ const TaskAdder: React.FunctionComponent<Props> = ({
 }
 
 export default connect(state => ({
+  theme: state.settings.theme,
   user: state.user,
   editing: state.editing,
   selected_task_ids: state.selected_task_ids,

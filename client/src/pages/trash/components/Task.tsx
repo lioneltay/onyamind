@@ -12,9 +12,7 @@ import { deleteTask, editTask } from "services/state/modules/tasks"
 import TaskGestureContainer from "components/TaskGestureContainer"
 import Task from "components/Task"
 
-const ItemContainer = styled.div`
-  background: white;
-`
+const ItemContainer = styled.div``
 
 export type Props = {
   task: Task

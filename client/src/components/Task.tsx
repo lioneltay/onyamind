@@ -7,12 +7,14 @@ import Fab from "@material-ui/core/Fab"
 
 import Assignment from "@material-ui/icons/Assignment"
 
-import { highlight_color } from "theme"
 import { ListItemText } from "@material-ui/core"
+import { connect } from "services/state"
 
-const StyledListItem = styled(ListItem)`
+const StyledListItem = styled(ListItem).attrs({})<{ selected: boolean }>`
   position: relative;
   min-height: 70px;
+  ${({ selected, theme }) =>
+    selected ? `background-color: ${theme.highlight_color}` : ""};
 ` as any
 
 const Overlay = styled.div`
@@ -50,6 +52,7 @@ const SingleLineWithEllipsis: React.FunctionComponent<Stylable> = ({
 }
 
 export type Props = {
+  theme: Theme
   selected: boolean
   task: Task
   editing: boolean
@@ -62,6 +65,7 @@ export type Props = {
 }
 
 const Task: React.FunctionComponent<Props> = ({
+  theme,
   selected,
   task,
   editing,
@@ -73,30 +77,23 @@ const Task: React.FunctionComponent<Props> = ({
   hoverActions,
 }) => {
   return (
-    <StyledListItem
-      style={{
-        opacity: 1,
-        height: "auto",
-        backgroundColor: selected ? highlight_color : undefined,
-      }}
-      selected={selected}
-      button
-    >
+    <StyledListItem selected={selected} button>
       <ListItemIcon>
         <Fab
           style={{
             borderRadius: editing ? "50%" : "5px",
             transition: "300ms",
             border: selected ? "1px solid blue" : "none",
-            background: "white",
+            background: theme.background_faded_color,
             marginLeft: 4,
-            color: "#ccc",
           }}
           onClick={() => onSelectTask(task.id)}
           size="small"
         >
           <Assignment
             style={{
+              // color: theme.mui.palette.primary.main,
+              color: theme.icon_color,
               transform: `scale(${editing ? 0.7 : 1})`,
               transition: "300ms",
             }}
@@ -111,7 +108,6 @@ const Task: React.FunctionComponent<Props> = ({
               fontWeight: 500,
               fontSize: "0.95rem",
               textDecoration: task.complete ? "line-through" : "none",
-              color: "#202124",
             }}
           >
             {task.title}
@@ -132,4 +128,6 @@ const Task: React.FunctionComponent<Props> = ({
   )
 }
 
-export default Task
+export default connect(state => ({
+  theme: state.settings.theme,
+}))(Task)

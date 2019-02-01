@@ -1,6 +1,9 @@
 import firebase from "firebase"
+import { Theme as _Theme } from "theme"
 
 declare global {
+  export type Theme = _Theme
+
   export type ID = string
 
   export type TaskList = {

@@ -4,6 +4,8 @@ import { hot } from "react-hot-loader"
 import Root from "pages"
 import GlobalStyles from "styles/global"
 
+import { Provider as RxStateProvider } from "services/state"
+
 function watchForHover() {
   var hasHoverClass = false
   var container = document.body
@@ -41,10 +43,10 @@ watchForHover()
 class App extends React.Component {
   render() {
     return (
-      <>
+      <RxStateProvider>
         <GlobalStyles />
         <Root />
-      </>
+      </RxStateProvider>
     )
   }
 }
