@@ -4,8 +4,8 @@
   "description": "A Todo App made with PWA Technology",
   "start_url": "/",
   "display": "standalone",
-  "theme_color": "tomato",
-  "background_color": "navy",
+  "theme_color": "#000000",
+  "background_color": "#ffffff",
   "orientation": "portrait",
   "icons": [
     {
