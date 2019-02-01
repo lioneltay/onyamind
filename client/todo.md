@@ -103,72 +103,83 @@
 
 # Goal
 
-- [ ] add settings collection
-  - [ ] store what theme the user is using
-
-* [ ] refactor again!
+- [ ] refactor again!
   - [ ] modularise headers
 
-# TODO
+* [ ] add settings collection
+  - [ ] store what theme the user is using
 
 - [ ] move task to another list
 
-* [ ] multiselect
+- [ ] order by fields
+  - [ ] date added
+  - [ ] last updated
+  - [ ] priority
+  - [ ] due date
+
+- [ ] pinned tasks
+
+- [ ] due dates
+
+- [ ] pwa push notifications on due dates
+  - [ ] 1 hour before notification
+
+# TODO
+
+- [ ] multiselect
 
   - [ ] drag on mobile
   - [ ] shift click on keyboard
 
-* [ ] deleted tasks should go to trash and be automatically deleted after a week
+- [ ] deleted tasks should go to trash and be automatically deleted after a week
 
-- [ ] add notification to kill service worker
+* [ ] add notification to kill service worker
 
-- [ ] implement max number of tasks per list
+* [ ] implement max number of tasks per list
 
-- [ ] firegure out how to make modals and drawers work on mobile with back button (you can block back button, add an event handgler instead?)
-- [ ] firegout how to put app on app store (pwa builder)
-- [ ] tests
+* [ ] firegure out how to make modals and drawers work on mobile with back button (you can block back button, add an event handgler instead?)
+* [ ] firegout how to put app on app store (pwa builder)
+* [ ] tests
 
-- [ ] non logged in version should store data localy
-- [ ] when signing in, if there are local notes ask if they would like them to be transfered, then delete the local notes
+* [ ] non logged in version should store data localy
+* [ ] when signing in, if there are local notes ask if they would like them to be transfered, then delete the local notes
 
-* [ ] due dates
 
-* [ ] pinned tasks
 
-* [ ] rich text editor
+- [ ] rich text editor
 
-* [ ] shared lists
+- [ ] shared lists
 
-- [ ] distinguish between completed and incompleted task counts in list's task count
+* [ ] distinguish between completed and incompleted task counts in list's task count
 
-- [ ] ensure service worker clears cache when initialising
+* [ ] ensure service worker clears cache when initialising
 
-- [ ] feedback
+* [ ] feedback
 
   - [ ] save feedback to firebase
   - [ ] screenshots
 
-- [ ] seo
+* [ ] seo
 
-- [ ] code splitting
+* [ ] code splitting
 
-- [ ] bundle optimisation with webpack
+* [ ] bundle optimisation with webpack
 
   - [ ] tree shaking
   - [ ] minification
 
-- [ ] Performance review/analysis
+* [ ] Performance review/analysis
 
-- [ ] security
+* [ ] security
 
-- [ ] drag and drop
+* [ ] drag and drop
 
   - [ ] drag doesnt work on mobile
   - [ ] lock drag to vertical only
 
-- [ ] advertisements
+* [ ] advertisements
 
-* [ ] add created date to edit modal
+- [ ] add created date to edit modal
 
 # Future
 

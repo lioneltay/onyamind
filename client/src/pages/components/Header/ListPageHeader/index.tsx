@@ -1,18 +1,11 @@
 import React, { Fragment } from "react"
-import { styled } from "theme"
 
 import IconButton from "@material-ui/core/IconButton"
-import Typography from "@material-ui/core/Typography"
-import Menu from "@material-ui/icons/Menu"
-import ArrowBack from "@material-ui/icons/ArrowBack"
 import Delete from "@material-ui/icons/Delete"
 import Check from "@material-ui/icons/Check"
 import Add from "@material-ui/icons/Add"
-import AppBar from "@material-ui/core/AppBar"
-import Toolbar from "@material-ui/core/Toolbar"
 
 import { connect } from "services/state"
-import { toggleDrawer } from "services/state/modules/misc"
 import {
   uncheckSelectedTasks,
   archiveSelectedTasks,
@@ -21,33 +14,9 @@ import {
 import { stopEditing } from "services/state/modules/editing"
 
 import TaskAdder from "./TaskAdder"
-
-const Container = styled(Toolbar)`
-  padding-left: 0;
-  padding-right: 0;
-  display: flex;
-  justify-content: center;
-` as typeof Toolbar
-
-const Main = styled.div`
-  padding-left: 16px;
-  padding-right: 16px;
-  max-width: 100%;
-  width: 600px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`
-
-const LeftSection = styled.div`
-  display: flex;
-  align-items: center;
-  font-weight: 500;
-  font-size: 20px;
-`
+import HeaderBase from "../HeaderBase"
 
 type Props = {
-  theme: Theme
   all_selected_tasks_complete: boolean
   all_selected_tasks_incomplete: boolean
   editing: boolean
@@ -61,73 +30,34 @@ const ListPageHeader: React.FunctionComponent<Props> = ({
   all_selected_tasks_incomplete,
   number_of_selected_tasks,
   editing,
-  theme,
 }) => {
   return (
     <Fragment>
-      <AppBar position="relative">
-        <Container
-          style={{
-            backgroundColor: editing ? theme.highlight_color : undefined,
-          }}
-        >
-          <Main>
-            <LeftSection>
-              {editing ? (
-                <Fragment>
-                  <IconButton
-                    style={{ display: "inline-block" }}
-                    onClick={stopEditing}
-                  >
-                    <ArrowBack />
-                  </IconButton>
-                  <div
-                    style={{
-                      color: theme.highlighted_text_color,
-                      paddingLeft: 18,
-                    }}
-                  >
-                    {number_of_selected_tasks} selected
-                  </div>
-                </Fragment>
-              ) : (
-                <Fragment>
-                  <IconButton
-                    style={{ display: "inline-block" }}
-                    onClick={toggleDrawer}
-                  >
-                    <Menu />
-                  </IconButton>
-                  <Typography variant="h5" style={{ paddingLeft: 18 }}>
-                    {selected_task_list_name}
-                  </Typography>
-                </Fragment>
-              )}
-            </LeftSection>
-
-            {editing ? (
-              <div style={{ display: "flex" }}>
-                {all_selected_tasks_complete ||
-                all_selected_tasks_incomplete ? (
-                  <IconButton
-                    onClick={
-                      all_selected_tasks_incomplete
-                        ? checkSelectedTasks
-                        : uncheckSelectedTasks
-                    }
-                  >
-                    {all_selected_tasks_incomplete ? <Check /> : <Add />}
-                  </IconButton>
-                ) : null}
-
-                <IconButton onClick={archiveSelectedTasks}>
-                  <Delete />
-                </IconButton>
-              </div>
+      <HeaderBase
+        title={selected_task_list_name}
+        number_of_selected_tasks={number_of_selected_tasks}
+        editing={editing}
+        onStopEditing={stopEditing}
+        editing_actions={
+          <Fragment>
+            {all_selected_tasks_complete || all_selected_tasks_incomplete ? (
+              <IconButton
+                onClick={
+                  all_selected_tasks_incomplete
+                    ? checkSelectedTasks
+                    : uncheckSelectedTasks
+                }
+              >
+                {all_selected_tasks_incomplete ? <Check /> : <Add />}
+              </IconButton>
             ) : null}
-          </Main>
-        </Container>
-      </AppBar>
+
+            <IconButton onClick={archiveSelectedTasks}>
+              <Delete />
+            </IconButton>
+          </Fragment>
+        }
+      />
       <TaskAdder />
     </Fragment>
   )
@@ -160,7 +90,6 @@ export default connect(
     )
 
     return {
-      theme,
       all_selected_tasks_complete,
       all_selected_tasks_incomplete,
       editing,
