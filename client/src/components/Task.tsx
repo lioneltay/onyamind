@@ -51,7 +51,7 @@ const SingleLineWithEllipsis: React.FunctionComponent<Stylable> = ({
   )
 }
 
-export type Props = {
+export type Props = Stylable & {
   theme: Theme
   selected: boolean
   task: Task
@@ -65,6 +65,9 @@ export type Props = {
 }
 
 const Task: React.FunctionComponent<Props> = ({
+  style,
+  className,
+
   theme,
   selected,
   task,
@@ -77,7 +80,13 @@ const Task: React.FunctionComponent<Props> = ({
   hoverActions,
 }) => {
   return (
-    <StyledListItem selected={selected} button>
+    <StyledListItem
+      style={style}
+      className={className}
+      selected={selected}
+      button
+      onClick={() => onItemClick(task.id)}
+    >
       <ListItemIcon>
         <Fab
           style={{
@@ -87,7 +96,10 @@ const Task: React.FunctionComponent<Props> = ({
             background: theme.background_faded_color,
             marginLeft: 4,
           }}
-          onClick={() => onSelectTask(task.id)}
+          onClick={e => {
+            e.stopPropagation()
+            onSelectTask(task.id)
+          }}
           size="small"
         >
           <Assignment
@@ -118,12 +130,11 @@ const Task: React.FunctionComponent<Props> = ({
             {task.notes}
           </SingleLineWithEllipsis>
         }
-        onClick={() => onItemClick(task.id)}
       />
 
-      <Overlay>{hoverActions}</Overlay>
+      <Overlay onClick={e => e.stopPropagation()}>{hoverActions}</Overlay>
 
-      {actions}
+      <div onClick={e => e.stopPropagation()}>{actions}</div>
     </StyledListItem>
   )
 }

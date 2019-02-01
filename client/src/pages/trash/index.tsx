@@ -36,7 +36,7 @@ const Trash: React.FunctionComponent<Props> = ({ tasks, theme }) => {
   return (
     <OuterContainer style={{ paddingTop: mobile ? 0 : 24 }}>
       <Container>
-        <List className="p-0" style={{ background: theme.background_color }}>
+        <List className="p-0">
           <Transition
             items={tasks}
             keys={task => task.id}

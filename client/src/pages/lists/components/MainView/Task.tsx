@@ -18,7 +18,7 @@ const ItemContainer = styled.div`
   /* background: ${({ theme }) => theme.background_color}; */
 `
 
-export type Props = {
+export type Props = Stylable & {
   task: Task
   onItemClick?: (id: ID) => void
   editing: boolean
@@ -27,6 +27,8 @@ export type Props = {
 }
 
 const MainViewTask: React.FunctionComponent<Props> = ({
+  style,
+  className,
   task,
   onItemClick = () => {},
   editing,
@@ -51,6 +53,8 @@ const MainViewTask: React.FunctionComponent<Props> = ({
     >
       <ItemContainer>
         <Task
+          style={style}
+          className={className}
           selected={selected}
           editing={editing}
           task={task}

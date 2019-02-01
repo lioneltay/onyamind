@@ -107,6 +107,7 @@ const MainView: React.FunctionComponent<Props> = ({ tasks, theme }) => {
                 <animated.div style={style}>
                   <Task
                     key={task.id}
+                    style={{ backgroundColor: theme.background_color }}
                     task={task}
                     onItemClick={startEditingTask}
                   />
@@ -116,20 +117,17 @@ const MainView: React.FunctionComponent<Props> = ({ tasks, theme }) => {
           </Transition>
         </List>
 
-        <List className="p-0">
+        <List className="p-0" onClick={toggleShowCompleteTasks}>
           <ListItem button>
             <ListItemIcon>
               <Rotate flip={show_complete_tasks}>
-                <IconButton onClick={toggleShowCompleteTasks}>
+                <IconButton>
                   <ExpandMore />
                 </IconButton>
               </Rotate>
             </ListItemIcon>
 
-            <ListItemText
-              onClick={toggleShowCompleteTasks}
-              primary={`${complete_tasks.length} checked off`}
-            />
+            <ListItemText primary={`${complete_tasks.length} checked off`} />
 
             <IconButtonMenu
               icon={<MoreVert />}
@@ -161,6 +159,7 @@ const MainView: React.FunctionComponent<Props> = ({ tasks, theme }) => {
                 <animated.div style={style}>
                   <Task
                     key={task.id}
+                    style={{ backgroundColor: theme.background_faded_color }}
                     task={task}
                     onItemClick={startEditingTask}
                   />

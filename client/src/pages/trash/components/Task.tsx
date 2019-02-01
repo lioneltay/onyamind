@@ -1,5 +1,5 @@
 import React, { Fragment } from "react"
-import styled from "styled-components"
+import { styled } from "theme"
 
 import IconButton from "@material-ui/core/IconButton"
 
@@ -12,7 +12,9 @@ import { deleteTask, editTask } from "services/state/modules/tasks"
 import TaskGestureContainer from "components/TaskGestureContainer"
 import Task from "components/Task"
 
-const ItemContainer = styled.div``
+const ItemContainer = styled.div`
+  background-color: ${({ theme }) => theme.background_color};
+`
 
 export type Props = {
   task: Task

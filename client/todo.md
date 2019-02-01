@@ -106,11 +106,73 @@
   - [x] modularise headers
 
 - [x] add settings collection
+
   - [x] store what theme the user is using
+
+- [x] task needs a background color otherwise it shoulds gesture background color
 
 # Goal
 
 - [ ] move task to another list
+  - [ ] 3rd option in editing header
+  - [ ] 3rd option in hover
+
+* [ ] could predefine the AppState type in createDispatcher
+
+# TODO
+
+- [ ] pull should not trigger edit modal
+
+- [ ] add notification to kill service worker
+- [ ] firegure out how to make modals and drawers work on mobile with back button (you can block back button, add an event handgler instead?)
+
+* [ ] shared lists
+
+- [ ] ensure service worker clears cache when initialising
+- [ ] security
+- [ ] feedback
+
+* [ ] deleted tasks should go to trash and be automatically deleted after a week
+
+  - [ ] save feedback to firebase
+  - [ ] screenshots
+
+- [ ] handle non logged in user
+  - [ ] don't show anything, just prompt to log in? OR
+  - [ ] non logged in version should store data localy
+    - [ ] when signing in, if there are local notes ask if they would like them to be transfered, then delete the local notes
+
+* [ ] multiselect
+
+  - [ ] drag on mobile
+  - [ ] shift click on keyboard
+
+- [ ] implement max number of tasks per list
+
+- [ ] firegout how to put app on app store (pwa builder)
+- [ ] tests
+
+* [ ] rich text editor
+
+- [ ] seo
+
+- [ ] code splitting
+
+- [ ] bundle optimisation with webpack
+
+  - [ ] tree shaking
+  - [ ] minification
+
+- [ ] Performance review/analysis
+
+* [ ] drag and drop
+
+  - [ ] drag doesnt work on mobile
+  - [ ] lock drag to vertical only
+
+* [ ] advertisements
+
+- [ ] add created date to edit modal
 
 - [ ] order by fields
 
@@ -125,63 +187,6 @@
 
 - [ ] pwa push notifications on due dates
   - [ ] 1 hour before notification
-
-* [ ] could predefine the AppState type in createDispatcher
-
-# TODO
-
-- [ ] multiselect
-
-  - [ ] drag on mobile
-  - [ ] shift click on keyboard
-
-- [ ] deleted tasks should go to trash and be automatically deleted after a week
-
-* [ ] add notification to kill service worker
-
-* [ ] implement max number of tasks per list
-
-* [ ] firegure out how to make modals and drawers work on mobile with back button (you can block back button, add an event handgler instead?)
-* [ ] firegout how to put app on app store (pwa builder)
-* [ ] tests
-
-* [ ] non logged in version should store data localy
-* [ ] when signing in, if there are local notes ask if they would like them to be transfered, then delete the local notes
-
-- [ ] rich text editor
-
-- [ ] shared lists
-
-* [ ] distinguish between completed and incompleted task counts in list's task count
-
-* [ ] ensure service worker clears cache when initialising
-
-* [ ] feedback
-
-  - [ ] save feedback to firebase
-  - [ ] screenshots
-
-* [ ] seo
-
-* [ ] code splitting
-
-* [ ] bundle optimisation with webpack
-
-  - [ ] tree shaking
-  - [ ] minification
-
-* [ ] Performance review/analysis
-
-* [ ] security
-
-* [ ] drag and drop
-
-  - [ ] drag doesnt work on mobile
-  - [ ] lock drag to vertical only
-
-* [ ] advertisements
-
-- [ ] add created date to edit modal
 
 # Future
 

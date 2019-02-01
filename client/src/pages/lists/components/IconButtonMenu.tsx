@@ -16,7 +16,12 @@ const IconButtonMenu: React.FunctionComponent<IconButtonMenu> = ({
 
   return (
     <Fragment>
-      <IconButton onClick={e => setAnchorEl(e.currentTarget)}>
+      <IconButton
+        onClick={e => {
+          e.stopPropagation()
+          setAnchorEl(e.currentTarget)
+        }}
+      >
         {icon}
       </IconButton>
       <Menu
