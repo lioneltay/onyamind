@@ -1,5 +1,15 @@
 import { firebase, firestore, dataWithId } from "services/firebase"
 
+export const getTaskList = async (list_id: ID): Promise<TaskList> => {
+  const x = await firestore
+    .collection("task_lists")
+    .doc(list_id)
+    .get()
+    .then(dataWithId)
+
+  return x as TaskList
+}
+
 type AddTaskListInput = Omit<
   TaskList,
   | "id"

@@ -119,20 +119,18 @@
 - [x] could predefine the AppState type in createDispatcher
 - [x] useGesture should take pointerup from document not item
 
+- [x] Moving items to other list should increment task counts appropriately (there was never a way to affect anything but the current task list previously)
+
 # Goal
 
-- [ ] Moving items to other list should increment task counts appropriately (there was never a way to affect anything but the current task list previously)
+- [ ] pull should not trigger edit modal
 
-* [ ] pull should not trigger edit modal
-
-- [ ] figure out whats wrong with rxjs
+* [ ] figure out whats wrong with rxjs
 
 # TODO
 
 - [ ] add notification to kill service worker
 - [ ] firegure out how to make modals and drawers work on mobile with back button (you can block back button, add an event handgler instead?)
-
-* [ ] shared lists
 
 - [ ] ensure service worker clears cache when initialising
 - [ ] security
@@ -144,54 +142,59 @@
   - [ ] screenshots
 
 - [ ] handle non logged in user
+
   - [ ] don't show anything, just prompt to log in? OR
   - [ ] non logged in version should store data localy
     - [ ] when signing in, if there are local notes ask if they would like them to be transfered, then delete the local notes
+
+- [ ] shared lists
+
+- [ ] invite a friend
 
 * [ ] multiselect
 
   - [ ] drag on mobile
   - [ ] shift click on keyboard
 
-- [ ] implement max number of tasks per list
+* [ ] implement max number of tasks per list
 
-- [ ] firegout how to put app on app store (pwa builder)
-- [ ] tests
+* [ ] firegout how to put app on app store (pwa builder)
+* [ ] tests
 
-* [ ] rich text editor
+- [ ] rich text editor
 
-- [ ] seo
+* [ ] seo
 
-- [ ] code splitting
+* [ ] code splitting
 
-- [ ] bundle optimisation with webpack
+* [ ] bundle optimisation with webpack
 
   - [ ] tree shaking
   - [ ] minification
 
-- [ ] Performance review/analysis
+* [ ] Performance review/analysis
 
-* [ ] drag and drop
+- [ ] drag and drop
 
   - [ ] drag doesnt work on mobile
   - [ ] lock drag to vertical only
 
-* [ ] advertisements
+- [ ] advertisements
 
-- [ ] add created date to edit modal
+* [ ] add created date to edit modal
 
-- [ ] order by fields
+* [ ] order by fields
 
   - [ ] date added
   - [ ] last updated
   - [ ] priority
   - [ ] due date
 
-- [ ] pinned tasks
+* [ ] pinned tasks
 
-- [ ] due dates
+* [ ] due dates
 
-- [ ] pwa push notifications on due dates
+* [ ] pwa push notifications on due dates
   - [ ] 1 hour before notification
 
 # Future

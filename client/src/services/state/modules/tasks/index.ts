@@ -45,8 +45,28 @@ type MoveTaskToListInput = {
   list_id: ID
 }
 export const moveTaskToList = createDispatcher(
-  ({ task_id, list_id }: MoveTaskToListInput) => {
-    return api.editTask({ task_id, task_data: { list_id } })
+  ({ task_id, list_id }: MoveTaskToListInput) => async state => {
+    if (!state.tasks || !state.task_lists) {
+      throw Error("Invalid State")
+    }
+
+    const list = state.task_lists.find(list => list.id === list_id)
+    const task = state.tasks.find(task => task.id === task_id)
+
+    if (!task || !list) {
+      throw Error("Invalid State 2")
+    }
+
+    await Promise.all([
+      api.editTask({ task_id, task_data: { list_id } }),
+
+      api.editTaskList({
+        list_id,
+        list_data: task.complete
+          ? { number_of_complete_tasks: list.number_of_complete_tasks + 1 }
+          : { number_of_incomplete_tasks: list.number_of_incomplete_tasks + 1 },
+      }),
+    ])
   },
 )
 

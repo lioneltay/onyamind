@@ -41,11 +41,35 @@ export const uncheckCompletedTasks = createDispatcher(
 )
 
 export const moveTasksToList = createDispatcher(
-  (list_id: ID) => (state: AppState) => {
-    return api.editTasks({
-      task_ids: state.selected_task_ids,
-      task_data: { list_id },
-    })
+  (list_id: ID) => async state => {
+    const state_tasks = state.tasks
+    if (!state_tasks || !state.task_lists) {
+      throw Error("Invalid State")
+    }
+
+    const list = state.task_lists.find(list => list.id === list_id) as TaskList
+    const tasks = state.selected_task_ids.map(task_id =>
+      (state.tasks as Task[]).find(task => task.id === task_id),
+    ) as Task[]
+
+    await Promise.all([
+      api.editTasks({
+        task_ids: state.selected_task_ids,
+        task_data: { list_id },
+      }),
+
+      api.editTaskList({
+        list_id,
+        list_data: {
+          number_of_complete_tasks:
+            list.number_of_complete_tasks +
+            tasks.filter(task => task.complete).length,
+          number_of_incomplete_tasks:
+            list.number_of_incomplete_tasks +
+            tasks.filter(task => !task.complete).length,
+        },
+      }),
+    ])
   },
 )
 
