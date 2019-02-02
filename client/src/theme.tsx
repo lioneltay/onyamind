@@ -4,7 +4,7 @@ import { ThemeProvider as SCThemeProvider } from "styled-components"
 import red from "@material-ui/core/colors/red"
 
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles"
-import { indigo, green } from "@material-ui/core/colors"
+import { teal, blue } from "@material-ui/core/colors"
 
 import { connect } from "services/state/tools"
 
@@ -27,14 +27,11 @@ type ThemeProps = {
 export const light_mui_theme = createMuiTheme({
   typography: {
     useNextVariants: true,
-    // allVariants: {
-    //   color: "red",
-    // },
   },
   palette: {
     type: "light",
-    primary: indigo,
-    secondary: green,
+    primary: blue,
+    secondary: teal,
   },
   overrides: {
     MuiToolbar: {
@@ -51,9 +48,8 @@ export const dark_mui_theme = createMuiTheme({
   },
   palette: {
     type: "dark",
-    primary: {
-      main: indigo[100],
-    },
+    primary: blue,
+    secondary: teal,
   },
   overrides: {
     MuiToolbar: {
