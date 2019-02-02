@@ -299,8 +299,8 @@ const Drawer: React.FunctionComponent<Props> = ({
 
       <CreateTaskListModal
         onSubmit={async values => {
-          await addTaskList({ ...values })
           setShowCreateModal(false)
+          await addTaskList({ ...values })
         }}
         open={show_create_modal}
         onClose={() => setShowCreateModal(false)}
@@ -310,11 +310,11 @@ const Drawer: React.FunctionComponent<Props> = ({
         <RenameTaskListModal
           task_list={selected_list}
           onSubmit={async values => {
+            setShowRenameModal(false)
             await editTaskList({
               list_id: selected_id,
               list_data: { ...values },
             })
-            setShowRenameModal(false)
           }}
           open={show_rename_modal}
           onClose={() => setShowRenameModal(false)}
@@ -327,9 +327,9 @@ const Drawer: React.FunctionComponent<Props> = ({
           onClose={() => setShowDeleteModal(false)}
           task_list_name={selected_list.name}
           onConfirmDelete={async () => {
-            await removeTaskList(selected_id)
             setSelectedId(null)
             setShowDeleteModal(false)
+            await removeTaskList(selected_id)
           }}
         />
       ) : null}

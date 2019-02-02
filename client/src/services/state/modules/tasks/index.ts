@@ -21,11 +21,16 @@ import { openUndo, undo, closeUndo } from "services/state/modules/misc"
 
 import { uniq, omit } from "ramda"
 
-export const addTask = createDispatcher((title: string) => async state =>
+type AddTaskInput = {
+  title: string
+  notes?: string
+}
+
+export const addTask = createDispatcher((input: AddTaskInput) => async state =>
   api.addTask({
     list_id: state.selected_task_list_id,
-    notes: "",
-    title,
+    notes: input.notes || "",
+    title: input.title,
     user_id: state.user ? state.user.uid : null,
   }),
 )

@@ -1,5 +1,5 @@
 import React from "react"
-import styled from "styled-components"
+import { styled } from "theme"
 
 import ListItem from "@material-ui/core/ListItem"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
@@ -10,11 +10,9 @@ import Assignment from "@material-ui/icons/Assignment"
 import { ListItemText } from "@material-ui/core"
 import { connect } from "services/state"
 
-const StyledListItem = styled(ListItem).attrs({})<{ selected: boolean }>`
+const StyledListItem = styled(ListItem)`
   position: relative;
   min-height: 70px;
-  ${({ selected, theme }) =>
-    selected ? `background-color: ${theme.highlight_color}` : ""};
 ` as any
 
 const Overlay = styled.div`

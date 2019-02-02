@@ -1,5 +1,4 @@
 import React, { Fragment } from "react"
-import { styled } from "theme"
 
 import IconButton from "@material-ui/core/IconButton"
 
@@ -21,8 +20,11 @@ import Task from "components/Task"
 import IconButtonMenu from "lib/components/IconButtonMenu"
 
 export type Props = Stylable & {
+  theme: Theme
+  selected?: boolean
   task: Task
   onItemClick?: (id: ID) => void
+  onSelectTask?: (id: ID) => void
   editing: boolean
   selected_task_ids: ID[]
   touch_screen: boolean
@@ -30,10 +32,13 @@ export type Props = Stylable & {
 }
 
 const MainViewTask: React.FunctionComponent<Props> = ({
+  theme,
   style,
   className,
   task,
+  selected: _selected,
   onItemClick = () => {},
+  onSelectTask = () => {},
   editing,
   selected_task_ids,
   touch_screen,
@@ -43,7 +48,8 @@ const MainViewTask: React.FunctionComponent<Props> = ({
     return null
   }
 
-  const selected = selected_task_ids.findIndex(id => id === task.id) >= 0
+  const selected =
+    _selected || selected_task_ids.findIndex(id => id === task.id) >= 0
 
   return (
     <TaskGestureContainer
@@ -59,17 +65,55 @@ const MainViewTask: React.FunctionComponent<Props> = ({
       rightBackground="dodgerblue"
       rightIcon={<Check />}
     >
-      <Task
-        style={style}
-        className={className}
-        selected={selected}
-        editing={editing}
-        task={task}
-        onItemClick={onItemClick}
-        onSelectTask={id => toggleTaskSelection(id)}
-        hoverActions={
-          editing || touch_screen ? null : (
-            <Fragment>
+      <div
+        style={{
+          background: task.complete
+            ? theme.background_faded_color
+            : theme.background_color,
+        }}
+      >
+        <Task
+          style={style}
+          className={className}
+          selected={selected}
+          editing={editing}
+          task={task}
+          onItemClick={onItemClick}
+          onSelectTask={id => {
+            onSelectTask(id)
+            toggleTaskSelection(id)
+          }}
+          hoverActions={
+            editing || touch_screen ? null : (
+              <Fragment>
+                <IconButton
+                  onClick={() =>
+                    editTask({
+                      task_id: task.id,
+                      task_data: { complete: !task.complete },
+                    })
+                  }
+                >
+                  {task.complete ? <Add /> : <Check />}
+                </IconButton>
+
+                <IconButtonMenu
+                  icon={<SwapHoriz />}
+                  items={task_lists.map(list => ({
+                    label: list.name,
+                    action: () =>
+                      moveTaskToList({ task_id: task.id, list_id: list.id }),
+                  }))}
+                />
+
+                <IconButton onClick={() => archiveTask(task.id)}>
+                  <Delete />
+                </IconButton>
+              </Fragment>
+            )
+          }
+          actions={
+            editing || !touch_screen || !task.complete ? null : (
               <IconButton
                 onClick={() =>
                   editTask({
@@ -78,44 +122,18 @@ const MainViewTask: React.FunctionComponent<Props> = ({
                   })
                 }
               >
-                {task.complete ? <Add /> : <Check />}
+                <Add />
               </IconButton>
-
-              <IconButtonMenu
-                icon={<SwapHoriz />}
-                items={task_lists.map(list => ({
-                  label: list.name,
-                  action: () =>
-                    moveTaskToList({ task_id: task.id, list_id: list.id }),
-                }))}
-              />
-
-              <IconButton onClick={() => archiveTask(task.id)}>
-                <Delete />
-              </IconButton>
-            </Fragment>
-          )
-        }
-        actions={
-          editing || !touch_screen || !task.complete ? null : (
-            <IconButton
-              onClick={() =>
-                editTask({
-                  task_id: task.id,
-                  task_data: { complete: !task.complete },
-                })
-              }
-            >
-              <Add />
-            </IconButton>
-          )
-        }
-      />
+            )
+          }
+        />
+      </div>
     </TaskGestureContainer>
   )
 }
 
 export default connect(state => ({
+  theme: state.settings.theme,
   task_lists: state.task_lists,
   editing: state.editing,
   selected_task_ids: state.selected_task_ids,

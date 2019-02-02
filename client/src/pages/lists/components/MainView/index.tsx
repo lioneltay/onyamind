@@ -17,7 +17,8 @@ import MoreVert from "@material-ui/icons/MoreVert"
 
 import IconButtonMenu from "lib/components/IconButtonMenu"
 import Task from "./Task"
-import EditModal from "./EditModal"
+// import EditModal from "./EditModal"
+import CollapsableEditor from "./CollapsableEditor"
 
 import { connect } from "services/state"
 import { editTask } from "services/state/modules/tasks"
@@ -46,27 +47,31 @@ const Rotate = styled.div.attrs({})<{ flip: boolean }>`
 type Props = {
   theme: Theme
   tasks: Task[]
+  editing: boolean
 }
 
-const MainView: React.FunctionComponent<Props> = ({ tasks, theme }) => {
+const MainView: React.FunctionComponent<Props> = ({
+  tasks,
+  theme,
+  editing,
+}) => {
   const [editing_task_id, setEditingTaskId] = useState(null as ID | null)
-  const [show_edit_modal, setShowEditModal] = useState(false)
   const [show_complete_tasks, setShowCompleteTasks] = useState(false)
 
-  const toggleShowCompleteTasks = useCallback(
-    () => setShowCompleteTasks(show => !show),
-    [],
+  const toggleShowCompleteTasks = useCallback(() => {
+    setShowCompleteTasks(show => !show)
+  }, [])
+
+  const stopEditing = useCallback(() => setEditingTaskId(null), [])
+
+  const toggleEditingTask = useCallback(
+    (id: ID) => {
+      if (!editing) {
+        setEditingTaskId(id === editing_task_id ? null : id)
+      }
+    },
+    [editing_task_id],
   )
-
-  const stopEditingTask = useCallback(() => {
-    setEditingTaskId(null)
-    setShowEditModal(false)
-  }, [])
-
-  const startEditingTask = useCallback((id: ID) => {
-    setEditingTaskId(id)
-    setShowEditModal(true)
-  }, [])
 
   if (!tasks) {
     return (
@@ -79,8 +84,6 @@ const MainView: React.FunctionComponent<Props> = ({ tasks, theme }) => {
       </OuterContainer>
     )
   }
-
-  const editing_task = tasks.find(task => task.id === editing_task_id)
 
   const [complete_tasks, incomplete_tasks] = partition(
     task => task.complete,
@@ -106,9 +109,21 @@ const MainView: React.FunctionComponent<Props> = ({ tasks, theme }) => {
                 <animated.div style={style}>
                   <Task
                     key={task.id}
-                    style={{ backgroundColor: theme.background_color }}
                     task={task}
-                    onItemClick={startEditingTask}
+                    onItemClick={toggleEditingTask}
+                    onSelectTask={stopEditing}
+                    selected={editing_task_id === task.id}
+                  />
+                  <CollapsableEditor
+                    task={task}
+                    open={editing_task_id === task.id}
+                    onSubmit={async values => {
+                      stopEditing()
+                      await editTask({
+                        task_id: task.id,
+                        task_data: values,
+                      })
+                    }}
                   />
                 </animated.div>
               )
@@ -158,9 +173,20 @@ const MainView: React.FunctionComponent<Props> = ({ tasks, theme }) => {
                 <animated.div style={style}>
                   <Task
                     key={task.id}
-                    style={{ backgroundColor: theme.background_faded_color }}
                     task={task}
-                    onItemClick={startEditingTask}
+                    onItemClick={toggleEditingTask}
+                    onSelectTask={stopEditing}
+                  />
+                  <CollapsableEditor
+                    task={task}
+                    open={editing_task_id === task.id}
+                    onSubmit={async values => {
+                      stopEditing()
+                      await editTask({
+                        task_id: task.id,
+                        task_data: values,
+                      })
+                    }}
                   />
                 </animated.div>
               )
@@ -168,23 +194,12 @@ const MainView: React.FunctionComponent<Props> = ({ tasks, theme }) => {
           </Transition>
         </Collapse>
       </Container>
-
-      {editing_task ? (
-        <EditModal
-          initialValues={editing_task}
-          open={show_edit_modal}
-          onClose={stopEditingTask}
-          onSubmit={async values => {
-            await editTask({ task_id: editing_task.id, task_data: values })
-            stopEditingTask()
-          }}
-        />
-      ) : null}
     </OuterContainer>
   )
 }
 
 export default connect(state => ({
   tasks: tasks(state),
+  editing: state.editing,
   theme: state.settings.theme,
 }))(MainView)
