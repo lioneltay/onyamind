@@ -7,7 +7,6 @@ import TextField from "@material-ui/core/TextField"
 import Modal from "lib/components/Modal"
 
 const StatusText = styled.div`
-  color: ${({ theme }) => theme.grey_text};
   font-size: 1rem;
   font-weight: 400;
 `

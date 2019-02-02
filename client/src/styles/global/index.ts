@@ -24,6 +24,10 @@ export default createGlobalStyle`
     padding: 0;
   }
 
+  body {
+    overscroll-behavior-y: none;
+  }
+
   ${flex}
   ${font}
   ${interaction}

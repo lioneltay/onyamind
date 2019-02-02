@@ -171,7 +171,7 @@ const Drawer: React.FunctionComponent<Props> = ({
             </Button>
           }
         >
-          <Typography style={{ color: theme.grey_text }}>
+          <Typography>
             The primary list will be selected by default when you open the
             application.
           </Typography>
