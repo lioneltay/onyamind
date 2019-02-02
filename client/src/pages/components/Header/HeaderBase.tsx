@@ -91,7 +91,7 @@ const HeaderBase: React.FunctionComponent<Props> = ({
                 >
                   <Menu />
                 </IconButton>
-                <Typography variant="h5" style={{ paddingLeft: 18 }}>
+                <Typography variant="h6" style={{ paddingLeft: 18 }}>
                   {title}
                 </Typography>
               </Fragment>
