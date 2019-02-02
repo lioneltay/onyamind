@@ -4,18 +4,15 @@ import { RouteComponentProps } from "react-router-dom"
 
 import MainView from "./components/MainView"
 
-import { selectTaskList } from "services/state/modules/misc"
+import { selectTaskList } from "services/state/modules/list-view"
 
 type Props = RouteComponentProps<{ list_id: string; list_name: string }> & {}
 
 const ListsPage: React.FunctionComponent<Props> = ({ match }) => {
-  useEffect(
-    () => {
-      selectTaskList(match.params.list_id)
-      return () => selectTaskList(null)
-    },
-    [match.params.list_id],
-  )
+  useEffect(() => {
+    selectTaskList(match.params.list_id)
+    return () => selectTaskList(null)
+  }, [match.params.list_id])
 
   return (
     <Fragment>

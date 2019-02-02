@@ -7,7 +7,7 @@ import Restore from "@material-ui/icons/Restore"
 import Delete from "@material-ui/icons/Delete"
 
 import { connect } from "services/state"
-import { deleteTask, editTask } from "services/state/modules/tasks"
+import { deleteTask, editTask } from "services/state/modules/list-view"
 
 import TaskGestureContainer from "components/TaskGestureContainer"
 import Task from "components/Task"
@@ -80,7 +80,7 @@ const TrashTask: React.FunctionComponent<Props> = ({
 }
 
 export default connect(
-  ({ touch_screen, trash: { selected_task_ids } }, { task }: Props) => {
+  ({ ui: { touch_screen }, trash: { selected_task_ids } }, { task }: Props) => {
     return {
       selected: selected_task_ids.findIndex(id => id === task.id) >= 0,
       touch_screen,

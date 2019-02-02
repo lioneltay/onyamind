@@ -2,11 +2,8 @@ import React, { Fragment, useEffect } from "react"
 import { Redirect, withRouter, RouteComponentProps } from "react-router-dom"
 
 import { connect } from "services/state"
-import {
-  setTouchEnabled,
-  selectTaskList,
-  toggleDrawer,
-} from "services/state/modules/misc"
+import { selectTaskList } from "services/state/modules/list-view"
+import { setTouchEnabled, toggleDrawer } from "services/state/modules/ui"
 
 import { urlSlug } from "lib/slug"
 
@@ -14,7 +11,7 @@ import {
   getTaskLists,
   createDefaultTaskList,
 } from "services/state/modules/task-lists"
-import { user_s } from "services/state/modules/auth"
+import { user_s } from "services/state/modules/user"
 import { primaryTaskList } from "services/state/modules/task-lists/selector"
 
 type Props = RouteComponentProps & {
@@ -39,9 +36,7 @@ const Root: React.FunctionComponent<Props> = ({
 }
 
 export default withRouter(
-  connect(
-    state => ({
-      primary_task_list: primaryTaskList(state),
-    }),
-  )(Root),
+  connect(state => ({
+    primary_task_list: primaryTaskList(state),
+  }))(Root),
 )

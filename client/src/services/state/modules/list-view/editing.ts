@@ -1,19 +1,11 @@
 import { createReducer } from "lib/rxstate"
-import { State as AppState } from "services/state"
-import { createDispatcher } from "services/state/tools"
+import { State } from "services/state/modules/list-view"
+import { createDispatcher } from "services/state"
 
-import { Observable, merge, of, timer, from } from "rxjs"
-import {
-  switchMap,
-  map,
-  distinctUntilChanged,
-  takeUntil,
-  mergeMap,
-  take,
-} from "rxjs/operators"
-import { uniq, difference, omit } from "ramda"
-import { openUndo, undo, closeUndo } from "services/state/modules/misc"
-import { archiveTasks } from "services/state/modules/tasks"
+import { merge } from "rxjs"
+import { map } from "rxjs/operators"
+import { uniq, difference } from "ramda"
+import { archiveTasks } from "services/state/modules/list-view"
 
 import * as api from "services/api"
 
@@ -22,39 +14,37 @@ export const toggleTaskSelection = createDispatcher((id: ID) => id)
 export const selectAllIncompleteTasks = createDispatcher()
 export const deselectAllIncompleteTasks = createDispatcher()
 
-export const checkSelectedTasks = createDispatcher(() => (state: AppState) =>
+export const checkSelectedTasks = createDispatcher(() => (state: State) =>
   api.checkTasks(state.selected_task_ids),
 )
-export const uncheckSelectedTasks = createDispatcher(() => (state: AppState) =>
+export const uncheckSelectedTasks = createDispatcher(() => (state: State) =>
   api.uncheckTasks(state.selected_task_ids),
 )
-export const uncheckCompletedTasks = createDispatcher(
-  () => (state: AppState) => {
-    if (!state.tasks) {
-      throw Error("No Tasks")
-    }
-    const completed_tasks_ids = state.tasks
-      .filter(task => task.complete)
-      .map(task => task.id)
-    return api.uncheckTasks(completed_tasks_ids)
-  },
-)
+export const uncheckCompletedTasks = createDispatcher(() => (state: State) => {
+  if (!state.tasks) {
+    throw Error("No Tasks")
+  }
+  const completed_tasks_ids = state.tasks
+    .filter(task => task.complete)
+    .map(task => task.id)
+  return api.uncheckTasks(completed_tasks_ids)
+})
 
 export const moveTasksToList = createDispatcher(
   (list_id: ID) => async state => {
-    const state_tasks = state.tasks
+    const state_tasks = state.list_view.tasks
     if (!state_tasks || !state.task_lists) {
       throw Error("Invalid State")
     }
 
     const list = state.task_lists.find(list => list.id === list_id) as TaskList
-    const tasks = state.selected_task_ids.map(task_id =>
-      (state.tasks as Task[]).find(task => task.id === task_id),
+    const tasks = state.list_view.selected_task_ids.map(task_id =>
+      (state.list_view.tasks as Task[]).find(task => task.id === task_id),
     ) as Task[]
 
     await Promise.all([
       api.editTasks({
-        task_ids: state.selected_task_ids,
+        task_ids: state.list_view.selected_task_ids,
         task_data: { list_id },
       }),
 
@@ -73,14 +63,12 @@ export const moveTasksToList = createDispatcher(
   },
 )
 
-export const archiveSelectedTasks = createDispatcher(
-  () => (state: AppState) => {
-    archiveTasks(state.selected_task_ids)
-  },
-)
+export const archiveSelectedTasks = createDispatcher(() => (state: State) => {
+  archiveTasks(state.selected_task_ids)
+})
 
 export const archiveCompletedTasks = createDispatcher(
-  () => async (state: AppState) => {
+  () => async (state: State) => {
     if (!state.tasks) {
       throw Error("No Tasks")
     }
@@ -92,7 +80,7 @@ export const archiveCompletedTasks = createDispatcher(
   },
 )
 
-export const reducer_s = createReducer<AppState>(
+export const reducer_s = createReducer<State>(
   merge(
     stopEditing.stream,
     checkSelectedTasks.stream,
@@ -100,7 +88,7 @@ export const reducer_s = createReducer<AppState>(
     archiveSelectedTasks.stream,
     moveTasksToList.stream,
   ).pipe(
-    map(() => (state: AppState) => ({
+    map(() => (state: State) => ({
       ...state,
       editing: false,
       selected_task_ids: [],
@@ -108,7 +96,7 @@ export const reducer_s = createReducer<AppState>(
   ),
 
   toggleTaskSelection.pipe(
-    map(task_id => (state: AppState) => {
+    map(task_id => (state: State) => {
       const { selected_task_ids } = state
 
       const index = selected_task_ids.findIndex(id => id === task_id)
@@ -126,7 +114,7 @@ export const reducer_s = createReducer<AppState>(
   ),
 
   selectAllIncompleteTasks.pipe(
-    map(() => (state: AppState) => {
+    map(() => (state: State) => {
       if (!state.tasks) {
         throw Error("No Tasks")
       }
@@ -143,7 +131,7 @@ export const reducer_s = createReducer<AppState>(
   ),
 
   deselectAllIncompleteTasks.pipe(
-    map(() => (state: AppState) => {
+    map(() => (state: State) => {
       if (!state.tasks) {
         throw Error("No Tasks")
       }

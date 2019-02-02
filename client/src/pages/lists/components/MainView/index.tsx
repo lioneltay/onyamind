@@ -21,12 +21,12 @@ import Task from "./Task"
 import CollapsableEditor from "./CollapsableEditor"
 
 import { connect } from "services/state"
-import { editTask } from "services/state/modules/tasks"
-import { tasks } from "services/state/modules/tasks/selectors"
 import {
+  editTask,
   uncheckCompletedTasks,
   archiveCompletedTasks,
-} from "services/state/modules/editing"
+} from "services/state/modules/list-view"
+import { tasks } from "services/state/modules/list-view/selectors"
 
 const OuterContainer = styled.div`
   display: flex;
@@ -200,6 +200,6 @@ const MainView: React.FunctionComponent<Props> = ({
 
 export default connect(state => ({
   tasks: tasks(state),
-  editing: state.editing,
+  editing: state.list_view.editing,
   theme: state.settings.theme,
 }))(MainView)

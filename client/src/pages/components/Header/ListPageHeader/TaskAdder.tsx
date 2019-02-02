@@ -17,9 +17,9 @@ import ListItemIcon from "@material-ui/core/ListItemIcon"
 import {
   selectAllIncompleteTasks,
   deselectAllIncompleteTasks,
-} from "services/state/modules/editing"
+  addTask,
+} from "services/state/modules/list-view"
 import { connect } from "services/state"
-import { addTask } from "services/state/modules/tasks"
 
 import CreateTaskModal from "./CreateTaskModal"
 
@@ -169,8 +169,8 @@ const TaskAdder: React.FunctionComponent<Props> = ({
 export default connect(state => ({
   theme: state.settings.theme,
   user: state.user,
-  editing: state.editing,
-  selected_task_ids: state.selected_task_ids,
-  tasks: state.tasks,
-  selected_task_list_id: state.selected_task_list_id,
+  editing: state.list_view.editing,
+  selected_task_ids: state.list_view.selected_task_ids,
+  tasks: state.list_view.tasks,
+  selected_task_list_id: state.list_view.selected_task_list_id,
 }))(TaskAdder)

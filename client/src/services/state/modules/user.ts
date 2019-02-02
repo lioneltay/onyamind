@@ -1,9 +1,12 @@
 import { createReducer } from "lib/rxstate"
-import { State } from ".."
-import { createDispatcher } from "services/state/tools"
+import { createDispatcher } from "services/state"
 import { Observable } from "rxjs"
 import { map } from "rxjs/operators"
 import { firebase } from "services/firebase"
+
+export type State = User | null
+
+export const initial_state: State = null
 
 export const signIn = createDispatcher()
 export const signOut = createDispatcher()
@@ -13,7 +16,7 @@ export const user_s = new Observable<User | null>(observer => {
 })
 
 export const reducer_s = createReducer<State>(
-  user_s.pipe(map(user => (state: State) => ({ ...state, user }))),
+  user_s.pipe(map(user => (state: State) => user)),
 
   signIn.pipe(
     map(() => {

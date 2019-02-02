@@ -11,8 +11,9 @@ import {
   uncheckSelectedTasks,
   archiveSelectedTasks,
   checkSelectedTasks,
-} from "services/state/modules/editing"
-import { stopEditing, moveTasksToList } from "services/state/modules/editing"
+  stopEditing,
+  moveTasksToList,
+} from "services/state/modules/list-view"
 
 import IconButtonMenu from "lib/components/IconButtonMenu"
 import TaskAdder from "./TaskAdder"
@@ -82,10 +83,7 @@ const ListPageHeader: React.FunctionComponent<Props> = ({
 export default connect(
   ({
     task_lists,
-    selected_task_ids,
-    selected_task_list_id,
-    tasks,
-    editing,
+    list_view: { selected_task_ids, selected_task_list_id, tasks, editing },
     settings: { theme },
   }) => {
     const selected_task_list = task_lists

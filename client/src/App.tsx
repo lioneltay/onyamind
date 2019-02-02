@@ -4,7 +4,7 @@ import { hot } from "react-hot-loader"
 import Root from "pages"
 import GlobalStyles from "styles/global"
 
-import { Provider as RxStateProvider } from "services/state"
+import { Provider as RxStateProvider } from "services/state/Provider"
 
 function watchForHover() {
   var hasHoverClass = false

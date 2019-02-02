@@ -12,7 +12,7 @@ import AppBar from "@material-ui/core/AppBar"
 import Toolbar from "@material-ui/core/Toolbar"
 
 import { connect } from "services/state"
-import { toggleDrawer } from "services/state/modules/misc"
+import { toggleDrawer } from "services/state/modules/ui"
 
 const Container = styled(Toolbar)`
   padding-left: 0;

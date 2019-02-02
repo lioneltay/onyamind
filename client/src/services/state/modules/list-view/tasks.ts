@@ -1,11 +1,11 @@
 import { createReducer } from "lib/rxstate"
-import { State as AppState } from "services/state"
-import { createDispatcher } from "services/state/tools"
+import { State } from "services/state/modules/list-view"
+import { createDispatcher } from "services/state"
 
 import { firestore, dataWithId } from "services/firebase"
 
 import * as api from "services/api"
-import { selectTaskList } from "../misc"
+import { selectTaskList } from "./misc"
 
 import { Observable, merge, of, timer, from } from "rxjs"
 import {
@@ -17,7 +17,7 @@ import {
   take,
 } from "rxjs/operators"
 
-import { openUndo, undo, closeUndo } from "services/state/modules/misc"
+import { openUndo, undo, closeUndo } from "services/state/modules/ui"
 
 import { uniq, omit } from "ramda"
 
@@ -28,7 +28,7 @@ type AddTaskInput = {
 
 export const addTask = createDispatcher((input: AddTaskInput) => async state =>
   api.addTask({
-    list_id: state.selected_task_list_id,
+    list_id: state.list_view.selected_task_list_id,
     notes: input.notes || "",
     title: input.title,
     user_id: state.user ? state.user.uid : null,
@@ -51,12 +51,12 @@ type MoveTaskToListInput = {
 }
 export const moveTaskToList = createDispatcher(
   ({ task_id, list_id }: MoveTaskToListInput) => async state => {
-    if (!state.tasks || !state.task_lists) {
+    if (!state.list_view.tasks || !state.task_lists) {
       throw Error("Invalid State")
     }
 
     const list = state.task_lists.find(list => list.id === list_id)
-    const task = state.tasks.find(task => task.id === task_id)
+    const task = state.list_view.tasks.find(task => task.id === task_id)
 
     if (!task || !list) {
       throw Error("Invalid State 2")
@@ -99,13 +99,13 @@ export const tasks_s = selectTaskList.pipe(
   switchMap(list_id => createCurrentTasksStream(list_id)),
 )
 
-export const reducer_s = createReducer<AppState>(
+export const reducer_s = createReducer<State>(
   archiveTask.pipe(
     mergeMap(task_id => {
       const commit_s = merge(timer(7000), openUndo.stream, closeUndo.stream)
       const revert_s = undo.stream
 
-      const addDeleteMarkerReducer = (state: AppState) => ({
+      const addDeleteMarkerReducer = (state: State) => ({
         ...state,
         task_delete_markers: {
           ...state.task_delete_markers,
@@ -113,7 +113,7 @@ export const reducer_s = createReducer<AppState>(
         },
       })
 
-      const removeDeleteMarkerReducer = (state: AppState) => ({
+      const removeDeleteMarkerReducer = (state: State) => ({
         ...state,
         task_delete_markers: omit([task_id], state.task_delete_markers),
       })
@@ -142,7 +142,7 @@ export const reducer_s = createReducer<AppState>(
       const commit_s = merge(timer(7000), openUndo.stream, closeUndo.stream)
       const revert_s = undo.stream
 
-      const addDeleteMarkersReducer = (state: AppState) => ({
+      const addDeleteMarkersReducer = (state: State) => ({
         ...state,
         task_delete_markers: task_ids.reduce((markers, id) => {
           markers[id] = id
@@ -150,7 +150,7 @@ export const reducer_s = createReducer<AppState>(
         }, state.task_delete_markers),
       })
 
-      const removeDeleteMarkersReducer = (state: AppState) => ({
+      const removeDeleteMarkersReducer = (state: State) => ({
         ...state,
         task_delete_markers: omit(task_ids, state.task_delete_markers),
       })
@@ -174,5 +174,5 @@ export const reducer_s = createReducer<AppState>(
     }),
   ),
 
-  tasks_s.pipe(map(tasks => (state: AppState) => ({ ...state, tasks }))),
+  tasks_s.pipe(map(tasks => (state: State) => ({ ...state, tasks }))),
 )

@@ -38,8 +38,8 @@ import GoogleSignInButton from "../GoogleSignInButton"
 import TaskList from "./TaskList"
 
 import { connect } from "services/state"
-import { toggleDrawer } from "services/state/modules/misc"
-import { signIn, signOut } from "services/state/modules/auth"
+import { toggleDrawer } from "services/state/modules/ui"
+import { signIn, signOut } from "services/state/modules/user"
 import {
   addTaskList,
   editTaskList,
@@ -375,8 +375,8 @@ export default withRouter(
     theme: state.settings.theme,
     dark_mode: state.settings.user_settings.dark,
     user: state.user,
-    show: state.show_drawer,
+    show: state.ui.show_drawer,
     task_lists: state.task_lists,
-    selected_task_list_id: state.selected_task_list_id,
+    selected_task_list_id: state.list_view.selected_task_list_id,
   }))(Drawer),
 )

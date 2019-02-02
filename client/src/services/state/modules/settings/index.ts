@@ -1,5 +1,5 @@
 import { createReducer } from "lib/rxstate"
-import { createDispatcher } from "services/state/tools"
+import { createDispatcher } from "services/state"
 import { Theme, getTheme } from "theme"
 
 import { firestore, dataWithId } from "services/firebase"
@@ -7,7 +7,7 @@ import { map, switchMap } from "rxjs/operators"
 import { Observable } from "rxjs"
 
 import { State as AppState } from "services/state"
-import { user_s } from "services/state/modules/auth"
+import { user_s } from "services/state/modules/user"
 
 import * as api from "services/api"
 

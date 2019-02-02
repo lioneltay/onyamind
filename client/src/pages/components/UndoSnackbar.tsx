@@ -5,7 +5,7 @@ import IconButton from "@material-ui/core/IconButton"
 import CloseIcon from "@material-ui/icons/Close"
 
 import { connect } from "services/state"
-import { openUndo, undo, closeUndo } from "services/state/modules/misc"
+import { openUndo, undo, closeUndo } from "services/state/modules/ui"
 
 type Props = {
   show: boolean
@@ -46,5 +46,5 @@ const UndoSnackbar: React.FunctionComponent<Props> = ({ show }) => {
 }
 
 export default connect(state => ({
-  show: state.show_undo,
+  show: state.ui.show_undo,
 }))(UndoSnackbar)

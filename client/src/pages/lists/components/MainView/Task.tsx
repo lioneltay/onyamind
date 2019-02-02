@@ -8,12 +8,12 @@ import Check from "@material-ui/icons/Check"
 import SwapHoriz from "@material-ui/icons/SwapHoriz"
 
 import { connect } from "services/state"
-import { toggleTaskSelection } from "services/state/modules/editing"
 import {
   archiveTask,
   editTask,
   moveTaskToList,
-} from "services/state/modules/tasks"
+  toggleTaskSelection,
+} from "services/state/modules/list-view"
 
 import TaskGestureContainer from "components/TaskGestureContainer"
 import Task from "components/Task"
@@ -135,7 +135,7 @@ const MainViewTask: React.FunctionComponent<Props> = ({
 export default connect(state => ({
   theme: state.settings.theme,
   task_lists: state.task_lists,
-  editing: state.editing,
-  selected_task_ids: state.selected_task_ids,
-  touch_screen: state.touch_screen,
+  editing: state.list_view.editing,
+  selected_task_ids: state.list_view.selected_task_ids,
+  touch_screen: state.ui.touch_screen,
 }))(MainViewTask)

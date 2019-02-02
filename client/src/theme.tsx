@@ -6,7 +6,7 @@ import red from "@material-ui/core/colors/red"
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles"
 import { teal, blue } from "@material-ui/core/colors"
 
-import { connect } from "services/state/tools"
+import { connect } from "services/state"
 
 const getSCTheme = ({ dark }: ThemeProps) => {
   return {

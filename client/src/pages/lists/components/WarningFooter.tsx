@@ -7,8 +7,8 @@ import Button from "@material-ui/core/Button"
 import Clear from "@material-ui/icons/Clear"
 import Modal from "lib/components/Modal"
 import { connect } from "services/state"
-import { signIn } from "services/state/modules/auth"
-import { toggleWarningFooter } from "services/state/modules/warning-footer"
+import { signIn } from "services/state/modules/user"
+import { toggleWarningFooter } from "services/state/modules/ui"
 
 const Container = styled.div`
   position: fixed;
@@ -96,5 +96,5 @@ const WarningFooter: React.FunctionComponent<Props> = ({ show, theme }) => {
 
 export default connect(state => ({
   theme: state.settings.theme,
-  show: state.show_warning_footer,
+  show: state.ui.show_warning_footer,
 }))(WarningFooter)
