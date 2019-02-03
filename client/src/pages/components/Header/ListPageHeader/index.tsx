@@ -104,7 +104,9 @@ export default connect(
     )
 
     return {
-      task_lists,
+      task_lists: task_lists
+        ? task_lists.filter(list => list.id !== selected_task_list_id)
+        : null,
       all_selected_tasks_complete,
       all_selected_tasks_incomplete,
       editing,

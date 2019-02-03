@@ -66,7 +66,7 @@ export const editTaskList = async ({
   return edited_list as TaskList
 }
 
-export const removeTaskList = async (list_id: ID): Promise<ID> => {
+export const deleteTaskList = async (list_id: ID): Promise<ID> => {
   await firestore
     .collection("task_lists")
     .doc(list_id)

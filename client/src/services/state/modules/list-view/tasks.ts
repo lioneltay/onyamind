@@ -1,11 +1,10 @@
 import { createReducer } from "lib/rxstate"
 import { State } from "services/state/modules/list-view"
-import { createDispatcher } from "services/state"
+import { createDispatcher, state_s } from "services/state"
 
 import { firestore, dataWithId } from "services/firebase"
 
 import * as api from "services/api"
-import { selectTaskList } from "./misc"
 
 import { Observable, merge, of, timer, from } from "rxjs"
 import {
@@ -94,12 +93,19 @@ const createCurrentTasksStream = (list_id: ID | null) =>
       })
     : of(null)
 
-export const tasks_s = selectTaskList.pipe(
+const selected_task_list_s = state_s.pipe(
+  map(state => state.list_view.selected_task_list_id),
+  distinctUntilChanged(),
+)
+
+export const tasks_s = selected_task_list_s.pipe(
   distinctUntilChanged(),
   switchMap(list_id => createCurrentTasksStream(list_id)),
 )
 
 export const reducer_s = createReducer<State>(
+  tasks_s.pipe(map(tasks => (state: State) => ({ ...state, tasks }))),
+
   archiveTask.pipe(
     mergeMap(task_id => {
       const commit_s = merge(timer(7000), openUndo.stream, closeUndo.stream)
@@ -173,6 +179,4 @@ export const reducer_s = createReducer<State>(
       )
     }),
   ),
-
-  tasks_s.pipe(map(tasks => (state: State) => ({ ...state, tasks }))),
 )

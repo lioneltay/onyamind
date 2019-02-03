@@ -43,7 +43,7 @@ import { signIn, signOut } from "services/state/modules/user"
 import {
   addTaskList,
   editTaskList,
-  removeTaskList,
+  deleteTaskList,
   setPrimaryTaskList,
 } from "services/state/modules/task-lists"
 import { withRouter, RouteComponentProps } from "react-router"
@@ -234,10 +234,7 @@ const Drawer: React.FunctionComponent<Props> = ({
                     setShowRenameModal(true)
                   }}
                   onMakePrimary={id => {
-                    setPrimaryTaskList({
-                      task_list_id: id,
-                      user_id: user ? user.uid : null,
-                    })
+                    setPrimaryTaskList(id)
                   }}
                 />
               ))
@@ -329,7 +326,7 @@ const Drawer: React.FunctionComponent<Props> = ({
           onConfirmDelete={async () => {
             setSelectedId(null)
             setShowDeleteModal(false)
-            await removeTaskList(selected_id)
+            await deleteTaskList(selected_id)
           }}
         />
       ) : null}

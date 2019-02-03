@@ -1,7 +1,7 @@
-import { createDispatcher } from "services/state"
 import { createReducer } from "lib/rxstate"
+import { createDispatcher, state_s } from "services/state"
 
-import { map } from "rxjs/operators"
+import { map, distinctUntilChanged } from "rxjs/operators"
 
 import { user_s } from "./user"
 
@@ -31,7 +31,19 @@ const closeWarningFooter = createDispatcher()
 export const toggleWarningFooter = createDispatcher()
 export const showWarningFooter = createDispatcher((show: boolean) => show)
 
+const selected_task_list_s = state_s.pipe(
+  map(state => state.list_view.selected_task_list_id),
+  distinctUntilChanged(),
+)
+
 export const reducer_s = createReducer<State>(
+  selected_task_list_s.pipe(
+    map(() => (state: State) => ({
+      ...state,
+      show_drawer: false,
+    })),
+  ),
+
   openUndo.pipe(map(() => (state: State) => ({ ...state, show_undo: true }))),
   closeUndo.pipe(map(() => (state: State) => ({ ...state, show_undo: false }))),
   undo.pipe(map(() => (state: State) => ({ ...state, show_undo: false }))),

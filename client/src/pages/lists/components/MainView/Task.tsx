@@ -134,7 +134,11 @@ const MainViewTask: React.FunctionComponent<Props> = ({
 
 export default connect(state => ({
   theme: state.settings.theme,
-  task_lists: state.task_lists,
+  task_lists: state.task_lists
+    ? state.task_lists.filter(
+        list => list.id !== state.list_view.selected_task_list_id,
+      )
+    : null,
   editing: state.list_view.editing,
   selected_task_ids: state.list_view.selected_task_ids,
   touch_screen: state.ui.touch_screen,

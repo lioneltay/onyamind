@@ -12,11 +12,8 @@ import {
   getTaskLists,
   createDefaultTaskList,
   editTaskList,
+  setPrimaryTaskList,
 } from "./index"
-
-user_s.subscribe(user => {
-  getTaskLists(user ? user.uid : null)
-})
 
 const createCurrentListsStream = (user_id: ID | null) =>
   new Observable<TaskList[] | null>(observer => {
@@ -71,23 +68,21 @@ tasks_s.pipe(withLatestFrom(state_s)).subscribe(([tasks, state]) => {
 })
 
 export const reducer_s = createReducer<State>(
-  getTaskLists.pipe(
-    switchMap(lists => from(lists)),
-    withLatestFrom(user_s),
-    switchMap(([lists, user]) => {
-      const primary = lists.find(list => list.primary)
-      if (primary) {
-        return of(null)
+  lists_s.pipe(
+    map(lists => {
+      if (lists) {
+        const primary = lists.find(list => list.primary)
+        if (!primary) {
+          const first_list = lists[0]
+          if (first_list) {
+            setPrimaryTaskList(first_list.id)
+          } else {
+            createDefaultTaskList()
+          }
+        }
       }
 
-      return from(
-        createDefaultTaskList(user ? user.uid : null).then(list =>
-          selectTaskList(list.id),
-        ),
-      )
+      return (state: State) => lists
     }),
-    map(() => (state: State) => state),
   ),
-
-  lists_s.pipe(map(task_lists => (state: State) => task_lists)),
 )

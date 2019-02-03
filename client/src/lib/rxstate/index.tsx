@@ -107,27 +107,23 @@ export function createObservableStateTools<S>() {
       current_state = initialState
     }
 
-    useEffect(() => {}, [])
+    useEffect(() => {
+      if (provider_mounted) {
+        throw Error("Provider is already mounted")
+      }
+      provider_mounted = true
 
-    useEffect(
-      () => {
-        if (provider_mounted) {
-          throw Error("Provider is already mounted")
-        }
-        provider_mounted = true
-
-        const subscription = reducerStream.subscribe(reducer => {
-          current_state = reducer(current_state)
-          state_s.next(current_state)
-          forceUpdate()
-        })
-        return () => {
-          subscription.unsubscribe()
-          provider_mounted = false
-        }
-      },
-      [reducerStream],
-    )
+      const subscription = reducerStream.subscribe(reducer => {
+        current_state = reducer(current_state)
+        console.log(current_state)
+        state_s.next(current_state)
+        forceUpdate()
+      })
+      return () => {
+        subscription.unsubscribe()
+        provider_mounted = false
+      }
+    }, [reducerStream])
 
     return provider_mounted ? (
       <Context.Provider value={current_state}>{children}</Context.Provider>

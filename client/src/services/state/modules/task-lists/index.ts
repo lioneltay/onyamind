@@ -26,14 +26,22 @@ export const addTaskList = createDispatcher(
   },
 )
 
-export const removeTaskList = createDispatcher(api.removeTaskList)
+export const deleteTaskList = createDispatcher(api.deleteTaskList)
 
 export const editTaskList = createDispatcher(api.editTaskList)
 
-export const createDefaultTaskList = createDispatcher(api.createDefaultTaskList)
+export const createDefaultTaskList = createDispatcher(() => state =>
+  api.createDefaultTaskList(state.user ? state.user.uid : null),
+)
 
 export const getTaskLists = createDispatcher(api.getTaskLists)
 
-export const setPrimaryTaskList = createDispatcher(api.setPrimaryTaskList)
+export const setPrimaryTaskList = createDispatcher(
+  (task_list_id: ID) => state =>
+    api.setPrimaryTaskList({
+      user_id: state.user ? state.user.uid : null,
+      task_list_id,
+    }),
+)
 
 export const reducer_s = createReducer<State>()
