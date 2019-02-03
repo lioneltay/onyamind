@@ -14,6 +14,7 @@ export type State = {
   task_delete_markers: { [key: string]: ID }
   tasks: Task[] | null
   selected_task_ids: ID[]
+  editing_task_id: ID | null
 }
 
 export const initial_state: State = {
@@ -22,6 +23,7 @@ export const initial_state: State = {
   editing: false,
   tasks: null,
   selected_task_ids: [],
+  editing_task_id: null,
 }
 
 export const reducer_s = createReducer<State>(

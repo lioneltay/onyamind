@@ -18,6 +18,7 @@ import {
   selectAllIncompleteTasks,
   deselectAllIncompleteTasks,
   addTask,
+  stopEditingTask,
 } from "services/state/modules/list-view"
 import { connect } from "services/state"
 
@@ -124,6 +125,7 @@ const TaskAdder: React.FunctionComponent<Props> = ({
               </ListItemIcon>
 
               <AdderTextField
+                onFocus={stopEditingTask}
                 placeholder="Add item"
                 className="fg-1"
                 value={new_task_title}
