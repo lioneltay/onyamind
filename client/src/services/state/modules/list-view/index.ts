@@ -1,12 +1,12 @@
 import { createReducer } from "lib/rxstate"
 
-import { reducer_s as editingReducer } from "./editing"
-import { reducer_s as tasksReducer } from "./tasks"
-import { reducer_s as miscReducer } from "./misc"
+// import { reducer_s as editingReducer } from "./editing"
+// import { reducer_s as tasksReducer } from "./tasks"
+// import { reducer_s as miscReducer } from "./misc"
 
-export * from "./editing"
-export * from "./tasks"
-export * from "./misc"
+// export * from "./editing"
+// export * from "./tasks"
+// export * from "./misc"
 
 export type State = {
   selected_task_list_id: ID | null
@@ -26,8 +26,8 @@ export const initial_state: State = {
   editing_task_id: null,
 }
 
-export const reducer_s = createReducer<State>(
-  editingReducer,
-  tasksReducer,
-  miscReducer,
-)
+// export const reducer_s = createReducer<State>(
+//   editingReducer,
+//   tasksReducer,
+//   miscReducer,
+// )

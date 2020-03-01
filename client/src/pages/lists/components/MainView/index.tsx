@@ -1,33 +1,33 @@
 import React, { useState, useCallback } from "react"
+import { noopTemplate as css } from "lib/utils"
 import styled from "styled-components"
 import { comparator, partition } from "ramda"
 import { Transition, animated } from "react-spring"
 
-import List from "@material-ui/core/List"
-import ListItem from "@material-ui/core/ListItem"
-import ListItemText from "@material-ui/core/ListItemText"
-import ListItemIcon from "@material-ui/core/ListItemIcon"
-import LinearProgress from "@material-ui/core/LinearProgress"
-import Fade from "@material-ui/core/Fade"
+import {
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  LinearProgress,
+  Fade,
+  Collapse,
+  IconButton,
+} from "@material-ui/core"
 
-import Collapse from "@material-ui/core/Collapse"
-import IconButton from "@material-ui/core/IconButton"
-import ExpandMore from "@material-ui/icons/ExpandMore"
-import MoreVert from "@material-ui/icons/MoreVert"
+import { ExpandMore, MoreVert } from "@material-ui/icons"
 
 import IconButtonMenu from "lib/components/IconButtonMenu"
+
 import Task from "./Task"
+
 import CollapsableEditor from "./CollapsableEditor"
 
 import { connect } from "services/state"
-import {
-  editTask,
-  uncheckCompletedTasks,
-  archiveCompletedTasks,
-  toggleEditingTask,
-  stopEditingTask,
-} from "services/state/modules/list-view"
 import { tasks } from "services/state/modules/list-view/selectors"
+
+import { useTheme } from "theme"
+import { useSelector } from "services/store"
 
 const OuterContainer = styled.div`
   display: flex;
@@ -45,17 +45,13 @@ const Rotate = styled.div.attrs({})<{ flip: boolean }>`
   transition: 300ms;
 `
 
-type Props = {
-  theme: Theme
-  tasks: Task[]
-  editing_task_id: ID | null
-}
+export default () => {
+  const theme = useTheme()
+  const { editingTaskId, tasks } = useSelector(state => ({
+    editingTaskId: 5,
+    tasks: [],
+  }))
 
-const MainView: React.FunctionComponent<Props> = ({
-  tasks,
-  theme,
-  editing_task_id,
-}) => {
   const [show_complete_tasks, setShowCompleteTasks] = useState(false)
 
   const toggleShowCompleteTasks = useCallback(() => {
@@ -101,11 +97,11 @@ const MainView: React.FunctionComponent<Props> = ({
                     task={task}
                     onItemClick={toggleEditingTask}
                     onSelectTask={stopEditingTask}
-                    selected={editing_task_id === task.id}
+                    selected={editingTaskId === task.id}
                   />
                   <CollapsableEditor
                     task={task}
-                    open={editing_task_id === task.id}
+                    open={editingTaskId === task.id}
                     onSubmit={async values => {
                       stopEditingTask()
                       await editTask({
@@ -168,7 +164,7 @@ const MainView: React.FunctionComponent<Props> = ({
                   />
                   <CollapsableEditor
                     task={task}
-                    open={editing_task_id === task.id}
+                    open={editingTaskId === task.id}
                     onSubmit={async values => {
                       stopEditingTask()
                       await editTask({
@@ -186,9 +182,3 @@ const MainView: React.FunctionComponent<Props> = ({
     </OuterContainer>
   )
 }
-
-export default connect(state => ({
-  tasks: tasks(state),
-  editing_task_id: state.list_view.editing_task_id,
-  theme: state.settings.theme,
-}))(MainView)

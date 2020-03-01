@@ -1,4 +1,4 @@
-import React from "react"
+import React, { createContext, useContext } from "react"
 import baseStyled, { ThemedStyledInterface } from "styled-components"
 import { ThemeProvider as SCThemeProvider } from "styled-components"
 import red from "@material-ui/core/colors/red"
@@ -25,9 +25,6 @@ type ThemeProps = {
 }
 
 export const light_mui_theme = createMuiTheme({
-  typography: {
-    useNextVariants: true,
-  },
   palette: {
     type: "light",
     primary: blue,
@@ -43,9 +40,6 @@ export const light_mui_theme = createMuiTheme({
 })
 
 export const dark_mui_theme = createMuiTheme({
-  typography: {
-    useNextVariants: true,
-  },
   palette: {
     type: "dark",
     primary: blue,
@@ -67,22 +61,23 @@ export const getTheme = ({ dark }: ThemeProps) => {
 
 export type Theme = ReturnType<typeof getTheme>
 
-const _ThemeProvider: React.FunctionComponent<ThemeProps> = ({
+const ThemeContext = createContext<Theme>(getTheme({ dark: true }))
+
+export const useTheme = () => useContext(ThemeContext)
+
+export const ThemeProvider: React.FunctionComponent<ThemeProps> = ({
   children,
-  dark,
 }) => {
-  const theme = getTheme({ dark })
+  const theme = getTheme({ dark: true })
   return (
     <MuiThemeProvider theme={theme.mui}>
       <SCThemeProvider theme={theme}>
-        {children as React.ReactElement<any>}
+        <ThemeContext.Provider value={getTheme({ dark: true })}>
+          {children as React.ReactElement<any>}
+        </ThemeContext.Provider>
       </SCThemeProvider>
     </MuiThemeProvider>
   )
 }
-
-export const ThemeProvider = connect(state => ({
-  dark: state.settings.user_settings.dark,
-}))(_ThemeProvider)
 
 export const styled = baseStyled as ThemedStyledInterface<Theme>

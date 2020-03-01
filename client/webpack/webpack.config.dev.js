@@ -20,8 +20,8 @@ module.exports = {
   devtool: "inline-source-map",
 
   devServer: {
-    hot: true,
-    port: 3000,
+    hot: false,
+    port: 7000,
     historyApiFallback: true,
   },
 
@@ -30,6 +30,5 @@ module.exports = {
     new webpack.EnvironmentPlugin({
       APP_MODE: "development",
     }),
-    new webpack.HotModuleReplacementPlugin(),
   ],
 }

@@ -1,6 +1,5 @@
 const path = require("path")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
-const WorkboxPlugin = require("workbox-webpack-plugin")
 
 const relativeToRoot = relativePath =>
   path.resolve(__dirname, "../", relativePath)
@@ -12,14 +11,9 @@ const babel_loader = {
   },
 }
 
-const ts_loader = {
-  loader: "ts-loader",
-  options: { transpileOnly: true },
-}
-
 module.exports = {
   entry: {
-    main: ["@babel/polyfill", relativeToRoot("./src/index.tsx")],
+    main: [relativeToRoot("./src/index.tsx")],
   },
 
   resolve: {
@@ -30,23 +24,14 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
+        test: /\.md$/,
         exclude: /node_modules/,
-        use: [babel_loader, ts_loader],
+        use: "raw-loader",
       },
       {
-        test: /.worker.ts$/,
+        test: /\.(t|j)sx?$/,
         exclude: /node_modules/,
-        use: [
-          {
-            loader: "worker-loader",
-            options: {
-              name: "[name].js",
-            },
-          },
-          babel_loader,
-          ts_loader,
-        ],
+        use: [babel_loader],
       },
     ],
   },
@@ -56,15 +41,5 @@ module.exports = {
       template: "./src/index.html",
       filename: "index.html",
     }),
-    // new WorkboxPlugin.InjectManifest({
-    //   swSrc: relativeToRoot("./src/service-worker/index.js"),
-    //   swDest: relativeToRoot("./dist/service-worker.js"),
-    // }),
-    // new WorkboxPlugin.GenerateSW({
-    //   // these options encourage the ServiceWorkers to get in there fast
-    //   // and not allow any straggling "old" SWs to hang around
-    //   clientsClaim: true,
-    //   skipWaiting: true,
-    // }),
   ],
 }

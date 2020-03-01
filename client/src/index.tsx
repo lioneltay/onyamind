@@ -1,8 +1,12 @@
+// Add typescript support for the styled-components css prop (https://www.styled-components.com/docs/api#css-prop)
+/// <reference types="styled-components/cssprop" />
+import "core-js/stable"
+import "regenerator-runtime/runtime"
+
 import React from "react"
 import { render } from "react-dom"
 
 import App from "./App"
-import { BrowserRouter } from "react-router-dom"
 
 import "./service-worker/service.worker.ts"
 
@@ -17,25 +21,41 @@ if ("serviceWorker" in navigator) {
   })
 }
 
-import { createGenerateClassName, jssPreset } from "@material-ui/core/styles"
-import { create } from "jss"
-import { JssProvider } from "react-jss"
+function watchForHover() {
+  var hasHoverClass = false
+  var container = document.body
+  var lastTouchTime = 0
 
-const jss = create({
-  ...jssPreset(),
-  insertionPoint: document.getElementById("jss-insertion-point")!,
-})
+  function enableHover() {
+    // filter emulated events coming from touch events
+    if (Date.now() - lastTouchTime < 500) return
+    if (hasHoverClass) return
 
-const generateClassName = createGenerateClassName()
+    container.className += " hasHover"
+    hasHoverClass = true
+  }
+
+  function disableHover() {
+    if (!hasHoverClass) return
+
+    container.className = container.className.replace(" hasHover", "")
+    hasHoverClass = false
+  }
+
+  function updateLastTouchTime() {
+    lastTouchTime = Date.now()
+  }
+
+  document.addEventListener("touchstart", updateLastTouchTime, true)
+  document.addEventListener("touchstart", disableHover, true)
+  document.addEventListener("mousemove", enableHover, true)
+
+  enableHover()
+}
+
+watchForHover()
 
 const container = document.getElementById("app")
 if (container) {
-  render(
-    <BrowserRouter>
-      <JssProvider jss={jss} generateClassName={generateClassName}>
-        <App />
-      </JssProvider>
-    </BrowserRouter>,
-    container,
-  )
+  render(<App />, container)
 }

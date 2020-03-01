@@ -1,5 +1,6 @@
 import React from "react"
 import { styled } from "theme"
+import { useTheme } from "theme"
 
 import ListItem from "@material-ui/core/ListItem"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
@@ -66,7 +67,6 @@ const Task: React.FunctionComponent<Props> = ({
   style,
   className,
 
-  theme,
   selected,
   task,
   editing,
@@ -77,6 +77,8 @@ const Task: React.FunctionComponent<Props> = ({
   actions,
   hoverActions,
 }) => {
+  const theme = useTheme()
+
   return (
     <StyledListItem
       style={style}
@@ -102,7 +104,7 @@ const Task: React.FunctionComponent<Props> = ({
         >
           <Assignment
             style={{
-              // color: theme.mui.palette.primary.main,
+              color: theme.mui.palette.primary.main,
               color: theme.icon_color,
               transform: `scale(${editing ? 0.7 : 1})`,
               transition: "300ms",
@@ -136,7 +138,3 @@ const Task: React.FunctionComponent<Props> = ({
     </StyledListItem>
   )
 }
-
-export default connect(state => ({
-  theme: state.settings.theme,
-}))(Task)

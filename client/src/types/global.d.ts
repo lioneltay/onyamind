@@ -8,8 +8,6 @@ declare global {
 
   export type FunctionType<A extends any[] = any[], R = any> = (...args: A) => R
 
-  export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>
-
   export type Arguments<T extends FunctionType> = T extends FunctionType<
     infer A,
     any

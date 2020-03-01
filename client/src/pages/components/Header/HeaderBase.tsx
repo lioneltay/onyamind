@@ -1,76 +1,60 @@
 import React, { Fragment } from "react"
-import { styled } from "theme"
+import { useTheme } from "theme"
+import { noopTemplate as css } from "lib/utils"
 
-import IconButton from "@material-ui/core/IconButton"
-import Typography from "@material-ui/core/Typography"
-import Menu from "@material-ui/icons/Menu"
-import ArrowBack from "@material-ui/icons/ArrowBack"
-import Delete from "@material-ui/icons/Delete"
-import Check from "@material-ui/icons/Check"
-import Add from "@material-ui/icons/Add"
-import AppBar from "@material-ui/core/AppBar"
-import Toolbar from "@material-ui/core/Toolbar"
+import { ArrowBack, Delete, Check, Add, Menu } from "@material-ui/icons"
+import { Toolbar, AppBar, IconButton, Typography } from "@material-ui/core"
 
-import { connect } from "services/state"
-import { toggleDrawer } from "services/state/modules/ui"
-
-const Container = styled(Toolbar)`
-  padding-left: 0;
-  padding-right: 0;
-  display: flex;
-  justify-content: center;
-` as typeof Toolbar
-
-const Main = styled.div`
-  padding-left: 16px;
-  padding-right: 16px;
-  max-width: 100%;
-  width: 600px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`
-
-const LeftSection = styled.div`
-  display: flex;
-  align-items: center;
-  font-weight: 500;
-  font-size: 20px;
-`
+import { useSelector } from "services/store"
 
 type Props = {
-  theme: Theme
   title: string
-  onStopEditing: () => void
-  editing: boolean
-  number_of_selected_tasks: number
-  editing_actions?: React.ReactNode
+  editingActions?: React.ReactNode
   actions?: React.ReactNode
 }
 
-const HeaderBase: React.FunctionComponent<Props> = ({
-  title,
-  onStopEditing,
-  number_of_selected_tasks,
-  editing,
-  theme,
-  editing_actions,
-  actions,
-}) => {
+export default ({ title, editingActions, actions }: Props) => {
+  const { numberOfSelectedTasks, editing } = useSelector(state => ({
+    editing: false,
+    numberOfSelectedTasks: 5,
+  }))
+  const theme = useTheme()
+
   return (
     <AppBar position="relative">
-      <Container
-        style={{
-          backgroundColor: editing ? theme.highlight_color : undefined,
-        }}
+      <Toolbar
+        css={css`
+          padding-left: 0;
+          padding-right: 0;
+          display: flex;
+          justify-content: center;
+          background: ${editing ? theme.highlight_color : undefined};
+        `}
       >
-        <Main>
-          <LeftSection>
+        <div
+          css={css`
+            padding-left: 16px;
+            padding-right: 16px;
+            max-width: 100%;
+            width: 600px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          `}
+        >
+          <div
+            css={css`
+              display: flex;
+              align-items: center;
+              font-weight: 500;
+              font-size: 20px;
+            `}
+          >
             {editing ? (
               <Fragment>
                 <IconButton
                   style={{ display: "inline-block" }}
-                  onClick={onStopEditing}
+                  onClick={() => {}}
                 >
                   <ArrowBack />
                 </IconButton>
@@ -80,14 +64,14 @@ const HeaderBase: React.FunctionComponent<Props> = ({
                     paddingLeft: 18,
                   }}
                 >
-                  {number_of_selected_tasks} selected
+                  {numberOfSelectedTasks} selected
                 </div>
               </Fragment>
             ) : (
               <Fragment>
                 <IconButton
                   style={{ display: "inline-block" }}
-                  onClick={toggleDrawer}
+                  // onClick={toggleDrawer}
                 >
                   <Menu />
                 </IconButton>
@@ -96,15 +80,11 @@ const HeaderBase: React.FunctionComponent<Props> = ({
                 </Typography>
               </Fragment>
             )}
-          </LeftSection>
+          </div>
 
-          {editing ? <div>{editing_actions}</div> : <div>{actions}</div>}
-        </Main>
-      </Container>
+          {editing ? <div>{editingActions}</div> : <div>{actions}</div>}
+        </div>
+      </Toolbar>
     </AppBar>
   )
 }
-
-export default connect(state => ({
-  theme: state.settings.theme,
-}))(HeaderBase)

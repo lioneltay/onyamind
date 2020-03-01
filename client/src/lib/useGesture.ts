@@ -290,7 +290,7 @@ export const useGesture = ({
       handlers_ref.current.push({
         node,
         type,
-        listener,
+        listener: listener as any,
       })
     },
     [],
@@ -303,57 +303,54 @@ export const useGesture = ({
     handlers_ref.current = []
   }
 
-  useEffect(
-    () => {
-      const node = ref
-      if (!node) {
+  useEffect(() => {
+    const node = ref
+    if (!node) {
+      return
+    }
+
+    let down_p: Vector | null
+    let noscroll = false
+
+    const touchStartHandler = (e: TouchEvent) => {
+      down_p = eventPosition(e.touches[0])
+    }
+
+    const touchMoveHandler = (e: TouchEvent) => {
+      if (!e.cancelable) {
         return
       }
 
-      let down_p: Vector | null
-      let noscroll = false
-
-      const touchStartHandler = (e: TouchEvent) => {
-        down_p = eventPosition(e.touches[0])
+      if (noscroll) {
+        e.preventDefault()
+        return
       }
 
-      const touchMoveHandler = (e: TouchEvent) => {
-        if (!e.cancelable) {
-          return
-        }
-
-        if (noscroll) {
-          e.preventDefault()
-          return
-        }
-
-        if (!down_p) {
-          return e.preventDefault()
-        }
-
-        const move_p = eventPosition(e.touches[0])
-        const dir = direction(down_p, move_p)
-        const delta = (1 / 4) * Math.PI
-
-        if (Math.abs(dir) < delta || Math.abs(dir) > Math.PI - delta) {
-          e.preventDefault()
-          noscroll = true
-        }
+      if (!down_p) {
+        return e.preventDefault()
       }
 
-      const touchEndHandler = (e: TouchEvent) => {
-        noscroll = false
-        down_p = null
+      const move_p = eventPosition(e.touches[0])
+      const dir = direction(down_p, move_p)
+      const delta = (1 / 4) * Math.PI
+
+      if (Math.abs(dir) < delta || Math.abs(dir) > Math.PI - delta) {
+        e.preventDefault()
+        noscroll = true
       }
+    }
 
-      addEventListener(node, "touchstart", touchStartHandler)
-      addEventListener(node, "touchmove", touchMoveHandler)
-      addEventListener(node, "touchend", touchEndHandler)
+    const touchEndHandler = (e: TouchEvent) => {
+      noscroll = false
+      down_p = null
+    }
 
-      return () => removeEventListeners()
-    },
-    [ref, onSwipeLeft, onSwipeRight],
-  )
+    addEventListener(node, "touchstart", touchStartHandler)
+    addEventListener(node, "touchmove", touchMoveHandler)
+    addEventListener(node, "touchend", touchEndHandler)
+
+    return () => removeEventListeners()
+  }, [ref, onSwipeLeft, onSwipeRight])
 
   return (input = {}) => ({
     onPointerDown: e => {
