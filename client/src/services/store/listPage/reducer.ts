@@ -38,7 +38,7 @@ export const reducer = (state: State = initialState, action: Action): State => {
     case "SET_TASK_LISTS": {
       return {
         ...state,
-        taskLists: action.taskLists,
+        taskLists: action.payload.taskLists,
       }
     }
     case "TOGGLE_TASK_SELECTION": {
@@ -78,38 +78,18 @@ export const reducer = (state: State = initialState, action: Action): State => {
       }
     }
     case "SET_USER": {
+      action
       return {
         ...state,
-        user: action.user,
-      }
-    }
-    case "SET_USER": {
-      return {
-        ...state,
-        user: action.user,
+        user: action.payload.user,
       }
     }
     case "SELECT_TASK_LIST": {
       return {
         ...state,
-        selectedTaskListId: action.taskListId,
+        selectedTaskListId: action.payload.listId,
       }
     }
-    case "DECOMPLETE_COMPLETED_TASKS":
-    case "DELETE_COMPLETED_TASKS":
-    case "CREATE_TASK":
-    case "EDIT_TASK":
-    case "DELETE_TASK":
-    case "ARCHIVE_TASK":
-    case "UNARCHIVE_TASK":
-    case "EMPTY_TRASH":
-    case "COMPLETE_TASK":
-    case "DECOMPLETE_TASK":
-    case "MOVE_TASK":
-    case "CREATE_TASK_LIST":
-    case "EDIT_TASK_LIST":
-    case "DELETE_TASK_LIST":
-      return state
     default: {
       assertNever(action)
       return state

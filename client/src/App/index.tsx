@@ -23,7 +23,7 @@ export default () => {
   )
 }
 
-import { useSelector, useActions } from "services/store"
+import { useSelector, useActions } from "services/store/listPage"
 
 const ShowState = () => {
   const state = useSelector(state => state)

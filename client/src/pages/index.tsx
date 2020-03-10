@@ -7,10 +7,10 @@ import ListPage from "./lists"
 export default () => {
   return (
     <div>
-      <Header />
+      {/* <Header /> */}
 
       <Switch>
-        <Route path="/lists/:listId/:listName" component={ListPage} />
+        {/* <Route path="/lists/:listId/:listName" component={ListPage} /> */}
       </Switch>
     </div>
   )

@@ -1,14 +1,14 @@
 import { bindActionCreators, Dispatch } from "redux"
 import { useDispatch } from "react-redux"
 import { ActionsUnion, ActionTypesUnion } from "services/store/helpers"
-import { State } from "services/store/reducer"
-import * as selectors from "services/store/selectors"
+import { State } from "services/store/listPage/reducer"
+import * as selectors from "services/store/listPage/selectors"
 import * as api from "services/api"
 
 type GetState = () => State
 
 const setTaskLists = (taskLists: TaskList[]) =>
-  ({ type: "SET_TASK_LISTS|SUCCESS", payload: { taskLists } } as const)
+  ({ type: "SET_TASK_LISTS", payload: { taskLists } } as const)
 
 const setTasks = (tasks: Task[]) => ({ type: "SET_TASKS", tasks } as const)
 
@@ -19,17 +19,20 @@ const selectAllTasks = () => ({ type: "SELECT_ALL_TASKS" } as const)
 
 const deselectAllTasks = () => ({ type: "DESELECT_ALL_TASKS" } as const)
 
-const setUser = (user: User) => ({ type: "SET_USER", payload: { user } })
+const setUser = (user: User) =>
+  ({ type: "SET_USER", payload: { user } } as const)
 
-const selectTaskList = (listId: ID | null) => ({
-  type: "SELECT_TASK_LIST",
-  payload: { listId },
-})
+const selectTaskList = (listId: ID | null) =>
+  ({
+    type: "SELECT_TASK_LIST",
+    payload: { listId },
+  } as const)
 
-const setEditingTask = (taskId: ID | null) => ({
-  type: "SET_EDITING_TASK",
-  payload: { taskId },
-})
+const setEditingTask = (taskId: ID | null) =>
+  ({
+    type: "SET_EDITING_TASK",
+    payload: { taskId },
+  } as const)
 
 const completeSelectedTasksPending = () =>
   ({ type: "COMPLETE_SELECTED_TASKS|Pending" } as const)
@@ -420,7 +423,7 @@ const Action = {
   deleteTaskListSuccess,
 }
 
-const actionCreators = {
+export const actionCreators = {
   setTaskLists,
   setTasks,
   toggleTaskSelection,

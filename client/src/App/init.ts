@@ -1,5 +1,5 @@
 import { store } from "services/store"
-import { actionCreators as actions } from "services/store/actions"
+import { actionCreators as actions } from "services/store/listPage/actions"
 import { firestore, dataWithId } from "services/firebase"
 import { camelCase } from "change-case"
 import { toPairs, fromPairs, pipe, map } from "ramda"
@@ -32,7 +32,7 @@ export const init = () => {
         parseTaskList(dataWithId(doc) as RawTaskList),
       )
 
-      dispatch(actions.setTaskLists({ taskLists }))
+      dispatch(actions.setTaskLists(taskLists))
     })
 }
 
