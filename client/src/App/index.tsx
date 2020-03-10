@@ -9,23 +9,19 @@ import { StylesProvider } from "@material-ui/core"
 import { store } from "services/store"
 import { Provider as ReduxProvider } from "react-redux"
 
-class App extends React.Component {
-  render() {
-    return (
-      <ReduxProvider store={store}>
-        <BrowserRouter>
-          <StylesProvider injectFirst>
-            <GlobalStyles />
-            <Root />
-            <ShowState />
-          </StylesProvider>
-        </BrowserRouter>
-      </ReduxProvider>
-    )
-  }
+export default () => {
+  return (
+    <ReduxProvider store={store}>
+      <BrowserRouter>
+        <StylesProvider injectFirst>
+          <GlobalStyles />
+          <Root />
+          <ShowState />
+        </StylesProvider>
+      </BrowserRouter>
+    </ReduxProvider>
+  )
 }
-
-export default App
 
 import { useSelector, useActions } from "services/store"
 

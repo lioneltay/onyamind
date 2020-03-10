@@ -1,9 +1,9 @@
 import { firebase, firestore, dataWithId } from "services/firebase"
 
-export const getTaskList = async (list_id: ID): Promise<TaskList> => {
+export const getTaskList = async (listId: ID): Promise<TaskList> => {
   const x = await firestore
-    .collection("task_lists")
-    .doc(list_id)
+    .collection("taskList")
+    .doc(listId)
     .get()
     .then(dataWithId)
 
@@ -13,24 +13,23 @@ export const getTaskList = async (list_id: ID): Promise<TaskList> => {
 type AddTaskListInput = Omit<
   TaskList,
   | "id"
-  | "created_at"
-  | "updated_at"
-  | "number_of_incomplete_tasks"
-  | "number_of_complete_tasks"
+  | "createdAt"
+  | "updatedAt"
+  | "numberOfIncompleteTasks"
+  | "numberOfCompleteTasks"
 >
-export const addTaskList = async (
+export const createTaskList = async (
   list: AddTaskListInput,
 ): Promise<TaskList> => {
   return firestore
-    .collection("task_lists")
+    .collection("taskList")
     .add({
-      number_of_incomplete_tasks: 0,
-      number_of_complete_tasks: 0,
-      primary: false,
-      user_id: null,
+      numberOfIncompleteTasks: 0,
+      numberOfCompleteTasks: 0,
       ...list,
-      created_at: Date.now(),
-      updated_at: Date.now(),
+      primary: list.primary ?? false,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
     })
     .then(async x => {
       return dataWithId(await x.get()) as TaskList
@@ -42,74 +41,66 @@ export const addTaskList = async (
 }
 
 type EditTaskListInput = {
-  list_id: ID
-  list_data: Partial<Omit<TaskList, "id" | "created_at" | "updated_at">>
+  taskListId: ID
+  data: Partial<Omit<TaskList, "id" | "createdAt" | "updatedAt">>
 }
 export const editTaskList = async ({
-  list_id,
-  list_data,
+  taskListId,
+  data,
 }: EditTaskListInput): Promise<TaskList> => {
   await firestore
-    .collection("task_lists")
-    .doc(list_id)
+    .collection("taskList")
+    .doc(taskListId)
     .update({
-      ...list_data,
-      updated_at: Date.now(),
+      ...data,
+      updatedAt: Date.now(),
     })
 
-  const edited_list = await firestore
-    .collection("task_lists")
-    .doc(list_id)
+  const editedList = await firestore
+    .collection("taskList")
+    .doc(taskListId)
     .get()
     .then(dataWithId)
 
-  return edited_list as TaskList
+  return editedList as TaskList
 }
 
-export const deleteTaskList = async (list_id: ID): Promise<ID> => {
+export const deleteTaskList = async (listId: ID): Promise<ID> => {
   await firestore
-    .collection("task_lists")
-    .doc(list_id)
+    .collection("taskList")
+    .doc(listId)
     .delete()
-  return list_id
+  return listId
 }
 
-export const createDefaultTaskList = (user_id: ID | null) => {
-  return addTaskList({
-    name: "Tasks",
-    primary: true,
-    user_id,
-  })
-}
-
-export const getTaskLists = async (user_id: ID | null): Promise<TaskList[]> => {
+export const getTaskLists = async (userId: ID | null): Promise<TaskList[]> => {
   return firestore
-    .collection("task_lists")
-    .where("user_id", "==", user_id)
+    .collection("taskList")
+    .where("userId", "==", userId)
     .get()
     .then(res => res.docs.map(dataWithId) as TaskList[])
 }
 
 type SetPrimaryTaskListInput = {
-  user_id: ID | null
-  task_list_id: ID
+  userId: ID | null
+  taskListId: ID
 }
 export const setPrimaryTaskList = async ({
-  user_id,
-  task_list_id,
+  userId,
+  taskListId,
 }: SetPrimaryTaskListInput) => {
-  const task_lists = await getTaskLists(user_id)
+  const taskLists = await getTaskLists(userId)
 
   const batch = firestore.batch()
 
-  batch.update(firestore.collection("task_lists").doc(task_list_id), {
+  batch.update(firestore.collection("taskList").doc(taskListId), {
     primary: true,
   })
 
-  task_lists
-    .filter(list => list.id !== task_list_id && list.primary)
+  taskLists
+    .filter(list => list.id !== taskListId && list.primary)
     .forEach(list => {
-      batch.update(firestore.collection("task_lists").doc(list.id), {
+      batch.update(firestore.collection("taskList").doc(list.id), {
         primary: false,
       })
     })

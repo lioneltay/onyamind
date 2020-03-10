@@ -23,11 +23,8 @@ import Task from "./Task"
 
 import CollapsableEditor from "./CollapsableEditor"
 
-import { connect } from "services/state"
-import { tasks } from "services/state/modules/list-view/selectors"
-
 import { useTheme } from "theme"
-import { useSelector } from "services/store"
+import { useSelector, useActions } from "services/store"
 
 const OuterContainer = styled.div`
   display: flex;
@@ -51,6 +48,7 @@ export default () => {
     editingTaskId: 5,
     tasks: [],
   }))
+  const { stopEditingTask, editTask } = useSelector()
 
   const [show_complete_tasks, setShowCompleteTasks] = useState(false)
 

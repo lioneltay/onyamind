@@ -3,7 +3,6 @@ import { actionCreators as actions } from "services/store/actions"
 import { firestore, dataWithId } from "services/firebase"
 import { camelCase } from "change-case"
 import { toPairs, fromPairs, pipe, map } from "ramda"
-import { RawTaskList, TaskList } from "types"
 
 const camelCaseKeys = (obj: any) =>
   (pipe as any)(

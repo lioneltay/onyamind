@@ -1,9 +1,9 @@
 import { firestore, dataWithId } from "services/firebase"
 
 export const createSettings = async (
-  user_id: ID | null,
+  userId: ID | null,
   data: Partial<
-    Omit<Settings, "id" | "user_id" | "created_at" | "updated_at">
+    Omit<Settings, "id" | "userId" | "createdAt" | "updatedAt">
   > = {},
 ): Promise<Settings> => {
   const settings = await firestore
@@ -11,10 +11,10 @@ export const createSettings = async (
     .add({
       dark: false,
       ...data,
-      user_id,
-      created_at: Date.now(),
-      updated_at: Date.now(),
-    } as Settings)
+      userId,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    } as Omit<Settings, "id">)
     .then(ref => ref.get())
     .then(dataWithId)
 
@@ -22,14 +22,14 @@ export const createSettings = async (
 }
 
 export const updateSettings = async (
-  user_id: ID | null,
-  settings_data: Partial<
-    Omit<Settings, "id" | "user_id" | "created_at" | "updated_at">
+  userId: ID | null,
+  settingsData: Partial<
+    Omit<Settings, "id" | "userId" | "createdAt" | "updatedAt">
   >,
 ): Promise<void> => {
   const [settings] = await firestore
     .collection("settings")
-    .where("user_id", "==", user_id)
+    .where("userId", "==", userId)
     .limit(1)
     .get()
     .then(ref => ref.docs.map(dataWithId))
@@ -38,8 +38,8 @@ export const updateSettings = async (
     return firestore
       .collection("settings")
       .doc(settings.id)
-      .update({ ...settings_data, updated_at: Date.now() })
+      .update({ ...settingsData, updatedAt: Date.now() })
   }
 
-  await createSettings(user_id, settings_data)
+  await createSettings(userId, settingsData)
 }

@@ -5,13 +5,17 @@ import { useSelector as originalUseSelector, shallowEqual } from "react-redux"
 
 import { rootEpic } from "./epics"
 import { createEpicMiddleware } from "redux-observable"
+import thunkMiddleware from "redux-thunk"
 
 import * as selectors from "./selectors"
 
 export const configureStore = () => {
   const epicMiddleware = createEpicMiddleware()
 
-  const store = createStore(reducer, applyMiddleware(epicMiddleware))
+  const store = createStore(
+    reducer,
+    applyMiddleware(epicMiddleware, thunkMiddleware),
+  )
 
   epicMiddleware.run(rootEpic as any)
 

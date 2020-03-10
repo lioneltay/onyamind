@@ -25,6 +25,8 @@ declare global {
 
   export type Merge<A, B> = Pick<A, Exclude<keyof A, keyof B>> & B
 
+  export type Modify<A, B extends A> = Merge<B, A>
+
   export namespace NodeJS {
     export interface ProcessEnv {
       APP_MODE: "local" | "development" | "production"

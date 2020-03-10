@@ -75,6 +75,7 @@
     "react-with-gesture": "^4.0.8",
     "redux": "^4.0.5",
     "redux-observable": "^1.2.0",
+    "redux-thunk": "^2.3.0",
     "regenerator-runtime": "^0.13.3",
     "rxjs": "^6.5.4",
     "shallowequal": "^1.1.0",
