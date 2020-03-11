@@ -1,15 +1,22 @@
 import { bindActionCreators, Dispatch } from "redux"
 import { useDispatch } from "react-redux"
 import { ActionsUnion, ActionTypesUnion } from "services/store/helpers"
-import { State } from "services/store/listPage/reducer"
-import * as selectors from "services/store/listPage/selectors"
-import * as api from "services/api"
 
-type GetState = () => State
+const openDrawer = () => ({ type: "OPEN_DRAWER" } as const)
+const closeDrawer = () => ({ type: "CLOSE_DRAWER" } as const)
+const toggleDrawer = () => ({ type: "TOGGLE_DRAWER" } as const)
 
-const Action = {}
+const Action = {
+  openDrawer,
+  closeDrawer,
+  toggleDrawer,
+}
 
-export const actionCreators = {}
+export const actionCreators = {
+  openDrawer,
+  closeDrawer,
+  toggleDrawer,
+}
 
 export type Action = ActionsUnion<typeof Action>
 export type ActionType = ActionTypesUnion<typeof Action>

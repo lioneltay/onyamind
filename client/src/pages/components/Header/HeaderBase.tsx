@@ -2,10 +2,10 @@ import React, { Fragment } from "react"
 import { useTheme } from "theme"
 import { noopTemplate as css } from "lib/utils"
 
-import { ArrowBack, Delete, Check, Add, Menu } from "@material-ui/icons"
+import { ArrowBack, Menu } from "@material-ui/icons"
 import { Toolbar, AppBar, IconButton, Typography } from "@material-ui/core"
 
-import { useSelector } from "services/store/listPage"
+import { useSelector, useActions } from "services/store"
 
 type Props = {
   title: string
@@ -14,10 +14,13 @@ type Props = {
 }
 
 export default ({ title, editingActions, actions }: Props) => {
+  const { toggleDrawer } = useActions()
+
   const { numberOfSelectedTasks, editing } = useSelector((state, s) => ({
-    editing: !!s.editingTaskId(state),
-    numberOfSelectedTasks: s.selectedTasks(state).length,
+    editing: !!s.listPage.editingTaskId(state),
+    numberOfSelectedTasks: s.listPage.selectedTasks(state).length,
   }))
+
   const theme = useTheme()
 
   return (
@@ -28,7 +31,7 @@ export default ({ title, editingActions, actions }: Props) => {
           padding-right: 0;
           display: flex;
           justify-content: center;
-          background: ${editing ? theme.highlight_color : undefined};
+          background: ${editing ? theme.highlightColor : undefined};
         `}
       >
         <div
@@ -60,7 +63,7 @@ export default ({ title, editingActions, actions }: Props) => {
                 </IconButton>
                 <div
                   style={{
-                    color: theme.highlighted_text_color,
+                    color: theme.highlightedTextColor,
                     paddingLeft: 18,
                   }}
                 >
@@ -71,7 +74,7 @@ export default ({ title, editingActions, actions }: Props) => {
               <Fragment>
                 <IconButton
                   style={{ display: "inline-block" }}
-                  // onClick={toggleDrawer}
+                  onClick={toggleDrawer}
                 >
                   <Menu />
                 </IconButton>

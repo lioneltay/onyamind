@@ -41,16 +41,16 @@ export const createTaskList = async (
 }
 
 type EditTaskListInput = {
-  taskListId: ID
+  listId: ID
   data: Partial<Omit<TaskList, "id" | "createdAt" | "updatedAt">>
 }
 export const editTaskList = async ({
-  taskListId,
+  listId,
   data,
 }: EditTaskListInput): Promise<TaskList> => {
   await firestore
     .collection("taskList")
-    .doc(taskListId)
+    .doc(listId)
     .update({
       ...data,
       updatedAt: Date.now(),
@@ -58,7 +58,7 @@ export const editTaskList = async ({
 
   const editedList = await firestore
     .collection("taskList")
-    .doc(taskListId)
+    .doc(listId)
     .get()
     .then(dataWithId)
 
@@ -83,22 +83,22 @@ export const getTaskLists = async (userId: ID | null): Promise<TaskList[]> => {
 
 type SetPrimaryTaskListInput = {
   userId: ID | null
-  taskListId: ID
+  listId: ID
 }
 export const setPrimaryTaskList = async ({
   userId,
-  taskListId,
+  listId,
 }: SetPrimaryTaskListInput) => {
   const taskLists = await getTaskLists(userId)
 
   const batch = firestore.batch()
 
-  batch.update(firestore.collection("taskList").doc(taskListId), {
+  batch.update(firestore.collection("taskList").doc(listId), {
     primary: true,
   })
 
   taskLists
-    .filter(list => list.id !== taskListId && list.primary)
+    .filter(list => list.id !== listId && list.primary)
     .forEach(list => {
       batch.update(firestore.collection("taskList").doc(list.id), {
         primary: false,

@@ -10,13 +10,13 @@ import { connect } from "services/state"
 
 const getSCTheme = ({ dark }: ThemeProps) => {
   return {
-    background_color: dark ? "#282828" : "#ffffff",
-    background_faded_color: dark ? "#424242" : "#f9f9f9",
-    highlighted_text_color: "#3A7AF2",
-    highlight_color: dark ? "#002663" : "#E4EEFE",
-    grey_text: "#6a6a6a",
-    icon_color: dark ? "ffffff" : "#0000008a",
-    error_color: red["500"],
+    backgroundColor: dark ? "#282828" : "#ffffff",
+    backgroundFadedColor: dark ? "#424242" : "#f9f9f9",
+    highlightedTextColor: "#3A7AF2",
+    highlightColor: dark ? "#002663" : "#E4EEFE",
+    greyText: "#6a6a6a",
+    iconColor: dark ? "ffffff" : "#0000008a",
+    errorColor: red["500"],
   }
 }
 
@@ -24,7 +24,7 @@ type ThemeProps = {
   dark: boolean
 }
 
-export const light_mui_theme = createMuiTheme({
+export const lightMuiTheme = createMuiTheme({
   palette: {
     type: "light",
     primary: blue,
@@ -33,13 +33,13 @@ export const light_mui_theme = createMuiTheme({
   overrides: {
     MuiToolbar: {
       root: {
-        backgroundColor: getSCTheme({ dark: false }).background_color,
+        backgroundColor: getSCTheme({ dark: false }).backgroundColor,
       },
     },
   },
 })
 
-export const dark_mui_theme = createMuiTheme({
+export const darkMuiTheme = createMuiTheme({
   palette: {
     type: "dark",
     primary: blue,
@@ -48,15 +48,15 @@ export const dark_mui_theme = createMuiTheme({
   overrides: {
     MuiToolbar: {
       root: {
-        backgroundColor: getSCTheme({ dark: true }).background_color,
+        backgroundColor: getSCTheme({ dark: true }).backgroundColor,
       },
     },
   },
 })
 
 export const getTheme = ({ dark }: ThemeProps) => {
-  const mui_theme = dark ? dark_mui_theme : light_mui_theme
-  return { ...getSCTheme({ dark }), mui: mui_theme }
+  const muiTheme = dark ? darkMuiTheme : lightMuiTheme
+  return { ...getSCTheme({ dark }), mui: muiTheme }
 }
 
 export type Theme = ReturnType<typeof getTheme>

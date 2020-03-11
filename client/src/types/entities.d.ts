@@ -29,7 +29,7 @@ declare global {
 
   export type TaskList = {
     id: ID
-    userId: ID
+    userId: ID | null
     name: string
     createdAt: Date
     updatedAt: Date | null

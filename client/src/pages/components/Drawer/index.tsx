@@ -40,51 +40,51 @@ import DeleteTaskListModal from "./DeleteTaskListModal"
 import { comparator } from "ramda"
 import GoogleSignInButton from "../GoogleSignInButton"
 import TaskList from "./TaskList"
+import { useHistory } from "react-router-dom"
 
-import { connect } from "services/state"
-import { toggleDrawer } from "services/state/modules/ui"
-import { signIn, signOut } from "services/state/modules/user"
-import {
-  addTaskList,
-  editTaskList,
-  deleteTaskList,
-  setPrimaryTaskList,
-} from "services/state/modules/task-lists"
-import { withRouter, RouteComponentProps } from "react-router"
+import { useActions, useSelector } from "services/store"
 
-import { toggleDarkMode } from "services/state/modules/settings"
+import { useTheme } from "theme"
 
-type Props = RouteComponentProps & {
-  theme: Theme
-  dark_mode: boolean
-  show: boolean
-  user: User
-  task_lists: TaskList[]
-  selected_task_list_id: ID | null
-}
+export default () => {
+  const history = useHistory()
+  const theme = useTheme()
+  const {
+    toggleDrawer,
+    closeDrawer,
+    signin,
+    signout,
+    deleteTaskList,
+    createTaskList,
+    editTaskList,
+    setPrimaryTaskList,
+  } = useActions()
 
-const Drawer: React.FunctionComponent<Props> = ({
-  theme,
-  dark_mode,
-  user,
-  show,
-  task_lists,
-  selected_task_list_id,
-  history,
-}) => {
-  const [show_create_modal, setShowCreateModal] = useState(false)
-  const [show_delete_modal, setShowDeleteModal] = useState(false)
-  const [show_rename_modal, setShowRenameModal] = useState(false)
-  const [selected_id, setSelectedId] = useState(null as ID | null)
-  const [show_other_lists, setShowOtherLists] = useState(true)
-  const [show_help_modal, setShowHelpModal] = useState(false)
+  const { show, taskLists, selectedTaskListId, user } = useSelector(
+    (state, s) => ({
+      show: state.ui.showDrawer,
+      taskLists: s.listPage.taskLists(state),
+      selectedTaskListId: s.listPage.selectedTaskListId(state),
+      user: state.auth.user,
+    }),
+  )
 
-  const selected_list =
-    selected_id && task_lists
-      ? task_lists.find(list => list.id === selected_id)
+  const toggleDarkMode = () => console.log("toggleDarkMode")
+  const darkMode = true
+
+  const [showCreateModal, setShowCreateModal] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [showRenameModal, setShowRenameModal] = useState(false)
+  const [selectedId, setSelectedId] = useState(null as ID | null)
+  const [showOtherLists, setShowOtherLists] = useState(true)
+  const [showHelpModal, setShowHelpModal] = useState(false)
+
+  const selectedList =
+    selectedId && taskLists
+      ? taskLists.find(list => list.id === selectedId)
       : null
 
-  const primary_list = task_lists ? task_lists.find(list => list.primary) : null
+  const primaryList = taskLists ? taskLists.find(list => list.primary) : null
 
   const selectTaskList = (list: TaskList) => {
     history.push(`/lists/${list.id}/${list.name}`)
@@ -95,7 +95,7 @@ const Drawer: React.FunctionComponent<Props> = ({
       open={show}
       onOpen={toggleDrawer}
       onClose={() => {
-        toggleDrawer()
+        closeDrawer()
         setShowCreateModal(false)
       }}
     >
@@ -106,17 +106,17 @@ const Drawer: React.FunctionComponent<Props> = ({
           maxWidth: 400,
           minWidth: 280,
           minHeight: "100vh",
-          backgroundColor: dark_mode
-            ? theme.background_faded_color
-            : theme.background_color,
+          backgroundColor: darkMode
+            ? theme.backgroundFadedColor
+            : theme.backgroundColor,
         }}
       >
         {user ? (
           <ListItem
             style={{
-              backgroundColor: dark_mode
-                ? theme.background_color
-                : theme.background_faded_color,
+              backgroundColor: darkMode
+                ? theme.backgroundColor
+                : theme.backgroundFadedColor,
             }}
           >
             <ListItemAvatar>
@@ -136,9 +136,9 @@ const Drawer: React.FunctionComponent<Props> = ({
             </ListItemSecondaryAction>
           </ListItem>
         ) : (
-          <ListItem style={{ backgroundColor: theme.background_color }}>
+          <ListItem style={{ backgroundColor: theme.backgroundColor }}>
             <ListItemText>
-              <GoogleSignInButton onClick={signIn} />
+              <GoogleSignInButton onClick={signin} />
             </ListItemText>
 
             <ListItemSecondaryAction>
@@ -154,14 +154,14 @@ const Drawer: React.FunctionComponent<Props> = ({
               <span className="mr-3">Primary List</span>
               <Help
                 className="cursor-pointer"
-                style={{ color: theme.icon_color }}
+                style={{ color: theme.iconColor }}
                 onClick={() => setShowHelpModal(true)}
               />
             </Typography>
           </ListItemText>
         </ListItem>
         <Modal
-          open={show_help_modal}
+          open={showHelpModal}
           onClose={() => setShowHelpModal(false)}
           title="Primary List"
           style={{ width: 500, maxWidth: "100%" }}
@@ -180,12 +180,12 @@ const Drawer: React.FunctionComponent<Props> = ({
             application.
           </Typography>
         </Modal>
-        {primary_list ? (
+        {primaryList ? (
           <TaskList
-            key={primary_list.id}
-            task_list={primary_list}
-            selected={primary_list.id === selected_task_list_id}
-            onBodyClick={() => selectTaskList(primary_list)}
+            key={primaryList.id}
+            taskList={primaryList}
+            selected={primaryList.id === selectedTaskListId}
+            onBodyClick={() => selectTaskList(primaryList)}
             onDelete={id => {
               setSelectedId(id)
               setShowDeleteModal(true)
@@ -212,20 +212,20 @@ const Drawer: React.FunctionComponent<Props> = ({
           <ListItemText>
             <Typography variant="subtitle2">Other Lists</Typography>
           </ListItemText>
-          <div style={{ color: theme.grey_text }}>
-            {show_other_lists ? <ExpandLess /> : <ExpandMore />}
+          <div style={{ color: theme.greyText }}>
+            {showOtherLists ? <ExpandLess /> : <ExpandMore />}
           </div>
         </ListItem>
-        <Collapse in={show_other_lists}>
-          {task_lists ? (
-            task_lists
+        <Collapse in={showOtherLists}>
+          {taskLists ? (
+            taskLists
               .filter(list => !list.primary)
-              .sort(comparator((l1, l2) => l1.created_at > l2.created_at))
+              .sort(comparator((l1, l2) => l1.createdAt > l2.createdAt))
               .map(list => (
                 <TaskList
                   key={list.id}
-                  task_list={list}
-                  selected={list.id === selected_task_list_id}
+                  taskList={list}
+                  selected={list.id === selectedTaskListId}
                   onBodyClick={() => {
                     selectTaskList(list)
                   }}
@@ -237,8 +237,8 @@ const Drawer: React.FunctionComponent<Props> = ({
                     setSelectedId(id)
                     setShowRenameModal(true)
                   }}
-                  onMakePrimary={id => {
-                    setPrimaryTaskList(id)
+                  onMakePrimary={listId => {
+                    setPrimaryTaskList({ listId, userId: user?.uid ?? null })
                   }}
                 />
               ))
@@ -274,7 +274,7 @@ const Drawer: React.FunctionComponent<Props> = ({
           }}
         />
         {user && (
-          <OptionItem icon={<ExitToApp />} text="Sign out" onClick={signOut} />
+          <OptionItem icon={<ExitToApp />} text="Sign out" onClick={signout} />
         )}
         <OptionItem icon={<Feedback />} text="Send feedback" />
         <OptionItem icon={<Help />} text="Help" />
@@ -289,7 +289,7 @@ const Drawer: React.FunctionComponent<Props> = ({
           <ListItemText>Dark mode</ListItemText>
           <ListItemSecondaryAction>
             <Switch
-              checked={dark_mode}
+              checked={darkMode}
               value="checkedB"
               color="primary"
               onChange={toggleDarkMode}
@@ -301,36 +301,40 @@ const Drawer: React.FunctionComponent<Props> = ({
       <CreateTaskListModal
         onSubmit={async values => {
           setShowCreateModal(false)
-          await addTaskList({ ...values })
+          await createTaskList({
+            name: values.name,
+            primary: values.primary,
+            userId: user?.uid ?? null,
+          })
         }}
-        open={show_create_modal}
+        open={showCreateModal}
         onClose={() => setShowCreateModal(false)}
       />
 
-      {selected_list && selected_id ? (
+      {selectedList && selectedId ? (
         <RenameTaskListModal
-          task_list={selected_list}
+          taskList={selectedList}
           onSubmit={async values => {
             setShowRenameModal(false)
             await editTaskList({
-              list_id: selected_id,
-              list_data: { ...values },
+              listId: selectedId,
+              data: { ...values },
             })
           }}
-          open={show_rename_modal}
+          open={showRenameModal}
           onClose={() => setShowRenameModal(false)}
         />
       ) : null}
 
-      {selected_id && selected_list ? (
+      {selectedId && selectedList ? (
         <DeleteTaskListModal
-          open={show_delete_modal}
+          open={showDeleteModal}
           onClose={() => setShowDeleteModal(false)}
-          task_list_name={selected_list.name}
+          taskListName={selectedList.name}
           onConfirmDelete={async () => {
             setSelectedId(null)
             setShowDeleteModal(false)
-            await deleteTaskList(selected_id)
+            await deleteTaskList(selectedId)
           }}
         />
       ) : null}
@@ -369,15 +373,4 @@ const TaskListLoader: React.FunctionComponent = () => (
     <rect x="0" y="10" rx="4" ry="4" width="100" height="10" />
     <rect x="0" y="30" rx="4" ry="4" width="50" height="7" />
   </ContentLoader>
-)
-
-export default withRouter(
-  connect(state => ({
-    theme: state.settings.theme,
-    dark_mode: state.settings.user_settings.dark,
-    user: state.user,
-    show: state.ui.show_drawer,
-    task_lists: state.task_lists,
-    selected_task_list_id: state.list_view.selected_task_list_id,
-  }))(Drawer),
 )

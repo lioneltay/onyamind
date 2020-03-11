@@ -291,7 +291,7 @@ const createTaskListFailure = () =>
 const createTaskListSuccess = () =>
   ({ type: "CREATE_TASK_LIST|SUCCESS" } as const)
 type CreateTaskListInput = {
-  userId: ID
+  userId: ID | null
   name: string
   primary?: boolean
 }
@@ -314,20 +314,46 @@ const editTaskListPending = () => ({ type: "EDIT_TASK_LIST|PENDING" } as const)
 const editTaskListFailure = () => ({ type: "EDIT_TASK_LIST|FAILURE" } as const)
 const editTaskListSuccess = () => ({ type: "EDIT_TASK_LIST|SUCCESS" } as const)
 type EditTaskListInput = {
-  taskListId: ID
-  name: string
-  primary?: boolean
+  listId: ID
+  data: {
+    name: string
+    primary?: boolean
+  }
 }
-const editTaskList = ({ name, primary, taskListId }: EditTaskListInput) => (
-  dispatch: Dispatch,
-  getState: GetState,
-) => {
+const editTaskList = ({
+  data: { name, primary },
+  listId,
+}: EditTaskListInput) => (dispatch: Dispatch, getState: GetState) => {
   dispatch(editTaskListPending())
   return api
-    .editTaskList({ taskListId, data: { name, primary } })
+    .editTaskList({ listId, data: { name, primary } })
     .then(res => dispatch(editTaskListSuccess()))
     .catch(e => {
       dispatch(editTaskListFailure())
+      throw e
+    })
+}
+
+const setPrimaryTaskListPending = () =>
+  ({ type: "SET_PRIMARY_TASK_LIST|PENDING" } as const)
+const setPrimaryTaskListFailure = () =>
+  ({ type: "SET_PRIMARY_TASK_LIST|FAILURE" } as const)
+const setPrimaryTaskListSuccess = () =>
+  ({ type: "SET_PRIMARY_TASK_LIST|SUCCESS" } as const)
+type SetPrimaryTaskListInput = {
+  listId: ID
+  userId: ID | null
+}
+const setPrimaryTaskList = ({ listId, userId }: SetPrimaryTaskListInput) => (
+  dispatch: Dispatch,
+  getState: GetState,
+) => {
+  dispatch(setPrimaryTaskListPending())
+  return api
+    .setPrimaryTaskList({ listId, userId })
+    .then(res => dispatch(setPrimaryTaskListSuccess()))
+    .catch(e => {
+      dispatch(setPrimaryTaskListFailure())
       throw e
     })
 }
@@ -421,9 +447,14 @@ const Action = {
   deleteTaskListPending,
   deleteTaskListFailure,
   deleteTaskListSuccess,
+
+  setPrimaryTaskListPending,
+  setPrimaryTaskListFailure,
+  setPrimaryTaskListSuccess,
 }
 
 export const actionCreators = {
+  setPrimaryTaskList,
   setTaskLists,
   setTasks,
   toggleTaskSelection,

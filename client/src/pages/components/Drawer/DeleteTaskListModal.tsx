@@ -8,21 +8,21 @@ type Props = {
   open: boolean
   onClose: () => void
   onConfirmDelete: () => void
-  task_list_name?: string
+  taskListName?: string
 }
 
 const DeleteTaskListModal: React.FunctionComponent<Props> = ({
   open,
   onClose,
   onConfirmDelete,
-  task_list_name = "list",
+  taskListName = "list",
 }) => {
   return (
     <Modal
       style={{ width: 300, maxWidth: "100%" }}
       open={open}
       onClose={onClose}
-      title={`Delete ${task_list_name}`}
+      title={`Delete ${taskListName}`}
       actions={
         <Button variant="outlined" color="primary" onClick={onConfirmDelete}>
           Confirm

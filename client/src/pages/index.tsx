@@ -9,7 +9,7 @@ export default () => {
   return (
     <div>
       <Header />
-      {/* <Drawer /> */}
+      <Drawer />
 
       <Switch>
         {/* <Route path="/lists/:listId/:listName" component={ListPage} /> */}

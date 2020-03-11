@@ -12,7 +12,7 @@ type Values = {
 }
 
 type Props = {
-  task_list: TaskList
+  taskList: TaskList
   open: boolean
   onClose: () => void
   onSubmit: (values: Values, actions: FormikActions<Values>) => Promise<void>
@@ -22,11 +22,11 @@ const RenameTaskListModal: React.FunctionComponent<Props> = ({
   open,
   onClose,
   onSubmit,
-  task_list,
+  taskList,
 }) => {
   return (
     <Formik<Values>
-      initialValues={{ name: task_list.name }}
+      initialValues={{ name: taskList.name }}
       onSubmit={async (values, actions) => {
         await onSubmit(values, actions)
         actions.setSubmitting(false)

@@ -1,15 +1,17 @@
 import React, { useState } from "react"
-import ListItem from "@material-ui/core/ListItem"
-import ListItemText from "@material-ui/core/ListItemText"
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction"
-import IconButton from "@material-ui/core/IconButton"
-import Menu from "@material-ui/core/Menu"
-import MenuItem from "@material-ui/core/MenuItem"
+import {
+  ListItem,
+  ListItemText,
+  ListItemSecondaryAction,
+  IconButton,
+  Menu,
+  MenuItem,
+} from "@material-ui/core"
 
-import MoreVert from "@material-ui/icons/MoreVert"
+import { MoreVert } from "@material-ui/icons"
 
 type Props = {
-  task_list: TaskList
+  taskList: TaskList
   selected: boolean
   onBodyClick: (id: ID) => void
   onDelete: (id: ID) => void
@@ -17,32 +19,30 @@ type Props = {
   onMakePrimary?: (id: ID) => void
 }
 
-const TaskList: React.FunctionComponent<Props> = ({
-  task_list,
+export default ({
+  taskList,
   selected,
   onDelete,
   onRename,
   onMakePrimary = () => {},
   onBodyClick,
-}) => {
-  const [anchor_el, setAnchorEl] = useState(null as HTMLElement | null)
+}: Props) => {
+  const [anchorEl, setAnchorEl] = useState(null as HTMLElement | null)
 
-  const total_tasks =
-    task_list.number_of_complete_tasks + task_list.number_of_incomplete_tasks
+  const totalTasks =
+    taskList.numberOfCompleteTasks + taskList.numberOfIncompleteTasks
 
   return (
     <ListItem
       selected={selected}
       button
-      onClick={() => onBodyClick(task_list.id)}
+      onClick={() => onBodyClick(taskList.id)}
     >
       <ListItemText
-        primary={task_list.name}
+        primary={taskList.name}
         secondary={
-          total_tasks > 0
-            ? `${
-                task_list.number_of_complete_tasks
-              }/${total_tasks} tasks complete`
+          totalTasks > 0
+            ? `${taskList.numberOfCompleteTasks}/${totalTasks} tasks complete`
             : "No tasks"
         }
       />
@@ -52,24 +52,24 @@ const TaskList: React.FunctionComponent<Props> = ({
         </IconButton>
 
         <Menu
-          anchorEl={anchor_el}
-          open={!!anchor_el}
+          anchorEl={anchorEl}
+          open={!!anchorEl}
           onClose={() => setAnchorEl(null)}
         >
           <MenuItem
             onClick={() => {
               setAnchorEl(null)
-              onRename(task_list.id)
+              onRename(taskList.id)
             }}
           >
             Rename
           </MenuItem>
 
-          {!task_list.primary && (
+          {!taskList.primary && (
             <MenuItem
               onClick={() => {
                 setAnchorEl(null)
-                onMakePrimary(task_list.id)
+                onMakePrimary(taskList.id)
               }}
             >
               Make Primary
@@ -78,7 +78,7 @@ const TaskList: React.FunctionComponent<Props> = ({
 
           <MenuItem
             onClick={() => {
-              onDelete(task_list.id)
+              onDelete(taskList.id)
               setAnchorEl(null)
             }}
           >
@@ -89,5 +89,3 @@ const TaskList: React.FunctionComponent<Props> = ({
     </ListItem>
   )
 }
-
-export default TaskList
