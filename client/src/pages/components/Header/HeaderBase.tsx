@@ -5,7 +5,7 @@ import { noopTemplate as css } from "lib/utils"
 import { ArrowBack, Delete, Check, Add, Menu } from "@material-ui/icons"
 import { Toolbar, AppBar, IconButton, Typography } from "@material-ui/core"
 
-import { useSelector } from "services/store"
+import { useSelector } from "services/store/listPage"
 
 type Props = {
   title: string
@@ -14,9 +14,9 @@ type Props = {
 }
 
 export default ({ title, editingActions, actions }: Props) => {
-  const { numberOfSelectedTasks, editing } = useSelector(state => ({
-    editing: false,
-    numberOfSelectedTasks: 5,
+  const { numberOfSelectedTasks, editing } = useSelector((state, s) => ({
+    editing: !!s.editingTaskId(state),
+    numberOfSelectedTasks: s.selectedTasks(state).length,
   }))
   const theme = useTheme()
 

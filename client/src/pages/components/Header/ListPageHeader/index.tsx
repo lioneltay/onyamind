@@ -7,23 +7,25 @@ import IconButtonMenu from "lib/components/IconButtonMenu"
 // import TaskAdder from "./TaskAdder"
 import HeaderBase from "../HeaderBase"
 
-import { useSelector } from "services/store"
+import { useSelector } from "services/store/listPage"
 
 export default () => {
   const {
     taskLists,
     allSelectedTasksComplete,
     allSelectedTasksIncomplete,
-  } = useSelector(state => ({
-    taskLists: state.taskLists || [],
-    allSelectedTasksComplete: false,
-    allSelectedTasksIncomplete: false,
+    selectedTaskList,
+  } = useSelector((state, s) => ({
+    taskLists: s.taskLists(state) || [],
+    allSelectedTasksComplete: s.allSelectedTasksComplete(state),
+    allSelectedTasksIncomplete: s.allSelectedTasksInComplete(state),
+    selectedTaskList: s.selectedTaskList(state),
   }))
 
   return (
     <Fragment>
       <HeaderBase
-        title={"Selected task list name"}
+        title={selectedTaskList?.name ?? ""}
         editingActions={
           <Fragment>
             {allSelectedTasksComplete || allSelectedTasksIncomplete ? (

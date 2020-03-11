@@ -30,5 +30,3 @@ const ShowState = () => {
 
   return <pre>{JSON.stringify(state, null, 2)}</pre>
 }
-
-import "./init"

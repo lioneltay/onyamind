@@ -42,3 +42,4 @@ export const trashTasks = (state: StoreState): Task[] =>
   slice(state).trashTasks ?? []
 
 export const editingTaskId = (state: StoreState) => slice(state).editingTaskId
+

@@ -1,31 +1,35 @@
 import React, { useState } from "react"
 import ContentLoader from "react-content-loader"
 
-import SwipeableDrawer from "@material-ui/core/SwipeableDrawer"
-import List from "@material-ui/core/List"
-import ListItem from "@material-ui/core/ListItem"
-import ListItemAvatar from "@material-ui/core/ListItemAvatar"
-import ListItemText from "@material-ui/core/ListItemText"
-import ListItemIcon from "@material-ui/core/ListItemIcon"
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction"
-import Collapse from "@material-ui/core/Collapse"
-import Typography from "@material-ui/core/Typography"
-import Avatar from "@material-ui/core/Avatar"
-import Divider from "@material-ui/core/Divider"
-import Button from "@material-ui/core/Button"
-import IconButton from "@material-ui/core/IconButton"
-import LinearProgress from "@material-ui/core/LinearProgress"
-import Fade from "@material-ui/core/Fade"
-import Switch from "@material-ui/core/Switch"
+import {
+  SwipeableDrawer,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  ListItemIcon,
+  ListItemSecondaryAction,
+  Collapse,
+  Typography,
+  Avatar,
+  Divider,
+  Button,
+  IconButton,
+  LinearProgress,
+  Fade,
+  Switch,
+} from "@material-ui/core"
 
-import Help from "@material-ui/icons/Help"
-import ExpandMore from "@material-ui/icons/ExpandMore"
-import ExpandLess from "@material-ui/icons/ExpandLess"
-import Feedback from "@material-ui/icons/Feedback"
-import Clear from "@material-ui/icons/Clear"
-import AccountCircle from "@material-ui/icons/AccountCircle"
-import ExitToApp from "@material-ui/icons/ExitToApp"
-import Delete from "@material-ui/icons/Delete"
+import {
+  Help,
+  ExpandMore,
+  ExpandLess,
+  Feedback,
+  Clear,
+  AccountCircle,
+  ExitToApp,
+  Delete,
+} from "@material-ui/icons"
 
 import Modal from "lib/components/Modal"
 

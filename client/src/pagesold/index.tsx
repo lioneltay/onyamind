@@ -9,7 +9,6 @@ import { Route, Switch, Redirect } from "react-router-dom"
 // import SandboxPage from "features/sandbox"
 
 import Header from "./components/Header"
-import Drawer from "./components/Drawer"
 // import UndoSnackbar from "./components/UndoSnackbar"
 
 // import { ThemeProvider } from "theme"
@@ -22,8 +21,8 @@ const Container = styled.div`
 const RootRoute: React.FunctionComponent = () => {
   return (
     <Container>
-      <Header />
-      <Drawer />
+      {/* <Header /> */}
+      {/* <Drawer /> */}
       {/* <UndoSnackbar /> */}
 
       {/* <Switch>

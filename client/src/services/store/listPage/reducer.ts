@@ -36,10 +36,20 @@ export const reducer = (state: State = initialState, action: Action): State => {
       }
     }
     case "SET_TASK_LISTS": {
-      return {
+      const { taskLists } = action.payload
+
+      const newState = {
         ...state,
-        taskLists: action.payload.taskLists,
+        taskLists,
       }
+
+      if (!state.selectedTaskListId) {
+        const selectedTaskList =
+          taskLists.find(list => list.primary) ?? taskLists[0]
+        newState.selectedTaskListId = selectedTaskList?.id
+      }
+
+      return newState
     }
     case "TOGGLE_TASK_SELECTION": {
       const selected = !!state.selectedTaskIds.find(
