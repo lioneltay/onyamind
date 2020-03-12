@@ -10,7 +10,6 @@ import {
   ListItemIcon,
   ListItemSecondaryAction,
   Collapse,
-  Typography,
   Avatar,
   Divider,
   Button,
@@ -19,6 +18,8 @@ import {
   Fade,
   Switch,
 } from "@material-ui/core"
+
+import { Text } from "lib/components"
 
 import {
   Help,
@@ -150,14 +151,14 @@ export default () => {
         )}
         <ListItem className="pb-0 pt-3" dense>
           <ListItemText className="fa-c">
-            <Typography variant="subtitle2" className="fa-c">
+            <Text variant="subtitle2" className="fa-c">
               <span className="mr-3">Primary List</span>
               <Help
                 className="cursor-pointer"
                 style={{ color: theme.iconColor }}
                 onClick={() => setShowHelpModal(true)}
               />
-            </Typography>
+            </Text>
           </ListItemText>
         </ListItem>
         <Modal
@@ -175,10 +176,10 @@ export default () => {
             </Button>
           }
         >
-          <Typography>
+          <Text>
             The primary list will be selected by default when you open the
             application.
-          </Typography>
+          </Text>
         </Modal>
         {primaryList ? (
           <TaskList
@@ -210,7 +211,7 @@ export default () => {
           onClick={() => setShowOtherLists(show => !show)}
         >
           <ListItemText>
-            <Typography variant="subtitle2">Other Lists</Typography>
+            <Text variant="subtitle2">Other Lists</Text>
           </ListItemText>
           <div style={{ color: theme.greyText }}>
             {showOtherLists ? <ExpandLess /> : <ExpandMore />}
@@ -281,7 +282,7 @@ export default () => {
         <Divider />
         <ListItem className="pb-0 pt-3" dense>
           <ListItemText>
-            <Typography variant="subtitle2">Settings</Typography>
+            <Text variant="subtitle2">Settings</Text>
           </ListItemText>
         </ListItem>
 
@@ -356,7 +357,7 @@ const OptionItem: React.FunctionComponent<OptionItemProps> = ({
   return (
     <ListItem button className="cursor-pointer" onClick={onClick}>
       <ListItemIcon>{icon}</ListItemIcon>
-      <ListItemText primary={<Typography>{text}</Typography>} />
+      <ListItemText primary={<Text>{text}</Text>} />
     </ListItem>
   )
 }

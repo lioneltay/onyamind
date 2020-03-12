@@ -1,4 +1,4 @@
-import { createStore, applyMiddleware, combineReducers } from "redux"
+import { createStore, applyMiddleware, combineReducers, compose } from "redux"
 
 import {
   reducer as listPageReducer,
@@ -30,9 +30,13 @@ const reducer = combineReducers({
 export const configureStore = () => {
   const epicMiddleware = createEpicMiddleware()
 
+  // TODO Only use this in development
+  const composeEnhancers =
+    (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
+
   const store = createStore(
     reducer,
-    applyMiddleware(epicMiddleware, thunkMiddleware),
+    composeEnhancers(applyMiddleware(epicMiddleware, thunkMiddleware)),
   )
 
   epicMiddleware.run(rootEpic as any)

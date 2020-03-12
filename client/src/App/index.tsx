@@ -5,25 +5,30 @@ import Root from "pages"
 import GlobalStyles from "styles/global"
 
 import { StylesProvider } from "@material-ui/core"
+import { Text } from "lib/components"
 
 import { store } from "services/store"
 import { Provider as ReduxProvider } from "react-redux"
+
+import { ThemeProvider } from "theme"
 
 export default () => {
   return (
     <ReduxProvider store={store}>
       <BrowserRouter>
         <StylesProvider injectFirst>
-          <GlobalStyles />
-          <Root />
-          <ShowState />
+          <ThemeProvider dark={true}>
+            <GlobalStyles />
+            <Root />
+            <ShowState />
+          </ThemeProvider>
         </StylesProvider>
       </BrowserRouter>
     </ReduxProvider>
   )
 }
 
-import { useSelector, useActions } from "services/store/listPage"
+import { useSelector } from "services/store/listPage"
 
 const ShowState = () => {
   const state = useSelector(state => state)

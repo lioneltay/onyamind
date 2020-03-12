@@ -44,13 +44,20 @@ const Rotate = styled.div.attrs({})<{ flip: boolean }>`
 
 export default () => {
   const theme = useTheme()
-  const { editingTaskId, tasks } = useSelector(state => ({
-    editingTaskId: 5,
-    tasks: [],
+  const { editingTaskId, tasks } = useSelector((state, s) => ({
+    editingTaskId: s.listPage.editingTaskId(state),
+    tasks: s.listPage.tasks(state),
   }))
-  const { stopEditingTask, editTask } = useSelector()
 
-  const [show_complete_tasks, setShowCompleteTasks] = useState(false)
+  const {
+    stopEditingTask,
+    editTask,
+    toggleEditingTask,
+    decompleteCompletedTasks,
+    archiveCompletedTasks,
+  } = useActions()
+
+  const [showCompleteTasks, setShowCompleteTasks] = useState(false)
 
   const toggleShowCompleteTasks = useCallback(() => {
     setShowCompleteTasks(show => !show)
@@ -68,19 +75,19 @@ export default () => {
     )
   }
 
-  const [complete_tasks, incomplete_tasks] = partition(
+  const [completeTasks, incompleteTasks] = partition(
     task => task.complete,
     tasks,
-  ).map(list =>
-    list.sort(comparator((t1, t2) => t1.created_at > t2.created_at)),
-  )
+  ).map(list => list.sort(comparator((t1, t2) => t1.createdAt > t2.createdAt)))
+
+  console.log(completeTasks, incompleteTasks)
 
   return (
     <OuterContainer>
       <Container>
-        <List className="p-0" style={{ background: theme.background_color }}>
+        <List className="p-0" style={{ background: theme.backgroundColor }}>
           <Transition
-            items={incomplete_tasks}
+            items={incompleteTasks}
             keys={task => task.id}
             initial={{ height: "auto", opacity: 1 }}
             from={{ height: 0, opacity: 0 }}
@@ -103,8 +110,9 @@ export default () => {
                     onSubmit={async values => {
                       stopEditingTask()
                       await editTask({
-                        task_id: task.id,
-                        task_data: values,
+                        taskId: task.id,
+                        title: values.title,
+                        notes: values.notes,
                       })
                     }}
                   />
@@ -117,21 +125,21 @@ export default () => {
         <List className="p-0" onClick={toggleShowCompleteTasks}>
           <ListItem button>
             <ListItemIcon>
-              <Rotate flip={show_complete_tasks}>
+              <Rotate flip={showCompleteTasks}>
                 <IconButton>
                   <ExpandMore />
                 </IconButton>
               </Rotate>
             </ListItemIcon>
 
-            <ListItemText primary={`${complete_tasks.length} checked off`} />
+            <ListItemText primary={`${completeTasks.length} checked off`} />
 
             <IconButtonMenu
               icon={<MoreVert />}
               items={[
                 {
                   label: "Uncheck all items",
-                  action: uncheckCompletedTasks,
+                  action: decompleteCompletedTasks,
                 },
                 {
                   label: "Delete completed items",
@@ -142,9 +150,9 @@ export default () => {
           </ListItem>
         </List>
 
-        <Collapse in={show_complete_tasks}>
+        <Collapse in={showCompleteTasks}>
           <Transition
-            items={complete_tasks}
+            items={completeTasks}
             keys={task => task.id}
             initial={{ height: "auto", opacity: 1 }}
             from={{ height: 0, opacity: 0 }}
@@ -166,8 +174,9 @@ export default () => {
                     onSubmit={async values => {
                       stopEditingTask()
                       await editTask({
-                        task_id: task.id,
-                        task_data: values,
+                        taskId: task.id,
+                        title: values.title,
+                        notes: values.notes,
                       })
                     }}
                   />

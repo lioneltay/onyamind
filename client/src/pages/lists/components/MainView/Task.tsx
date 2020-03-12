@@ -1,63 +1,57 @@
 import React, { Fragment } from "react"
 
-import IconButton from "@material-ui/core/IconButton"
+import { IconButton } from "@material-ui/core"
 
-import Delete from "@material-ui/icons/Delete"
-import Add from "@material-ui/icons/Add"
-import Check from "@material-ui/icons/Check"
-import SwapHoriz from "@material-ui/icons/SwapHoriz"
-
-import { connect } from "services/state"
-import {
-  archiveTask,
-  editTask,
-  moveTaskToList,
-  toggleTaskSelection,
-} from "services/state/modules/list-view"
+import { Delete, Add, Check, SwapHoriz } from "@material-ui/icons"
 
 import TaskGestureContainer from "components/TaskGestureContainer"
 import Task from "components/Task"
 import IconButtonMenu from "lib/components/IconButtonMenu"
 
+import { useTheme } from "theme"
+import { useSelector, useActions } from "services/store"
+
 export type Props = Stylable & {
-  theme: Theme
   selected?: boolean
   task: Task
   onItemClick?: (id: ID) => void
   onSelectTask?: (id: ID) => void
-  editing: boolean
-  selected_task_ids: ID[]
-  touch_screen: boolean
-  task_lists: TaskList[] | null
 }
 
-const MainViewTask: React.FunctionComponent<Props> = ({
-  theme,
+export default ({
   style,
   className,
   task,
-  selected: _selected,
+  selected: Selected,
   onItemClick = () => {},
   onSelectTask = () => {},
-  editing,
-  selected_task_ids,
-  touch_screen,
-  task_lists,
-}) => {
-  if (!task_lists) {
+}: Props) => {
+  const theme = useTheme()
+
+  const { archiveTask, editTask, toggleTaskSelection, moveTask } = useActions()
+  const { taskLists, selectedTaskIds, editing, touchScreen } = useSelector(
+    state => ({
+      taskLists: state.listPage.taskLists,
+      selectedTaskIds: state.listPage.selectedTaskIds,
+      editing: false,
+      touchScreen: false,
+    }),
+  )
+
+  if (!taskLists) {
     return null
   }
 
   const selected =
-    _selected || selected_task_ids.findIndex(id => id === task.id) >= 0
+    Selected || selectedTaskIds.findIndex(id => id === task.id) >= 0
 
   return (
     <TaskGestureContainer
       onSwipeLeft={() => archiveTask(task.id)}
       onSwipeRight={() =>
         editTask({
-          task_id: task.id,
-          task_data: { complete: !task.complete },
+          taskId: task.id,
+          complete: !task.complete,
         })
       }
       leftBackground="tomato"
@@ -68,8 +62,8 @@ const MainViewTask: React.FunctionComponent<Props> = ({
       <div
         style={{
           background: task.complete
-            ? theme.background_faded_color
-            : theme.background_color,
+            ? theme.backgroundFadedColor
+            : theme.backgroundColor,
         }}
       >
         <Task
@@ -84,13 +78,13 @@ const MainViewTask: React.FunctionComponent<Props> = ({
             toggleTaskSelection(id)
           }}
           hoverActions={
-            editing || touch_screen ? null : (
+            editing || touchScreen ? null : (
               <Fragment>
                 <IconButton
                   onClick={() =>
                     editTask({
-                      task_id: task.id,
-                      task_data: { complete: !task.complete },
+                      taskId: task.id,
+                      complete: !task.complete,
                     })
                   }
                 >
@@ -99,10 +93,10 @@ const MainViewTask: React.FunctionComponent<Props> = ({
 
                 <IconButtonMenu
                   icon={<SwapHoriz />}
-                  items={task_lists.map(list => ({
+                  items={taskLists.map(list => ({
                     label: list.name,
                     action: () =>
-                      moveTaskToList({ task_id: task.id, list_id: list.id }),
+                      moveTask({ taskId: task.id, listId: list.id }),
                   }))}
                 />
 
@@ -113,12 +107,12 @@ const MainViewTask: React.FunctionComponent<Props> = ({
             )
           }
           actions={
-            editing || !touch_screen || !task.complete ? null : (
+            editing || !touchScreen || !task.complete ? null : (
               <IconButton
                 onClick={() =>
                   editTask({
-                    task_id: task.id,
-                    task_data: { complete: !task.complete },
+                    taskId: task.id,
+                    complete: !task.complete,
                   })
                 }
               >
@@ -131,15 +125,3 @@ const MainViewTask: React.FunctionComponent<Props> = ({
     </TaskGestureContainer>
   )
 }
-
-export default connect(state => ({
-  theme: state.settings.theme,
-  task_lists: state.task_lists
-    ? state.task_lists.filter(
-        list => list.id !== state.list_view.selected_task_list_id,
-      )
-    : null,
-  editing: state.list_view.editing,
-  selected_task_ids: state.list_view.selected_task_ids,
-  touch_screen: state.ui.touch_screen,
-}))(MainViewTask)

@@ -2,7 +2,7 @@ import React from "react"
 
 import { Form, Formik, FormikActions } from "formik"
 
-import Typography from "@material-ui/core/Typography"
+import { Text } from "lib/components"
 import Modal from "@material-ui/core/Modal"
 import Paper from "@material-ui/core/Paper"
 import TextField from "@material-ui/core/TextField"
@@ -38,7 +38,7 @@ const CreateTaskListModal: React.FunctionComponent<Props> = ({
         {({ values, setFieldValue, isSubmitting }) => (
           <Paper className="p-3" style={{ width: 500, maxWidth: "100%" }}>
             <Form>
-              <Typography variant="h6">Create a new list</Typography>
+              <Text variant="h6">Create a new list</Text>
 
               <div className="mt-3">
                 <TextField

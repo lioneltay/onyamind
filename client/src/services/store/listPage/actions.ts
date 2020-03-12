@@ -1,7 +1,7 @@
 import { bindActionCreators, Dispatch } from "redux"
 import { useDispatch } from "react-redux"
 import { ActionsUnion, ActionTypesUnion } from "services/store/helpers"
-import { State } from "services/store/listPage/reducer"
+import { State } from "services/store"
 import * as selectors from "services/store/listPage/selectors"
 import * as api from "services/api"
 
@@ -34,8 +34,16 @@ const setEditingTask = (taskId: ID | null) =>
     payload: { taskId },
   } as const)
 
+const stopEditingTask = () => ({ type: "STOP_EDITING_TASK" } as const)
+
+const toggleEditingTask = (taskId: ID | null) =>
+  ({
+    type: "TOGGLE_EDITING_TASK",
+    payload: { taskId },
+  } as const)
+
 const completeSelectedTasksPending = () =>
-  ({ type: "COMPLETE_SELECTED_TASKS|Pending" } as const)
+  ({ type: "COMPLETE_SELECTED_TASKS|PENDING" } as const)
 const completeSelectedTasksFailure = () =>
   ({ type: "COMPLETE_SELECTED_TASKS|FAILURE" } as const)
 const completeSelectedTasksSuccess = () =>
@@ -55,12 +63,33 @@ const completeSelectedTasks = async (
     })
 }
 
+const archiveCompletedTasksPending = () =>
+  ({ type: "ARCHIVE_COMPLETED_TASKS|PENDING" } as const)
+const archiveCompletedTasksFailure = () =>
+  ({ type: "ARCHIVE_COMPLETED_TASKS|FAILURE" } as const)
+const archiveCompletedTasksSuccess = () =>
+  ({ type: "ARCHIVE_COMPLETED_TASKS|SUCCESS" } as const)
+const archiveCompletedTasks = () => (
+  dispatch: Dispatch,
+  getState: GetState,
+) => {
+  dispatch(archiveCompletedTasksPending())
+  const tasks = selectors.completedTasks(getState())
+  return api
+    .editTasks(tasks.map(task => ({ ...task, archived: true })))
+    .then(res => dispatch(archiveCompletedTasksSuccess()))
+    .catch(e => {
+      dispatch(archiveCompletedTasksFailure())
+      throw e
+    })
+}
+
 const decompleteSelectedTasksPending = () =>
-  ({ type: "DECOMPLETE_SELECTED_TASKS" } as const)
+  ({ type: "DECOMPLETE_SELECTED_TASKS|PENDING" } as const)
 const decompleteSelectedTasksFailure = () =>
-  ({ type: "DECOMPLETE_SELECTED_TASKS" } as const)
+  ({ type: "DECOMPLETE_SELECTED_TASKS|FAILURE" } as const)
 const decompleteSelectedTasksSuccess = () =>
-  ({ type: "DECOMPLETE_SELECTED_TASKS" } as const)
+  ({ type: "DECOMPLETE_SELECTED_TASKS|SUCCESS" } as const)
 const decompleteSelectedTasks = () => (
   dispatch: Dispatch,
   getState: GetState,
@@ -144,18 +173,19 @@ type EditTaskInput = {
   taskId: ID
   title?: string
   notes?: string
+  complete?: boolean
 }
 
 const editTaskPending = () => ({ type: "EDIT_TASK|PENDING" } as const)
 const editTaskFailure = () => ({ type: "EDIT_TASK|FAILURE" } as const)
 const editTaskSuccess = () => ({ type: "EDIT_TASK|SUCCESS" } as const)
-const editTask = ({ taskId, title, notes }: EditTaskInput) => (
+const editTask = ({ taskId, title, notes, complete }: EditTaskInput) => (
   dispatch: Dispatch,
   getState: GetState,
 ) => {
   dispatch(editTaskPending())
   return api
-    .editTask({ taskId, data: { title, notes } })
+    .editTask({ taskId, data: { title, notes, complete } })
     .then(res => dispatch(editTaskSuccess()))
     .catch(e => {
       dispatch(editTaskFailure())
@@ -387,6 +417,8 @@ const Action = {
   setUser,
   selectTaskList,
   setEditingTask,
+  stopEditingTask,
+  toggleEditingTask,
 
   completeSelectedTasksPending,
   completeSelectedTasksFailure,
@@ -395,6 +427,10 @@ const Action = {
   decompleteCompletedTasksPending,
   decompleteCompletedTasksFailure,
   decompleteCompletedTasksSuccess,
+
+  decompleteSelectedTasksPending,
+  decompleteSelectedTasksFailure,
+  decompleteSelectedTasksSuccess,
 
   deleteCompletedTasksPending,
   deleteCompletedTasksFailure,
@@ -451,6 +487,10 @@ const Action = {
   setPrimaryTaskListPending,
   setPrimaryTaskListFailure,
   setPrimaryTaskListSuccess,
+
+  archiveCompletedTasksPending,
+  archiveCompletedTasksFailure,
+  archiveCompletedTasksSuccess,
 }
 
 export const actionCreators = {
@@ -462,6 +502,8 @@ export const actionCreators = {
   deselectAllTasks,
   selectTaskList,
   setEditingTask,
+  stopEditingTask,
+  toggleEditingTask,
   setUser,
   completeSelectedTasks,
   decompleteSelectedTasks,
@@ -479,6 +521,7 @@ export const actionCreators = {
   createTaskList,
   editTaskList,
   deleteTaskList,
+  archiveCompletedTasks,
 }
 
 export type Action = ActionsUnion<typeof Action>

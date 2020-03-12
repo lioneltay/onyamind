@@ -1,7 +1,7 @@
 import React from "react"
 
 import Modal from "lib/components/Modal"
-import Typography from "@material-ui/core/Typography"
+import {Text} from "lib/components"
 import Button from "@material-ui/core/Button"
 
 type Props = {
@@ -29,9 +29,9 @@ const DeleteTaskListModal: React.FunctionComponent<Props> = ({
         </Button>
       }
     >
-      <Typography variant="body2">
+      <Text variant="body2">
         Are you sure you want to delete this list?
-      </Typography>
+      </Text>
     </Modal>
   )
 }

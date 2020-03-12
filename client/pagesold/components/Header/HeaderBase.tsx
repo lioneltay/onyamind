@@ -2,7 +2,7 @@ import React, { Fragment } from "react"
 import { styled } from "theme"
 
 import IconButton from "@material-ui/core/IconButton"
-import Typography from "@material-ui/core/Typography"
+import {Text} from "lib/components"
 import Menu from "@material-ui/icons/Menu"
 import ArrowBack from "@material-ui/icons/ArrowBack"
 import Delete from "@material-ui/icons/Delete"
@@ -91,9 +91,9 @@ const HeaderBase: React.FunctionComponent<Props> = ({
                 >
                   <Menu />
                 </IconButton>
-                <Typography variant="h6" style={{ paddingLeft: 18 }}>
+                <Text variant="h6" style={{ paddingLeft: 18 }}>
                   {title}
-                </Typography>
+                </Text>
               </Fragment>
             )}
           </LeftSection>

@@ -9,7 +9,7 @@ import ListItemText from "@material-ui/core/ListItemText"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction"
 import Collapse from "@material-ui/core/Collapse"
-import Typography from "@material-ui/core/Typography"
+import {Text} from "lib/components"
 import Avatar from "@material-ui/core/Avatar"
 import Divider from "@material-ui/core/Divider"
 import Button from "@material-ui/core/Button"
@@ -146,14 +146,14 @@ const Drawer: React.FunctionComponent<Props> = ({
         )}
         <ListItem className="pb-0 pt-3" dense>
           <ListItemText className="fa-c">
-            <Typography variant="subtitle2" className="fa-c">
+            <Text variant="subtitle2" className="fa-c">
               <span className="mr-3">Primary List</span>
               <Help
                 className="cursor-pointer"
                 style={{ color: theme.icon_color }}
                 onClick={() => setShowHelpModal(true)}
               />
-            </Typography>
+            </Text>
           </ListItemText>
         </ListItem>
         <Modal
@@ -171,10 +171,10 @@ const Drawer: React.FunctionComponent<Props> = ({
             </Button>
           }
         >
-          <Typography>
+          <Text>
             The primary list will be selected by default when you open the
             application.
-          </Typography>
+          </Text>
         </Modal>
         {primary_list ? (
           <TaskList
@@ -206,7 +206,7 @@ const Drawer: React.FunctionComponent<Props> = ({
           onClick={() => setShowOtherLists(show => !show)}
         >
           <ListItemText>
-            <Typography variant="subtitle2">Other Lists</Typography>
+            <Text variant="subtitle2">Other Lists</Text>
           </ListItemText>
           <div style={{ color: theme.grey_text }}>
             {show_other_lists ? <ExpandLess /> : <ExpandMore />}
@@ -277,7 +277,7 @@ const Drawer: React.FunctionComponent<Props> = ({
         <Divider />
         <ListItem className="pb-0 pt-3" dense>
           <ListItemText>
-            <Typography variant="subtitle2">Settings</Typography>
+            <Text variant="subtitle2">Settings</Text>
           </ListItemText>
         </ListItem>
 
@@ -348,7 +348,7 @@ const OptionItem: React.FunctionComponent<OptionItemProps> = ({
   return (
     <ListItem button className="cursor-pointer" onClick={onClick}>
       <ListItemIcon>{icon}</ListItemIcon>
-      <ListItemText primary={<Typography>{text}</Typography>} />
+      <ListItemText primary={<Text>{text}</Text>} />
     </ListItem>
   )
 }

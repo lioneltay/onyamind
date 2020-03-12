@@ -2,14 +2,11 @@ import React from "react"
 import { styled } from "theme"
 import { useTheme } from "theme"
 
-import ListItem from "@material-ui/core/ListItem"
-import ListItemIcon from "@material-ui/core/ListItemIcon"
-import Fab from "@material-ui/core/Fab"
+import { ListItem, ListItemIcon, Fab, ListItemText } from "@material-ui/core"
 
-import Assignment from "@material-ui/icons/Assignment"
+import { Text } from "lib/components"
 
-import { ListItemText } from "@material-ui/core"
-import { connect } from "services/state"
+import { Assignment } from "@material-ui/icons"
 
 const StyledListItem = styled(ListItem)`
   position: relative;
@@ -34,8 +31,8 @@ const SingleLineWithEllipsis: React.FunctionComponent<Stylable> = ({
   children,
 }) => {
   return (
-    <span className="flex">
-      <span
+    <Text className="flex">
+      <Text
         className={className}
         style={{
           ...style,
@@ -45,13 +42,12 @@ const SingleLineWithEllipsis: React.FunctionComponent<Stylable> = ({
         }}
       >
         {children}
-      </span>
-    </span>
+      </Text>
+    </Text>
   )
 }
 
 export type Props = Stylable & {
-  theme: Theme
   selected: boolean
   task: Task
   editing: boolean
@@ -63,7 +59,7 @@ export type Props = Stylable & {
   actions?: React.ReactNode
 }
 
-const Task: React.FunctionComponent<Props> = ({
+export default ({
   style,
   className,
 
@@ -76,7 +72,7 @@ const Task: React.FunctionComponent<Props> = ({
 
   actions,
   hoverActions,
-}) => {
+}: Props) => {
   const theme = useTheme()
 
   return (
@@ -93,7 +89,7 @@ const Task: React.FunctionComponent<Props> = ({
             borderRadius: editing ? "50%" : "5px",
             transition: "300ms",
             border: selected ? "1px solid blue" : "none",
-            background: theme.background_faded_color,
+            background: theme.backgroundFadedColor,
             marginLeft: 4,
           }}
           onClick={e => {
@@ -105,7 +101,7 @@ const Task: React.FunctionComponent<Props> = ({
           <Assignment
             style={{
               color: theme.mui.palette.primary.main,
-              color: theme.icon_color,
+              // color: theme.iconColor,
               transform: `scale(${editing ? 0.7 : 1})`,
               transition: "300ms",
             }}

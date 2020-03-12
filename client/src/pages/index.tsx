@@ -12,7 +12,7 @@ export default () => {
       <Drawer />
 
       <Switch>
-        {/* <Route path="/lists/:listId/:listName" component={ListPage} /> */}
+        <Route path="/lists/:listId/:listName" component={ListPage} />
       </Switch>
     </div>
   )

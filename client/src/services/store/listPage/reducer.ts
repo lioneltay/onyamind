@@ -75,13 +75,25 @@ export const reducer = (state: State = initialState, action: Action): State => {
         selectedTaskIds: [],
       }
     }
-    case "COMPLETE_SELECTED_TASKS": {
+    case "COMPLETE_SELECTED_TASKS|PENDING": {
+      return state
+    }
+    case "COMPLETE_SELECTED_TASKS|FAILURE": {
+      return state
+    }
+    case "COMPLETE_SELECTED_TASKS|SUCCESS": {
       return {
         ...state,
         selectedTaskIds: [],
       }
     }
-    case "DECOMPLETE_SELECTED_TASKS": {
+    case "DECOMPLETE_SELECTED_TASKS|PENDING": {
+      return state
+    }
+    case "DECOMPLETE_SELECTED_TASKS|FAILURE": {
+      return state
+    }
+    case "DECOMPLETE_SELECTED_TASKS|SUCCESS": {
       return {
         ...state,
         selectedTaskIds: [],
@@ -98,6 +110,27 @@ export const reducer = (state: State = initialState, action: Action): State => {
       return {
         ...state,
         selectedTaskListId: action.payload.listId,
+      }
+    }
+    case "STOP_EDITING_TASK": {
+      return {
+        ...state,
+        editingTaskId: null,
+      }
+    }
+    case "SET_EDITING_TASK": {
+      return {
+        ...state,
+        editingTaskId: action.payload.taskId,
+      }
+    }
+    case "TOGGLE_EDITING_TASK": {
+      return {
+        ...state,
+        editingTaskId:
+          state.editingTaskId === action.payload.taskId
+            ? null
+            : action.payload.taskId,
       }
     }
     default: {

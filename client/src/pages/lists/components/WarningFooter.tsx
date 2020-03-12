@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import styled from "styled-components"
 import { Transition } from "react-spring"
 
-import Typography from "@material-ui/core/Typography"
+import {Text} from "lib/components"
 import Button from "@material-ui/core/Button"
 import Clear from "@material-ui/icons/Clear"
 import Modal from "lib/components/Modal"
@@ -53,11 +53,11 @@ const WarningFooter: React.FunctionComponent<Props> = ({ show, theme }) => {
       {show => style =>
         show ? (
           <Container style={style}>
-            <Typography variant="caption" color="inherit" align="center">
+            <Text variant="caption" color="inherit" align="center">
               <Action onClick={signIn}>Sign in</Action> to backup and sync your
               notes across devices.{" "}
               <Action onClick={() => setShowModal(true)}>Learn more.</Action>
-            </Typography>
+            </Text>
             <X fontSize="small" onClick={toggleWarningFooter} />
 
             <Modal
@@ -75,7 +75,7 @@ const WarningFooter: React.FunctionComponent<Props> = ({ show, theme }) => {
               }
               title="You are not signed in"
             >
-              <Typography style={{ color: theme.grey_text }}>
+              <Text style={{ color: theme.grey_text }}>
                 As you are not signed in your tasks are stored and only
                 accessible directly on your device. Your data could be lost if
                 you delete the app or lose your phone.
@@ -86,7 +86,7 @@ const WarningFooter: React.FunctionComponent<Props> = ({ show, theme }) => {
                   <li>Access to your tasks across all your devices</li>
                   <li>Automatic backups of your tasks so they won't be lost</li>
                 </ul>
-              </Typography>
+              </Text>
             </Modal>
           </Container>
         ) : null}

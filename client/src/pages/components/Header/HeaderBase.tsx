@@ -3,7 +3,8 @@ import { useTheme } from "theme"
 import { noopTemplate as css } from "lib/utils"
 
 import { ArrowBack, Menu } from "@material-ui/icons"
-import { Toolbar, AppBar, IconButton, Typography } from "@material-ui/core"
+import { Toolbar, AppBar, IconButton } from "@material-ui/core"
+import { Text } from "lib/components"
 
 import { useSelector, useActions } from "services/store"
 
@@ -78,9 +79,9 @@ export default ({ title, editingActions, actions }: Props) => {
                 >
                   <Menu />
                 </IconButton>
-                <Typography variant="h6" style={{ paddingLeft: 18 }}>
+                <Text variant="h6" style={{ paddingLeft: 18 }}>
                   {title}
-                </Typography>
+                </Text>
               </Fragment>
             )}
           </div>

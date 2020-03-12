@@ -6,8 +6,6 @@ import red from "@material-ui/core/colors/red"
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles"
 import { teal, blue } from "@material-ui/core/colors"
 
-import { connect } from "services/state"
-
 const getSCTheme = ({ dark }: ThemeProps) => {
   return {
     backgroundColor: dark ? "#282828" : "#ffffff",
@@ -21,7 +19,7 @@ const getSCTheme = ({ dark }: ThemeProps) => {
 }
 
 type ThemeProps = {
-  dark: boolean
+  dark?: boolean
 }
 
 export const lightMuiTheme = createMuiTheme({
@@ -56,6 +54,7 @@ export const darkMuiTheme = createMuiTheme({
 
 export const getTheme = ({ dark }: ThemeProps) => {
   const muiTheme = dark ? darkMuiTheme : lightMuiTheme
+  console.log(muiTheme)
   return { ...getSCTheme({ dark }), mui: muiTheme }
 }
 
@@ -66,9 +65,10 @@ const ThemeContext = createContext<Theme>(getTheme({ dark: true }))
 export const useTheme = () => useContext(ThemeContext)
 
 export const ThemeProvider: React.FunctionComponent<ThemeProps> = ({
+  dark = true,
   children,
 }) => {
-  const theme = getTheme({ dark: true })
+  const theme = getTheme({ dark })
   return (
     <MuiThemeProvider theme={theme.mui}>
       <SCThemeProvider theme={theme}>
