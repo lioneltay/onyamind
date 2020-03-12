@@ -4,7 +4,7 @@ import { IconButton } from "@material-ui/core"
 import { SwapHoriz, Add, Check, Delete } from "@material-ui/icons"
 
 import IconButtonMenu from "lib/components/IconButtonMenu"
-// import TaskAdder from "./TaskAdder"
+import TaskAdder from "./TaskAdder"
 import HeaderBase from "../HeaderBase"
 
 import { useSelector } from "services/store/listPage"
@@ -50,7 +50,7 @@ export default () => {
           </Fragment>
         }
       />
-      {/* <TaskAdder /> */}
+      <TaskAdder />
     </Fragment>
   )
 }

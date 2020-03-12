@@ -7,6 +7,12 @@ import * as api from "services/api"
 
 type GetState = () => State
 
+const selectIncompleteTasks = () =>
+  ({ type: "SELECT_INCOMPLETE_TASKS" } as const)
+
+const deselectIncompleteTasks = () =>
+  ({ type: "DESELECT_INCOMPLETE_TASKS" } as const)
+
 const setTaskLists = (taskLists: TaskList[]) =>
   ({ type: "SET_TASK_LISTS", payload: { taskLists } } as const)
 
@@ -148,17 +154,21 @@ const createTaskPending = () => ({ type: "CREATE_TASK|PENDING" } as const)
 const createTaskFailure = () => ({ type: "CREATE_TASK|FAILURE" } as const)
 const createTaskSuccess = () => ({ type: "CREATE_TASK|SUCCESS" } as const)
 type CreateTaskInput = {
-  userId: ID
-  listId: ID
   title?: string
   notes?: string
 }
-const createTask = ({
-  title = "",
-  notes = "",
-  userId,
-  listId,
-}: CreateTaskInput) => (dispatch: Dispatch, getState: GetState) => {
+const createTask = ({ title = "", notes = "" }: CreateTaskInput) => (
+  dispatch: Dispatch,
+  getState: GetState,
+) => {
+  const state = getState()
+  const listId = state.listPage.selectedTaskListId
+  const userId = state.auth.user?.uid ?? null
+
+  if (!listId) {
+    throw Error("Cannot create task when there is no selected task list")
+  }
+
   dispatch(createTaskPending())
   return api
     .createTask({ listId, userId, title, notes })
@@ -408,6 +418,23 @@ const deleteTaskList = (listId: ID) => (
     })
 }
 
+const deleteSelectedTasksPending = () =>
+  ({ type: "DELETE_SELECTED_TASKS|PENDING" } as const)
+const deleteSelectedTasksFailure = () =>
+  ({ type: "DELETE_SELECTED_TASKS|FAILURE" } as const)
+const deleteSelectedTasksSuccess = () =>
+  ({ type: "DELETE_SELECTED_TASKS|SUCCESS" } as const)
+const deleteSelectedTasks = () => (dispatch: Dispatch, getState: GetState) => {
+  dispatch(deleteSelectedTasksPending())
+  return api
+    .deleteTasks(selectors.selectedTasks(getState()).map(task => task.id))
+    .then(res => dispatch(deleteSelectedTasksSuccess()))
+    .catch(e => {
+      dispatch(deleteSelectedTasksFailure())
+      throw e
+    })
+}
+
 const Action = {
   setTaskLists,
   setTasks,
@@ -419,6 +446,12 @@ const Action = {
   setEditingTask,
   stopEditingTask,
   toggleEditingTask,
+  selectIncompleteTasks,
+  deselectIncompleteTasks,
+
+  deleteSelectedTasksPending,
+  deleteSelectedTasksFailure,
+  deleteSelectedTasksSuccess,
 
   completeSelectedTasksPending,
   completeSelectedTasksFailure,
@@ -522,6 +555,9 @@ export const actionCreators = {
   editTaskList,
   deleteTaskList,
   archiveCompletedTasks,
+  selectIncompleteTasks,
+  deselectIncompleteTasks,
+  deleteSelectedTasks,
 }
 
 export type Action = ActionsUnion<typeof Action>

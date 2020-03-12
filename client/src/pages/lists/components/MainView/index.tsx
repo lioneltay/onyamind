@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react"
+import React, { useState, useCallback, Fragment } from "react"
 import { noopTemplate as css } from "lib/utils"
 import styled from "styled-components"
 import { comparator, partition } from "ramda"
@@ -86,40 +86,28 @@ export default () => {
     <OuterContainer>
       <Container>
         <List className="p-0" style={{ background: theme.backgroundColor }}>
-          <Transition
-            items={incompleteTasks}
-            keys={task => task.id}
-            initial={{ height: "auto", opacity: 1 }}
-            from={{ height: 0, opacity: 0 }}
-            enter={{ height: "auto", opacity: 1 }}
-            leave={{ height: 0, opacity: 0 }}
-          >
-            {task => style => {
-              return (
-                <animated.div style={style}>
-                  <Task
-                    key={task.id}
-                    task={task}
-                    onItemClick={toggleEditingTask}
-                    onSelectTask={stopEditingTask}
-                    selected={editingTaskId === task.id}
-                  />
-                  <CollapsableEditor
-                    task={task}
-                    open={editingTaskId === task.id}
-                    onSubmit={async values => {
-                      stopEditingTask()
-                      await editTask({
-                        taskId: task.id,
-                        title: values.title,
-                        notes: values.notes,
-                      })
-                    }}
-                  />
-                </animated.div>
-              )
-            }}
-          </Transition>
+          {incompleteTasks.map(task => (
+            <Fragment key={task.id}>
+              <Task
+                task={task}
+                onItemClick={toggleEditingTask}
+                onSelectTask={stopEditingTask}
+                selected={editingTaskId === task.id}
+              />
+              <CollapsableEditor
+                task={task}
+                open={editingTaskId === task.id}
+                onSubmit={async values => {
+                  stopEditingTask()
+                  await editTask({
+                    taskId: task.id,
+                    title: values.title,
+                    notes: values.notes,
+                  })
+                }}
+              />
+            </Fragment>
+          ))}
         </List>
 
         <List className="p-0" onClick={toggleShowCompleteTasks}>
@@ -151,39 +139,27 @@ export default () => {
         </List>
 
         <Collapse in={showCompleteTasks}>
-          <Transition
-            items={completeTasks}
-            keys={task => task.id}
-            initial={{ height: "auto", opacity: 1 }}
-            from={{ height: 0, opacity: 0 }}
-            enter={{ height: "auto", opacity: 1 }}
-            leave={{ height: 0, opacity: 0 }}
-          >
-            {task => style => {
-              return (
-                <animated.div style={style}>
-                  <Task
-                    key={task.id}
-                    task={task}
-                    onItemClick={toggleEditingTask}
-                    onSelectTask={stopEditingTask}
-                  />
-                  <CollapsableEditor
-                    task={task}
-                    open={editingTaskId === task.id}
-                    onSubmit={async values => {
-                      stopEditingTask()
-                      await editTask({
-                        taskId: task.id,
-                        title: values.title,
-                        notes: values.notes,
-                      })
-                    }}
-                  />
-                </animated.div>
-              )
-            }}
-          </Transition>
+          {completeTasks.map(task => (
+            <Fragment key={task.id}>
+              <Task
+                task={task}
+                onItemClick={toggleEditingTask}
+                onSelectTask={stopEditingTask}
+              />
+              <CollapsableEditor
+                task={task}
+                open={editingTaskId === task.id}
+                onSubmit={async values => {
+                  stopEditingTask()
+                  await editTask({
+                    taskId: task.id,
+                    title: values.title,
+                    notes: values.notes,
+                  })
+                }}
+              />
+            </Fragment>
+          ))}
         </Collapse>
       </Container>
     </OuterContainer>

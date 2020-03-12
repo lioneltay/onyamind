@@ -1,5 +1,6 @@
 import { assertNever } from "lib/utils"
 import { Action } from "./actions"
+import { union } from "ramda"
 
 export type State = {
   // All TaskLists of the current user
@@ -133,8 +134,26 @@ export const reducer = (state: State = initialState, action: Action): State => {
             : action.payload.taskId,
       }
     }
+    case "SELECT_INCOMPLETE_TASKS": {
+      const incompleteTaskIds =
+        state.tasks?.filter(task => !task.complete).map(task => task.id) ?? []
+      return {
+        ...state,
+        selectedTaskIds: union(state.selectedTaskIds, incompleteTaskIds),
+      }
+    }
+    case "DESELECT_INCOMPLETE_TASKS": {
+      const incompleteTaskIds =
+        state.tasks?.filter(task => !task.complete).map(task => task.id) ?? []
+      return {
+        ...state,
+        selectedTaskIds: state.selectedTaskIds.filter(
+          id => !incompleteTaskIds.includes(id),
+        ),
+      }
+    }
     default: {
-      assertNever(action)
+      // assertNever(action)
       return state
     }
   }

@@ -1,17 +1,20 @@
 import React from "react"
-import Button from "@material-ui/core/Button"
-import Snackbar from "@material-ui/core/Snackbar"
-import IconButton from "@material-ui/core/IconButton"
-import CloseIcon from "@material-ui/icons/Close"
+import { Button, Snackbar, IconButton } from "@material-ui/core"
+import { Close } from "@material-ui/icons"
 
-import { connect } from "services/state"
-import { openUndo, undo, closeUndo } from "services/state/modules/ui"
+import { useSelector, useActions } from "services/store"
 
 type Props = {
   show: boolean
 }
 
-const UndoSnackbar: React.FunctionComponent<Props> = ({ show }) => {
+export default () => {
+  const { show } = useSelector(state => ({
+    show: state.ui.showUndoSnackbar,
+  }))
+
+  const { openUndoSnackbar, closeUndoSnackbar } = useActions()
+
   return (
     <Snackbar
       anchorOrigin={{
@@ -20,7 +23,7 @@ const UndoSnackbar: React.FunctionComponent<Props> = ({ show }) => {
       }}
       open={show}
       autoHideDuration={7000}
-      onClose={closeUndo}
+      onClose={closeUndoSnackbar}
       ClickAwayListenerProps={{
         onClickAway: () => {},
       }}
@@ -29,22 +32,23 @@ const UndoSnackbar: React.FunctionComponent<Props> = ({ show }) => {
       }}
       message={<span style={{ userSelect: "none" }}>Task deleted</span>}
       action={[
-        <Button key="undo" color="secondary" size="small" onClick={undo}>
+        <Button
+          key="undo"
+          color="secondary"
+          size="small"
+          onClick={() => console.log("what")}
+        >
           UNDO
         </Button>,
         <IconButton
           key="close"
           aria-label="Close"
           color="inherit"
-          onClick={closeUndo}
+          onClick={closeUndoSnackbar}
         >
-          <CloseIcon />
+          <Close />
         </IconButton>,
       ]}
     />
   )
 }
-
-export default connect(state => ({
-  show: state.ui.show_undo,
-}))(UndoSnackbar)

@@ -33,6 +33,18 @@ export const reducer = (state: State = initialState, action: Action): State => {
         showDrawer: !state.showDrawer,
       }
     }
+    case "CLOSE_UNDO_SNACKBAR": {
+      return {
+        ...state,
+        showUndoSnackbar: false,
+      }
+    }
+    case "OPEN_UNDO_SNACKBAR": {
+      return {
+        ...state,
+        showUndoSnackbar: true,
+      }
+    }
     default: {
       assertNever(action)
       return state

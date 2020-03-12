@@ -1,32 +1,27 @@
 import React, { Fragment, useState } from "react"
-import { styled } from "theme"
+import { useTheme, styled } from "theme"
 import { useMediaQuery } from "@tekktekk/react-media-query"
 
-import Add from "@material-ui/icons/Add"
-import Clear from "@material-ui/icons/Clear"
-import IconButton from "@material-ui/core/IconButton"
-import TextField from "@material-ui/core/TextField"
-import InputAdornment from "@material-ui/core/InputAdornment"
-
-import Checkbox from "@material-ui/core/Checkbox"
-import List from "@material-ui/core/List"
-import ListItem from "@material-ui/core/ListItem"
-import ListItemText from "@material-ui/core/ListItemText"
-import ListItemIcon from "@material-ui/core/ListItemIcon"
+import { Add, Clear } from "@material-ui/icons"
 
 import {
-  selectAllIncompleteTasks,
-  deselectAllIncompleteTasks,
-  addTask,
-  stopEditingTask,
-} from "services/state/modules/list-view"
-import { connect } from "services/state"
+  IconButton,
+  TextField,
+  InputAdornment,
+  Checkbox,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+} from "@material-ui/core"
+
+import { useSelector, useActions } from "services/store"
 
 import CreateTaskModal from "./CreateTaskModal"
 
 const OuterContainer = styled.div`
   position: relative;
-  background: ${({ theme }) => theme.background_faded_color};
+  background: ${({ theme }) => theme.backgroundFadedColor};
   width: 100%;
   display: flex;
   justify-content: center;
@@ -44,30 +39,39 @@ const AdderTextField = styled(TextField).attrs({ variant: "outlined" })`
   }
 ` as typeof TextField
 
-type Props = {
-  theme: Theme
-  tasks: Task[]
-  user: User
-  editing: boolean
-  selected_task_ids: ID[]
-  selected_task_list_id: ID | null
-}
+export default () => {
+  const theme = useTheme()
+  const [showCreateModal, setShowCreateModal] = useState(false)
+  const [newTaskTitle, setNewTaskTitle] = useState("")
 
-const TaskAdder: React.FunctionComponent<Props> = ({
-  editing,
-  selected_task_ids,
-  tasks,
-  theme,
-}) => {
-  const [show_create_modal, setShowCreateModal] = useState(false)
-  const [new_task_title, setNewTaskTitle] = useState("")
+  const {
+    stopEditingTask,
+    deselectIncompleteTasks,
+    selectIncompleteTasks,
+    createTask,
+  } = useActions()
 
-  const all_selected =
-    selected_task_ids.length !== 0 &&
+  const {
+    selectedTaskIds,
+    tasks,
+    editing,
+    selectedTaskListId,
+    userId,
+  } = useSelector(state => ({
+    selectedTaskIds: state.listPage.selectedTaskIds,
+    tasks: state.listPage.tasks,
+    editing: false,
+    selectedTaskListId: state.listPage.selectedTaskListId,
+    userId: state.auth.user?.uid,
+  }))
+
+  const allSelected = !!(
+    selectedTaskIds.length !== 0 &&
     tasks &&
     tasks
       .filter(task => !task.complete)
-      .every(task => selected_task_ids.includes(task.id))
+      .every(task => selectedTaskIds.includes(task.id))
+  )
 
   const mobile = useMediaQuery("(max-width: 800px)")
 
@@ -78,8 +82,8 @@ const TaskAdder: React.FunctionComponent<Props> = ({
           style={{
             height: 57,
             background: editing
-              ? theme.background_faded_color
-              : theme.background_color,
+              ? theme.backgroundFadedColor
+              : theme.backgroundColor,
           }}
         >
           {editing ? (
@@ -91,22 +95,20 @@ const TaskAdder: React.FunctionComponent<Props> = ({
               }}
               divider
               onClick={
-                all_selected
-                  ? deselectAllIncompleteTasks
-                  : selectAllIncompleteTasks
+                allSelected ? deselectIncompleteTasks : selectIncompleteTasks
               }
             >
               <ListItemIcon>
-                <Checkbox color="primary" checked={all_selected} />
+                <Checkbox color="primary" checked={allSelected} />
               </ListItemIcon>
               <ListItemText className="cursor-pointer">
                 <span
                   style={{
-                    color: theme.highlighted_text_color,
+                    color: theme.highlightedTextColor,
                     fontWeight: 500,
                   }}
                 >
-                  {all_selected ? "DESELECT ALL" : "SELECT ALL"}
+                  {allSelected ? "DESELECT ALL" : "SELECT ALL"}
                 </span>
               </ListItemText>
             </ListItem>
@@ -128,12 +130,12 @@ const TaskAdder: React.FunctionComponent<Props> = ({
                 onFocus={stopEditingTask}
                 placeholder="Add item"
                 className="fg-1"
-                value={new_task_title}
+                value={newTaskTitle}
                 onChange={e => setNewTaskTitle(e.currentTarget.value)}
                 onKeyPress={e => {
-                  if (e.key === "Enter" && new_task_title.length > 0) {
+                  if (e.key === "Enter" && newTaskTitle.length > 0) {
                     setNewTaskTitle("")
-                    addTask({ title: new_task_title })
+                    createTask({ title: newTaskTitle })
                   }
                 }}
                 InputProps={{
@@ -153,26 +155,17 @@ const TaskAdder: React.FunctionComponent<Props> = ({
       </OuterContainer>
 
       <CreateTaskModal
-        open={show_create_modal}
+        open={showCreateModal}
         onClose={() => setShowCreateModal(false)}
         initialValues={{
-          title: new_task_title,
+          title: newTaskTitle,
         }}
         onSubmit={async values => {
           setShowCreateModal(false)
           setNewTaskTitle("")
-          await addTask(values)
+          await createTask({ ...values })
         }}
       />
     </Fragment>
   )
 }
-
-export default connect(state => ({
-  theme: state.settings.theme,
-  user: state.user,
-  editing: state.list_view.editing,
-  selected_task_ids: state.list_view.selected_task_ids,
-  tasks: state.list_view.tasks,
-  selected_task_list_id: state.list_view.selected_task_list_id,
-}))(TaskAdder)
