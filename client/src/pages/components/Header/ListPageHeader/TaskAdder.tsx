@@ -21,7 +21,6 @@ import CreateTaskModal from "./CreateTaskModal"
 
 const OuterContainer = styled.div`
   position: relative;
-  background: ${({ theme }) => theme.backgroundFadedColor};
   width: 100%;
   display: flex;
   justify-content: center;
@@ -77,7 +76,12 @@ export default () => {
 
   return (
     <Fragment>
-      <OuterContainer style={{ paddingTop: mobile ? 0 : 24 }}>
+      <OuterContainer
+        style={{
+          paddingTop: mobile ? 0 : 24,
+          background: theme.backgroundFadedColor,
+        }}
+      >
         <Container
           style={{
             height: 57,

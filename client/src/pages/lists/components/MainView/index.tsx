@@ -1,19 +1,18 @@
 import React, { useState, useCallback, Fragment } from "react"
 import { noopTemplate as css } from "lib/utils"
 import styled from "styled-components"
-import { comparator, partition } from "ramda"
-import { Transition, animated } from "react-spring"
 
 import {
   List,
   ListItem,
-  ListItemText,
   ListItemIcon,
   LinearProgress,
   Fade,
   Collapse,
   IconButton,
 } from "@material-ui/core"
+
+import { Text, ListItemText } from "lib/components"
 
 import { ExpandMore, MoreVert } from "@material-ui/icons"
 
@@ -44,15 +43,17 @@ const Rotate = styled.div.attrs({})<{ flip: boolean }>`
 
 export default () => {
   const theme = useTheme()
-  const { editingTaskId, tasks } = useSelector((state, s) => ({
-    editingTaskId: s.listPage.editingTaskId(state),
-    tasks: s.listPage.tasks(state),
-  }))
+  const { editingTaskId, completeTasks, incompleteTasks } = useSelector(
+    (state, s) => ({
+      editingTaskId: s.listPage.editingTaskId(state),
+      completeTasks: s.listPage.completedTasks(state),
+      incompleteTasks: s.listPage.incompletedTasks(state),
+    }),
+  )
 
   const {
     stopEditingTask,
     editTask,
-    toggleEditingTask,
     decompleteCompletedTasks,
     archiveCompletedTasks,
   } = useActions()
@@ -63,7 +64,7 @@ export default () => {
     setShowCompleteTasks(show => !show)
   }, [])
 
-  if (!tasks) {
+  if (completeTasks.length + incompleteTasks.length === 0) {
     return (
       <OuterContainer>
         <Container>
@@ -75,23 +76,15 @@ export default () => {
     )
   }
 
-  const [completeTasks, incompleteTasks] = partition(
-    task => task.complete,
-    tasks,
-  ).map(list => list.sort(comparator((t1, t2) => t1.createdAt > t2.createdAt)))
-
-  console.log(completeTasks, incompleteTasks)
-
   return (
     <OuterContainer>
       <Container>
-        <List className="p-0" style={{ background: theme.backgroundColor }}>
+        <List className="p-0">
           {incompleteTasks.map(task => (
             <Fragment key={task.id}>
               <Task
+                backgroundColor={theme.backgroundColor}
                 task={task}
-                onItemClick={toggleEditingTask}
-                onSelectTask={stopEditingTask}
                 selected={editingTaskId === task.id}
               />
               <CollapsableEditor
@@ -138,29 +131,27 @@ export default () => {
           </ListItem>
         </List>
 
-        <Collapse in={showCompleteTasks}>
-          {completeTasks.map(task => (
-            <Fragment key={task.id}>
-              <Task
-                task={task}
-                onItemClick={toggleEditingTask}
-                onSelectTask={stopEditingTask}
-              />
-              <CollapsableEditor
-                task={task}
-                open={editingTaskId === task.id}
-                onSubmit={async values => {
-                  stopEditingTask()
-                  await editTask({
-                    taskId: task.id,
-                    title: values.title,
-                    notes: values.notes,
-                  })
-                }}
-              />
-            </Fragment>
-          ))}
-        </Collapse>
+        <List>
+          <Collapse in={showCompleteTasks}>
+            {completeTasks.map(task => (
+              <Fragment key={task.id}>
+                <Task task={task} />
+                <CollapsableEditor
+                  task={task}
+                  open={editingTaskId === task.id}
+                  onSubmit={async values => {
+                    stopEditingTask()
+                    await editTask({
+                      taskId: task.id,
+                      title: values.title,
+                      notes: values.notes,
+                    })
+                  }}
+                />
+              </Fragment>
+            ))}
+          </Collapse>
+        </List>
       </Container>
     </OuterContainer>
   )

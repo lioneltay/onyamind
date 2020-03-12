@@ -1,6 +1,7 @@
 import { State as StoreState } from "services/store"
 import { State } from "./reducer"
 import { notNil } from "lib/utils"
+import { sort, comparator } from "ramda"
 
 const slice = (state: StoreState): State => state.listPage
 
@@ -32,11 +33,17 @@ export const allSelectedTasksComplete = (state: StoreState): boolean =>
 export const allSelectedTasksInComplete = (state: StoreState): boolean =>
   selectedTasks(state).every(task => !task.complete)
 
+const sortTasksByDate = (tasks: Task[]) =>
+  sort(
+    comparator((t1, t2) => t1.createdAt > t2.createdAt),
+    tasks,
+  )
+
 export const completedTasks = (state: StoreState): Task[] =>
-  tasks(state)?.filter(task => task.complete) ?? []
+  sortTasksByDate((tasks(state) ?? []).filter(task => task.complete))
 
 export const incompletedTasks = (state: StoreState): Task[] =>
-  tasks(state)?.filter(task => !task.complete) ?? []
+  sortTasksByDate((tasks(state) ?? []).filter(task => !task.complete))
 
 export const trashTasks = (state: StoreState): Task[] =>
   slice(state).trashTasks ?? []

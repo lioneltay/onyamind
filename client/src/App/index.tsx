@@ -20,18 +20,9 @@ export default () => {
           <ThemeProvider dark={true}>
             <GlobalStyles />
             <Root />
-            <ShowState />
           </ThemeProvider>
         </StylesProvider>
       </BrowserRouter>
     </ReduxProvider>
   )
-}
-
-import { useSelector } from "services/store/listPage"
-
-const ShowState = () => {
-  const state = useSelector(state => state)
-
-  return <pre>{JSON.stringify(state, null, 2)}</pre>
 }

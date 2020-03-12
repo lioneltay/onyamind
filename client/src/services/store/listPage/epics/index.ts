@@ -25,6 +25,7 @@ const createTasksObservable = (userId: ID | null, listId: ID) =>
       .collection("task")
       .where("listId", "==", listId)
       .where("userId", "==", userId)
+      .where("archived", "==", false)
       .onSnapshot(snapshot => {
         const tasks = snapshot.docs.map(doc => dataWithId(doc) as Task)
         observer.next(tasks)

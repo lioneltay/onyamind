@@ -1,10 +1,11 @@
 import React from "react"
+import { noopTemplate as css } from "lib/utils"
 import { styled } from "theme"
 import { useTheme } from "theme"
 
-import { ListItem, ListItemIcon, Fab, ListItemText } from "@material-ui/core"
+import { ListItem, ListItemIcon, Fab } from "@material-ui/core"
 
-import { Text } from "lib/components"
+import { ListItemText } from "lib/components"
 
 import { Assignment } from "@material-ui/icons"
 
@@ -25,43 +26,23 @@ const Overlay = styled.div`
   }
 `
 
-const SingleLineWithEllipsis: React.FunctionComponent<Stylable> = ({
-  className,
-  style,
-  children,
-}) => {
-  return (
-    <Text className="flex">
-      <Text
-        className={className}
-        style={{
-          ...style,
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-        }}
-      >
-        {children}
-      </Text>
-    </Text>
-  )
-}
-
-export type Props = Stylable & {
+export type TaskProps = Stylable & {
   selected: boolean
   task: Task
   editing: boolean
+  backgroundColor?: string
 
   onSelectTask?: (id: ID) => void
   onItemClick?: (id: ID) => void
 
   hoverActions?: React.ReactNode
-  actions?: React.ReactNode
 }
 
 export default ({
   style,
   className,
+
+  backgroundColor = "transparent",
 
   selected,
   task,
@@ -70,14 +51,13 @@ export default ({
   onSelectTask = () => {},
   onItemClick = () => {},
 
-  actions,
   hoverActions,
-}: Props) => {
+}: TaskProps) => {
   const theme = useTheme()
 
   return (
     <StyledListItem
-      style={style}
+      style={{ ...style, backgroundColor }}
       className={className}
       selected={selected}
       button
@@ -100,8 +80,7 @@ export default ({
         >
           <Assignment
             style={{
-              color: theme.mui.palette.primary.main,
-              // color: theme.iconColor,
+              color: theme.iconColor,
               transform: `scale(${editing ? 0.7 : 1})`,
               transition: "300ms",
             }}
@@ -111,26 +90,20 @@ export default ({
 
       <ListItemText
         primary={
-          <SingleLineWithEllipsis
+          <span
+            className="ellipsis bold"
             style={{
-              fontWeight: 500,
               fontSize: "0.95rem",
               textDecoration: task.complete ? "line-through" : "none",
             }}
           >
             {task.title}
-          </SingleLineWithEllipsis>
+          </span>
         }
-        secondary={
-          <SingleLineWithEllipsis style={{ fontWeight: 500 }}>
-            {task.notes}
-          </SingleLineWithEllipsis>
-        }
+        secondary={<span className="ellipsis bold">{task.notes}</span>}
       />
 
       <Overlay onClick={e => e.stopPropagation()}>{hoverActions}</Overlay>
-
-      <div onClick={e => e.stopPropagation()}>{actions}</div>
     </StyledListItem>
   )
 }

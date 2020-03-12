@@ -4,8 +4,11 @@ import styled from "styled-components"
 import { useGesture } from "lib/useGesture"
 import { Spring, config } from "react-spring"
 
-import IconButton from "@material-ui/core/IconButton"
-import ListItem from "@material-ui/core/ListItem"
+import { IconButton, ListItem } from "@material-ui/core"
+
+import { Delete, Check } from "@material-ui/icons"
+
+import Task, { TaskProps } from "./Task"
 
 const Container = styled.div`
   width: 100%;
@@ -13,30 +16,28 @@ const Container = styled.div`
   overflow-x: hidden;
 `
 
-type GestureContainerProps = {
+type Props = TaskProps & {
   onSwipeLeft?: () => void
   onSwipeRight?: () => void
-  leftBackground: string
-  rightBackground: string
-  leftIcon: React.ReactNode
-  rightIcon: React.ReactNode
+  swipeLeftBackground?: string
+  swipeRightBackground?: string
+  swipeLeftIcon?: React.ReactNode
+  swipeRightIcon?: React.ReactNode
 }
 
-const TaskGestureContainer: React.FunctionComponent<GestureContainerProps> = ({
-  children,
+export default ({
   onSwipeLeft = () => {},
   onSwipeRight = () => {},
-  leftBackground,
-  leftIcon,
-  rightBackground,
-  rightIcon,
-}) => {
+  swipeLeftBackground = "tomato",
+  swipeLeftIcon = <Delete />,
+  swipeRightBackground = "dodgerblue",
+  swipeRightIcon = <Check />,
+  ...taskProps
+}: Props) => {
   const [percent, setPercent] = useState(0)
-  const [status, setStatus] = useState("default" as
-    | "default"
-    | "pulling"
-    | "left"
-    | "right")
+  const [status, setStatus] = useState(
+    "default" as "default" | "pulling" | "left" | "right",
+  )
   const container_ref = useRef(null as null | HTMLElement)
   const [done, setDone] = useState(false)
 
@@ -95,14 +96,14 @@ const TaskGestureContainer: React.FunctionComponent<GestureContainerProps> = ({
                 top: 0,
                 left: 0,
                 backgroundColor: right
-                  ? rightBackground
+                  ? swipeRightBackground
                   : left
-                  ? leftBackground
+                  ? swipeLeftBackground
                   : undefined,
               }}
             >
               <IconButton style={{ color: "white" }}>
-                {right ? rightIcon : left ? leftIcon : undefined}
+                {right ? swipeRightIcon : left ? swipeLeftIcon : undefined}
               </IconButton>
             </ListItem>
             <div
@@ -114,7 +115,7 @@ const TaskGestureContainer: React.FunctionComponent<GestureContainerProps> = ({
                     : `translateX(${spring.percent}%)`,
               }}
             >
-              {children}
+              <Task {...taskProps} />
             </div>
           </Container>
         )
@@ -122,5 +123,3 @@ const TaskGestureContainer: React.FunctionComponent<GestureContainerProps> = ({
     </Spring>
   )
 }
-
-export default TaskGestureContainer
