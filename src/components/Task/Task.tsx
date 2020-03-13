@@ -8,6 +8,7 @@ import { ListItem, ListItemIcon, Fab } from "@material-ui/core"
 import { ListItemText } from "lib/components"
 
 import { Assignment } from "@material-ui/icons"
+import { useGesture } from "lib/useGesture"
 
 const StyledListItem = styled(ListItem)`
   position: relative;
@@ -55,15 +56,28 @@ export default ({
 }: TaskProps) => {
   const theme = useTheme()
 
+  const containerRef = React.useRef()
+
+  const bind = useGesture({
+    onTap: () => onItemClick(task.id),
+  })
+
   return (
     <StyledListItem
+      ref={containerRef}
+      {...bind({ ref: containerRef })}
       style={{ ...style, backgroundColor }}
       className={className}
       selected={selected}
       button
-      onClick={() => onItemClick(task.id)}
     >
-      <ListItemIcon>
+      <ListItemIcon
+        onPointerDown={e => e.stopPropagation()}
+        onClick={e => {
+          e.stopPropagation()
+          onSelectTask(task.id)
+        }}
+      >
         <Fab
           style={{
             borderRadius: multiselect ? "50%" : "5px",
@@ -71,10 +85,6 @@ export default ({
             border: selected ? "1px solid blue" : "none",
             background: theme.backgroundFadedColor,
             marginLeft: 4,
-          }}
-          onClick={e => {
-            e.stopPropagation()
-            onSelectTask(task.id)
           }}
           size="small"
         >

@@ -22,9 +22,17 @@ export const selectedTaskList = (state: StoreState): TaskList | null =>
 export const selectedTaskIds = (state: StoreState) =>
   slice(state).selectedTaskIds
 
-export const selectedTasks = (state: StoreState): Task[] =>
+type SelectedTasksOptions = {
+  fromTrash?: boolean
+}
+export const selectedTasks = (
+  state: StoreState,
+  { fromTrash }: SelectedTasksOptions = {},
+): Task[] =>
   selectedTaskIds(state)
-    .map(id => tasks(state)?.find(task => task.id === id))
+    .map(id =>
+      (fromTrash ? trashTasks : tasks)(state)?.find(task => task.id === id),
+    )
     .filter(notNil)
 
 export const allSelectedTasksComplete = (state: StoreState): boolean =>

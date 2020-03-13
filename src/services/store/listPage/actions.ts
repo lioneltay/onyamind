@@ -80,8 +80,9 @@ const moveSelectedTasksSuccess = () =>
   ({ type: "MOVE_SELECTED_TASKS|SUCCESS" } as const)
 type MoveSelectTasksInput = {
   listId: ID
+  fromTrash?: boolean
 }
-const moveSelectedTasks = ({ listId }: MoveSelectTasksInput) => (
+const moveSelectedTasks = ({ listId, fromTrash }: MoveSelectTasksInput) => (
   dispatch: Dispatch,
   getState: GetState,
 ) => {
@@ -90,20 +91,23 @@ const moveSelectedTasks = ({ listId }: MoveSelectTasksInput) => (
   const selectedTaskListId = state.listPage.selectedTaskListId
 
   // TODO use typescript assert here instead?
-  if (!selectedTaskListId) {
+  if (!fromTrash && !selectedTaskListId) {
     throw Error("Cannot call moveTask without a selectedTaskListId")
   }
 
-  const tasks = selectors.selectedTasks(state)
+  const tasks = selectors.selectedTasks(state, { fromTrash: true })
   const numberOfCompleteTasks = tasks.filter(task => task.complete).length
   const numberOfIncompleteTasks = tasks.filter(task => !task.complete).length
 
-  console.log(numberOfCompleteTasks, numberOfIncompleteTasks)
-
   const batch = firestore.batch()
 
+  console.log("fromtrash", tasks, state)
+
   tasks.forEach(task =>
-    batch.update(firestore.collection("task").doc(task.id), { listId: listId }),
+    batch.update(firestore.collection("task").doc(task.id), {
+      listId: listId,
+      archived: false,
+    }),
   )
   batch.update(firestore.collection("taskList").doc(listId), {
     numberOfCompleteTasks: firebase.firestore.FieldValue.increment(
@@ -113,14 +117,16 @@ const moveSelectedTasks = ({ listId }: MoveSelectTasksInput) => (
       numberOfIncompleteTasks,
     ),
   })
-  batch.update(firestore.collection("taskList").doc(selectedTaskListId), {
-    numberOfCompleteTasks: firebase.firestore.FieldValue.increment(
-      -numberOfCompleteTasks,
-    ),
-    numberOfIncompleteTasks: firebase.firestore.FieldValue.increment(
-      -numberOfIncompleteTasks,
-    ),
-  })
+  if (!fromTrash && selectedTaskListId) {
+    batch.update(firestore.collection("taskList").doc(selectedTaskListId), {
+      numberOfCompleteTasks: firebase.firestore.FieldValue.increment(
+        -numberOfCompleteTasks,
+      ),
+      numberOfIncompleteTasks: firebase.firestore.FieldValue.increment(
+        -numberOfIncompleteTasks,
+      ),
+    })
+  }
 
   dispatch(moveSelectedTasksPending())
   return batch
@@ -399,8 +405,9 @@ const moveTaskSuccess = () => ({ type: "MOVE_TASK|SUCCESS" } as const)
 type MoveTaskInput = {
   taskId: ID
   listId: ID
+  fromTrash?: boolean
 }
-const moveTask = ({ taskId, listId }: MoveTaskInput) => (
+const moveTask = ({ taskId, listId, fromTrash }: MoveTaskInput) => (
   dispatch: Dispatch,
   getState: GetState,
 ) => {
@@ -409,11 +416,13 @@ const moveTask = ({ taskId, listId }: MoveTaskInput) => (
   const selectedTaskListId = state.listPage.selectedTaskListId
 
   // TODO use typescript assert here instead?
-  if (!selectedTaskListId) {
+  if (!fromTrash && !selectedTaskListId) {
     throw Error("Cannot call moveTask without a selectedTaskListId")
   }
 
-  const task = state.listPage.tasks?.find(t => t.id === taskId)
+  const task = fromTrash
+    ? state.listPage.trashTasks?.find(t => t.id === taskId)
+    : state.listPage.tasks?.find(t => t.id === taskId)
   const numberOfCompleteTasks = selectors.completedTasks(state).length
   const numberOfIncompleteTasks = selectors.incompletedTasks(state).length
 
@@ -423,16 +432,22 @@ const moveTask = ({ taskId, listId }: MoveTaskInput) => (
 
   const batch = firestore.batch()
 
-  batch.update(firestore.collection("task").doc(taskId), { listId: listId })
+  batch.update(firestore.collection("task").doc(taskId), {
+    listId: listId,
+    archived: false,
+  })
   batch.update(firestore.collection("taskList").doc(listId), {
     [task.complete
       ? "numberOfCompleteTasks"
       : "numberOfIncompleteTasks"]: firebase.firestore.FieldValue.increment(1),
   })
-  batch.update(firestore.collection("taskList").doc(selectedTaskListId), {
-    numberOfCompleteTasks: numberOfCompleteTasks - (task.complete ? 1 : 0),
-    numberOfIncompleteTasks: numberOfIncompleteTasks - (task.complete ? 0 : 1),
-  })
+  if (!fromTrash && selectedTaskListId) {
+    batch.update(firestore.collection("taskList").doc(selectedTaskListId), {
+      numberOfCompleteTasks: numberOfCompleteTasks - (task.complete ? 1 : 0),
+      numberOfIncompleteTasks:
+        numberOfIncompleteTasks - (task.complete ? 0 : 1),
+    })
+  }
 
   dispatch(moveTaskPending())
   return batch

@@ -107,6 +107,7 @@ export default ({
               </IconButton>
             </ListItem>
             <div
+              onPointerDown={e => e.stopPropagation()}
               {...bind({ ref: container_ref })}
               style={{
                 transform:

@@ -38,6 +38,9 @@ export const reducer = (state: State = initialState, action: Action): State => {
       return {
         ...state,
         multiselect: action.payload.multiselect,
+        selectedTaskIds: action.payload.multiselect
+          ? state.selectedTaskIds
+          : [],
       }
     }
     case "SET_TASKS": {
@@ -93,6 +96,13 @@ export const reducer = (state: State = initialState, action: Action): State => {
       return {
         ...state,
         selectedTaskIds: [],
+      }
+    }
+    case "ARCHIVE_SELECTED_TASKS|PENDING": {
+      return {
+        ...state,
+        selectedTaskIds: [],
+        multiselect: false,
       }
     }
     case "DELETE_SELECTED_TASKS|PENDING": {

@@ -15,13 +15,7 @@ export type Props = Stylable & {
   backgroundColor?: string
 }
 
-export default ({
-  style,
-  className,
-  task,
-  backgroundColor,
-  selected: Selected,
-}: Props) => {
+export default ({ style, className, task, backgroundColor }: Props) => {
   const {
     archiveTask,
     editTask,
@@ -44,8 +38,7 @@ export default ({
     return null
   }
 
-  const selected =
-    Selected || selectedTaskIds.findIndex(id => id === task.id) >= 0
+  const selected = selectedTaskIds.findIndex(id => id === task.id) >= 0
 
   return (
     <Task

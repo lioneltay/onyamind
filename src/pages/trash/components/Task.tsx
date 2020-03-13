@@ -24,12 +24,12 @@ export default ({
 }: Props) => {
   const {
     deleteTask,
-    editTask,
     toggleTaskSelection,
     unarchiveTask,
     toggleEditingTask,
     stopEditingTask,
     setMultiselect,
+    moveTask,
   } = useActions()
   const { taskLists, selectedTaskIds, multiselect, touchScreen } = useSelector(
     state => ({
@@ -73,14 +73,18 @@ export default ({
               <Restore />
             </IconButton>
 
-            {/*
             <IconButtonMenu
               icon={<SwapHoriz />}
               items={taskLists.map(list => ({
                 label: list.name,
-                action: () => moveTask({ taskId: task.id, listId: list.id }),
+                action: () =>
+                  moveTask({
+                    taskId: task.id,
+                    listId: list.id,
+                    fromTrash: true,
+                  }),
               }))}
-            /> */}
+            />
 
             <IconButton onClick={() => deleteTask(task.id)}>
               <Delete />

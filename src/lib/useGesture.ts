@@ -35,7 +35,7 @@ type UseGestureInput = {
   onPull?: (input: { displacement: Vector; distance: number }) => void
   onPullEnd?: () => void
 
-  onPress?: () => void
+  onTap?: () => void
 
   onHold?: () => void
 }
@@ -72,7 +72,7 @@ const handler = (e: PointerEvent) => {
 let listeners = 0
 
 export const useGesture = ({
-  onPress = () => {},
+  onTap = () => {},
   onPointerDown = () => {},
   onPointerMove = () => {},
   onHold = () => {},
@@ -88,8 +88,8 @@ export const useGesture = ({
   onPointerDownRef.current = onPointerDown
   const onPointerMoveRef = useRef(onPointerMove)
   onPointerMoveRef.current = onPointerMove
-  const onPressRef = useRef(onPress)
-  onPressRef.current = onPress
+  const onTapRef = useRef(onTap)
+  onTapRef.current = onTap
   const onHoldRef = useRef(onHold)
   onHoldRef.current = onHold
   const onPullRef = useRef(onPull)
@@ -167,7 +167,7 @@ export const useGesture = ({
     // this is a dodgy work around...
     const pull_end_s = down_s.pipe(switchMap(() => up_s.pipe(take(1))))
 
-    const press_s = down_data_s.pipe(
+    const tap_s = down_data_s.pipe(
       switchMap(({ down_e, down_time }) =>
         up_s.pipe(
           take(1),
@@ -264,7 +264,7 @@ export const useGesture = ({
     )
     subscriptions.push(down_s.subscribe(val => onPointerDownRef.current(val)))
     subscriptions.push(move_s.subscribe(val => onPointerMoveRef.current(val)))
-    subscriptions.push(press_s.subscribe(val => onPressRef.current()))
+    subscriptions.push(tap_s.subscribe(val => onTapRef.current()))
     subscriptions.push(hold_s.subscribe(val => onHoldRef.current()))
     subscriptions.push(pull_s.subscribe(val => onPullRef.current(val)))
     subscriptions.push(pull_end_s.subscribe(val => onPullEndRef.current()))

@@ -70,7 +70,9 @@ export default ({
     incompleteTasks,
     loadingTasks,
     selectedTaskList,
+    multiselect,
   } = useSelector((state, s) => ({
+    multiselect: state.listPage.multiselect,
     editingTask: s.listPage.editingTask(state),
     completeTasks: s.listPage.completedTasks(state),
     incompleteTasks: s.listPage.incompletedTasks(state),
@@ -115,8 +117,6 @@ export default ({
     )
   }
 
-  console.log(editingTask)
-
   return (
     <Fragment>
       <OuterContainer>
@@ -127,7 +127,6 @@ export default ({
                 key={task.id}
                 backgroundColor={theme.backgroundColor}
                 task={task}
-                selected={editingTask?.id === task.id}
               />
             ))}
           </List>
@@ -174,7 +173,7 @@ export default ({
         </Container>
       </OuterContainer>
 
-      {editingTask && (
+      {!multiselect && editingTask ? (
         <EditModal
           open={!!editingTask}
           onClose={() => {
@@ -190,7 +189,7 @@ export default ({
             })
           }}
         />
-      )}
+      ) : null}
     </Fragment>
   )
 }
