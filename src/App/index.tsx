@@ -17,7 +17,7 @@ export default () => {
     <ReduxProvider store={store}>
       <BrowserRouter>
         <StylesProvider injectFirst>
-          <ThemeProvider dark={true}>
+          <ThemeProvider dark={false}>
             <GlobalStyles />
             <Root />
           </ThemeProvider>

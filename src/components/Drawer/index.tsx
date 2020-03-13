@@ -60,19 +60,18 @@ export default () => {
     createTaskList,
     editTaskList,
     setPrimaryTaskList,
+    toggleDarkMode,
   } = useActions()
 
-  const { show, taskLists, selectedTaskListId, user } = useSelector(
+  const { show, taskLists, selectedTaskListId, user, darkMode } = useSelector(
     (state, s) => ({
       show: state.ui.showDrawer,
       taskLists: s.listPage.taskLists(state),
       selectedTaskListId: s.listPage.selectedTaskListId(state),
       user: state.auth.user,
+      darkMode: state.settings.darkMode,
     }),
   )
-
-  const toggleDarkMode = () => console.log("toggleDarkMode")
-  const darkMode = true
 
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -290,12 +289,7 @@ export default () => {
         <ListItem button onClick={toggleDarkMode}>
           <ListItemText>Dark mode</ListItemText>
           <ListItemSecondaryAction>
-            <Switch
-              checked={darkMode}
-              value="checkedB"
-              color="primary"
-              onChange={toggleDarkMode}
-            />
+            <Switch checked={darkMode} value="checkedB" color="primary" />
           </ListItemSecondaryAction>
         </ListItem>
       </List>

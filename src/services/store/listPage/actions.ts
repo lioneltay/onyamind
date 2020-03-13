@@ -696,8 +696,3 @@ export const actionCreators = {
 
 export type Action = ActionsUnion<typeof actionCreators>
 export type ActionType = ActionTypesUnion<typeof actionCreators>
-
-export const useActions = () => {
-  const dispatch = useDispatch()
-  return bindActionCreators(actionCreators, dispatch)
-}

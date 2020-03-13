@@ -6,6 +6,10 @@ import {
 } from "./listPage/reducer"
 import { reducer as authReducer, State as AuthState } from "./auth/reducer"
 import { reducer as uiReducer, State as UIState } from "./ui/reducer"
+import {
+  reducer as settingsReducer,
+  State as SettingsState,
+} from "./settings/reducer"
 
 import { rootEpic as listPageEpic } from "./listPage/epics"
 import { rootEpic as authEpic } from "./auth/epics"
@@ -14,6 +18,7 @@ import { createEpicMiddleware, combineEpics } from "redux-observable"
 import thunkMiddleware from "redux-thunk"
 
 export type State = {
+  settings: SettingsState
   listPage: ListPageState
   auth: AuthState
   ui: UIState
@@ -22,6 +27,7 @@ export type State = {
 const rootEpic = combineEpics(listPageEpic, authEpic, uiEpic)
 
 const reducer = combineReducers({
+  settings: settingsReducer,
   listPage: listPageReducer,
   ui: uiReducer,
   auth: authReducer,
@@ -58,13 +64,18 @@ import {
   actionCreators as authActionCreators,
   Action as AuthAction,
 } from "./auth/actions"
+import {
+  actionCreators as settingsActionCreators,
+  Action as SettingsAction,
+} from "./settings/actions"
 import { shallowEqual } from "react-redux"
 import { useDispatch, useSelector as originalUseSelector } from "react-redux"
 import { bindActionCreators } from "redux"
 
-export type Action = ListPageAction | UIAction | AuthAction
+export type Action = ListPageAction | UIAction | AuthAction | SettingsAction
 
 const actionCreators = {
+  ...settingsActionCreators,
   ...listPageActionCreators,
   ...uiActionCreators,
   ...authActionCreators,

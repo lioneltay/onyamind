@@ -6,6 +6,8 @@ import red from "@material-ui/core/colors/red"
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles"
 import { teal, blue } from "@material-ui/core/colors"
 
+import { useSelector, useActions } from "services/store"
+
 const getSCTheme = ({ dark }: ThemeProps) => {
   return {
     backgroundColor: dark ? "#282828" : "#ffffff",
@@ -64,14 +66,30 @@ const ThemeContext = createContext<Theme>(getTheme({ dark: true }))
 export const useTheme = () => useContext(ThemeContext)
 
 export const ThemeProvider: React.FunctionComponent<ThemeProps> = ({
-  dark = true,
   children,
 }) => {
+  const { setDarkMode } = useActions()
+  const dark = useSelector(state => state.settings.darkMode)
   const theme = getTheme({ dark })
+
+  React.useEffect(() => {
+    if (window.matchMedia) {
+      const query = window.matchMedia("(prefers-color-scheme: dark)")
+
+      const listener = (e: MediaQueryListEvent) => {
+        setDarkMode(e.matches)
+      }
+
+      query.addEventListener("change", listener)
+
+      return () => query.removeEventListener("change", listener)
+    }
+  }, [])
+
   return (
     <MuiThemeProvider theme={theme.mui}>
       <SCThemeProvider theme={theme}>
-        <ThemeContext.Provider value={getTheme({ dark: true })}>
+        <ThemeContext.Provider value={theme}>
           {children as React.ReactElement<any>}
         </ThemeContext.Provider>
       </SCThemeProvider>
