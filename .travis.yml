@@ -28,7 +28,7 @@ deploy:
   - provider: gae
     project: tekktekk-notes
     keyfile: ./keys/travis-service-account.json
-    config: "./client/app.yaml"
+    config: "app.yaml"
     verbosity: debug
     skip_cleanup: true
     on: master
