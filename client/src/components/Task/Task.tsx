@@ -29,7 +29,7 @@ const Overlay = styled.div`
 export type TaskProps = Stylable & {
   selected: boolean
   task: Task
-  editing: boolean
+  multiselect: boolean
   backgroundColor?: string
 
   onSelectTask?: (id: ID) => void
@@ -46,7 +46,7 @@ export default ({
 
   selected,
   task,
-  editing,
+  multiselect,
 
   onSelectTask = () => {},
   onItemClick = () => {},
@@ -66,7 +66,7 @@ export default ({
       <ListItemIcon>
         <Fab
           style={{
-            borderRadius: editing ? "50%" : "5px",
+            borderRadius: multiselect ? "50%" : "5px",
             transition: "300ms",
             border: selected ? "1px solid blue" : "none",
             background: theme.backgroundFadedColor,
@@ -81,7 +81,7 @@ export default ({
           <Assignment
             style={{
               color: theme.iconColor,
-              transform: `scale(${editing ? 0.7 : 1})`,
+              transform: `scale(${multiselect ? 0.7 : 1})`,
               transition: "300ms",
             }}
           />

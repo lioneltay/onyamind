@@ -21,8 +21,10 @@ type FunctionType = (...args: any[]) => any
 
 type ActionCreatorsMapObject = { [actionCreator: string]: FunctionType }
 
-export type ActionsUnion<A extends ActionCreatorsMapObject> = ReturnType<
-  A[keyof A]
+type FilterAction<T> = T extends Action<any> ? T : never
+
+export type ActionsUnion<A extends ActionCreatorsMapObject> = FilterAction<
+  ReturnType<A[keyof A]>
 >
 
 type ActionTypesHelper<T> = T extends Action<any> ? T["type"] : never

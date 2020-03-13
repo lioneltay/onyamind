@@ -46,6 +46,7 @@ import { useHistory } from "react-router-dom"
 import { useActions, useSelector } from "services/store"
 
 import { useTheme } from "theme"
+import { listPageUrl } from "pages/lists/routing"
 
 export default () => {
   const history = useHistory()
@@ -88,7 +89,7 @@ export default () => {
   const primaryList = taskLists ? taskLists.find(list => list.primary) : null
 
   const selectTaskList = (list: TaskList) => {
-    history.push(`/lists/${list.id}/${list.name}`)
+    history.push(listPageUrl({ listId: list.id, listName: list.name }))
   }
 
   return (

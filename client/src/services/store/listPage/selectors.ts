@@ -39,6 +39,8 @@ const sortTasksByDate = (tasks: Task[]) =>
     tasks,
   )
 
+export const loadingTasks = (state: StoreState) => state.listPage.tasks === null
+
 export const completedTasks = (state: StoreState): Task[] =>
   sortTasksByDate((tasks(state) ?? []).filter(task => task.complete))
 

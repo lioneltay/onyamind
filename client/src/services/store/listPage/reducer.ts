@@ -2,38 +2,54 @@ import { assertNever } from "lib/utils"
 import { Action } from "./actions"
 import { union } from "ramda"
 
-export type State = {
+type UIState = {
+  selectedTaskListId: ID | null
+  editingTaskId: ID | null
+  selectedTaskIds: ID[]
+  multiselect: boolean
+}
+
+export type State = UIState & {
   // All TaskLists of the current user
   taskLists: TaskList[] | null
   // All Tasks to display on the tasklist page
   tasks: Task[] | null
   // All Tasks to display on the trash page
   trashTasks: Task[] | null
-  showDrawer: boolean
-  // Current
-  selectedTaskListId: ID | null
-  editingTaskId: ID | null
-  selectedTaskIds: ID[]
-  user: User | null
+}
+
+const initialUIState: UIState = {
+  selectedTaskListId: null,
+  editingTaskId: null,
+  selectedTaskIds: [],
+  multiselect: false,
 }
 
 const initialState: State = {
   taskLists: null,
   tasks: null,
-  selectedTaskListId: null,
-  editingTaskId: null,
-  selectedTaskIds: [],
-  showDrawer: false,
-  trashTasks: [],
-  user: null,
+  trashTasks: null,
+  ...initialUIState,
 }
 
 export const reducer = (state: State = initialState, action: Action): State => {
   switch (action.type) {
+    case "SET_MULTISELECT": {
+      return {
+        ...state,
+        multiselect: action.payload.multiselect,
+      }
+    }
     case "SET_TASKS": {
       return {
         ...state,
-        tasks: action.tasks,
+        tasks: action.payload.tasks,
+      }
+    }
+    case "SET_TRASH_TASKS": {
+      return {
+        ...state,
+        trashTasks: action.payload.tasks,
       }
     }
     case "SET_TASK_LISTS": {
@@ -57,11 +73,14 @@ export const reducer = (state: State = initialState, action: Action): State => {
         taskId => taskId === action.taskId,
       )
 
+      const selectedTaskIds = selected
+        ? state.selectedTaskIds.filter(id => id !== action.taskId)
+        : state.selectedTaskIds.concat(action.taskId)
+
       return {
         ...state,
-        selectedTaskIds: selected
-          ? state.selectedTaskIds.filter(id => id === action.taskId)
-          : state.selectedTaskIds.concat(action.taskId),
+        selectedTaskIds,
+        multiselect: selectedTaskIds.length === 0 ? false : state.multiselect,
       }
     }
     case "SELECT_ALL_TASKS": {
@@ -76,40 +95,39 @@ export const reducer = (state: State = initialState, action: Action): State => {
         selectedTaskIds: [],
       }
     }
-    case "COMPLETE_SELECTED_TASKS|PENDING": {
-      return state
-    }
-    case "COMPLETE_SELECTED_TASKS|FAILURE": {
-      return state
-    }
-    case "COMPLETE_SELECTED_TASKS|SUCCESS": {
+    case "DELETE_SELECTED_TASKS|PENDING": {
       return {
         ...state,
         selectedTaskIds: [],
+        multiselect: false,
+      }
+    }
+    case "MOVE_SELECTED_TASKS|PENDING": {
+      return {
+        ...state,
+        selectedTaskIds: [],
+        multiselect: false,
+      }
+    }
+    case "COMPLETE_SELECTED_TASKS|PENDING": {
+      return {
+        ...state,
+        selectedTaskIds: [],
+        multiselect: false,
       }
     }
     case "DECOMPLETE_SELECTED_TASKS|PENDING": {
-      return state
-    }
-    case "DECOMPLETE_SELECTED_TASKS|FAILURE": {
-      return state
-    }
-    case "DECOMPLETE_SELECTED_TASKS|SUCCESS": {
       return {
         ...state,
         selectedTaskIds: [],
-      }
-    }
-    case "SET_USER": {
-      action
-      return {
-        ...state,
-        user: action.payload.user,
+        multiselect: false,
       }
     }
     case "SELECT_TASK_LIST": {
       return {
         ...state,
+        ...initialUIState,
+        tasks: null,
         selectedTaskListId: action.payload.listId,
       }
     }

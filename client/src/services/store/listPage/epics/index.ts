@@ -32,7 +32,19 @@ const createTasksObservable = (userId: ID | null, listId: ID) =>
       })
   })
 
-const taskListEpic = (
+const createTrashTasksObservable = (userId: ID | null) =>
+  new Observable<Task[]>(observer => {
+    return firestore
+      .collection("task")
+      .where("userId", "==", userId)
+      .where("archived", "==", true)
+      .onSnapshot(snapshot => {
+        const tasks = snapshot.docs.map(doc => dataWithId(doc) as Task)
+        observer.next(tasks)
+      })
+  })
+
+const taskListsEpic = (
   action$: Observable<Action>,
   state$: StateObservable<State>,
 ): Observable<Action> => {
@@ -44,7 +56,7 @@ const taskListEpic = (
   )
 }
 
-const taskEpic = (
+const tasksEpic = (
   action$: Observable<Action>,
   state$: StateObservable<State>,
 ): Observable<Action> => {
@@ -57,10 +69,22 @@ const taskEpic = (
       (prev, curr) => prev[0] === curr[0] && prev[1] === curr[1],
     ),
     switchMap(([userId, listId]) =>
-      listId ? createTasksObservable(userId, listId) : of([]),
+      listId ? createTasksObservable(userId, listId) : empty(),
     ),
     map(tasks => actionCreators.setTasks(tasks)),
   )
 }
 
-export const rootEpic = combineEpics(taskListEpic, taskEpic)
+const trashTasksEpic = (
+  action$: Observable<Action>,
+  state$: StateObservable<State>,
+): Observable<Action> => {
+  return state$.pipe(
+    map(state => state.auth?.user?.uid ?? null),
+    distinctUntilChanged(),
+    switchMap(userId => createTrashTasksObservable(userId)),
+    map(tasks => actionCreators.setTrashTasks(tasks)),
+  )
+}
+
+export const rootEpic = combineEpics(taskListsEpic, tasksEpic, trashTasksEpic)

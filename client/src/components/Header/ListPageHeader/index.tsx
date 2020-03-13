@@ -7,7 +7,7 @@ import IconButtonMenu from "lib/components/IconButtonMenu"
 import TaskAdder from "./TaskAdder"
 import HeaderBase from "../HeaderBase"
 
-import { useSelector } from "services/store/listPage"
+import { useSelector, useActions } from "services/store"
 
 export default () => {
   const {
@@ -16,11 +16,18 @@ export default () => {
     allSelectedTasksIncomplete,
     selectedTaskList,
   } = useSelector((state, s) => ({
-    taskLists: s.taskLists(state) || [],
-    allSelectedTasksComplete: s.allSelectedTasksComplete(state),
-    allSelectedTasksIncomplete: s.allSelectedTasksInComplete(state),
-    selectedTaskList: s.selectedTaskList(state),
+    taskLists: s.listPage.taskLists(state) || [],
+    allSelectedTasksComplete: s.listPage.allSelectedTasksComplete(state),
+    allSelectedTasksIncomplete: s.listPage.allSelectedTasksInComplete(state),
+    selectedTaskList: s.listPage.selectedTaskList(state),
   }))
+
+  const {
+    completeSelectedTasks,
+    decompleteSelectedTasks,
+    archiveSelectedTasks,
+    moveSelectedTasks,
+  } = useActions()
 
   return (
     <Fragment>
@@ -30,7 +37,11 @@ export default () => {
           <Fragment>
             {allSelectedTasksComplete || allSelectedTasksIncomplete ? (
               <IconButton
-                onClick={allSelectedTasksIncomplete ? () => {} : () => {}}
+                onClick={
+                  allSelectedTasksIncomplete
+                    ? completeSelectedTasks
+                    : decompleteSelectedTasks
+                }
               >
                 {allSelectedTasksIncomplete ? <Check /> : <Add />}
               </IconButton>
@@ -40,11 +51,11 @@ export default () => {
               icon={<SwapHoriz />}
               items={taskLists.map(list => ({
                 label: list.name,
-                action: () => {},
+                action: () => moveSelectedTasks({ listId: list.id }),
               }))}
             />
 
-            <IconButton onClick={() => {}}>
+            <IconButton onClick={archiveSelectedTasks}>
               <Delete />
             </IconButton>
           </Fragment>

@@ -4,8 +4,12 @@ import { ActionsUnion, ActionTypesUnion } from "services/store/helpers"
 import { State } from "services/store"
 import * as selectors from "services/store/listPage/selectors"
 import * as api from "services/api"
+import { firestore, firebase } from "services/firebase"
 
 type GetState = () => State
+
+const setMultiselect = (multiselect: boolean) =>
+  ({ type: "SET_MULTISELECT", payload: { multiselect } } as const)
 
 const selectIncompleteTasks = () =>
   ({ type: "SELECT_INCOMPLETE_TASKS" } as const)
@@ -16,7 +20,11 @@ const deselectIncompleteTasks = () =>
 const setTaskLists = (taskLists: TaskList[]) =>
   ({ type: "SET_TASK_LISTS", payload: { taskLists } } as const)
 
-const setTasks = (tasks: Task[]) => ({ type: "SET_TASKS", tasks } as const)
+const setTasks = (tasks: Task[]) =>
+  ({ type: "SET_TASKS", payload: { tasks } } as const)
+
+const setTrashTasks = (tasks: Task[]) =>
+  ({ type: "SET_TRASH_TASKS", payload: { tasks } } as const)
 
 const toggleTaskSelection = (taskId: ID) =>
   ({ type: "TOGGLE_TASK_SELECTION", taskId } as const)
@@ -24,9 +32,6 @@ const toggleTaskSelection = (taskId: ID) =>
 const selectAllTasks = () => ({ type: "SELECT_ALL_TASKS" } as const)
 
 const deselectAllTasks = () => ({ type: "DESELECT_ALL_TASKS" } as const)
-
-const setUser = (user: User) =>
-  ({ type: "SET_USER", payload: { user } } as const)
 
 const selectTaskList = (listId: ID | null) =>
   ({
@@ -48,18 +53,98 @@ const toggleEditingTask = (taskId: ID | null) =>
     payload: { taskId },
   } as const)
 
+const archiveSelectedTasksPending = () =>
+  ({ type: "ARCHIVE_SELECTED_TASKS|PENDING" } as const)
+const archiveSelectedTasksFailure = () =>
+  ({ type: "ARCHIVE_SELECTED_TASKS|FAILURE" } as const)
+const archiveSelectedTasksSuccess = () =>
+  ({ type: "ARCHIVE_SELECTED_TASKS|SUCCESS" } as const)
+const archiveSelectedTasks = () => (dispatch: Dispatch, getState: GetState) => {
+  const tasks = selectors.selectedTasks(getState())
+
+  dispatch(archiveSelectedTasksPending())
+  return api
+    .editTasks(tasks.map(task => ({ ...task, archived: true })))
+    .then(res => dispatch(archiveSelectedTasksSuccess()))
+    .catch(e => {
+      dispatch(archiveSelectedTasksFailure())
+      throw e
+    })
+}
+
+const moveSelectedTasksPending = () =>
+  ({ type: "MOVE_SELECTED_TASKS|PENDING" } as const)
+const moveSelectedTasksFailure = () =>
+  ({ type: "MOVE_SELECTED_TASKS|FAILURE" } as const)
+const moveSelectedTasksSuccess = () =>
+  ({ type: "MOVE_SELECTED_TASKS|SUCCESS" } as const)
+type MoveSelectTasksInput = {
+  listId: ID
+}
+const moveSelectedTasks = ({ listId }: MoveSelectTasksInput) => (
+  dispatch: Dispatch,
+  getState: GetState,
+) => {
+  const state = getState()
+
+  const selectedTaskListId = state.listPage.selectedTaskListId
+
+  // TODO use typescript assert here instead?
+  if (!selectedTaskListId) {
+    throw Error("Cannot call moveTask without a selectedTaskListId")
+  }
+
+  const tasks = selectors.selectedTasks(state)
+  const numberOfCompleteTasks = tasks.filter(task => task.complete).length
+  const numberOfIncompleteTasks = tasks.filter(task => !task.complete).length
+
+  console.log(numberOfCompleteTasks, numberOfIncompleteTasks)
+
+  const batch = firestore.batch()
+
+  tasks.forEach(task =>
+    batch.update(firestore.collection("task").doc(task.id), { listId: listId }),
+  )
+  batch.update(firestore.collection("taskList").doc(listId), {
+    numberOfCompleteTasks: firebase.firestore.FieldValue.increment(
+      numberOfCompleteTasks,
+    ),
+    numberOfIncompleteTasks: firebase.firestore.FieldValue.increment(
+      numberOfIncompleteTasks,
+    ),
+  })
+  batch.update(firestore.collection("taskList").doc(selectedTaskListId), {
+    numberOfCompleteTasks: firebase.firestore.FieldValue.increment(
+      -numberOfCompleteTasks,
+    ),
+    numberOfIncompleteTasks: firebase.firestore.FieldValue.increment(
+      -numberOfIncompleteTasks,
+    ),
+  })
+
+  dispatch(moveSelectedTasksPending())
+  return batch
+    .commit()
+    .then(res => dispatch(moveSelectedTasksSuccess()))
+    .catch(e => {
+      dispatch(moveSelectedTasksFailure())
+      throw e
+    })
+}
+
 const completeSelectedTasksPending = () =>
   ({ type: "COMPLETE_SELECTED_TASKS|PENDING" } as const)
 const completeSelectedTasksFailure = () =>
   ({ type: "COMPLETE_SELECTED_TASKS|FAILURE" } as const)
 const completeSelectedTasksSuccess = () =>
   ({ type: "COMPLETE_SELECTED_TASKS|SUCCESS" } as const)
-const completeSelectedTasks = async (
+const completeSelectedTasks = () => (
   dispatch: Dispatch,
   getState: GetState,
 ) => {
-  dispatch(completeSelectedTasksPending())
   const selectedTasks = selectors.selectedTasks(getState())
+
+  dispatch(completeSelectedTasksPending())
   return api
     .editTasks(selectedTasks.map(task => ({ ...task, complete: true })))
     .then(() => dispatch(completeSelectedTasksSuccess()))
@@ -79,8 +164,9 @@ const archiveCompletedTasks = () => (
   dispatch: Dispatch,
   getState: GetState,
 ) => {
-  dispatch(archiveCompletedTasksPending())
   const tasks = selectors.completedTasks(getState())
+
+  dispatch(archiveCompletedTasksPending())
   return api
     .editTasks(tasks.map(task => ({ ...task, archived: true })))
     .then(res => dispatch(archiveCompletedTasksSuccess()))
@@ -100,8 +186,9 @@ const decompleteSelectedTasks = () => (
   dispatch: Dispatch,
   getState: GetState,
 ) => {
-  dispatch(decompleteSelectedTasksPending())
   const selectedTasks = selectors.selectedTasks(getState())
+
+  dispatch(decompleteSelectedTasksPending())
   return api
     .editTasks(selectedTasks.map(task => ({ ...task, complete: false })))
     .then(() => dispatch(decompleteSelectedTasksSuccess()))
@@ -121,10 +208,11 @@ const decompleteCompletedTasks = () => (
   dispatch: Dispatch,
   getState: GetState,
 ) => {
+  const tasks = selectors.completedTasks(getState())
+
   dispatch(decompleteCompletedTasksPending())
-  const selectedTasks = selectors.selectedTasks(getState())
   return api
-    .editTasks(selectedTasks.map(task => ({ ...task, complete: false })))
+    .editTasks(tasks.map(task => ({ ...task, complete: false })))
     .then(() => dispatch(decompleteCompletedTasksSuccess()))
     .catch(e => {
       dispatch(decompleteCompletedTasksFailure())
@@ -139,8 +227,9 @@ const deleteCompletedTasksFailure = () =>
 const deleteCompletedTasksSuccess = () =>
   ({ type: "DELETE_COMPLETED_TASKS|SUCCESS" } as const)
 const deleteCompletedTasks = () => (dispatch: Dispatch, getState: GetState) => {
-  dispatch(deleteCompletedTasksPending())
   const tasks = selectors.completedTasks(getState())
+
+  dispatch(deleteCompletedTasksPending())
   return api
     .deleteTasks(tasks.map(task => task.id))
     .then(res => dispatch(deleteCompletedTasksSuccess()))
@@ -255,8 +344,9 @@ const emptyTrashPending = () => ({ type: "EMPTY_TRASH|PENDING" } as const)
 const emptyTrashFailure = () => ({ type: "EMPTY_TRASH|FAILURE" } as const)
 const emptyTrashSuccess = () => ({ type: "EMPTY_TRASH|SUCCESS" } as const)
 const emptyTrash = () => (dispatch: Dispatch, getState: GetState) => {
-  dispatch(emptyTrashPending())
   const tasks = selectors.trashTasks(getState())
+
+  dispatch(emptyTrashPending())
   return api
     .deleteTasks(tasks.map(task => task.id))
     .then(res => dispatch(emptyTrashSuccess()))
@@ -314,9 +404,39 @@ const moveTask = ({ taskId, listId }: MoveTaskInput) => (
   dispatch: Dispatch,
   getState: GetState,
 ) => {
+  const state = getState()
+
+  const selectedTaskListId = state.listPage.selectedTaskListId
+
+  // TODO use typescript assert here instead?
+  if (!selectedTaskListId) {
+    throw Error("Cannot call moveTask without a selectedTaskListId")
+  }
+
+  const task = state.listPage.tasks?.find(t => t.id === taskId)
+  const numberOfCompleteTasks = selectors.completedTasks(state).length
+  const numberOfIncompleteTasks = selectors.incompletedTasks(state).length
+
+  if (!task) {
+    throw Error("No task")
+  }
+
+  const batch = firestore.batch()
+
+  batch.update(firestore.collection("task").doc(taskId), { listId: listId })
+  batch.update(firestore.collection("taskList").doc(listId), {
+    [task.complete
+      ? "numberOfCompleteTasks"
+      : "numberOfIncompleteTasks"]: firebase.firestore.FieldValue.increment(1),
+  })
+  batch.update(firestore.collection("taskList").doc(selectedTaskListId), {
+    numberOfCompleteTasks: numberOfCompleteTasks - (task.complete ? 1 : 0),
+    numberOfIncompleteTasks: numberOfIncompleteTasks - (task.complete ? 0 : 1),
+  })
+
   dispatch(moveTaskPending())
-  return api
-    .editTask({ taskId, data: { listId } })
+  return batch
+    .commit()
     .then(res => dispatch(moveTaskSuccess()))
     .catch(e => {
       dispatch(moveTaskFailure())
@@ -425,9 +545,11 @@ const deleteSelectedTasksFailure = () =>
 const deleteSelectedTasksSuccess = () =>
   ({ type: "DELETE_SELECTED_TASKS|SUCCESS" } as const)
 const deleteSelectedTasks = () => (dispatch: Dispatch, getState: GetState) => {
+  const selectedTaskIds = selectors.selectedTaskIds(getState())
+
   dispatch(deleteSelectedTasksPending())
   return api
-    .deleteTasks(selectors.selectedTasks(getState()).map(task => task.id))
+    .deleteTasks(selectedTaskIds)
     .then(res => dispatch(deleteSelectedTasksSuccess()))
     .catch(e => {
       dispatch(deleteSelectedTasksFailure())
@@ -435,19 +557,30 @@ const deleteSelectedTasks = () => (dispatch: Dispatch, getState: GetState) => {
     })
 }
 
-const Action = {
+export const actionCreators = {
+  setTrashTasks,
+  setMultiselect,
   setTaskLists,
   setTasks,
   toggleTaskSelection,
   selectAllTasks,
   deselectAllTasks,
-  setUser,
   selectTaskList,
   setEditingTask,
   stopEditingTask,
   toggleEditingTask,
   selectIncompleteTasks,
   deselectIncompleteTasks,
+
+  archiveSelectedTasks,
+  archiveSelectedTasksPending,
+  archiveSelectedTasksFailure,
+  archiveSelectedTasksSuccess,
+
+  moveSelectedTasks,
+  moveSelectedTasksPending,
+  moveSelectedTasksFailure,
+  moveSelectedTasksSuccess,
 
   deleteSelectedTasksPending,
   deleteSelectedTasksFailure,
@@ -524,20 +657,8 @@ const Action = {
   archiveCompletedTasksPending,
   archiveCompletedTasksFailure,
   archiveCompletedTasksSuccess,
-}
 
-export const actionCreators = {
   setPrimaryTaskList,
-  setTaskLists,
-  setTasks,
-  toggleTaskSelection,
-  selectAllTasks,
-  deselectAllTasks,
-  selectTaskList,
-  setEditingTask,
-  stopEditingTask,
-  toggleEditingTask,
-  setUser,
   completeSelectedTasks,
   decompleteSelectedTasks,
   decompleteCompletedTasks,
@@ -555,13 +676,11 @@ export const actionCreators = {
   editTaskList,
   deleteTaskList,
   archiveCompletedTasks,
-  selectIncompleteTasks,
-  deselectIncompleteTasks,
   deleteSelectedTasks,
 }
 
-export type Action = ActionsUnion<typeof Action>
-export type ActionType = ActionTypesUnion<typeof Action>
+export type Action = ActionsUnion<typeof actionCreators>
+export type ActionType = ActionTypesUnion<typeof actionCreators>
 
 export const useActions = () => {
   const dispatch = useDispatch()

@@ -1,3 +1,5 @@
+import { RouteComponentProps } from "react-router-dom"
+
 import React, { useState, useCallback, Fragment } from "react"
 import { noopTemplate as css } from "lib/utils"
 import styled from "styled-components"
@@ -18,12 +20,14 @@ import { ExpandMore, MoreVert } from "@material-ui/icons"
 
 import IconButtonMenu from "lib/components/IconButtonMenu"
 
-import Task from "./Task"
+import Task from "./components/Task"
 
-import CollapsableEditor from "./CollapsableEditor"
+import CollapsableEditor from "./components/CollapsableEditor"
 
 import { useTheme } from "theme"
 import { useSelector, useActions } from "services/store"
+
+import { listPageUrl } from "./routing"
 
 const OuterContainer = styled.div`
   display: flex;
@@ -41,22 +45,56 @@ const Rotate = styled.div.attrs({})<{ flip: boolean }>`
   transition: 300ms;
 `
 
-export default () => {
+type Props = RouteComponentProps<{ listId: string; listName: string }> & {}
+
+export default ({
+  match: {
+    params: { listName, listId },
+  },
+  history,
+}: Props) => {
   const theme = useTheme()
-  const { editingTaskId, completeTasks, incompleteTasks } = useSelector(
-    (state, s) => ({
-      editingTaskId: s.listPage.editingTaskId(state),
-      completeTasks: s.listPage.completedTasks(state),
-      incompleteTasks: s.listPage.incompletedTasks(state),
-    }),
-  )
 
   const {
     stopEditingTask,
     editTask,
     decompleteCompletedTasks,
     archiveCompletedTasks,
+    selectTaskList,
   } = useActions()
+
+  const {
+    editingTaskId,
+    completeTasks,
+    incompleteTasks,
+    loadingTasks,
+    selectedTaskList,
+  } = useSelector((state, s) => ({
+    editingTaskId: s.listPage.editingTaskId(state),
+    completeTasks: s.listPage.completedTasks(state),
+    incompleteTasks: s.listPage.incompletedTasks(state),
+    loadingTasks: s.listPage.loadingTasks(state),
+    selectedTaskList: s.listPage.selectedTaskList(state),
+  }))
+
+  React.useEffect(() => {
+    if (selectedTaskList && !listId && !listName) {
+      history.push(
+        listPageUrl({
+          listId: selectedTaskList.id,
+          listName: selectedTaskList.name,
+        }),
+      )
+    }
+  }, [selectedTaskList?.id])
+
+  React.useEffect(() => {
+    selectTaskList(listId)
+
+    return () => {
+      selectTaskList(null)
+    }
+  }, [listId])
 
   const [showCompleteTasks, setShowCompleteTasks] = useState(false)
 
@@ -64,7 +102,7 @@ export default () => {
     setShowCompleteTasks(show => !show)
   }, [])
 
-  if (completeTasks.length + incompleteTasks.length === 0) {
+  if (loadingTasks) {
     return (
       <OuterContainer>
         <Container>
@@ -135,7 +173,10 @@ export default () => {
           <Collapse in={showCompleteTasks}>
             {completeTasks.map(task => (
               <Fragment key={task.id}>
-                <Task task={task} />
+                <Task
+                  backgroundColor={theme.backgroundFadedColor}
+                  task={task}
+                />
                 <CollapsableEditor
                   task={task}
                   open={editingTaskId === task.id}

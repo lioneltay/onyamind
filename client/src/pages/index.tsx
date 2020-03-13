@@ -1,11 +1,11 @@
 import React from "react"
 import { noopTemplate as css } from "lib/utils"
-import { Switch, Route } from "react-router-dom"
+import { Switch, Route, Redirect } from "react-router-dom"
 
-import Header from "./components/Header"
-import Drawer from "./components/Drawer"
+import { Drawer, Header } from "components"
 
-import ListPage from "./lists"
+import ListPage from "./lists/Page"
+import TrashPage from "./trash/Page"
 
 import { useTheme } from "theme"
 
@@ -23,7 +23,9 @@ export default () => {
       <Drawer />
 
       <Switch>
-        <Route path="/lists/:listId/:listName" component={ListPage} />
+        <Route path="/lists/:listId?/:listName?" component={ListPage} />
+        <Route path="/trash" component={TrashPage} />
+        <Route>{() => <Redirect to="/lists" />}</Route>
       </Switch>
     </div>
   )

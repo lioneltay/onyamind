@@ -54,7 +54,6 @@ export const darkMuiTheme = createMuiTheme({
 
 export const getTheme = ({ dark }: ThemeProps) => {
   const muiTheme = dark ? darkMuiTheme : lightMuiTheme
-  console.log(muiTheme)
   return { ...getSCTheme({ dark }), mui: muiTheme }
 }
 

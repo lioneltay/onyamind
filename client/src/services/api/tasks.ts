@@ -107,6 +107,14 @@ export const moveTask = async ({
   const batch = firestore.batch()
 
   batch.update(firestore.collection("task").doc(taskId), { listId: toListId })
+  batch.update(firestore.collection("taskList").doc(fromListId), {
+    numberOfCompleteTasks: 4,
+    numberOfIncompleteTasks: 7,
+  })
+  batch.update(firestore.collection("taskList").doc(fromListId), {
+    numberOfCompleteTasks: 4,
+    numberOfIncompleteTasks: 7,
+  })
 
   return batch.commit()
 }

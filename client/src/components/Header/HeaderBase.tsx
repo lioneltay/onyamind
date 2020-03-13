@@ -15,10 +15,10 @@ type Props = {
 }
 
 export default ({ title, editingActions, actions }: Props) => {
-  const { toggleDrawer } = useActions()
+  const { toggleDrawer, setMultiselect } = useActions()
 
-  const { numberOfSelectedTasks, editing } = useSelector((state, s) => ({
-    editing: !!s.listPage.editingTaskId(state),
+  const { numberOfSelectedTasks, multiselect } = useSelector((state, s) => ({
+    multiselect: state.listPage.multiselect,
     numberOfSelectedTasks: s.listPage.selectedTasks(state).length,
   }))
 
@@ -32,7 +32,7 @@ export default ({ title, editingActions, actions }: Props) => {
           padding-right: 0;
           display: flex;
           justify-content: center;
-          background: ${editing ? theme.highlightColor : undefined};
+          background: ${multiselect ? theme.highlightColor : undefined};
         `}
       >
         <div
@@ -54,11 +54,11 @@ export default ({ title, editingActions, actions }: Props) => {
               font-size: 20px;
             `}
           >
-            {editing ? (
+            {multiselect ? (
               <Fragment>
                 <IconButton
                   style={{ display: "inline-block" }}
-                  onClick={() => {}}
+                  onClick={() => setMultiselect(false)}
                 >
                   <ArrowBack />
                 </IconButton>
@@ -86,7 +86,7 @@ export default ({ title, editingActions, actions }: Props) => {
             )}
           </div>
 
-          {editing ? <div>{editingActions}</div> : <div>{actions}</div>}
+          {multiselect ? <div>{editingActions}</div> : <div>{actions}</div>}
         </div>
       </Toolbar>
     </AppBar>

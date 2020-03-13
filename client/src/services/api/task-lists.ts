@@ -66,10 +66,18 @@ export const editTaskList = async ({
 }
 
 export const deleteTaskList = async (listId: ID): Promise<ID> => {
-  await firestore
-    .collection("taskList")
-    .doc(listId)
-    .delete()
+  const tasks = await firestore
+    .collection("task")
+    .where("listId", "==", listId)
+    .get()
+    .then(x => x.docs.map(dataWithId) as Task[])
+
+  const batch = firestore.batch()
+
+  batch.delete(firestore.collection("taskList").doc(listId))
+  tasks.forEach(task => batch.delete(firestore.collection("task").doc(task.id)))
+
+  await batch.commit()
   return listId
 }
 

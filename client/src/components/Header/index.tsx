@@ -17,7 +17,7 @@ const Header: React.FunctionComponent = () => {
     <StickySection>
       <Switch>
         <Route path="/lists" component={ListPageHeader} />
-        {/* <Route path="/trash" component={TrashPageHeader} /> */}
+        <Route path="/trash" component={TrashPageHeader} />
       </Switch>
     </StickySection>
   )

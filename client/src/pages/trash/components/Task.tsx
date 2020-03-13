@@ -2,7 +2,7 @@ import React, { Fragment } from "react"
 
 import { IconButton } from "@material-ui/core"
 
-import { Delete, Add, Check, SwapHoriz } from "@material-ui/icons"
+import { Delete, Add, Check, SwapHoriz, Restore } from "@material-ui/icons"
 
 import Task from "components/Task"
 import IconButtonMenu from "lib/components/IconButtonMenu"
@@ -27,14 +27,17 @@ export default ({
     editTask,
     toggleTaskSelection,
     moveTask,
+    deleteTask,
+    unarchiveTask,
     toggleEditingTask,
     stopEditingTask,
+    setMultiselect,
   } = useActions()
-  const { taskLists, selectedTaskIds, editing, touchScreen } = useSelector(
+  const { taskLists, selectedTaskIds, multiselect, touchScreen } = useSelector(
     state => ({
       taskLists: state.listPage.taskLists,
       selectedTaskIds: state.listPage.selectedTaskIds,
-      editing: false,
+      multiselect: state.listPage.multiselect,
       touchScreen: false,
     }),
   )
@@ -59,36 +62,33 @@ export default ({
       style={style}
       className={className}
       selected={selected}
-      editing={editing}
+      multiselect={multiselect}
       task={task}
       onItemClick={() => toggleEditingTask(task.id)}
       onSelectTask={id => {
         stopEditingTask()
         toggleTaskSelection(id)
+        if (!multiselect) {
+          setMultiselect(true)
+        }
       }}
       hoverActions={
-        editing || touchScreen ? null : (
+        multiselect || touchScreen ? null : (
           <Fragment>
-            <IconButton
-              onClick={() =>
-                editTask({
-                  taskId: task.id,
-                  complete: !task.complete,
-                })
-              }
-            >
-              {task.complete ? <Add /> : <Check />}
+            <IconButton onClick={() => unarchiveTask(task.id)}>
+              <Restore />
             </IconButton>
 
+            {/*
             <IconButtonMenu
               icon={<SwapHoriz />}
               items={taskLists.map(list => ({
                 label: list.name,
                 action: () => moveTask({ taskId: task.id, listId: list.id }),
               }))}
-            />
+            /> */}
 
-            <IconButton onClick={() => archiveTask(task.id)}>
+            <IconButton onClick={() => deleteTask(task.id)}>
               <Delete />
             </IconButton>
           </Fragment>

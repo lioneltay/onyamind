@@ -53,13 +53,13 @@ export default () => {
   const {
     selectedTaskIds,
     tasks,
-    editing,
+    multiselect,
     selectedTaskListId,
     userId,
   } = useSelector(state => ({
     selectedTaskIds: state.listPage.selectedTaskIds,
     tasks: state.listPage.tasks,
-    editing: false,
+    multiselect: state.listPage.multiselect,
     selectedTaskListId: state.listPage.selectedTaskListId,
     userId: state.auth.user?.uid,
   }))
@@ -85,12 +85,12 @@ export default () => {
         <Container
           style={{
             height: 57,
-            background: editing
+            background: multiselect
               ? theme.backgroundFadedColor
               : theme.backgroundColor,
           }}
         >
-          {editing ? (
+          {multiselect ? (
             <ListItem
               button
               className="py-0"
