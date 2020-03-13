@@ -46,12 +46,23 @@ export const configureStore = () => {
 
 export const store = configureStore()
 
-import { actionCreators as listPageActionCreators } from "./listPage/actions"
-import { actionCreators as uiActionCreators } from "./ui/actions"
-import { actionCreators as authActionCreators } from "./auth/actions"
+import {
+  actionCreators as listPageActionCreators,
+  Action as ListPageAction,
+} from "./listPage/actions"
+import {
+  actionCreators as uiActionCreators,
+  Action as UIAction,
+} from "./ui/actions"
+import {
+  actionCreators as authActionCreators,
+  Action as AuthAction,
+} from "./auth/actions"
 import { shallowEqual } from "react-redux"
 import { useDispatch, useSelector as originalUseSelector } from "react-redux"
 import { bindActionCreators } from "redux"
+
+export type Action = ListPageAction | UIAction | AuthAction
 
 const actionCreators = {
   ...listPageActionCreators,

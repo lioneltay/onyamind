@@ -1,16 +1,27 @@
-import { combineEpics } from "redux-observable"
-import { Observable, empty } from "rxjs"
-import { Action } from "../actions"
-
-import { State } from "../reducer"
+import { combineEpics, ofType } from "redux-observable"
+import { Observable, empty, of } from "rxjs"
+import { mergeMap, withLatestFrom } from "rxjs/operators"
 
 import { StateObservable } from "redux-observable"
 
-const simpleCrudEpic = (
+import { Action, State } from "services/store"
+
+const closeDrawerEpic = (
   action$: Observable<Action>,
   state$: StateObservable<State>,
 ): Observable<Action> => {
-  return empty()
+  return action$.pipe(
+    ofType("SELECT_TASK_LIST"),
+    withLatestFrom(state$),
+    mergeMap(([action, state]) => {
+      console.log("DRAW EPIC")
+      return state.ui.showDrawer
+        ? of({
+            type: "CLOSE_DRAWER",
+          } as const)
+        : empty()
+    }),
+  )
 }
 
-export const rootEpic = combineEpics(simpleCrudEpic)
+export const rootEpic = combineEpics(closeDrawerEpic)
