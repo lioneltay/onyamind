@@ -13,22 +13,22 @@ install:
 script:
   - npm run test
 
-before_deploy:
-  - npm run build
+# before_deploy:
+#   - npm run build
 
-deploy:
-  - provider: gae
-    project: tekktekk-notes
-    keyfile: ./keys/travis-service-account.json
-    config: "dispatch.yaml"
-    verbosity: debug
-    skip_cleanup: true
-    on: master
+# deploy:
+#   - provider: gae
+#     project: tekktekk-notes
+#     keyfile: ./keys/travis-service-account.json
+#     config: "dispatch.yaml"
+#     verbosity: debug
+#     skip_cleanup: true
+#     on: master
 
-  - provider: gae
-    project: tekktekk-notes
-    keyfile: ./keys/travis-service-account.json
-    config: "./client/app.yaml"
-    verbosity: debug
-    skip_cleanup: true
-    on: master
+#   - provider: gae
+#     project: tekktekk-notes
+#     keyfile: ./keys/travis-service-account.json
+#     config: "./client/app.yaml"
+#     verbosity: debug
+#     skip_cleanup: true
+#     on: master
