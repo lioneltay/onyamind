@@ -8,7 +8,7 @@ before_install:
   - openssl aes-256-cbc -K $encrypted_4b0974dc0a55_key -iv $encrypted_4b0974dc0a55_iv -in ./keys/travis-service-account.json.enc -out ./keys/travis-service-account.json -d
 
 install:
-  - npm install --production
+  - npm install
 
 script:
   - npm run test
