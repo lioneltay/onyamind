@@ -289,7 +289,12 @@ export default () => {
         <ListItem button onClick={toggleDarkMode}>
           <ListItemText>Dark mode</ListItemText>
           <ListItemSecondaryAction>
-            <Switch checked={darkMode} value="checkedB" color="primary" />
+            <Switch
+              checked={darkMode}
+              value="checkedB"
+              color="primary"
+              onChange={toggleDarkMode}
+            />
           </ListItemSecondaryAction>
         </ListItem>
       </List>

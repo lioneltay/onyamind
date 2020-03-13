@@ -9,15 +9,16 @@ import { StateObservable } from "redux-observable"
 
 import { firebase } from "services/firebase"
 
-export const userState$ = new Observable<User | null>(observer => {
-  return firebase.auth().onAuthStateChanged(user => observer.next(user))
-})
+export const createUserStream = () =>
+  new Observable<User | null>(observer => {
+    return firebase.auth().onAuthStateChanged(user => observer.next(user))
+  })
 
 const authStateChangedEpic = (
   action$: Observable<Action>,
   state$: StateObservable<State>,
 ): Observable<Action> => {
-  return userState$.pipe(map(user => actionCreators.setUser(user)))
+  return createUserStream().pipe(map(user => actionCreators.setUser(user)))
 }
 
 export const rootEpic = combineEpics(authStateChangedEpic)

@@ -1,5 +1,14 @@
 import { firestore, dataWithId } from "services/firebase"
 
+export const getSettings = async (userId: ID): Promise<Settings | null> => {
+  return firestore
+    .collection("settings")
+    .where("userId", "==", userId)
+    .get()
+    .then(res => res.docs[0])
+    .then(doc => (doc ? dataWithId(doc) : null) as Settings | null)
+}
+
 export const createSettings = async (
   userId: ID | null,
   data: Partial<

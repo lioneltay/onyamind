@@ -14,6 +14,7 @@ import {
 import { rootEpic as listPageEpic } from "./listPage/epics"
 import { rootEpic as authEpic } from "./auth/epics"
 import { rootEpic as uiEpic } from "./ui/epics"
+import { rootEpic as settingsEpic } from "./settings/epics"
 import { createEpicMiddleware, combineEpics } from "redux-observable"
 import thunkMiddleware from "redux-thunk"
 
@@ -24,7 +25,9 @@ export type State = {
   ui: UIState
 }
 
-const rootEpic = combineEpics(listPageEpic, authEpic, uiEpic)
+export type GetState = () => State
+
+const rootEpic = combineEpics(listPageEpic, authEpic, uiEpic, settingsEpic)
 
 const reducer = combineReducers({
   settings: settingsReducer,

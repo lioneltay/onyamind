@@ -24,6 +24,18 @@ export const reducer = (state: State = initialState, action: Action): State => {
         darkMode: !state.darkMode,
       }
     }
+    case "SET_SETTINGS": {
+      const settings = action.payload.settings
+
+      if (!settings) {
+        return state
+      }
+
+      return {
+        ...state,
+        ...settings,
+      }
+    }
     default: {
       return state
     }

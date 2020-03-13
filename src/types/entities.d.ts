@@ -11,7 +11,7 @@ declare global {
   export type Settings = {
     id: ID
     userId: ID | null
-    dark: boolean
+    darkMode: boolean
     createdAt: number
     updatedAt: number
   }
