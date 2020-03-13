@@ -1,9 +1,7 @@
 import { firestore, dataWithId } from "services/firebase"
 import { pickBy } from "ramda"
 
-import { getTaskList } from "./task-lists"
-
-const noUndefinedValues = pickBy((v, k) => v !== undefined)
+import { noUndefinedValues } from "lib/utils"
 
 export const createTask = async (
   task: Omit<Task, "id" | "createdAt" | "updatedAt" | "complete" | "archived">,

@@ -14,7 +14,6 @@ const closeDrawerEpic = (
     ofType("SELECT_TASK_LIST"),
     withLatestFrom(state$),
     mergeMap(([action, state]) => {
-      console.log("DRAW EPIC")
       return state.ui.showDrawer
         ? of({
             type: "CLOSE_DRAWER",

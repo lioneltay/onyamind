@@ -23,11 +23,9 @@ export default ({
   selected: Selected,
 }: Props) => {
   const {
-    archiveTask,
+    deleteTask,
     editTask,
     toggleTaskSelection,
-    moveTask,
-    deleteTask,
     unarchiveTask,
     toggleEditingTask,
     stopEditingTask,
@@ -51,13 +49,9 @@ export default ({
 
   return (
     <Task
-      onSwipeLeft={() => archiveTask(task.id)}
-      onSwipeRight={() =>
-        editTask({
-          taskId: task.id,
-          complete: !task.complete,
-        })
-      }
+      onSwipeLeft={() => deleteTask(task.id)}
+      onSwipeRight={() => unarchiveTask(task.id)}
+      swipeRightIcon={<Restore />}
       backgroundColor={backgroundColor}
       style={style}
       className={className}

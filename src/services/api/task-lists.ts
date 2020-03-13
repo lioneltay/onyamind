@@ -1,4 +1,5 @@
 import { firebase, firestore, dataWithId } from "services/firebase"
+import { noUndefinedValues } from "lib/utils"
 
 export const getTaskList = async (listId: ID): Promise<TaskList> => {
   const x = await firestore
@@ -48,13 +49,16 @@ export const editTaskList = async ({
   listId,
   data,
 }: EditTaskListInput): Promise<TaskList> => {
+  console.log("editing", listId, data)
   await firestore
     .collection("taskList")
     .doc(listId)
-    .update({
-      ...data,
-      updatedAt: Date.now(),
-    })
+    .update(
+      noUndefinedValues({
+        ...data,
+        updatedAt: Date.now(),
+      }),
+    )
 
   const editedList = await firestore
     .collection("taskList")

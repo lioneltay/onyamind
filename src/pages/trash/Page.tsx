@@ -9,12 +9,15 @@ import Task from "./components/Task"
 
 import { useTheme } from "theme"
 import { useSelector, useActions } from "services/store"
+import { MOBILE_WIDTH } from "config"
 
 const OuterContainer = styled.div`
   display: flex;
   justify-content: center;
   padding-bottom: 50px;
-  margin-top: 24px;
+  @media (min-width: ${MOBILE_WIDTH}px) {
+    margin-top: 24px;
+  }
   margin-bottom: 48px;
 `
 

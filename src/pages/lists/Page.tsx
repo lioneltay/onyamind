@@ -1,6 +1,6 @@
 import { RouteComponentProps } from "react-router-dom"
 
-import React, { useState, useCallback, Fragment } from "react"
+import React, { Fragment } from "react"
 import { noopTemplate as css } from "lib/utils"
 import styled from "styled-components"
 
@@ -23,6 +23,7 @@ import IconButtonMenu from "lib/components/IconButtonMenu"
 import Task from "./components/Task"
 
 import CollapsableEditor from "./components/CollapsableEditor"
+import EditModal from "./components/EditModal"
 
 import { useTheme } from "theme"
 import { useSelector, useActions } from "services/store"
@@ -64,13 +65,13 @@ export default ({
   } = useActions()
 
   const {
-    editingTaskId,
+    editingTask,
     completeTasks,
     incompleteTasks,
     loadingTasks,
     selectedTaskList,
   } = useSelector((state, s) => ({
-    editingTaskId: s.listPage.editingTaskId(state),
+    editingTask: s.listPage.editingTask(state),
     completeTasks: s.listPage.completedTasks(state),
     incompleteTasks: s.listPage.incompletedTasks(state),
     loadingTasks: s.listPage.loadingTasks(state),
@@ -96,9 +97,9 @@ export default ({
     }
   }, [listId])
 
-  const [showCompleteTasks, setShowCompleteTasks] = useState(false)
+  const [showCompleteTasks, setShowCompleteTasks] = React.useState(false)
 
-  const toggleShowCompleteTasks = useCallback(() => {
+  const toggleShowCompleteTasks = React.useCallback(() => {
     setShowCompleteTasks(show => !show)
   }, [])
 
@@ -114,86 +115,82 @@ export default ({
     )
   }
 
+  console.log(editingTask)
+
   return (
-    <OuterContainer>
-      <Container>
-        <List className="p-0">
-          {incompleteTasks.map(task => (
-            <Fragment key={task.id}>
+    <Fragment>
+      <OuterContainer>
+        <Container>
+          <List className="p-0">
+            {incompleteTasks.map(task => (
               <Task
+                key={task.id}
                 backgroundColor={theme.backgroundColor}
                 task={task}
-                selected={editingTaskId === task.id}
+                selected={editingTask?.id === task.id}
               />
-              <CollapsableEditor
-                task={task}
-                open={editingTaskId === task.id}
-                onSubmit={async values => {
-                  stopEditingTask()
-                  await editTask({
-                    taskId: task.id,
-                    title: values.title,
-                    notes: values.notes,
-                  })
-                }}
+            ))}
+          </List>
+
+          <List className="p-0" onClick={toggleShowCompleteTasks}>
+            <ListItem button>
+              <ListItemIcon>
+                <Rotate flip={showCompleteTasks}>
+                  <IconButton>
+                    <ExpandMore />
+                  </IconButton>
+                </Rotate>
+              </ListItemIcon>
+
+              <ListItemText primary={`${completeTasks.length} checked off`} />
+
+              <IconButtonMenu
+                icon={<MoreVert />}
+                items={[
+                  {
+                    label: "Uncheck all items",
+                    action: decompleteCompletedTasks,
+                  },
+                  {
+                    label: "Delete completed items",
+                    action: archiveCompletedTasks,
+                  },
+                ]}
               />
-            </Fragment>
-          ))}
-        </List>
+            </ListItem>
+          </List>
 
-        <List className="p-0" onClick={toggleShowCompleteTasks}>
-          <ListItem button>
-            <ListItemIcon>
-              <Rotate flip={showCompleteTasks}>
-                <IconButton>
-                  <ExpandMore />
-                </IconButton>
-              </Rotate>
-            </ListItemIcon>
-
-            <ListItemText primary={`${completeTasks.length} checked off`} />
-
-            <IconButtonMenu
-              icon={<MoreVert />}
-              items={[
-                {
-                  label: "Uncheck all items",
-                  action: decompleteCompletedTasks,
-                },
-                {
-                  label: "Delete completed items",
-                  action: archiveCompletedTasks,
-                },
-              ]}
-            />
-          </ListItem>
-        </List>
-
-        <List>
-          <Collapse in={showCompleteTasks}>
-            {completeTasks.map(task => (
-              <Fragment key={task.id}>
+          <List>
+            <Collapse in={showCompleteTasks}>
+              {completeTasks.map(task => (
                 <Task
+                  key={task.id}
                   backgroundColor={theme.backgroundFadedColor}
                   task={task}
                 />
-                <CollapsableEditor
-                  task={task}
-                  open={editingTaskId === task.id}
-                  onSubmit={async values => {
-                    stopEditingTask()
-                    await editTask({
-                      taskId: task.id,
-                      title: values.title,
-                      notes: values.notes,
-                    })
-                  }}
-                />
-              </Fragment>
-            ))}
-          </Collapse>
-        </List>
-      </Container>
-    </OuterContainer>
+              ))}
+            </Collapse>
+          </List>
+        </Container>
+      </OuterContainer>
+
+      {editingTask && (
+        <EditModal
+          open={!!editingTask}
+          onClose={() => {
+            stopEditingTask()
+          }}
+          initialValues={editingTask || {}}
+          onSubmit={async values => {
+            stopEditingTask()
+            await editTask({
+              taskId: editingTask.id,
+              title: values.title,
+              notes: values.notes,
+            })
+          }}
+        />
+      )}
+    </Fragment>
   )
 }

@@ -1,6 +1,7 @@
 import React, { Fragment, useState } from "react"
 import { useTheme, styled } from "theme"
 import { useMediaQuery } from "@tekktekk/react-media-query"
+import { MOBILE_WIDTH } from "config"
 
 import { Add, Clear } from "@material-ui/icons"
 
@@ -72,7 +73,7 @@ export default () => {
       .every(task => selectedTaskIds.includes(task.id))
   )
 
-  const mobile = useMediaQuery("(max-width: 800px)")
+  const mobile = useMediaQuery(`(max-width: ${MOBILE_WIDTH}px)`)
 
   return (
     <Fragment>

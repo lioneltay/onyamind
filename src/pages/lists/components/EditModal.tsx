@@ -1,5 +1,6 @@
 import React from "react"
 import { styled } from "theme"
+import { noUndefinedValues } from "lib/utils"
 
 import { Formik, Form } from "formik"
 import Button from "@material-ui/core/Button"
@@ -11,7 +12,10 @@ const StatusText = styled.div`
   font-weight: 400;
 `
 
-type Values = Omit<Task, "id">
+type Values = {
+  title?: string
+  notes?: string
+}
 
 type Props = {
   open: boolean
@@ -28,7 +32,11 @@ const EditModal: React.FunctionComponent<Props> = ({
 }) => {
   return (
     <Formik<Values>
-      initialValues={initialValues}
+      initialValues={{
+        title: "",
+        notes: "",
+        ...noUndefinedValues(initialValues),
+      }}
       onSubmit={async (values, actions) => {
         await onSubmit(values)
         actions.setSubmitting(false)

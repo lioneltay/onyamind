@@ -2,7 +2,7 @@ import React, { Fragment } from "react"
 
 import { IconButton } from "@material-ui/core"
 
-import { Delete, Add, Check, SwapHoriz } from "@material-ui/icons"
+import { Delete, Add, Check, SwapHoriz, Close } from "@material-ui/icons"
 
 import Task from "components/Task"
 import IconButtonMenu from "lib/components/IconButtonMenu"
@@ -57,6 +57,7 @@ export default ({
         })
       }
       backgroundColor={backgroundColor}
+      swipeRightIcon={task.complete ? <Close /> : undefined}
       style={style}
       className={className}
       selected={selected}

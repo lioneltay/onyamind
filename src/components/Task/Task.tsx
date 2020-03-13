@@ -93,6 +93,8 @@ export default ({
           <span
             className="ellipsis bold"
             style={{
+              maxWidth: "100%",
+              display: "inline-block",
               fontSize: "0.95rem",
               textDecoration: task.complete ? "line-through" : "none",
             }}
@@ -100,7 +102,22 @@ export default ({
             {task.title}
           </span>
         }
-        secondary={<span className="ellipsis bold">{task.notes}</span>}
+        secondary={
+          task.notes ? (
+            <span
+              className="ellipsis bold"
+              style={{
+                maxWidth: "100%",
+                display: "inline-block",
+                textDecoration: task.complete ? "line-through" : "none",
+              }}
+            >
+              {task.notes}
+            </span>
+          ) : (
+            undefined
+          )
+        }
       />
 
       <Overlay onClick={e => e.stopPropagation()}>{hoverActions}</Overlay>

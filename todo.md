@@ -1,15 +1,14 @@
 # Tasks
 
-- [ ] Refactor to use `redux` and `redux-observable`
+- [x] Refactor to use `redux` and `redux-observable`
 
-- [ ] Fix bugs
+- [x] Fix bugs
 
 - [ ] Add 'asap' tasks that put a persistent notification on your device
 
+- [ ] Schedule notification reminders
+
 - [ ] pull should not trigger edit modal
-
-* [ ] figure out whats wrong with rxjs
-
 
 - [ ] add notification to kill service worker
 - [ ] firegure out how to make modals and drawers work on mobile with back button (you can block back button, add an event handgler instead?)
@@ -78,12 +77,3 @@
 
 * [ ] pwa push notifications on due dates
   - [ ] 1 hour before notification
-
-# Future
-
-- [ ] hooks api?
-
-  - Not feasible since we want to also impletement shouldcomponentupdate for you although there is an issue around it
-
-- [ ] Stop the connect component from rerendering
-  - [ ] Not possbile at the moment since there is not way to stop the rendering triggered by a context update.
