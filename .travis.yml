@@ -8,14 +8,13 @@ before_install:
   - openssl aes-256-cbc -K $encrypted_4b0974dc0a55_key -iv $encrypted_4b0974dc0a55_iv -in ./keys/travis-service-account.json.enc -out ./keys/travis-service-account.json -d
 
 install:
-  - cd client && npm install && cd ..
-  - cd server && npm install && cd ..
+  - npm install
 
 script:
   - npm run test
 
 before_deploy:
-  - cd client && npm run build && cd ..
+  - npm run build
 
 deploy:
   - provider: gae
@@ -30,14 +29,6 @@ deploy:
     project: tekktekk-notes
     keyfile: ./keys/travis-service-account.json
     config: "./client/app.yaml"
-    verbosity: debug
-    skip_cleanup: true
-    on: master
-
-  - provider: gae
-    project: tekktekk-notes
-    keyfile: ./keys/travis-service-account.json
-    config: "./server/app.yaml"
     verbosity: debug
     skip_cleanup: true
     on: master

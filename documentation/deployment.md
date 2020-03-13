@@ -1,1 +1,0 @@
-https://graysonkoonce.com/continuous-deployment-to-google-app-engine-using-travis-ci/
