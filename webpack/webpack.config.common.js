@@ -24,14 +24,22 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.md$/,
-        exclude: /node_modules/,
-        use: "raw-loader",
-      },
-      {
         test: /\.(t|j)sx?$/,
         exclude: /node_modules/,
         use: [babel_loader],
+      },
+      {
+        test: /.worker.ts$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: "worker-loader",
+            options: {
+              name: "[name].js",
+            },
+          },
+          babel_loader,
+        ],
       },
     ],
   },
