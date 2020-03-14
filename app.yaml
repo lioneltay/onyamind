@@ -1,4 +1,4 @@
-service: client-dev
+service: default
 runtime: nodejs10
 
 instance_class: F1
@@ -7,7 +7,7 @@ env_variables:
   APP_MODE: development
 
 handlers:
-- url: /.*
-  secure: always
-  redirect_http_response_code: 301
-  script: auto
+  - url: /.*
+    secure: always
+    redirect_http_response_code: 301
+    script: auto
