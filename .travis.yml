@@ -24,7 +24,7 @@ before_deploy:
   # Add gcloud to $PATH
   - source /home/travis/google-cloud-sdk/path.bash.inc
   - gcloud version
-  - ./scripts/clean-gae-versions.sh
+  - ./scripts/cleanup-gae-versions.sh
 
 deploy:
   - provider: gae
