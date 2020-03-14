@@ -24,7 +24,7 @@ before_deploy:
   # Add gcloud to $PATH
   - source /home/travis/google-cloud-sdk/path.bash.inc
   - gcloud version
-  - ls
+  - gcloud auth activate-service-account --project=tekktekk-notes --key-file=./keys/travis-service-account.json
   - scripts/cleanup-gae-versions.sh
 
 deploy:
