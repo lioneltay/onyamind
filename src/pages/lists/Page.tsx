@@ -123,11 +123,21 @@ export default ({
         <Container>
           <List className="p-0">
             {incompleteTasks.map(task => (
-              <Task
-                key={task.id}
-                backgroundColor={theme.backgroundColor}
-                task={task}
-              />
+              <Fragment key={task.id}>
+                <Task backgroundColor={theme.backgroundColor} task={task} />
+                <CollapsableEditor
+                  task={task}
+                  open={!multiselect && editingTask?.id === task.id}
+                  onSubmit={async values => {
+                    stopEditingTask()
+                    await editTask({
+                      taskId: task.id,
+                      title: values.title,
+                      notes: values.notes,
+                    })
+                  }}
+                />
+              </Fragment>
             ))}
           </List>
 
@@ -162,18 +172,31 @@ export default ({
           <List>
             <Collapse in={showCompleteTasks}>
               {completeTasks.map(task => (
-                <Task
-                  key={task.id}
-                  backgroundColor={theme.backgroundFadedColor}
-                  task={task}
-                />
+                <Fragment key={task.id}>
+                  <Task
+                    backgroundColor={theme.backgroundFadedColor}
+                    task={task}
+                  />
+                  <CollapsableEditor
+                    task={task}
+                    open={!multiselect && editingTask?.id === task.id}
+                    onSubmit={async values => {
+                      stopEditingTask()
+                      await editTask({
+                        taskId: task.id,
+                        title: values.title,
+                        notes: values.notes,
+                      })
+                    }}
+                  />
+                </Fragment>
               ))}
             </Collapse>
           </List>
         </Container>
       </OuterContainer>
 
-      {!multiselect && editingTask ? (
+      {/* {!multiselect && editingTask ? (
         <EditModal
           open={!!editingTask}
           onClose={() => {
@@ -189,7 +212,7 @@ export default ({
             })
           }}
         />
-      ) : null}
+      ) : null} */}
     </Fragment>
   )
 }

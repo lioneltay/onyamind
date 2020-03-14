@@ -56,20 +56,21 @@ export default ({
 }: TaskProps) => {
   const theme = useTheme()
 
-  const containerRef = React.useRef()
+  // const containerRef = React.useRef()
 
-  const bind = useGesture({
-    onTap: () => onItemClick(task.id),
-  })
+  // const bind = useGesture({
+  //   onTap: () => onItemClick(task.id),
+  // })
 
   return (
     <StyledListItem
-      ref={containerRef}
-      {...bind({ ref: containerRef })}
+      // ref={containerRef}
+      // {...bind({ ref: containerRef })}
       style={{ ...style, backgroundColor }}
       className={className}
       selected={selected}
       button
+      onClick={() => onItemClick(task.id)}
     >
       <ListItemIcon
         onPointerDown={e => e.stopPropagation()}
@@ -130,7 +131,12 @@ export default ({
         }
       />
 
-      <Overlay onClick={e => e.stopPropagation()}>{hoverActions}</Overlay>
+      <Overlay
+        onClick={e => e.stopPropagation()}
+        onPointerDown={e => e.stopPropagation()}
+      >
+        {hoverActions}
+      </Overlay>
     </StyledListItem>
   )
 }
