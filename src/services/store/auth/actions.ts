@@ -13,7 +13,7 @@ const signinSuccess = () => ({ type: "SIGNIN|SUCCESS" } as const)
 const signin = () => (dispatch: Dispatch) => {
   dispatch(signinPending())
   return api
-    .signin()
+    .signinWithGoogle()
     .then(res => dispatch(signinSuccess()))
     .catch(e => {
       dispatch(signinFailure())

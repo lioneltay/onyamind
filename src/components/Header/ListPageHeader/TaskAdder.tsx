@@ -1,9 +1,10 @@
 import React, { Fragment, useState } from "react"
+import { noopTemplate as css } from "lib/utils"
 import { useTheme, styled } from "theme"
 import { useMediaQuery } from "@tekktekk/react-media-query"
 import { MOBILE_WIDTH } from "config"
 
-import { Add, Clear } from "@material-ui/icons"
+import { Add, Clear, Mic } from "@material-ui/icons"
 
 import {
   IconButton,
@@ -32,12 +33,6 @@ const Container = styled(List)`
   width: 100%;
   padding: 0;
 ` as typeof List
-
-const AdderTextField = styled(TextField).attrs({ variant: "outlined" })`
-  & fieldset {
-    border: none;
-  }
-` as typeof TextField
 
 export default () => {
   const theme = useTheme()
@@ -131,7 +126,13 @@ export default () => {
                 </IconButton>
               </ListItemIcon>
 
-              <AdderTextField
+              <TextField
+                css={css`
+                  & fieldset {
+                    border: none;
+                  }
+                `}
+                variant="outlined"
                 onFocus={stopEditingTask}
                 placeholder="Add item"
                 className="fg-1"
@@ -143,12 +144,15 @@ export default () => {
                     createTask({ title: newTaskTitle })
                   }
                 }}
+                inputProps={{
+                  style: { paddingLeft: 0 },
+                }}
                 InputProps={{
                   style: { paddingRight: 0 },
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton onClick={() => setNewTaskTitle("")}>
-                        <Clear />
+                        {newTaskTitle ? <Clear /> : <Mic />}
                       </IconButton>
                     </InputAdornment>
                   ),

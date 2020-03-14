@@ -121,7 +121,7 @@ export default ({
     <Fragment>
       <OuterContainer>
         <Container>
-          <List className="p-0">
+          <List className="p-0" style={{ background: theme.backgroundColor }}>
             {incompleteTasks.map(task => (
               <Fragment key={task.id}>
                 <Task backgroundColor={theme.backgroundColor} task={task} />

@@ -16,9 +16,9 @@ const OuterContainer = styled.div`
   justify-content: center;
   padding-bottom: 50px;
   @media (min-width: ${MOBILE_WIDTH}px) {
-    margin-top: 24px;
+    padding-top: 24px;
   }
-  margin-bottom: 48px;
+  padding-bottom: 48px;
 `
 
 const Container = styled.div`
