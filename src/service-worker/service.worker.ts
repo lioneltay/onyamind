@@ -1,4 +1,3 @@
-import * as taskSW from "./task"
 import * as assetsSW from "./assets"
 import { VERSION } from "./constants"
 
@@ -34,28 +33,4 @@ function precache() {
 
 self.addEventListener("fetch", evt => {
   assetsSW.fetchHandler(evt)
-  // taskSW.fetchHandler(evt)
-
-  // evt.respondWith(
-  //   caches
-  //     .open(CACHE.PREFETCHED)
-  //     .then(cache => cache.match(evt.request))
-  //     .then(match => {
-  //       if (match) {
-  //         // console.log("FROM CACHE", match)
-  //         return match
-  //       }
-
-  //       return fetch(evt.request).then(response => {
-  //         // console.log("CACHING", evt.request, response)
-
-  //         return shouldCache(evt.request)
-  //           ? caches
-  //               .open(CACHE.BUILT)
-  //               .then(cache => cache.put(evt.request, response.clone()))
-  //               .then(() => response)
-  //           : response
-  //       })
-  //     })
-  // )
 })

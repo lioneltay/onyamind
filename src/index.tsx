@@ -8,7 +8,7 @@ import { render } from "react-dom"
 
 import App from "./App"
 
-import "./service-worker/service.worker.ts"
+import "./service-worker/service.worker"
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {

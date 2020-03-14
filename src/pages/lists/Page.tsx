@@ -16,9 +16,9 @@ import {
 
 import { Text, ListItemText } from "lib/components"
 
-import { ExpandMore, MoreVert } from "@material-ui/icons"
+import { ExpandMore, MoreVert, Add } from "@material-ui/icons"
 
-import IconButtonMenu from "lib/components/IconButtonMenu"
+import { IconButtonMenu } from "lib/components"
 
 import Task from "./components/Task"
 
