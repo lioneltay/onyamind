@@ -8,12 +8,12 @@ declare global {
 
   export type FunctionType<A extends any[] = any[], R = any> = (...args: A) => R
 
-  export type Arguments<T extends FunctionType> = T extends FunctionType<
-    infer A,
-    any
-  >
-    ? A
-    : never
+  // export type Arguments<T extends FunctionType> = T extends FunctionType<
+  //   infer A,
+  //   any
+  // >
+  //   ? A
+  //   : never
 
   type MonoFunction<T extends any = any, R = any> = (arg: T) => R
   export type FirstArg<T extends MonoFunction> = T extends MonoFunction<

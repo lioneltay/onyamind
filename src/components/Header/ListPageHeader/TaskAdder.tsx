@@ -57,9 +57,9 @@ export default () => {
     multiselect,
     selectedTaskListId,
     userId,
-  } = useSelector(state => ({
+  } = useSelector((state, s) => ({
     selectedTaskIds: state.listPage.selectedTaskIds,
-    tasks: state.listPage.tasks,
+    tasks: s.listPage.tasks(state),
     multiselect: state.listPage.multiselect,
     selectedTaskListId: state.listPage.selectedTaskListId,
     userId: state.auth.user?.uid,

@@ -75,6 +75,8 @@ import { shallowEqual } from "react-redux"
 import { useDispatch, useSelector as originalUseSelector } from "react-redux"
 import { bindActionCreators } from "redux"
 
+export { Dispatch } from "redux"
+
 export type Action = ListPageAction | UIAction | AuthAction | SettingsAction
 
 const actionCreators = {
@@ -89,15 +91,7 @@ export const useActions = () => {
   return bindActionCreators(actionCreators, dispatch)
 }
 
-import * as listPageSelectors from "./listPage/selectors"
-import * as uiSelectors from "./ui/selectors"
-import * as authSelectors from "./auth/selectors"
-
-const selectors = {
-  listPage: listPageSelectors,
-  ui: uiSelectors,
-  auth: authSelectors,
-}
+import { selectors } from "./selectors"
 
 export const useSelector = <T extends any>(
   selector: (state: State, selectorsObj: typeof selectors) => T,

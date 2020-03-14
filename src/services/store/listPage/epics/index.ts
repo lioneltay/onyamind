@@ -1,12 +1,24 @@
-import { combineEpics } from "redux-observable"
-import { Observable, empty, of } from "rxjs"
-import { map, switchMap, distinctUntilChanged } from "rxjs/operators"
+import { combineEpics, ofType } from "redux-observable"
+import { Observable, empty, of, from } from "rxjs"
+import {
+  map,
+  switchMap,
+  distinctUntilChanged,
+  mergeMap,
+  withLatestFrom,
+  debounceTime,
+} from "rxjs/operators"
 import { Action, actionCreators } from "../actions"
 import { firestore, dataWithId } from "services/firebase"
+import { assert } from "lib/utils"
+
+import { selectors } from "services/store/selectors"
 
 import { State } from "services/store"
 
 import { StateObservable } from "redux-observable"
+
+import * as api from "services/api"
 
 const createTaskListObservable = (userId: ID | null) =>
   new Observable<TaskList[]>(observer => {
@@ -69,9 +81,13 @@ const tasksEpic = (
       (prev, curr) => prev[0] === curr[0] && prev[1] === curr[1],
     ),
     switchMap(([userId, listId]) =>
-      listId ? createTasksObservable(userId, listId) : empty(),
+      listId
+        ? createTasksObservable(userId, listId).pipe(
+            map(tasks => ({ tasks, listId })),
+          )
+        : empty(),
     ),
-    map(tasks => actionCreators.setTasks(tasks)),
+    map(({ tasks, listId }) => actionCreators.setTasks({ tasks, listId })),
   )
 }
 
@@ -87,4 +103,50 @@ const trashTasksEpic = (
   )
 }
 
-export const rootEpic = combineEpics(taskListsEpic, tasksEpic, trashTasksEpic)
+const updateTaskListCountsEpic = (
+  action$: Observable<Action>,
+  state$: StateObservable<State>,
+): Observable<Action> => {
+  return action$.pipe(
+    ofType("SET_TASKS"),
+    withLatestFrom(state$),
+    mergeMap(([action, state]) => {
+      assert(action.type === "SET_TASKS")
+
+      const list = state.listPage.taskLists?.find(
+        list => list.id === action.payload.listId,
+      )
+      assert(list, "No task list")
+      const tasks = selectors.listPage.tasks(state, list.id)
+      assert(tasks)
+      const numberOfCompleteTasks = tasks.filter(task => task.complete).length
+      const numberOfIncompleteTasks = tasks.filter(task => !task.complete)
+        .length
+
+      if (
+        list.numberOfCompleteTasks === numberOfCompleteTasks &&
+        list.numberOfIncompleteTasks === numberOfIncompleteTasks
+      ) {
+        return empty()
+      }
+
+      return from(
+        api.editTaskList({
+          listId: action.payload.listId,
+          data: {
+            numberOfCompleteTasks,
+            numberOfIncompleteTasks,
+          },
+        }),
+      )
+    }),
+    mergeMap(() => empty()),
+  )
+}
+
+export const rootEpic = combineEpics(
+  taskListsEpic,
+  tasksEpic,
+  trashTasksEpic,
+  updateTaskListCountsEpic,
+)

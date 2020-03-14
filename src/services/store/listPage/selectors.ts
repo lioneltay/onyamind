@@ -1,32 +1,30 @@
-import { State as StoreState } from "services/store"
 import { State } from "./reducer"
-import { notNil } from "lib/utils"
+import { notNil, assert } from "lib/utils"
 import { sort, comparator } from "ramda"
 
-const slice = (state: StoreState): State => state.listPage
+export const taskLists = (state: State) => state.taskLists
 
-export const taskLists = (state: StoreState) => slice(state).taskLists
+export const selectedTaskListId = (state: State) => state.selectedTaskListId
 
-export const tasks = (state: StoreState) => slice(state).tasks
+export const tasks = (state: State, listId?: ID): Task[] | null => {
+  const key = listId ?? selectedTaskListId(state)
+  return (key ? state.tasks[key] : null) ?? null
+}
 
-export const primaryTaskList = (state: StoreState): TaskList | null =>
-  slice(state).taskLists?.find(list => list.primary) ?? null
+export const primaryTaskList = (state: State): TaskList | null =>
+  state.taskLists?.find(list => list.primary) ?? null
 
-export const selectedTaskListId = (state: StoreState) =>
-  slice(state).selectedTaskListId
-
-export const selectedTaskList = (state: StoreState): TaskList | null =>
+export const selectedTaskList = (state: State): TaskList | null =>
   taskLists(state)?.find(list => list.id === selectedTaskListId(state)) ??
   primaryTaskList(state)
 
-export const selectedTaskIds = (state: StoreState) =>
-  slice(state).selectedTaskIds
+export const selectedTaskIds = (state: State) => state.selectedTaskIds
 
 type SelectedTasksOptions = {
   fromTrash?: boolean
 }
 export const selectedTasks = (
-  state: StoreState,
+  state: State,
   { fromTrash }: SelectedTasksOptions = {},
 ): Task[] =>
   selectedTaskIds(state)
@@ -35,10 +33,10 @@ export const selectedTasks = (
     )
     .filter(notNil)
 
-export const allSelectedTasksComplete = (state: StoreState): boolean =>
+export const allSelectedTasksComplete = (state: State): boolean =>
   selectedTasks(state).every(task => task.complete)
 
-export const allSelectedTasksInComplete = (state: StoreState): boolean =>
+export const allSelectedTasksInComplete = (state: State): boolean =>
   selectedTasks(state).every(task => !task.complete)
 
 const sortTasksByDate = (tasks: Task[]) =>
@@ -47,20 +45,19 @@ const sortTasksByDate = (tasks: Task[]) =>
     tasks,
   )
 
-export const loadingTasks = (state: StoreState) => state.listPage.tasks === null
+export const loadingTasks = (state: State) => state.tasks === null
 
-export const completedTasks = (state: StoreState): Task[] =>
+export const completedTasks = (state: State): Task[] =>
   sortTasksByDate((tasks(state) ?? []).filter(task => task.complete))
 
-export const incompletedTasks = (state: StoreState): Task[] =>
+export const incompletedTasks = (state: State): Task[] =>
   sortTasksByDate((tasks(state) ?? []).filter(task => !task.complete))
 
-export const trashTasks = (state: StoreState): Task[] =>
-  slice(state).trashTasks ?? []
+export const trashTasks = (state: State): Task[] => state.trashTasks ?? []
 
-export const editingTaskId = (state: StoreState) => slice(state).editingTaskId
+export const editingTaskId = (state: State) => state.editingTaskId
 
-export const editingTask = (state: StoreState) => {
+export const editingTask = (state: State) => {
   const taskId = editingTaskId(state)
   return tasks(state)?.find(task => task.id === taskId) ?? null
 }

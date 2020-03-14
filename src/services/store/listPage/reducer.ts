@@ -1,6 +1,7 @@
 import { assertNever } from "lib/utils"
 import { Action } from "./actions"
 import { union } from "ramda"
+import * as selectors from "./selectors"
 
 type UIState = {
   selectedTaskListId: ID | null
@@ -13,7 +14,7 @@ export type State = UIState & {
   // All TaskLists of the current user
   taskLists: TaskList[] | null
   // All Tasks to display on the tasklist page
-  tasks: Task[] | null
+  tasks: Record<ID, Task[] | undefined>
   // All Tasks to display on the trash page
   trashTasks: Task[] | null
 }
@@ -27,7 +28,7 @@ const initialUIState: UIState = {
 
 const initialState: State = {
   taskLists: null,
-  tasks: null,
+  tasks: {},
   trashTasks: null,
   ...initialUIState,
 }
@@ -46,7 +47,10 @@ export const reducer = (state: State = initialState, action: Action): State => {
     case "SET_TASKS": {
       return {
         ...state,
-        tasks: action.payload.tasks,
+        tasks: {
+          ...state.tasks,
+          [action.payload.listId]: action.payload.tasks,
+        },
       }
     }
     case "SET_TRASH_TASKS": {
@@ -89,7 +93,7 @@ export const reducer = (state: State = initialState, action: Action): State => {
     case "SELECT_ALL_TASKS": {
       return {
         ...state,
-        selectedTaskIds: state.tasks?.map(task => task.id) ?? [],
+        selectedTaskIds: selectors.tasks(state)?.map(task => task.id) ?? [],
       }
     }
     case "DESELECT_ALL_TASKS": {
@@ -137,7 +141,6 @@ export const reducer = (state: State = initialState, action: Action): State => {
       return {
         ...state,
         ...initialUIState,
-        tasks: null,
         selectedTaskListId: action.payload.listId,
       }
     }
@@ -164,7 +167,10 @@ export const reducer = (state: State = initialState, action: Action): State => {
     }
     case "SELECT_INCOMPLETE_TASKS": {
       const incompleteTaskIds =
-        state.tasks?.filter(task => !task.complete).map(task => task.id) ?? []
+        selectors
+          .tasks(state)
+          ?.filter(task => !task.complete)
+          .map(task => task.id) ?? []
       return {
         ...state,
         selectedTaskIds: union(state.selectedTaskIds, incompleteTaskIds),
@@ -172,7 +178,10 @@ export const reducer = (state: State = initialState, action: Action): State => {
     }
     case "DESELECT_INCOMPLETE_TASKS": {
       const incompleteTaskIds =
-        state.tasks?.filter(task => !task.complete).map(task => task.id) ?? []
+        selectors
+          .tasks(state)
+          ?.filter(task => !task.complete)
+          .map(task => task.id) ?? []
       return {
         ...state,
         selectedTaskIds: state.selectedTaskIds.filter(

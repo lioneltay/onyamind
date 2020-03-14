@@ -1,12 +1,10 @@
-import { bindActionCreators, Dispatch } from "redux"
-import { useDispatch } from "react-redux"
 import { ActionsUnion, ActionTypesUnion } from "services/store/helpers"
-import { State } from "services/store"
-import * as selectors from "services/store/listPage/selectors"
+import { GetState, Dispatch } from "services/store"
+import { selectors as storeSelectors } from "services/store/selectors"
 import * as api from "services/api"
 import { firestore, firebase } from "services/firebase"
 
-type GetState = () => State
+const selectors = storeSelectors.listPage
 
 const setMultiselect = (multiselect: boolean) =>
   ({ type: "SET_MULTISELECT", payload: { multiselect } } as const)
@@ -20,8 +18,12 @@ const deselectIncompleteTasks = () =>
 const setTaskLists = (taskLists: TaskList[]) =>
   ({ type: "SET_TASK_LISTS", payload: { taskLists } } as const)
 
-const setTasks = (tasks: Task[]) =>
-  ({ type: "SET_TASKS", payload: { tasks } } as const)
+type SetTasksOptions = {
+  tasks: Task[]
+  listId: ID
+}
+const setTasks = ({ tasks, listId }: SetTasksOptions) =>
+  ({ type: "SET_TASKS", payload: { tasks, listId } } as const)
 
 const setTrashTasks = (tasks: Task[]) =>
   ({ type: "SET_TRASH_TASKS", payload: { tasks } } as const)
@@ -420,7 +422,7 @@ const moveTask = ({ taskId, listId, fromTrash }: MoveTaskInput) => (
 
   const task = fromTrash
     ? state.listPage.trashTasks?.find(t => t.id === taskId)
-    : state.listPage.tasks?.find(t => t.id === taskId)
+    : selectors.tasks(state)?.find(t => t.id === taskId)
   const numberOfCompleteTasks = selectors.completedTasks(state).length
   const numberOfIncompleteTasks = selectors.incompletedTasks(state).length
 
