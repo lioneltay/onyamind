@@ -95,13 +95,11 @@ const moveSelectedTasks = ({ listId, fromTrash }: MoveSelectTasksInput) => (
     throw Error("Cannot call moveTask without a selectedTaskListId")
   }
 
-  const tasks = selectors.selectedTasks(state, { fromTrash: true })
+  const tasks = selectors.selectedTasks(state, { fromTrash })
   const numberOfCompleteTasks = tasks.filter(task => task.complete).length
   const numberOfIncompleteTasks = tasks.filter(task => !task.complete).length
 
   const batch = firestore.batch()
-
-  console.log("fromtrash", tasks, state)
 
   tasks.forEach(task =>
     batch.update(firestore.collection("task").doc(task.id), {
