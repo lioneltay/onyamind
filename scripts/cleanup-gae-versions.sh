@@ -7,3 +7,5 @@ gcloud app versions list --service client-dev
 #     # If you want to confirm before deletion, remove the -q
 #     gcloud app versions delete --service client-dev $(echo $VERSIONS) -q
 # fi
+
+#dfasdfasdf
