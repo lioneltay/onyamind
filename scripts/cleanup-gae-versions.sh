@@ -8,4 +8,4 @@ gcloud app versions list --service client-dev
 #     gcloud app versions delete --service client-dev $(echo $VERSIONS) -q
 # fi
 
-#dfasdfasdfsdfasdfasd
+#dfasdfasdfsdfasdfasdsdfasdf asd
