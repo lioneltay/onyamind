@@ -151,7 +151,7 @@ export default ({
     params: { listId },
   },
 }: Props) => {
-  const { selectTaskList } = useActions("listPage")
+  const { selectTaskList } = useActions("app")
 
   React.useEffect(() => {
     selectTaskList(listId)

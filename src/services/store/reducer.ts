@@ -14,8 +14,10 @@ import {
   reducer as settingsReducer,
   State as SettingsState,
 } from "./settings/reducer"
+import { reducer as appReducer, State as AppState } from "./app/reducer"
 
 export type State = {
+  app: AppState
   settings: SettingsState
   listPage: ListPageState
   trashPage: TrashPageState
@@ -26,6 +28,7 @@ export type State = {
 export type GetState = () => State
 
 export const reducer = combineReducers({
+  app: appReducer,
   settings: settingsReducer,
   listPage: listPageReducer,
   trashPage: trashPageReducer,

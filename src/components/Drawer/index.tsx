@@ -46,7 +46,6 @@ import { useHistory } from "react-router-dom"
 import { useActions, useSelector } from "services/store"
 
 import { useTheme } from "theme"
-import { listPageUrl } from "pages/lists/routing"
 
 export default () => {
   const history = useHistory()
@@ -54,11 +53,12 @@ export default () => {
   const {
     ui: { toggleDrawer, closeDrawer },
     auth: { signin, signout },
-    listPage: {
+    app: {
       deleteTaskList,
       createTaskList,
       editTaskList,
       setPrimaryTaskList,
+      selectTaskList,
     },
     settings: { toggleDarkMode },
   } = useActions()
@@ -66,8 +66,8 @@ export default () => {
   const { show, taskLists, selectedTaskListId, user, darkMode } = useSelector(
     (state, s) => ({
       show: state.ui.showDrawer,
-      taskLists: s.listPage.taskLists(state),
-      selectedTaskListId: s.listPage.selectedTaskListId(state),
+      taskLists: state.app.taskLists,
+      selectedTaskListId: state.app.selectedTaskListId,
       user: state.auth.user,
       darkMode: state.settings.darkMode,
     }),
@@ -87,8 +87,8 @@ export default () => {
 
   const primaryList = taskLists ? taskLists.find(list => list.primary) : null
 
-  const selectTaskList = (list: TaskList) => {
-    history.push(listPageUrl(list.id))
+  if (!user) {
+    return null
   }
 
   return (
@@ -186,7 +186,7 @@ export default () => {
             key={primaryList.id}
             taskList={primaryList}
             selected={primaryList.id === selectedTaskListId}
-            onBodyClick={() => selectTaskList(primaryList)}
+            onBodyClick={() => selectTaskList(primaryList.id)}
             onDelete={id => {
               setSelectedId(id)
               setShowDeleteModal(true)
@@ -228,7 +228,7 @@ export default () => {
                   taskList={list}
                   selected={list.id === selectedTaskListId}
                   onBodyClick={() => {
-                    selectTaskList(list)
+                    selectTaskList(list.id)
                   }}
                   onDelete={id => {
                     setSelectedId(id)

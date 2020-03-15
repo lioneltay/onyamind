@@ -16,21 +16,24 @@ export default () => {
     allSelectedTasksComplete,
     allSelectedTasksIncomplete,
     selectedTaskList,
+    multiselect,
+    numberOfSelectedTasks,
   } = useSelector((state, s) => ({
-    taskLists: s.listPage.taskLists(state) || [],
+    taskLists: state.app.taskLists || [],
     allSelectedTasksComplete: s.listPage.allSelectedTasksComplete(state),
     allSelectedTasksIncomplete: s.listPage.allSelectedTasksInComplete(state),
-    selectedTaskList: s.listPage.selectedTaskList(state),
+    selectedTaskList: s.app.selectedTaskList(state),
+    multiselect: state.listPage.multiselect,
+    numberOfSelectedTasks: state.listPage.tasks?.length ?? 0,
   }))
 
   const {
-    listPage: {
-      completeSelectedTasks,
-      decompleteSelectedTasks,
-      archiveSelectedTasks,
-      moveSelectedTasks,
-    },
-  } = useActions()
+    completeSelectedTasks,
+    decompleteSelectedTasks,
+    archiveSelectedTasks,
+    moveSelectedTasks,
+    setMultiselect,
+  } = useActions("listPage")
 
   return (
     <header
@@ -42,7 +45,10 @@ export default () => {
     >
       <HeaderBase
         title={selectedTaskList?.name ?? ""}
-        editingActions={
+        numberOfSelectedTasks={numberOfSelectedTasks}
+        multiselect={multiselect}
+        onEndMultiselect={() => setMultiselect(false)}
+        multiselectActions={
           <Fragment>
             {allSelectedTasksComplete || allSelectedTasksIncomplete ? (
               <IconButton

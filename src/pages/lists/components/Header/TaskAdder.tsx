@@ -40,26 +40,16 @@ export default () => {
   const [newTaskTitle, setNewTaskTitle] = useState("")
 
   const {
-    listPage: {
-      stopEditingTask,
-      deselectIncompleteTasks,
-      selectIncompleteTasks,
-      createTask,
-    },
-  } = useActions()
+    stopEditingTask,
+    deselectIncompleteTasks,
+    selectIncompleteTasks,
+    createTask,
+  } = useActions("listPage")
 
-  const {
-    selectedTaskIds,
-    tasks,
-    multiselect,
-    selectedTaskListId,
-    userId,
-  } = useSelector((state, s) => ({
+  const { selectedTaskIds, tasks, multiselect } = useSelector((state, s) => ({
     selectedTaskIds: state.listPage.selectedTaskIds,
     tasks: s.listPage.tasks(state),
     multiselect: state.listPage.multiselect,
-    selectedTaskListId: state.listPage.selectedTaskListId,
-    userId: state.auth.user?.uid,
   }))
 
   const allSelected = !!(

@@ -2,7 +2,7 @@ import React, { Fragment } from "react"
 
 import { IconButton } from "@material-ui/core"
 
-import { Delete, Add, Check, SwapHoriz, Restore } from "@material-ui/icons"
+import { Delete, SwapHoriz, Restore } from "@material-ui/icons"
 
 import Task from "components/Task"
 import IconButtonMenu from "lib/components/IconButtonMenu"
@@ -23,21 +23,17 @@ export default ({
   selected: Selected,
 }: Props) => {
   const {
-    listPage: {
-      deleteTask,
-      toggleTaskSelection,
-      unarchiveTask,
-      toggleEditingTask,
-      stopEditingTask,
-      setMultiselect,
-      moveTask,
-    },
-  } = useActions()
+    deleteTask,
+    toggleTaskSelection,
+    unarchiveTask,
+    setMultiselect,
+    moveTask,
+  } = useActions("trashPage")
   const { taskLists, selectedTaskIds, multiselect, touchScreen } = useSelector(
     state => ({
-      taskLists: state.listPage.taskLists,
-      selectedTaskIds: state.listPage.selectedTaskIds,
-      multiselect: state.listPage.multiselect,
+      taskLists: state.app.taskLists,
+      selectedTaskIds: state.trashPage.selectedTaskIds,
+      multiselect: state.trashPage.multiselect,
       touchScreen: false,
     }),
   )
@@ -60,9 +56,7 @@ export default ({
       selected={selected}
       multiselect={multiselect}
       task={task}
-      onItemClick={() => toggleEditingTask(task.id)}
       onSelectTask={id => {
-        stopEditingTask()
         toggleTaskSelection(id)
         if (!multiselect) {
           setMultiselect(true)
@@ -83,7 +77,6 @@ export default ({
                   moveTask({
                     taskId: task.id,
                     listId: list.id,
-                    fromTrash: true,
                   }),
               }))}
             />

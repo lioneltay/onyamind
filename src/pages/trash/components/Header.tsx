@@ -12,12 +12,19 @@ import { useActions, useSelector } from "services/store"
 
 export default () => {
   const {
-    listPage: { deleteSelectedTasks, emptyTrash, moveSelectedTasks },
-  } = useActions()
+    deleteSelectedTasks,
+    emptyTrash,
+    moveSelectedTasks,
+    setMultiselect,
+  } = useActions("trashPage")
 
-  const { taskLists } = useSelector(state => ({
-    taskLists: state.listPage.taskLists ?? [],
-  }))
+  const { taskLists, multiselect, numberOfSelectedTasks } = useSelector(
+    state => ({
+      taskLists: state.app.taskLists ?? [],
+      multiselect: state.trashPage.multiselect,
+      numberOfSelectedTasks: state.trashPage.trashTasks?.length ?? 0,
+    }),
+  )
 
   return (
     <HeaderBase
@@ -27,14 +34,16 @@ export default () => {
         z-index: 1000;
       `}
       title="Trash"
-      editingActions={
+      numberOfSelectedTasks={numberOfSelectedTasks}
+      multiselect={multiselect}
+      onEndMultiselect={() => setMultiselect(false)}
+      multiselectActions={
         <Fragment>
           <IconButtonMenu
             icon={<SwapHoriz />}
             items={taskLists.map(list => ({
               label: list.name,
-              action: () =>
-                moveSelectedTasks({ listId: list.id, fromTrash: true }),
+              action: () => moveSelectedTasks({ listId: list.id }),
             }))}
           />
 

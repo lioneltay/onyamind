@@ -16,7 +16,7 @@ const Content = () => {
   const { editingTaskId, tasks } = useSelector((state, s) => ({
     editingTaskId: s.listPage.editingTaskId(state),
     loadingTasks: s.listPage.loadingTasks(state),
-    tasks: state.listPage.trashTasks,
+    tasks: state.trashPage.trashTasks,
   }))
 
   if (!tasks) {
@@ -45,7 +45,7 @@ type Props = RouteComponentProps<{ listId: string; listName: string }> & {}
 
 export default ({ match }: Props) => {
   const {
-    listPage: { selectTaskList },
+    app: { selectTaskList },
   } = useActions()
 
   React.useEffect(() => {

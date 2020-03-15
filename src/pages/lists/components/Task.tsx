@@ -17,19 +17,17 @@ export type Props = Stylable & {
 
 export default ({ style, className, task, backgroundColor }: Props) => {
   const {
-    listPage: {
-      archiveTask,
-      editTask,
-      toggleTaskSelection,
-      moveTask,
-      toggleEditingTask,
-      stopEditingTask,
-      setMultiselect,
-    },
-  } = useActions()
+    archiveTask,
+    editTask,
+    toggleTaskSelection,
+    moveTask,
+    toggleEditingTask,
+    stopEditingTask,
+    setMultiselect,
+  } = useActions("listPage")
   const { taskLists, selectedTaskIds, multiselect, touchScreen } = useSelector(
     state => ({
-      taskLists: state.listPage.taskLists,
+      taskLists: state.app.taskLists,
       selectedTaskIds: state.listPage.selectedTaskIds,
       multiselect: state.listPage.multiselect,
       touchScreen: false,

@@ -22,11 +22,22 @@ import {
 import {
   actionCreators as trashPageActionCreators,
   Action as TrashPageAction,
-} from "./settings/actions"
+} from "./trashPage/actions"
+import {
+  actionCreators as appActionCreators,
+  Action as AppAction,
+} from "./app/actions"
 
-export type Action = ListPageAction | UIAction | AuthAction | SettingsAction
+export type Action =
+  | ListPageAction
+  | TrashPageAction
+  | UIAction
+  | AuthAction
+  | SettingsAction
+  | AppAction
 
-const actionCreators = {
+export const actionCreators = {
+  app: appActionCreators,
   settings: settingsActionCreators,
   listPage: listPageActionCreators,
   trashPage: trashPageActionCreators,

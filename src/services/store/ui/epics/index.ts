@@ -11,7 +11,7 @@ const closeDrawerEpic = (
   state$: StateObservable<State>,
 ): Observable<Action> => {
   return action$.pipe(
-    ofType("LIST|SELECT_TASK_LIST"),
+    ofType("APP|SELECT_TASK_LIST"),
     withLatestFrom(state$),
     mergeMap(([action, state]) => {
       return state.ui.showDrawer

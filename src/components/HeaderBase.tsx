@@ -6,26 +6,30 @@ import { ArrowBack, Menu } from "@material-ui/icons"
 import { Toolbar, AppBar, IconButton } from "@material-ui/core"
 import { Text } from "lib/components"
 
-import { useSelector, useActions } from "services/store"
+import { useActions } from "services/store"
 
 type Props = Stylable & {
   title: string
-  editingActions?: React.ReactNode
+  multiselectActions: React.ReactNode
+  multiselect: boolean
+  onEndMultiselect: () => void
+  numberOfSelectedTasks: number
   actions?: React.ReactNode
 }
 
-export default ({ title, editingActions, actions, ...rest }: Props) => {
+export default ({
+  title,
+  multiselectActions,
+  actions,
+  onEndMultiselect,
+  multiselect,
+  numberOfSelectedTasks,
+  ...rest
+}: Props) => {
+  const theme = useTheme()
   const {
     ui: { toggleDrawer },
-    listPage: { setMultiselect },
   } = useActions()
-
-  const { numberOfSelectedTasks, multiselect } = useSelector((state, s) => ({
-    multiselect: state.listPage.multiselect,
-    numberOfSelectedTasks: s.listPage.selectedTasks(state).length,
-  }))
-
-  const theme = useTheme()
 
   return (
     <AppBar {...rest} position="relative">
@@ -61,7 +65,7 @@ export default ({ title, editingActions, actions, ...rest }: Props) => {
               <Fragment>
                 <IconButton
                   style={{ display: "inline-block" }}
-                  onClick={() => setMultiselect(false)}
+                  onClick={onEndMultiselect}
                 >
                   <ArrowBack />
                 </IconButton>
@@ -89,7 +93,7 @@ export default ({ title, editingActions, actions, ...rest }: Props) => {
             )}
           </div>
 
-          {multiselect ? <div>{editingActions}</div> : <div>{actions}</div>}
+          {multiselect ? <div>{multiselectActions}</div> : <div>{actions}</div>}
         </div>
       </Toolbar>
     </AppBar>
