@@ -40,10 +40,12 @@ export default () => {
   const [newTaskTitle, setNewTaskTitle] = useState("")
 
   const {
-    stopEditingTask,
-    deselectIncompleteTasks,
-    selectIncompleteTasks,
-    createTask,
+    listPage: {
+      stopEditingTask,
+      deselectIncompleteTasks,
+      selectIncompleteTasks,
+      createTask,
+    },
   } = useActions()
 
   const {

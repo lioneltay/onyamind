@@ -23,13 +23,15 @@ export default ({
   selected: Selected,
 }: Props) => {
   const {
-    deleteTask,
-    toggleTaskSelection,
-    unarchiveTask,
-    toggleEditingTask,
-    stopEditingTask,
-    setMultiselect,
-    moveTask,
+    listPage: {
+      deleteTask,
+      toggleTaskSelection,
+      unarchiveTask,
+      toggleEditingTask,
+      stopEditingTask,
+      setMultiselect,
+      moveTask,
+    },
   } = useActions()
   const { taskLists, selectedTaskIds, multiselect, touchScreen } = useSelector(
     state => ({

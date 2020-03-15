@@ -52,15 +52,15 @@ export default () => {
   const history = useHistory()
   const theme = useTheme()
   const {
-    toggleDrawer,
-    closeDrawer,
-    signin,
-    signout,
-    deleteTaskList,
-    createTaskList,
-    editTaskList,
-    setPrimaryTaskList,
-    toggleDarkMode,
+    ui: { toggleDrawer, closeDrawer },
+    auth: { signin, signout },
+    listPage: {
+      deleteTaskList,
+      createTaskList,
+      editTaskList,
+      setPrimaryTaskList,
+    },
+    settings: { toggleDarkMode },
   } = useActions()
 
   const { show, taskLists, selectedTaskListId, user, darkMode } = useSelector(

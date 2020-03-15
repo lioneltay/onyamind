@@ -68,7 +68,9 @@ export const useTheme = () => useContext(ThemeContext)
 export const ThemeProvider: React.FunctionComponent<ThemeProps> = ({
   children,
 }) => {
-  const { setDarkMode } = useActions()
+  const {
+    settings: { setDarkMode },
+  } = useActions()
   const dark = useSelector(state => state.settings.darkMode)
   const theme = getTheme({ dark })
 

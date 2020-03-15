@@ -1,7 +1,8 @@
+import { useSelector as originalUseSelector, shallowEqual } from "react-redux"
 import * as listPageSelectors from "./listPage/selectors"
 import * as uiSelectors from "./ui/selectors"
 import * as authSelectors from "./auth/selectors"
-import { State } from "./index"
+import { State } from "./reducer"
 
 // This works but shows an error..
 type LiftSelectors<T extends Record<string, FunctionType>> = {
@@ -29,4 +30,14 @@ export const selectors = {
   listPage: mapSelectors("listPage", listPageSelectors),
   ui: mapSelectors("ui", uiSelectors),
   auth: mapSelectors("auth", authSelectors),
+}
+
+export const useSelector = <T extends any>(
+  selector: (state: State, selectorsObj: typeof selectors) => T,
+  equalityFn?: (left: T, right: T) => boolean,
+): T => {
+  return originalUseSelector(
+    (state: State) => selector(state, selectors),
+    equalityFn || shallowEqual,
+  )
 }

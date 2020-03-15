@@ -15,7 +15,10 @@ type Props = Stylable & {
 }
 
 export default ({ title, editingActions, actions, ...rest }: Props) => {
-  const { toggleDrawer, setMultiselect } = useActions()
+  const {
+    ui: { toggleDrawer },
+    listPage: { setMultiselect },
+  } = useActions()
 
   const { numberOfSelectedTasks, multiselect } = useSelector((state, s) => ({
     multiselect: state.listPage.multiselect,

@@ -11,7 +11,9 @@ import { HeaderBase } from "components"
 import { useActions, useSelector } from "services/store"
 
 export default () => {
-  const { deleteSelectedTasks, emptyTrash, moveSelectedTasks } = useActions()
+  const {
+    listPage: { deleteSelectedTasks, emptyTrash, moveSelectedTasks },
+  } = useActions()
 
   const { taskLists } = useSelector(state => ({
     taskLists: state.listPage.taskLists ?? [],

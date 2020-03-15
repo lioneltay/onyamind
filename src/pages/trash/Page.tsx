@@ -44,7 +44,9 @@ const Content = () => {
 type Props = RouteComponentProps<{ listId: string; listName: string }> & {}
 
 export default ({ match }: Props) => {
-  const { selectTaskList } = useActions()
+  const {
+    listPage: { selectTaskList },
+  } = useActions()
 
   React.useEffect(() => {
     selectTaskList(match.params.listId)

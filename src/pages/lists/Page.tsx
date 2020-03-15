@@ -33,10 +33,12 @@ const Content = () => {
   const theme = useTheme()
 
   const {
-    stopEditingTask,
-    editTask,
-    decompleteCompletedTasks,
-    archiveCompletedTasks,
+    listPage: {
+      stopEditingTask,
+      editTask,
+      decompleteCompletedTasks,
+      archiveCompletedTasks,
+    },
   } = useActions()
 
   const {
@@ -149,7 +151,7 @@ export default ({
     params: { listId },
   },
 }: Props) => {
-  const { selectTaskList } = useActions()
+  const { selectTaskList } = useActions("listPage")
 
   React.useEffect(() => {
     selectTaskList(listId)

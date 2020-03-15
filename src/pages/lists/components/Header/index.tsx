@@ -24,10 +24,12 @@ export default () => {
   }))
 
   const {
-    completeSelectedTasks,
-    decompleteSelectedTasks,
-    archiveSelectedTasks,
-    moveSelectedTasks,
+    listPage: {
+      completeSelectedTasks,
+      decompleteSelectedTasks,
+      archiveSelectedTasks,
+      moveSelectedTasks,
+    },
   } = useActions()
 
   return (
