@@ -97,9 +97,9 @@ export default () => {
 
   const primaryList = taskLists ? taskLists.find(list => list.primary) : null
 
-  if (!user) {
-    return null
-  }
+  // if (!user) {
+  //   return null
+  // }
 
   return (
     <SwipeableDrawer
