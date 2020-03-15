@@ -20,20 +20,10 @@ export const reducer = (state: State = initialState, action: Action): State => {
       }
     }
     case "APP|SET_TASK_LISTS": {
-      const { taskLists } = action.payload
-
-      const newState: State = {
+      return {
         ...state,
-        taskLists,
+        taskLists: action.payload.taskLists,
       }
-
-      if (!state.selectedTaskListId && taskLists.length > 0) {
-        const selectedList =
-          taskLists.find(list => list.primary) ?? taskLists[1]
-        newState.selectedTaskListId = selectedList.id
-      }
-
-      return newState
     }
     default: {
       return state

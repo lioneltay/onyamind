@@ -23,6 +23,7 @@ import { CollapsableEditor, Header } from "./components"
 
 import { useTheme } from "theme"
 import { useSelector, useActions } from "services/store"
+import { listPageUrl } from "pages/lists/routing"
 
 const Flip = styled.div<{ flip: boolean }>`
   transform: rotate(${({ flip }) => (flip ? "-180deg" : "0")});
@@ -63,7 +64,7 @@ const Content = () => {
 
   if (loadingTasks) {
     return (
-      <Fade in={true} style={{ transitionDelay: "800ms" }}>
+      <Fade in={true} style={{ transitionDelay: "500ms" }}>
         <LinearProgress />
       </Fade>
     )
@@ -150,15 +151,33 @@ export default ({
   match: {
     params: { listId },
   },
+  history,
 }: Props) => {
   const { selectTaskList } = useActions("app")
+  const { selectedTaskListId, taskListsLoaded, listIdParamValid } = useSelector(
+    state => ({
+      selectedTaskListId: state.app.selectedTaskListId,
+      taskListsLoaded: !!state.app.taskLists,
+      listIdParamValid: state.app.taskLists?.find(list => list.id === listId),
+    }),
+  )
 
+  /**
+   * Run once when taskLists are first loaded
+   * If the listId param is valid make it the selectedTaskListId
+   */
   React.useEffect(() => {
-    selectTaskList(listId)
-    return () => {
-      selectTaskList(null)
+    if (listIdParamValid) {
+      selectTaskList(listId)
     }
-  }, [])
+  }, [taskListsLoaded])
+
+  // Keep url synced with selectedTaskListId
+  React.useEffect(() => {
+    if (selectedTaskListId) {
+      history.push(listPageUrl(selectedTaskListId))
+    }
+  }, [selectedTaskListId])
 
   return (
     <Fragment>

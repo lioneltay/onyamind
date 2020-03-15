@@ -46,6 +46,7 @@ import { useHistory } from "react-router-dom"
 import { useActions, useSelector } from "services/store"
 
 import { useTheme } from "theme"
+import { listPageUrl } from "pages/lists/routing"
 
 export default () => {
   const history = useHistory()
@@ -72,6 +73,15 @@ export default () => {
       darkMode: state.settings.darkMode,
     }),
   )
+
+  const handleSelectTaskList = (listId: ID) => {
+    if (selectedTaskListId === listId) {
+      return
+    }
+    history.push(listPageUrl(listId))
+    selectTaskList(listId)
+    closeDrawer()
+  }
 
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -186,7 +196,7 @@ export default () => {
             key={primaryList.id}
             taskList={primaryList}
             selected={primaryList.id === selectedTaskListId}
-            onBodyClick={() => selectTaskList(primaryList.id)}
+            onBodyClick={() => handleSelectTaskList(primaryList.id)}
             onDelete={id => {
               setSelectedId(id)
               setShowDeleteModal(true)
@@ -228,7 +238,7 @@ export default () => {
                   taskList={list}
                   selected={list.id === selectedTaskListId}
                   onBodyClick={() => {
-                    selectTaskList(list.id)
+                    handleSelectTaskList(list.id)
                   }}
                   onDelete={id => {
                     setSelectedId(id)

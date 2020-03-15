@@ -6,21 +6,11 @@ import { StateObservable } from "redux-observable"
 
 import { Action, State } from "services/store"
 
-const closeDrawerEpic = (
+const placeHolder = (
   action$: Observable<Action>,
   state$: StateObservable<State>,
 ): Observable<Action> => {
-  return action$.pipe(
-    ofType("APP|SELECT_TASK_LIST"),
-    withLatestFrom(state$),
-    mergeMap(([action, state]) => {
-      return state.ui.showDrawer
-        ? of({
-            type: "CLOSE_DRAWER",
-          } as const)
-        : empty()
-    }),
-  )
+  return empty()
 }
 
-export const rootEpic = combineEpics(closeDrawerEpic)
+export const rootEpic = combineEpics(placeHolder)
