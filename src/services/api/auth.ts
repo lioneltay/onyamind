@@ -32,18 +32,13 @@ export const signout = () => {
   return firebase.auth().signOut()
 }
 
-/**
- * FIRST TIME
- * anonymous
- * sign in (POPUP)
- * linkWithCrednetial (SUCCESS)
- * DONE
- *
- * OTHER TIMES
- * anaonymous
- * sign in (POPUP)
- * linkWithCredential (FAIL)
- * manual delete anonymous and merge into existing account (HOW TO DEAL WITH AUTH RULES)
- *
- *
- */
+export const getUser = () => {
+  let unsub = () => {}
+
+  return new Promise<User | null>(res => {
+    unsub = firebase.auth().onAuthStateChanged(user => {
+      unsub()
+      res(user)
+    })
+  })
+}

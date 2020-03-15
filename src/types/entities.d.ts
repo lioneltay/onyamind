@@ -10,7 +10,7 @@ declare global {
 
   export type Settings = {
     id: ID
-    userId: ID | null
+    userId: ID
     darkMode: boolean
     createdAt: number
     updatedAt: number
@@ -24,12 +24,12 @@ declare global {
     numberOfCompleteTasks: number
     numberOfIncompleteTasks: number
     primary: boolean
-    userId: ID | null
+    userId: ID
   }
 
   export type TaskList = {
     id: ID
-    userId: ID | null
+    userId: ID
     name: string
     createdAt: Date
     updatedAt: Date | null
@@ -41,12 +41,12 @@ declare global {
   export type Task = {
     id: ID
     listId: ID
-    userId: ID | null
+    userId: ID
     archived: boolean
     complete: boolean
     createdAt: Date
     updatedAt: Date | null
-    notes: string
+    notes?: string
     title: string
   }
 }

@@ -1,14 +1,14 @@
 import { firebase, firestore, dataWithId } from "services/firebase"
 import { noUndefinedValues } from "lib/utils"
 
-export const getTaskList = async (listId: ID): Promise<TaskList> => {
+export const getTaskList = async (listId: ID): Promise<TaskList | null> => {
   const x = await firestore
     .collection("taskList")
     .doc(listId)
     .get()
-    .then(dataWithId)
+    .then(res => (res.exists ? dataWithId(res) : null))
 
-  return x as TaskList
+  return x as TaskList | null
 }
 
 type AddTaskListInput = Omit<

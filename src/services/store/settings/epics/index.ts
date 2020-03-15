@@ -34,8 +34,6 @@ const updateSettingsEpic = (
         return empty()
       }
 
-      console.log("update the firebase settings")
-
       return from(
         api.updateSettings(state.auth.user.uid, {
           darkMode: state.settings.darkMode,

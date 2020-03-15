@@ -38,29 +38,6 @@ export function fetchHandler(evt: FetchEvent) {
             }),
         ),
     )
-
-    // // Cache first
-    // evt.respondWith(
-    //   caches
-    //     .open(CACHE)
-    //     .then(cache => cache.match(evt.request))
-    //     .then(match => {
-    //       if (match) {
-    //         console.log("FROM CACHE", match)
-    //         return match
-    //       }
-
-    //       return fetch(evt.request).then(response => {
-
-    //         return shouldCache(evt.request)
-    //           ? caches
-    //               .open(CACHE)
-    //               .then(cache => cache.put(evt.request, response.clone()))
-    //               .then(() => response)
-    //           : response
-    //       })
-    //     })
-    // )
   }
 }
 

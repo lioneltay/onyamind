@@ -39,7 +39,7 @@ import RenameTaskListModal from "./RenameTaskListModal"
 import DeleteTaskListModal from "./DeleteTaskListModal"
 
 import { comparator } from "ramda"
-import GoogleSignInButton from "../GoogleSignInButton"
+import { GoogleSignInButton } from "components"
 import TaskList from "./TaskList"
 import { useHistory } from "react-router-dom"
 
@@ -88,7 +88,7 @@ export default () => {
   const primaryList = taskLists ? taskLists.find(list => list.primary) : null
 
   const selectTaskList = (list: TaskList) => {
-    history.push(listPageUrl({ listId: list.id, listName: list.name }))
+    history.push(listPageUrl(list.id))
   }
 
   return (
@@ -305,7 +305,6 @@ export default () => {
           await createTaskList({
             name: values.name,
             primary: values.primary,
-            userId: user?.uid ?? null,
           })
         }}
         open={showCreateModal}

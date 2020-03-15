@@ -1,3 +1,4 @@
+import { assert } from "lib/utils"
 import { ActionsUnion, ActionTypesUnion } from "services/store/helpers"
 import { GetState, Dispatch } from "services/store"
 import { selectors as storeSelectors } from "services/store/selectors"
@@ -264,6 +265,8 @@ const createTask = ({ title = "", notes = "" }: CreateTaskInput) => (
     throw Error("Cannot create task when there is no selected task list")
   }
 
+  assert(userId, "No user")
+
   dispatch(createTaskPending())
   return api
     .createTask({ listId, userId, title, notes })
@@ -466,15 +469,16 @@ const createTaskListFailure = () =>
 const createTaskListSuccess = () =>
   ({ type: "CREATE_TASK_LIST|SUCCESS" } as const)
 type CreateTaskListInput = {
-  userId: ID | null
   name: string
   primary?: boolean
 }
-const createTaskList = ({
-  userId,
-  primary = true,
-  name,
-}: CreateTaskListInput) => (dispatch: Dispatch, getState: GetState) => {
+const createTaskList = ({ primary = true, name }: CreateTaskListInput) => (
+  dispatch: Dispatch,
+  getState: GetState,
+) => {
+  const userId = getState().auth.user?.uid
+  assert(userId, "No userId")
+
   dispatch(createTaskListPending())
   return api
     .createTaskList({ userId, primary, name })

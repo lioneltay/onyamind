@@ -67,7 +67,11 @@ export const reducer = (state: State = initialState, action: Action): State => {
         taskLists,
       }
 
-      if (!state.selectedTaskListId) {
+      // Select the primary or first list if there is no selected list, or the selected list is invalid
+      if (
+        !state.selectedTaskListId ||
+        !taskLists.find(list => list.id === state.selectedTaskListId)
+      ) {
         const selectedTaskList =
           taskLists.find(list => list.primary) ?? taskLists[0]
         newState.selectedTaskListId = selectedTaskList?.id

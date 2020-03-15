@@ -8,13 +8,13 @@ import { Text } from "lib/components"
 
 import { useSelector, useActions } from "services/store"
 
-type Props = {
+type Props = Stylable & {
   title: string
   editingActions?: React.ReactNode
   actions?: React.ReactNode
 }
 
-export default ({ title, editingActions, actions }: Props) => {
+export default ({ title, editingActions, actions, ...rest }: Props) => {
   const { toggleDrawer, setMultiselect } = useActions()
 
   const { numberOfSelectedTasks, multiselect } = useSelector((state, s) => ({
@@ -25,7 +25,7 @@ export default ({ title, editingActions, actions }: Props) => {
   const theme = useTheme()
 
   return (
-    <AppBar position="relative">
+    <AppBar {...rest} position="relative">
       <Toolbar
         css={css`
           padding-left: 0;

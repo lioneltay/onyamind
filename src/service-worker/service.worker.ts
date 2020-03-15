@@ -1,3 +1,5 @@
+// docs https://developers.google.com/web/fundamentals/primers/service-workers
+
 import * as assetsSW from "./assets"
 import { VERSION } from "./constants"
 

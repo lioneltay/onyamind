@@ -1,11 +1,12 @@
 import React, { Fragment } from "react"
+import { noopTemplate as css } from "lib/utils"
 
 import { IconButton } from "@material-ui/core"
 import { SwapHoriz, Add, Check, Delete } from "@material-ui/icons"
 
 import IconButtonMenu from "lib/components/IconButtonMenu"
 import TaskAdder from "./TaskAdder"
-import HeaderBase from "../HeaderBase"
+import HeaderBase from "components/HeaderBase"
 
 import { useSelector, useActions } from "services/store"
 
@@ -30,7 +31,13 @@ export default () => {
   } = useActions()
 
   return (
-    <Fragment>
+    <header
+      css={css`
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      `}
+    >
       <HeaderBase
         title={selectedTaskList?.name ?? ""}
         editingActions={
@@ -62,6 +69,6 @@ export default () => {
         }
       />
       <TaskAdder />
-    </Fragment>
+    </header>
   )
 }

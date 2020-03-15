@@ -5,6 +5,7 @@ import { State } from "./index"
 
 // This works but shows an error..
 type LiftSelectors<T extends Record<string, FunctionType>> = {
+  //@ts-ignore
   [K in keyof T]: (...args: ModifyFirst<Parameters<T[K]>>) => ReturnType<T[K]>
 }
 

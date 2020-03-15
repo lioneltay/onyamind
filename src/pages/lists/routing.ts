@@ -1,13 +1,9 @@
 import { slug } from "lib/utils"
 
-type ListPageUrlInput = {
-  listId: ID
-  listName: string
-}
-export const listPageUrl = (config: ListPageUrlInput) => {
-  if (!config) {
-    return slug(`/lists`)
+export const listPageUrl = (listId?: ID) => {
+  if (!listId) {
+    return `/lists`
   }
 
-  return `/lists/${slug(config.listId)}/${slug(config.listName)}`
+  return `/lists/${slug(listId)}`
 }

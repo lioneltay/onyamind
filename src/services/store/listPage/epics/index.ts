@@ -7,6 +7,7 @@ import {
   mergeMap,
   withLatestFrom,
   debounceTime,
+  tap,
 } from "rxjs/operators"
 import { Action, actionCreators } from "../actions"
 import { firestore, dataWithId } from "services/firebase"
@@ -19,8 +20,10 @@ import { State } from "services/store"
 import { StateObservable } from "redux-observable"
 
 import * as api from "services/api"
+import { router } from "services/router"
+import { listPageUrl } from "pages/lists/routing"
 
-const createTaskListObservable = (userId: ID | null) =>
+const createTaskListObservable = (userId: ID) =>
   new Observable<TaskList[]>(observer => {
     return firestore
       .collection("taskList")
@@ -31,7 +34,7 @@ const createTaskListObservable = (userId: ID | null) =>
       })
   })
 
-const createTasksObservable = (userId: ID | null, listId: ID) =>
+const createTasksObservable = (userId: ID, listId: ID) =>
   new Observable<Task[]>(observer => {
     return firestore
       .collection("task")
@@ -44,7 +47,7 @@ const createTasksObservable = (userId: ID | null, listId: ID) =>
       })
   })
 
-const createTrashTasksObservable = (userId: ID | null) =>
+const createTrashTasksObservable = (userId: ID) =>
   new Observable<Task[]>(observer => {
     return firestore
       .collection("task")
@@ -63,7 +66,7 @@ const taskListsEpic = (
   return state$.pipe(
     map(state => state.auth?.user?.uid ?? null),
     distinctUntilChanged(),
-    switchMap(userId => createTaskListObservable(userId)),
+    switchMap(userId => (userId ? createTaskListObservable(userId) : empty())),
     map(taskLists => actionCreators.setTaskLists(taskLists)),
   )
 }
@@ -80,13 +83,13 @@ const tasksEpic = (
     distinctUntilChanged(
       (prev, curr) => prev[0] === curr[0] && prev[1] === curr[1],
     ),
-    switchMap(([userId, listId]) =>
-      listId
+    switchMap(([userId, listId]) => {
+      return listId && userId
         ? createTasksObservable(userId, listId).pipe(
             map(tasks => ({ tasks, listId })),
           )
-        : empty(),
-    ),
+        : empty()
+    }),
     map(({ tasks, listId }) => actionCreators.setTasks({ tasks, listId })),
   )
 }
@@ -98,7 +101,9 @@ const trashTasksEpic = (
   return state$.pipe(
     map(state => state.auth?.user?.uid ?? null),
     distinctUntilChanged(),
-    switchMap(userId => createTrashTasksObservable(userId)),
+    switchMap(userId =>
+      userId ? createTrashTasksObservable(userId) : empty(),
+    ),
     map(tasks => actionCreators.setTrashTasks(tasks)),
   )
 }
@@ -116,7 +121,12 @@ const updateTaskListCountsEpic = (
       const list = state.listPage.taskLists?.find(
         list => list.id === action.payload.listId,
       )
-      assert(list, "No task list")
+
+      if (!list) {
+        console.log("no task list")
+        return empty()
+      }
+
       const tasks = selectors.listPage.tasks(state, list.id)
       assert(tasks)
       const numberOfCompleteTasks = tasks.filter(task => task.complete).length
@@ -144,9 +154,79 @@ const updateTaskListCountsEpic = (
   )
 }
 
+const firstTaskListEpic = (
+  action$: Observable<Action>,
+  state$: StateObservable<State>,
+): Observable<Action> => {
+  return action$.pipe(
+    ofType("SET_TASK_LISTS"),
+    withLatestFrom(state$),
+    mergeMap(([action, state]) => {
+      assert(action.type === "SET_TASK_LISTS")
+
+      const userId = state.auth.user?.uid
+
+      console.log("firstasklist epic", userId)
+
+      if (!(userId && action.payload.taskLists.length === 0)) {
+        return empty()
+      }
+
+      return from(
+        api
+          .createTaskList({
+            name: "Todo",
+            primary: true,
+            userId,
+          })
+          .then(async list => {
+            await Promise.all([
+              api.createTask({
+                title: "My first task!",
+                userId,
+                listId: list.id,
+              }),
+              api.createTask({
+                title: "My second task!",
+                userId,
+                listId: list.id,
+              }),
+            ])
+            return list
+          }),
+      )
+    }),
+    map(list => actionCreators.selectTaskList(list.id)),
+  )
+}
+
+const listPageUrlSyncEpic = (
+  action$: Observable<Action>,
+  state$: StateObservable<State>,
+): Observable<Action> => {
+  return state$.pipe(
+    map(state => {
+      const selectedId = state.listPage.selectedTaskListId
+      return state.listPage.taskLists?.find(list => list.id === selectedId)
+        ? selectedId
+        : null
+    }),
+    distinctUntilChanged(),
+    tap(listId => {
+      if (listId) {
+        console.log("REDIREDFJ", listId)
+        router.history.push(listPageUrl(listId))
+      }
+    }),
+    mergeMap(() => empty()),
+  )
+}
+
 export const rootEpic = combineEpics(
   taskListsEpic,
   tasksEpic,
   trashTasksEpic,
   updateTaskListCountsEpic,
+  firstTaskListEpic,
+  listPageUrlSyncEpic,
 )

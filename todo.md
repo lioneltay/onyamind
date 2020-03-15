@@ -4,6 +4,11 @@
 
 - [x] Fix bugs
 
+- [ ] when looking at a list that doesn't exist go to primary list
+- [ ] track anonymous signin state
+- [ ] show google sign in button when signed in anonymously
+- [ ] don't show log out when signed in anonymously
+
 - [ ] Add 'asap' tasks that put a persistent notification on your device
 
 - [ ] Schedule notification reminders

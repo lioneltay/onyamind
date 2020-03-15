@@ -1,5 +1,5 @@
 import React from "react"
-import { BrowserRouter } from "react-router-dom"
+import { Router } from "services/router"
 
 import Root from "pages"
 import GlobalStyles from "styles/global"
@@ -15,14 +15,14 @@ import { ThemeProvider } from "theme"
 export default () => {
   return (
     <ReduxProvider store={store}>
-      <BrowserRouter>
+      <Router>
         <StylesProvider injectFirst>
           <ThemeProvider dark={false}>
             <GlobalStyles />
             <Root />
           </ThemeProvider>
         </StylesProvider>
-      </BrowserRouter>
+      </Router>
     </ReduxProvider>
   )
 }
