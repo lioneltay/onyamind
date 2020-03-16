@@ -25,14 +25,19 @@ export default ({ style, className, task, backgroundColor }: Props) => {
     stopEditingTask,
     setMultiselect,
   } = useActions("listPage")
-  const { taskLists, selectedTaskIds, multiselect, touchScreen } = useSelector(
-    state => ({
-      taskLists: state.app.taskLists,
-      selectedTaskIds: state.listPage.selectedTaskIds,
-      multiselect: state.listPage.multiselect,
-      touchScreen: false,
-    }),
-  )
+  const {
+    taskLists,
+    selectedTaskIds,
+    multiselect,
+    touchScreen,
+    selectedTaskListId,
+  } = useSelector(state => ({
+    taskLists: state.app.taskLists,
+    selectedTaskIds: state.listPage.selectedTaskIds,
+    multiselect: state.listPage.multiselect,
+    touchScreen: false,
+    selectedTaskListId: state.app.selectedTaskListId,
+  }))
 
   if (!taskLists) {
     return null
@@ -80,10 +85,12 @@ export default ({ style, className, task, backgroundColor }: Props) => {
 
             <IconButtonMenu
               icon={<SwapHoriz />}
-              items={taskLists.map(list => ({
-                label: list.name,
-                action: () => moveTask({ taskId: task.id, listId: list.id }),
-              }))}
+              items={taskLists
+                .filter(list => list.id !== selectedTaskListId)
+                .map(list => ({
+                  label: list.name,
+                  action: () => moveTask({ taskId: task.id, listId: list.id }),
+                }))}
             />
 
             <IconButton onClick={() => archiveTask(task.id)}>

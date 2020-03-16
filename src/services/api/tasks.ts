@@ -1,7 +1,8 @@
 import { firestore, dataWithId } from "services/firebase"
-import { pickBy } from "ramda"
 
 import { noUndefinedValues } from "lib/utils"
+
+type PartialTaskWithID = Partial<Task> & { id: ID }
 
 export const createTask = async (
   task: Omit<Task, "id" | "createdAt" | "updatedAt" | "complete" | "archived">,
@@ -34,13 +35,6 @@ export const editTask = async ({
   taskId,
   data,
 }: EditTaskPayload): Promise<Task> => {
-  console.log(
-    "what",
-    noUndefinedValues({
-      ...data,
-      updatedAt: Date.now(),
-    }),
-  )
   await firestore
     .collection("task")
     .doc(taskId)
@@ -60,7 +54,7 @@ export const editTask = async ({
   return editedTask as Task
 }
 
-export const editTasks = async (tasks: Partial<Task>[]): Promise<void> => {
+export const editTasks = async (tasks: PartialTaskWithID[]): Promise<void> => {
   const batch = firestore.batch()
 
   tasks.forEach(task => {

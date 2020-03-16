@@ -64,10 +64,12 @@ export default () => {
 
             <IconButtonMenu
               icon={<SwapHoriz />}
-              items={taskLists.map(list => ({
-                label: list.name,
-                action: () => moveSelectedTasks({ listId: list.id }),
-              }))}
+              items={taskLists
+                .filter(list => list.id !== selectedTaskList?.id)
+                .map(list => ({
+                  label: list.name,
+                  action: () => moveSelectedTasks({ listId: list.id }),
+                }))}
             />
 
             <IconButton onClick={archiveSelectedTasks}>

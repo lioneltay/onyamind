@@ -2,7 +2,7 @@ import { ActionsUnion, ActionTypesUnion } from "services/store/helpers"
 import { GetState, Dispatch } from "services/store"
 import { selectors as storeSelectors } from "services/store/selectors"
 import * as api from "services/api"
-import { firestore, firebase } from "services/firebase"
+import { assert } from "lib/utils"
 
 const selectors = storeSelectors.trashPage
 
@@ -13,7 +13,7 @@ const setTrashTasks = (tasks: Task[]) =>
   ({ type: "TRASH|SET_TRASH_TASKS", payload: { tasks } } as const)
 
 const toggleTaskSelection = (taskId: ID) =>
-  ({ type: "TRASH|TOGGLE_TASK_SELECTION", taskId } as const)
+  ({ type: "TRASH|TOGGLE_TASK_SELECTION", payload: { taskId } } as const)
 
 const selectAllTasks = () => ({ type: "TRASH|SELECT_ALL_TASKS" } as const)
 
@@ -32,32 +32,11 @@ const moveSelectedTasks = ({ listId }: MoveSelectTasksInput) => (
   dispatch: Dispatch,
   getState: GetState,
 ) => {
-  const state = getState()
-
-  const tasks = state.trashPage.trashTasks || []
-  const numberOfCompleteTasks = tasks.filter(task => task.complete).length
-  const numberOfIncompleteTasks = tasks.filter(task => !task.complete).length
-
-  const batch = firestore.batch()
-
-  tasks.forEach(task =>
-    batch.update(firestore.collection("task").doc(task.id), {
-      listId: listId,
-      archived: false,
-    }),
-  )
-  batch.update(firestore.collection("taskList").doc(listId), {
-    numberOfCompleteTasks: firebase.firestore.FieldValue.increment(
-      numberOfCompleteTasks,
-    ),
-    numberOfIncompleteTasks: firebase.firestore.FieldValue.increment(
-      numberOfIncompleteTasks,
-    ),
-  })
+  const tasks = getState().trashPage.trashTasks || []
 
   dispatch(moveSelectedTasksPending())
-  return batch
-    .commit()
+  return api
+    .editTasks(tasks.map(task => ({ ...task, archived: false, listId })))
     .then(() => dispatch(moveSelectedTasksSuccess()))
     .catch(e => {
       dispatch(moveSelectedTasksFailure())
@@ -123,29 +102,12 @@ const moveTask = ({ taskId, listId }: MoveTaskInput) => (
   dispatch: Dispatch,
   getState: GetState,
 ) => {
-  const state = getState()
-
-  const task = state.trashPage.trashTasks?.find(t => t.id === taskId)
-
-  if (!task) {
-    throw Error("No task")
-  }
-
-  const batch = firestore.batch()
-
-  batch.update(firestore.collection("task").doc(taskId), {
-    listId: listId,
-    archived: false,
-  })
-  batch.update(firestore.collection("taskList").doc(listId), {
-    [task.complete
-      ? "numberOfCompleteTasks"
-      : "numberOfIncompleteTasks"]: firebase.firestore.FieldValue.increment(1),
-  })
+  const task = getState().trashPage.trashTasks?.find(t => t.id === taskId)
+  assert(task, "No task")
 
   dispatch(moveTaskPending())
-  return batch
-    .commit()
+  return api
+    .editTask({ taskId: task.id, data: { listId, archived: false } })
     .then(() => dispatch(moveTaskSuccess()))
     .catch(e => {
       dispatch(moveTaskFailure())

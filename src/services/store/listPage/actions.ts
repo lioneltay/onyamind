@@ -24,7 +24,10 @@ const setTasks = ({ tasks, listId }: SetTasksOptions) =>
   ({ type: "LIST|SET_TASKS", payload: { tasks, listId } } as const)
 
 const toggleTaskSelection = (taskId: ID) =>
-  ({ type: "LIST|TOGGLE_TASK_SELECTION", taskId } as const)
+  ({ type: "LIST|TOGGLE_TASK_SELECTION", payload: { taskId } } as const)
+
+const selectMultipleTasks = (taskIds: ID[]) =>
+  ({ type: "LIST|SELECT_MULTIPLE_TASKS", payload: { taskIds } } as const)
 
 const selectAllTasks = () => ({ type: "LIST|SELECT_ALL_TASKS" } as const)
 
@@ -71,55 +74,25 @@ const moveSelectedTasksSuccess = () =>
   ({ type: "LIST|MOVE_SELECTED_TASKS|SUCCESS" } as const)
 type MoveSelectTasksInput = {
   listId: ID
-  fromTrash?: boolean
 }
-const moveSelectedTasks = ({ listId, fromTrash }: MoveSelectTasksInput) => (
+const moveSelectedTasks = ({ listId }: MoveSelectTasksInput) => (
   dispatch: Dispatch,
   getState: GetState,
 ) => {
   const state = getState()
 
   const selectedTaskListId = state.app.selectedTaskListId
-
-  // TODO use typescript assert here instead?
-  if (!fromTrash && !selectedTaskListId) {
-    throw Error("Cannot call moveTask without a selectedTaskListId")
-  }
+  assert(
+    selectedTaskListId,
+    "Cannot call moveTask without a selectedTaskListId",
+  )
 
   const tasks = selectors.selectedTasks(state)
-  const numberOfCompleteTasks = tasks.filter(task => task.complete).length
-  const numberOfIncompleteTasks = tasks.filter(task => !task.complete).length
 
-  const batch = firestore.batch()
-
-  tasks.forEach(task =>
-    batch.update(firestore.collection("task").doc(task.id), {
-      listId: listId,
-      archived: false,
-    }),
-  )
-  batch.update(firestore.collection("taskList").doc(listId), {
-    numberOfCompleteTasks: firebase.firestore.FieldValue.increment(
-      numberOfCompleteTasks,
-    ),
-    numberOfIncompleteTasks: firebase.firestore.FieldValue.increment(
-      numberOfIncompleteTasks,
-    ),
-  })
-  if (!fromTrash && selectedTaskListId) {
-    batch.update(firestore.collection("taskList").doc(selectedTaskListId), {
-      numberOfCompleteTasks: firebase.firestore.FieldValue.increment(
-        -numberOfCompleteTasks,
-      ),
-      numberOfIncompleteTasks: firebase.firestore.FieldValue.increment(
-        -numberOfIncompleteTasks,
-      ),
-    })
-  }
-
+  console.log("moveseletedt asks", tasks, listId)
   dispatch(moveSelectedTasksPending())
-  return batch
-    .commit()
+  return api
+    .editTasks(tasks.map(task => ({ ...task, listId })))
     .then(() => dispatch(moveSelectedTasksSuccess()))
     .catch(e => {
       dispatch(moveSelectedTasksFailure())
@@ -331,45 +304,13 @@ const moveTask = ({ taskId, listId }: MoveTaskInput) => (
   dispatch: Dispatch,
   getState: GetState,
 ) => {
-  const state = getState()
+  const task = selectors.tasks(getState())?.find(t => t.id === taskId)
 
-  const selectedTaskListId = state.app.selectedTaskListId
-
-  // TODO use typescript assert here instead?
-  if (!selectedTaskListId) {
-    throw Error("Cannot call moveTask without a selectedTaskListId")
-  }
-
-  const task = selectors.tasks(state)?.find(t => t.id === taskId)
-  const numberOfCompleteTasks = selectors.completedTasks(state).length
-  const numberOfIncompleteTasks = selectors.incompletedTasks(state).length
-
-  if (!task) {
-    throw Error("No task")
-  }
-
-  const batch = firestore.batch()
-
-  batch.update(firestore.collection("task").doc(taskId), {
-    listId: listId,
-    archived: false,
-  })
-  batch.update(firestore.collection("taskList").doc(listId), {
-    [task.complete
-      ? "numberOfCompleteTasks"
-      : "numberOfIncompleteTasks"]: firebase.firestore.FieldValue.increment(1),
-  })
-  if (selectedTaskListId) {
-    batch.update(firestore.collection("taskList").doc(selectedTaskListId), {
-      numberOfCompleteTasks: numberOfCompleteTasks - (task.complete ? 1 : 0),
-      numberOfIncompleteTasks:
-        numberOfIncompleteTasks - (task.complete ? 0 : 1),
-    })
-  }
+  assert(task, "No task")
 
   dispatch(moveTaskPending())
-  return batch
-    .commit()
+  return api
+    .editTask({ taskId: task.id, data: { listId } })
     .then(() => dispatch(moveTaskSuccess()))
     .catch(e => {
       dispatch(moveTaskFailure())

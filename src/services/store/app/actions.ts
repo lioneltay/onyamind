@@ -89,6 +89,18 @@ const setPrimaryTaskList = ({ listId, userId }: SetPrimaryTaskListInput) => (
     })
 }
 
+const selectPrimaryTaskList = () => (
+  dispatch: Dispatch,
+  getState: GetState,
+) => {
+  const { taskLists } = getState().app
+  assert(taskLists, "Task lists havent loaded yet")
+  const primaryList = taskLists.find(list => list.primary)
+
+  const listId = primaryList?.id ?? taskLists[0].id
+  dispatch(selectTaskList(listId))
+}
+
 const deleteTaskListPending = () =>
   ({ type: "APP|DELETE_TASK_DATA|PENDING" } as const)
 const deleteTaskListFailure = () =>
@@ -107,6 +119,7 @@ const deleteTaskList = (listId: ID) => (dispatch: Dispatch) => {
 }
 
 export const actionCreators = {
+  selectPrimaryTaskList,
   setTaskLists,
   selectTaskList,
 

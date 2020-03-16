@@ -1,4 +1,5 @@
 import { Action } from "./actions"
+import { union } from "ramda"
 
 type UIState = {
   selectedTaskIds: ID[]
@@ -39,12 +40,12 @@ export const reducer = (state: State = initialState, action: Action): State => {
     }
     case "TRASH|TOGGLE_TASK_SELECTION": {
       const selected = !!state.selectedTaskIds.find(
-        taskId => taskId === action.taskId,
+        taskId => taskId === action.payload.taskId,
       )
 
       const selectedTaskIds = selected
-        ? state.selectedTaskIds.filter(id => id !== action.taskId)
-        : state.selectedTaskIds.concat(action.taskId)
+        ? state.selectedTaskIds.filter(id => id !== action.payload.taskId)
+        : state.selectedTaskIds.concat(action.payload.taskId)
 
       return {
         ...state,

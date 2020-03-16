@@ -153,12 +153,12 @@ export default ({
   },
   history,
 }: Props) => {
-  const { selectTaskList } = useActions("app")
+  const { selectTaskList, selectPrimaryTaskList } = useActions("app")
   const { selectedTaskListId, taskListsLoaded, listIdParamValid } = useSelector(
     state => ({
       selectedTaskListId: state.app.selectedTaskListId,
       taskListsLoaded: !!state.app.taskLists,
-      listIdParamValid: state.app.taskLists?.find(list => list.id === listId),
+      listIdParamValid: !!state.app.taskLists?.find(list => list.id === listId),
     }),
   )
 
@@ -167,8 +167,12 @@ export default ({
    * If the listId param is valid make it the selectedTaskListId
    */
   React.useEffect(() => {
-    if (listIdParamValid) {
-      selectTaskList(listId)
+    if (taskListsLoaded) {
+      if (listIdParamValid) {
+        selectTaskList(listId)
+      } else {
+        selectPrimaryTaskList()
+      }
     }
   }, [taskListsLoaded])
 

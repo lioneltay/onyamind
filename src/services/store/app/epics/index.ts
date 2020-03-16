@@ -54,8 +54,6 @@ const firstTaskListEpic = (
 
       const userId = state.auth.user?.uid
 
-      console.log("firstasklist epic", userId)
-
       if (!(userId && action.payload.taskLists.length === 0)) {
         return empty()
       }
@@ -88,54 +86,4 @@ const firstTaskListEpic = (
   )
 }
 
-const updateTaskListCountsEpic = (
-  action$: Observable<Action>,
-  state$: StateObservable<State>,
-): Observable<Action> => {
-  return action$.pipe(
-    ofType("LIST|SET_TASKS"),
-    withLatestFrom(state$),
-    mergeMap(([action, state]) => {
-      assert(action.type === "LIST|SET_TASKS")
-
-      const list = state.app.taskLists?.find(
-        list => list.id === action.payload.listId,
-      )
-
-      if (!list) {
-        console.log("no task list")
-        return empty()
-      }
-
-      const tasks = selectors.listPage.tasks(state, list.id)
-      assert(tasks)
-      const numberOfCompleteTasks = tasks.filter(task => task.complete).length
-      const numberOfIncompleteTasks = tasks.filter(task => !task.complete)
-        .length
-
-      if (
-        list.numberOfCompleteTasks === numberOfCompleteTasks &&
-        list.numberOfIncompleteTasks === numberOfIncompleteTasks
-      ) {
-        return empty()
-      }
-
-      return from(
-        api.editTaskList({
-          listId: action.payload.listId,
-          data: {
-            numberOfCompleteTasks,
-            numberOfIncompleteTasks,
-          },
-        }),
-      )
-    }),
-    mergeMap(() => empty()),
-  )
-}
-
-export const rootEpic = combineEpics(
-  taskListsEpic,
-  firstTaskListEpic,
-  updateTaskListCountsEpic,
-)
+export const rootEpic = combineEpics(taskListsEpic, firstTaskListEpic)

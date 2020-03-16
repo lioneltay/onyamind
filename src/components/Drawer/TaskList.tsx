@@ -1,4 +1,5 @@
 import React, { useState } from "react"
+import { noop } from "lib/utils"
 import {
   ListItem,
   ListItemText,
@@ -14,7 +15,7 @@ type Props = {
   taskList: TaskList
   selected: boolean
   onBodyClick: (id: ID) => void
-  onDelete: (id: ID) => void
+  onDelete?: (id: ID) => void
   onRename: (id: ID) => void
   onMakePrimary?: (id: ID) => void
 }
@@ -24,7 +25,7 @@ export default ({
   selected,
   onDelete,
   onRename,
-  onMakePrimary = () => {},
+  onMakePrimary = noop,
   onBodyClick,
 }: Props) => {
   const [anchorEl, setAnchorEl] = useState(null as HTMLElement | null)
@@ -76,14 +77,16 @@ export default ({
             </MenuItem>
           )}
 
-          <MenuItem
-            onClick={() => {
-              onDelete(taskList.id)
-              setAnchorEl(null)
-            }}
-          >
-            Delete
-          </MenuItem>
+          {onDelete && (
+            <MenuItem
+              onClick={() => {
+                onDelete(taskList.id)
+                setAnchorEl(null)
+              }}
+            >
+              Delete
+            </MenuItem>
+          )}
         </Menu>
       </ListItemSecondaryAction>
     </ListItem>

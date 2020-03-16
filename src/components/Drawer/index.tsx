@@ -97,9 +97,9 @@ export default () => {
 
   const primaryList = taskLists ? taskLists.find(list => list.primary) : null
 
-  // if (!user) {
-  //   return null
-  // }
+  if (!user) {
+    return null
+  }
 
   return (
     <SwipeableDrawer
@@ -141,8 +141,8 @@ export default () => {
             </ListItemAvatar>
             <ListItemText primary={user.displayName} secondary={user.email} />
             <ListItemSecondaryAction>
-              <IconButton>
-                <Clear onClick={toggleDrawer} />
+              <IconButton onClick={toggleDrawer}>
+                <Clear />
               </IconButton>
             </ListItemSecondaryAction>
           </ListItem>
@@ -197,10 +197,6 @@ export default () => {
             taskList={primaryList}
             selected={primaryList.id === selectedTaskListId}
             onBodyClick={() => handleSelectTaskList(primaryList.id)}
-            onDelete={id => {
-              setSelectedId(id)
-              setShowDeleteModal(true)
-            }}
             onRename={id => {
               setSelectedId(id)
               setShowRenameModal(true)
@@ -223,9 +219,6 @@ export default () => {
           <ListItemText>
             <Text variant="subtitle2">Other Lists</Text>
           </ListItemText>
-          <div style={{ color: theme.greyText }}>
-            {showOtherLists ? <ExpandLess /> : <ExpandMore />}
-          </div>
         </ListItem>
         <Collapse in={showOtherLists}>
           {taskLists ? (
@@ -353,16 +346,12 @@ export default () => {
 }
 
 type OptionItemProps = {
-  icon: React.ReactElement<any>
+  icon: React.ReactElement
   text: React.ReactNode
   onClick?: (e: React.MouseEvent) => void
 }
 
-const OptionItem: React.FunctionComponent<OptionItemProps> = ({
-  onClick,
-  icon,
-  text,
-}) => {
+const OptionItem = ({ onClick, icon, text }: OptionItemProps) => {
   return (
     <ListItem button className="cursor-pointer" onClick={onClick}>
       <ListItemIcon>{icon}</ListItemIcon>
