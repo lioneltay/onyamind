@@ -13,12 +13,21 @@ import { useGesture } from "lib/useGesture"
 const StyledListItem = styled(ListItem)`
   position: relative;
   min-height: 70px;
-` as any
+`
 
-const Overlay = styled.div`
+const Overlay = styled.div<{ show: boolean }>`
   opacity: 0;
   pointer-events: none;
   display: none;
+
+  ${props =>
+    props.show
+      ? css`
+          display: flex;
+          opacity: 1;
+          pointer-events: all;
+        `
+      : ""};
 
   body.hasHover ${StyledListItem}:hover & {
     display: flex;
@@ -37,6 +46,7 @@ export type TaskProps = Stylable & {
   onItemClick?: (id: ID) => void
 
   hoverActions?: React.ReactNode
+  showHoverActions?: boolean
 }
 
 export default ({
@@ -53,6 +63,7 @@ export default ({
   onItemClick = () => {},
 
   hoverActions,
+  showHoverActions = false,
 }: TaskProps) => {
   const theme = useTheme()
 
@@ -132,6 +143,7 @@ export default ({
       />
 
       <Overlay
+        show={showHoverActions}
         onClick={e => e.stopPropagation()}
         onPointerDown={e => e.stopPropagation()}
       >

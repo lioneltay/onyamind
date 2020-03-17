@@ -38,14 +38,14 @@ export default ({
   const [status, setStatus] = useState(
     "default" as "default" | "pulling" | "left" | "right",
   )
-  const container_ref = useRef(null as null | HTMLElement)
+  const containerRef = useRef(null as null | HTMLElement)
   const [done, setDone] = useState(false)
 
   const bind = useGesture({
     onPull: ({ displacement: [dx] }) => {
       setStatus("pulling")
-      if (container_ref.current) {
-        const box = container_ref.current.getBoundingClientRect()
+      if (containerRef.current) {
+        const box = containerRef.current.getBoundingClientRect()
         setPercent((dx / box.width) * 100)
       }
     },
@@ -108,7 +108,7 @@ export default ({
             </ListItem>
             <div
               onPointerDown={e => e.stopPropagation()}
-              {...bind({ ref: container_ref })}
+              {...bind({ ref: containerRef })}
               style={{
                 transform:
                   status === "pulling"
