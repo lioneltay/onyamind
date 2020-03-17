@@ -16,7 +16,7 @@ export const createTaskNotification = async (task: Task) => {
     tag: task.id,
     data: task,
     // Shows in notification
-    badge: "/public/favicon/favicon.ico",
+    badge: "/public/favicon/favicon-16x16.png",
     // Shows in notification bar
     icon: "/public/favicon/favicon.ico",
     // Large image to show in notification
