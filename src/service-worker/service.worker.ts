@@ -42,8 +42,6 @@ self.addEventListener("activate", evt => {
 self.addEventListener(
   "notificationclick",
   function(event) {
-    event.notification.close()
-
     switch (event.action) {
       case "DISMISS": {
         return
