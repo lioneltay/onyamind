@@ -1,10 +1,10 @@
-import firebase_import from "firebase/app"
+import firebaseImport from "firebase/app"
 import "firebase/firestore"
 import "firebase/auth"
 
-export const firebase = firebase_import
+export const firebase = firebaseImport
 
-var config = {
+const config = {
   apiKey: "AIzaSyC0hvPquqsBgTnUem_05Kr2e0YInyFs-DE",
   authDomain: "tekktekk-notes.firebaseapp.com",
   databaseURL: "https://tekktekk-notes.firebaseio.com",
@@ -48,3 +48,8 @@ export function dataWithId(
   }
   return { ...data, id: doc.id }
 }
+
+export const auth = firebase.auth()
+
+console.log('here')
+console.log("INTTANT", firebase.auth().currentUser)

@@ -153,7 +153,10 @@ export default ({
   },
   history,
 }: Props) => {
-  const { selectTaskList, selectPrimaryTaskList } = useActions("app")
+  const {
+    app: { selectTaskList, selectPrimaryTaskList },
+    ui: { closeDrawer },
+  } = useActions()
   const { selectedTaskListId, taskListsLoaded, listIdParamValid } = useSelector(
     state => ({
       selectedTaskListId: state.app.selectedTaskListId,
@@ -173,8 +176,9 @@ export default ({
       } else {
         selectPrimaryTaskList()
       }
+      closeDrawer()
     }
-  }, [taskListsLoaded])
+  }, [taskListsLoaded, listIdParamValid])
 
   // Keep url synced with selectedTaskListId
   React.useEffect(() => {

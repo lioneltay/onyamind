@@ -16,17 +16,6 @@ declare global {
     updatedAt: number
   }
 
-  export type RawTaskList = {
-    id: ID
-    name: string
-    createdAt: number
-    updatedAt: number | null
-    numberOfCompleteTasks: number
-    numberOfIncompleteTasks: number
-    primary: boolean
-    userId: ID
-  }
-
   export type TaskList = {
     id: ID
     userId: ID
@@ -36,6 +25,7 @@ declare global {
     numberOfCompleteTasks: number
     numberOfIncompleteTasks: number
     primary: boolean
+    demo?: boolean
   }
 
   export type Task = {

@@ -13,7 +13,7 @@ const signinSuccess = () => ({ type: "SIGNIN|SUCCESS" } as const)
 const signin = () => (dispatch: Dispatch) => {
   dispatch(signinPending())
   return api
-    .signinWithGoogle()
+    .linkAnonymousAccountWithGoogle()
     .then(res => dispatch(signinSuccess()))
     .catch(e => {
       dispatch(signinFailure())
@@ -27,7 +27,7 @@ const signoutSuccess = () => ({ type: "SIGNOUT|SUCCESS" } as const)
 const signout = () => (dispatch: Dispatch) => {
   dispatch(signoutPending())
   return api
-    .signout()
+    .signinAnonymously()
     .then(res => dispatch(signoutSuccess()))
     .catch(e => {
       dispatch(signoutFailure())

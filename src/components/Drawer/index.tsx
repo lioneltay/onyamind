@@ -48,6 +48,8 @@ import { useActions, useSelector } from "services/store"
 import { useTheme } from "theme"
 import { listPageUrl } from "pages/lists/routing"
 
+import * as api from "services/api"
+
 export default () => {
   const history = useHistory()
   const theme = useTheme()
@@ -122,7 +124,7 @@ export default () => {
             : theme.backgroundColor,
         }}
       >
-        {user ? (
+        {!user.isAnonymous ? (
           <ListItem
             style={{
               backgroundColor: darkMode
@@ -277,9 +279,9 @@ export default () => {
             toggleDrawer()
           }}
         />
-        {user && (
+        {/* {!user.isAnonymous && (
           <OptionItem icon={<ExitToApp />} text="Sign out" onClick={signout} />
-        )}
+        )} */}
         <OptionItem icon={<Feedback />} text="Send feedback" />
         <OptionItem icon={<Help />} text="Help" />
         <Divider />

@@ -86,4 +86,4 @@ const firstTaskListEpic = (
   )
 }
 
-export const rootEpic = combineEpics(taskListsEpic, firstTaskListEpic)
+export const rootEpic = combineEpics(taskListsEpic)

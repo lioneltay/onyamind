@@ -39,6 +39,25 @@ const dataWithId = (
   doc: FirebaseFirestore.QueryDocumentSnapshot<FirebaseFirestore.DocumentData>,
 ) => ({ id: doc.id, ...doc.data })
 
+export const updateDemoListFlag = functions.firestore
+  .document("/taskList/{listId}")
+  .onUpdate(async (change, context) => {
+    const before = change.before.data()
+    const after = change.after.data()
+
+    if (
+      after?.demo &&
+      (before?.numberOfCompleteTasks !== after?.numberOfCompleteTasks ||
+        before?.numberOfIncompleteTasks !== after?.numberOfIncompleteTasks)
+    ) {
+      await admin
+        .firestore()
+        .collection("taskList")
+        .doc(change.after.id)
+        .update({ demo: false })
+    }
+  })
+
 /**
  * Keep taskList numberOfCompleteTasks and numberOfIncompleteTasks up to date as tasks are changed
  */
@@ -116,72 +135,33 @@ export const syncListTaskCount = functions.firestore
 export const removeUserAssetsWhenDelete = functions.auth
   .user()
   .onDelete(async (user, context) => {
-    const taskLists = await admin
-      .firestore()
-      .collection("taskList")
-      .where("userId", "==", user.uid)
-      .get()
-      .then(res => res.docs.map(dataWithId))
+    const deleteItemsOfUser = async (collection: string) => {
+      const items = await admin
+        .firestore()
+        .collection(collection)
+        .where("userId", "==", user.uid)
+        .get()
+        .then(res => res.docs.map(dataWithId))
 
-    // Delete tasks, batch by list
-    await Promise.all(
-      taskLists.map(async list => {
-        const tasks = await admin
-          .firestore()
-          .collection("task")
-          .where("listId", "==", list.id)
-          .get()
-          .then(res => res.docs.map(dataWithId))
+      const batch = admin.firestore().batch()
 
-        const batch = admin.firestore().batch()
+      // Delete taskLists
+      items.forEach(item =>
+        batch.delete(
+          admin
+            .firestore()
+            .collection(collection)
+            .doc(item.id),
+        ),
+      )
 
-        tasks.forEach(task =>
-          batch.delete(
-            admin
-              .firestore()
-              .collection("task")
-              .doc(task.id),
-          ),
-        )
+      await batch.commit()
+    }
 
-        return batch.commit()
-      }),
-    )
-
-    const taskListBatch = admin.firestore().batch()
-
-    // Delete taskLists
-    taskLists.forEach(list =>
-      taskListBatch.delete(
-        admin
-          .firestore()
-          .collection("list")
-          .doc(list.id),
-      ),
-    )
-
-    await taskListBatch.commit()
-
-    // Delete settings
-    const allSettings = await admin
-      .firestore()
-      .collection("settings")
-      .where("userId", "==", user.uid)
-      .get()
-      .then(res => res.docs.map(dataWithId))
-
-    const settingsBatch = admin.firestore().batch()
-
-    allSettings.forEach(settings =>
-      settingsBatch.delete(
-        admin
-          .firestore()
-          .collection("settings")
-          .doc(settings.id),
-      ),
-    )
-
-    return settingsBatch.commit()
+    await Promise.all([
+      deleteItemsOfUser("taskList"),
+      deleteItemsOfUser("settings"),
+    ])
   })
 
 export const removeTasksWhenListIsDeleted = functions.firestore
