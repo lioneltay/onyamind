@@ -10,16 +10,24 @@ import App from "./App"
 
 import "./service-worker/service.worker"
 
-console.log('weladjfk')
+import { registerServiceWorker } from "services/notifications"
+
+console.log("weladjfk")
 
 if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker
-      .register("/service.worker.js")
-      .then(registration => console.log("SW registered: ", registration))
-      .catch(registrationError =>
-        console.log("SW registration failed: ", registrationError),
+  window.addEventListener("load", async () => {
+    try {
+      const registration = await navigator.serviceWorker.register(
+        "/service.worker.js",
       )
+
+      registerServiceWorker(registration)
+
+      console.log("SW registered: ", registration)
+      return registration
+    } catch (e) {
+      console.log("SW registration failed: ", e)
+    }
   })
 }
 

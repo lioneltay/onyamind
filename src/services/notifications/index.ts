@@ -1,10 +1,15 @@
+let registration: ServiceWorkerRegistration | null = null
+
+export const registerServiceWorker = (reg: ServiceWorkerRegistration) => {
+  registration = reg
+}
+
 export const createTaskNotification = async (task: Task) => {
-  console.log(Notification.permission)
   if (Notification.permission !== "granted") {
     await Notification.requestPermission()
   }
 
-  new Notification(task.title, {
+  registration?.showNotification(task.title, {
     requireInteraction: true,
     body: task.notes,
     renotify: true,
