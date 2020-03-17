@@ -15,6 +15,9 @@ export const createTaskNotification = async (task: Task) => {
     renotify: true,
     tag: task.id,
     data: task,
+    icon: "/public/favicon/favicon.ico",
+    badge: "/public/pencil-icon.png",
+    image: "/public/favicon.png",
     actions: [
       {
         title: "Dismiss",
