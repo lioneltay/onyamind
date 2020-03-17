@@ -14,6 +14,17 @@ export const createTaskNotification = async (task: Task) => {
     body: task.notes,
     renotify: true,
     tag: task.id,
+    data: task,
+    actions: [
+      {
+        title: "Dismiss",
+        action: "DISMISS",
+      },
+      {
+        title: "Complete",
+        action: "COMPLETE_TASK",
+      },
+    ],
   })
 }
 

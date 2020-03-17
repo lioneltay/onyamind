@@ -3,6 +3,8 @@
 import * as assetsSW from "./assets"
 import { VERSION } from "./constants"
 
+import { firebase } from "services/firebase"
+
 declare const self: ServiceWorkerGlobalScope
 
 const CACHE = {
@@ -36,3 +38,25 @@ self.addEventListener("activate", evt => {
   // Become the service worker for clients which do not already have a service worker
   return self.clients.claim()
 })
+
+self.addEventListener(
+  "notificationclick",
+  function(event) {
+    event.notification.close()
+
+    switch (event.action) {
+      case "DISMISS": {
+        return
+      }
+      case "COMPLETE_TASK": {
+        const task = event.notification.data
+        // firestore
+        //   .collection("task")
+        //   .doc(task.id)
+        //   .update({ complete: true })
+        console.log("completeTask", task)
+      }
+    }
+  },
+  false,
+)
