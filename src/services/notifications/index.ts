@@ -6,12 +6,11 @@ export const createTaskNotification = async (task: Task) => {
   new Notification(task.title, {
     requireInteraction: true,
     body: task.notes,
-    tag: task.id,
   })
 }
 
 export const createTaskNotifications = async (tasks: Task[]) => {
   tasks.forEach((task, index) =>
-    setTimeout(() => createTaskNotification(task), index * 50),
+    setTimeout(() => createTaskNotification(task), index * 1000),
   )
 }

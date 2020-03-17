@@ -16,7 +16,10 @@ import HeaderBase from "components/HeaderBase"
 
 import { useSelector, useActions } from "services/store"
 
-import { createTaskNotification } from "services/notifications"
+import {
+  createTaskNotification,
+  createTaskNotifications,
+} from "services/notifications"
 
 export default () => {
   const {
@@ -62,6 +65,7 @@ export default () => {
           <Fragment>
             <IconButton
               onClick={() => selectedTasks.forEach(createTaskNotification)}
+              // onClick={() => createTaskNotifications(selectedTasks)}
             >
               <Notifications />
             </IconButton>
