@@ -1,6 +1,6 @@
 export const createTaskNotification = async (task: Task) => {
-  if (!Notification.permission) {
-    console.log('REQUESTIONG PERMISSION')
+  console.log(Notification.permission)
+  if (Notification.permission !== "granted") {
     await Notification.requestPermission()
   }
 
@@ -13,6 +13,10 @@ export const createTaskNotification = async (task: Task) => {
 }
 
 export const createTaskNotifications = async (tasks: Task[]) => {
+  if (Notification.permission !== "granted") {
+    await Notification.requestPermission()
+  }
+
   tasks.forEach((task, index) =>
     setTimeout(() => createTaskNotification(task), index * 1000),
   )

@@ -106,7 +106,11 @@ export default ({ style, className, task, backgroundColor }: Props) => {
               <Delete />
             </IconButton>
 
-            <IconButton onClick={() => createTaskNotification(task)}>
+            <IconButton
+              onClick={async () => {
+                createTaskNotification(task)
+              }}
+            >
               <Notifications />
             </IconButton>
           </Fragment>
