@@ -10,6 +10,8 @@ import App from "./App"
 
 import "./service-worker/service.worker"
 
+console.log('weladjfk')
+
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker

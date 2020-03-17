@@ -7,7 +7,6 @@ type PartialTaskWithID = Partial<Task> & { id: ID }
 export const createTask = async (
   task: Omit<Task, "id" | "createdAt" | "updatedAt" | "complete" | "archived">,
 ): Promise<Task> => {
-  console.log("create", task)
   return firestore
     .collection("task")
     .add({

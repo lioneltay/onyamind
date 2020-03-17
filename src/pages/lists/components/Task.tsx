@@ -2,12 +2,21 @@ import React, { Fragment } from "react"
 
 import { IconButton } from "@material-ui/core"
 
-import { Delete, Add, Check, SwapHoriz, Close } from "@material-ui/icons"
+import {
+  Delete,
+  Add,
+  Check,
+  SwapHoriz,
+  Close,
+  Notifications,
+} from "@material-ui/icons"
 
 import Task from "components/Task"
 import IconButtonMenu from "lib/components/IconButtonMenu"
 
 import { useSelector, useActions } from "services/store"
+
+import { createTaskNotification } from "services/notifications"
 
 export type Props = Stylable & {
   selected?: boolean
@@ -95,6 +104,10 @@ export default ({ style, className, task, backgroundColor }: Props) => {
 
             <IconButton onClick={() => archiveTask(task.id)}>
               <Delete />
+            </IconButton>
+
+            <IconButton onClick={() => createTaskNotification(task)}>
+              <Notifications />
             </IconButton>
           </Fragment>
         )

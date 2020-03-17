@@ -2,13 +2,21 @@ import React, { Fragment } from "react"
 import { noopTemplate as css } from "lib/utils"
 
 import { IconButton } from "@material-ui/core"
-import { SwapHoriz, Add, Check, Delete } from "@material-ui/icons"
+import {
+  SwapHoriz,
+  Add,
+  Check,
+  Delete,
+  Notifications,
+} from "@material-ui/icons"
 
 import IconButtonMenu from "lib/components/IconButtonMenu"
 import TaskAdder from "./TaskAdder"
 import HeaderBase from "components/HeaderBase"
 
 import { useSelector, useActions } from "services/store"
+
+import { createTaskNotification } from "services/notifications"
 
 export default () => {
   const {
@@ -18,13 +26,15 @@ export default () => {
     selectedTaskList,
     multiselect,
     numberOfSelectedTasks,
+    selectedTasks,
   } = useSelector((state, s) => ({
     taskLists: state.app.taskLists || [],
     allSelectedTasksComplete: s.listPage.allSelectedTasksComplete(state),
     allSelectedTasksIncomplete: s.listPage.allSelectedTasksInComplete(state),
     selectedTaskList: s.app.selectedTaskList(state),
     multiselect: state.listPage.multiselect,
-    numberOfSelectedTasks: state.listPage.tasks?.length ?? 0,
+    numberOfSelectedTasks: s.listPage.selectedTasks(state).length,
+    selectedTasks: s.listPage.selectedTasks(state),
   }))
 
   const {
@@ -50,6 +60,12 @@ export default () => {
         onEndMultiselect={() => setMultiselect(false)}
         multiselectActions={
           <Fragment>
+            <IconButton
+              onClick={() => selectedTasks.forEach(createTaskNotification)}
+            >
+              <Notifications />
+            </IconButton>
+
             {allSelectedTasksComplete || allSelectedTasksIncomplete ? (
               <IconButton
                 onClick={
