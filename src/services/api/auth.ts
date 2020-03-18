@@ -53,7 +53,8 @@ const migrateUserData = async (fromUserId: ID, toUserId: ID) => {
   taskLists.forEach(list => {
     const ref = firestore.collection("taskList").doc(list.id)
     if (list.demo) {
-      listBatch.delete(ref)
+      // Dont delete the demo list for now
+      // listBatch.delete(ref)
     } else {
       listBatch.update(ref, {
         userId: toUserId,
