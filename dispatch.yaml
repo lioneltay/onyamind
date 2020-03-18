@@ -1,5 +1,0 @@
-dispatch:
-  - url: "notes.tekktekk.com/*"
-    service: default
-  - url: "onyamind.app/*"
-    service: default

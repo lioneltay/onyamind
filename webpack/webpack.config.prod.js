@@ -27,10 +27,6 @@ module.exports = {
         from: relativeToRoot("./public"),
         to: relativeToRoot("./dist/public"),
       },
-      {
-        from: relativeToRoot("./server.js"),
-        to: relativeToRoot("./dist/server.js"),
-      },
     ]),
   ],
 }
