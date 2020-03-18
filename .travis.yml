@@ -8,6 +8,7 @@ script:
   - npm run test
   - npm run build
 deploy:
-  provider: firebase
-  token:
-    secure: $FIREBASE_DEPLOY_KEY
+  provider: script
+  script: npm run deploy:ci -- $FIREBASE_DEPLOY_TOKEN
+  on:
+    branch: master

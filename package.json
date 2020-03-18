@@ -13,6 +13,7 @@
     "typecheck": "tsc --noEmit --watch --skipLibCheck",
     "lint": "eslint . --ext .ts,.tsx",
     "deploy:functions": "firebase deploy --only functions -f",
+    "deploy:ci": "firebase deploy --token",
     "cy:open": "cypress open",
     "test:watch": "jest --watch",
     "test": "echo no tests yet"
