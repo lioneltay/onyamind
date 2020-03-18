@@ -9,6 +9,6 @@ script:
   - npm run build
 deploy:
   provider: script
-  script: npm run deploy:ci -- $FIREBASE_DEPLOY_TOKEN
+  script: npm run deploy:ci -- $FIREBASE_DEPLOY_KEY
   on:
     branch: master
