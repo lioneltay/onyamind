@@ -64,8 +64,10 @@ export default () => {
         multiselectActions={
           <Fragment>
             <IconButton
-              onClick={() => selectedTasks.forEach(createTaskNotification)}
-              // onClick={() => createTaskNotifications(selectedTasks)}
+              onClick={() => {
+                selectedTasks.forEach(createTaskNotification)
+                setMultiselect(false)
+              }}
             >
               <Notifications />
             </IconButton>

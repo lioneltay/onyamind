@@ -1,5 +1,7 @@
 import { Action } from "./actions"
 
+import { getLocalSettings } from "./utils"
+
 export type State = {
   darkMode: boolean
 }
@@ -8,6 +10,7 @@ const initialState = {
   darkMode: window.matchMedia
     ? window.matchMedia("(prefers-color-scheme: dark)").matches
     : true,
+  ...(getLocalSettings() || undefined),
 }
 
 export const reducer = (state: State = initialState, action: Action): State => {

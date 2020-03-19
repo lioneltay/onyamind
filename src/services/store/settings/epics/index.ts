@@ -17,6 +17,8 @@ import { actionCreators } from "../actions"
 
 import * as api from "services/api"
 
+import { setLocalSettings } from "../utils"
+
 const updateSettingsEpic = (
   action$: Observable<Action>,
   state$: StateObservable<State>,
@@ -34,11 +36,13 @@ const updateSettingsEpic = (
         return empty()
       }
 
-      return from(
-        api.updateSettings(state.auth.user.uid, {
-          darkMode: state.settings.darkMode,
-        }),
-      )
+      const settings = {
+        darkMode: state.settings.darkMode,
+      }
+
+      setLocalSettings(settings)
+
+      return from(api.updateSettings(state.auth.user.uid, settings))
     }),
     mergeMap(() => empty()),
   )

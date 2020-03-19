@@ -53,8 +53,7 @@ const migrateUserData = async (fromUserId: ID, toUserId: ID) => {
   taskLists.forEach(list => {
     const ref = firestore.collection("taskList").doc(list.id)
     if (list.demo) {
-      // Dont delete the demo list for now
-      // listBatch.delete(ref)
+      listBatch.delete(ref)
     } else {
       listBatch.update(ref, {
         userId: toUserId,
@@ -84,12 +83,21 @@ export const linkAnonymousAccountWithGoogle = async () => {
   const anonUser = auth.currentUser
   assert(anonUser?.isAnonymous, "No anonymous user currently signed in")
 
-  const { user } = await signinWithGoogle()
-  assert(user?.uid, "Google sign in fail")
+  try {
+    const { credential } = await anonUser.linkWithPopup(googleProvider)
+    assert(credential)
+    await auth.signInWithCredential(credential)
+  } catch (err) {
+    const { credential } = err
+    console.log(err)
+    console.log(credential)
+    const user = await auth.signInWithCredential(credential)
+    assert(user?.uid, "Google sign in fail")
 
-  await migrateUserData(anonUser.uid, user.uid)
+    await migrateUserData(anonUser.uid, user.uid)
 
-  await anonUser.delete()
+    await anonUser.delete()
+  }
 }
 
 export const signinAnonymously = () => {
