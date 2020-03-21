@@ -15,7 +15,7 @@ deploy:
     - firebase use staging
     - npm run deploy:ci -- $FIREBASE_DEPLOY_KEY
   on:
-    branch: master
+    branch: staging
 
 deploy:
   provider: script
@@ -24,4 +24,4 @@ deploy:
     - firebase use default
     - npm run deploy:ci -- $FIREBASE_DEPLOY_KEY
   on:
-    branch: staging
+    branch: master
