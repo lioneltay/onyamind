@@ -6,9 +6,9 @@ install:
   - npm install
 script:
   - npm run test
+  - npm run build
 
 before_deploy:
-  - npm run build
   - cd functions
   - npm install
   - cd ..
