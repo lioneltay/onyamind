@@ -63,6 +63,3 @@ export function dataWithId(
 }
 
 export const auth = firebase.auth()
-
-console.log("here")
-console.log("INTTANT", firebase.auth().currentUser)
