@@ -9,13 +9,11 @@ script:
   - npm run build
 
 deploy:
-  provider: script
-  script: bash ./scripts/deploy.sh staging
-  on:
-    branch: staging
-
-deploy:
-  provider: script
-  script: bash ./scripts/deploy.sh default
-  on:
-    branch: master
+  - provider: script
+    script: bash ./scripts/deploy.sh staging
+    on:
+      branch: staging
+  - provider: script
+    script: bash ./scripts/deploy.sh default
+    on:
+      branch: master
