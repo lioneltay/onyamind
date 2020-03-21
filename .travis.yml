@@ -7,10 +7,21 @@ install:
 script:
   - npm run test
   - npm run build
+
 deploy:
   provider: script
   script:
     - npm install -g firebase-tools
+    - firebase use staging
     - npm run deploy:ci -- $FIREBASE_DEPLOY_KEY
   on:
     branch: master
+
+deploy:
+  provider: script
+  script:
+    - npm install -g firebase-tools
+    - firebase use default
+    - npm run deploy:ci -- $FIREBASE_DEPLOY_KEY
+  on:
+    branch: staging

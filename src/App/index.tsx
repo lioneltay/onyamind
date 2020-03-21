@@ -18,6 +18,7 @@ export default () => {
       <Router>
         <StylesProvider injectFirst>
           <ThemeProvider dark={false}>
+            <h1>STAGING</h1>
             <GlobalStyles />
             <Root />
           </ThemeProvider>
