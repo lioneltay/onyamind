@@ -10,18 +10,12 @@ script:
 
 deploy:
   provider: script
-  script:
-    - npm install -g firebase-tools
-    - firebase use staging
-    - npm run deploy:ci -- $FIREBASE_DEPLOY_KEY
+  script: bash ./scripts/deploy.sh staging
   on:
     branch: staging
 
 deploy:
   provider: script
-  script:
-    - npm install -g firebase-tools
-    - firebase use default
-    - npm run deploy:ci -- $FIREBASE_DEPLOY_KEY
+  script: bash ./scripts/deploy.sh default
   on:
     branch: master
