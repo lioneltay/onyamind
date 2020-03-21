@@ -21,7 +21,8 @@
     "strict": ["error", "never"],
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/no-empty-function": "off",
-    "react/display-name": "off"
+    "react/display-name": "off",
+    "react/prop-types": "off"
   },
   "env": {
     "browser": true

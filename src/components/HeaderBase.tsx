@@ -1,6 +1,6 @@
 import React, { Fragment } from "react"
 import { useTheme } from "theme"
-import { noopTemplate as css } from "lib/utils"
+import { noopTemplate as css, noop } from "lib/utils"
 
 import { ArrowBack, Menu } from "@material-ui/icons"
 import { Toolbar, AppBar, IconButton } from "@material-ui/core"
@@ -12,7 +12,7 @@ type Props = Stylable & {
   title: string
   multiselectActions: React.ReactNode
   multiselect: boolean
-  onEndMultiselect: () => void
+  onEndMultiselect?: () => void
   numberOfSelectedTasks: number
   actions?: React.ReactNode
 }
@@ -21,7 +21,7 @@ export default ({
   title,
   multiselectActions,
   actions,
-  onEndMultiselect,
+  onEndMultiselect = noop,
   multiselect,
   numberOfSelectedTasks,
   ...rest

@@ -68,25 +68,8 @@ export const useTheme = () => useContext(ThemeContext)
 export const ThemeProvider: React.FunctionComponent<ThemeProps> = ({
   children,
 }) => {
-  const {
-    settings: { setDarkMode },
-  } = useActions()
   const dark = useSelector(state => state.settings.darkMode)
   const theme = getTheme({ dark })
-
-  React.useEffect(() => {
-    if (window.matchMedia) {
-      const query = window.matchMedia("(prefers-color-scheme: dark)")
-
-      const listener = (e: MediaQueryListEvent) => {
-        setDarkMode(e.matches)
-      }
-
-      query.addEventListener("change", listener)
-
-      return () => query.removeEventListener("change", listener)
-    }
-  }, [])
 
   return (
     <MuiThemeProvider theme={theme.mui}>

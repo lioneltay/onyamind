@@ -24,7 +24,7 @@ type Props = {
   onClick: (e: React.MouseEvent) => void
 }
 
-const GoogleSignInButton: React.FunctionComponent<Props> = ({ onClick }) => {
+const GoogleSignInButton = ({ onClick }: Props) => {
   return (
     <GoogleButton onClick={onClick}>
       <GoogleIcon src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" />
