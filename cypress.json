@@ -1,3 +1,6 @@
 {
-  "baseUrl": "http://localhost:3000"
+  "baseUrl": "https://staging.onyamind.app",
+  "integrationFolder": "cypress/e2e",
+  "viewportHeight": 800,
+  "viewportWidth": 660
 }

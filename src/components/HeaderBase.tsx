@@ -84,7 +84,7 @@ export default ({
                   style={{ display: "inline-block" }}
                   onClick={toggleDrawer}
                 >
-                  <Menu />
+                  <Menu data-testid="menu-button" />
                 </IconButton>
                 <Text variant="h6" style={{ paddingLeft: 18 }}>
                   {title}

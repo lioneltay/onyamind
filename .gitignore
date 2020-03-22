@@ -1,7 +1,9 @@
 .DS_Store
-/private
+private
 node_modules
-/dist/
-/coverage/
-/**/.DS_Store
-/trash
+dist/
+coverage/
+**/.DS_Store
+trash
+cypress/videos
+cypress/screenshots
