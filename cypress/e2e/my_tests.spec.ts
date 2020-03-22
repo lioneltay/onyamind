@@ -1,8 +1,15 @@
 describe("Intialization", function() {
   it("Initialize the anonymous user and create first 'Todo' list", () => {
-    cy.visit("/").get(
-      ".HeaderBase___StyledDiv2-sc-175njhs-2 > .MuiButtonBase-root > .MuiIconButton-label > .MuiSvgIcon-root > path",
-    )
-    .click()
+    cy.visit("/")
+
+    cy.findByText(/todo/i)
+  })
+
+  it("Clicking menu opens drawer", () => {
+    cy.visit("/")
+
+    cy.findByTestId("menu-button").click()
+
+    cy.findByTestId(/primary list/i)
   })
 })
