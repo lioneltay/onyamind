@@ -10,6 +10,12 @@ describe("Intialization", function() {
 
     cy.findByTestId("menu-button").click()
 
-    cy.findByTestId(/primary list/i)
+    cy.findByText(/primary list/i)
+
+    cy.findByTestId("close-drawer-button").click()
+
+    cy.findByText(/primary list/i)
+
+    cy.findByTestId("close-drawer-button").should("not.exist")
   })
 })

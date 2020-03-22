@@ -143,8 +143,11 @@ export default () => {
             </ListItemAvatar>
             <ListItemText primary={user.displayName} secondary={user.email} />
             <ListItemSecondaryAction>
-              <IconButton onClick={toggleDrawer}>
-                <Clear data-testid="close-drawer-button" />
+              <IconButton
+                onClick={toggleDrawer}
+                data-testid="close-drawer-button"
+              >
+                <Clear />
               </IconButton>
             </ListItemSecondaryAction>
           </ListItem>
