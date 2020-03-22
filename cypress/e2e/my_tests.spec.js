@@ -1,4 +1,10 @@
+import { resetDB } from "../utils"
+
 describe("Intialization", function() {
+  beforeEach(() => {
+    return resetDB()
+  })
+
   it("Initialize the anonymous user and create first 'Todo' list", () => {
     cy.visit("/")
 
@@ -14,7 +20,7 @@ describe("Intialization", function() {
 
     cy.findByTestId("close-drawer-button").click()
 
-    cy.findByText(/primary list/i)
+    cy.findByText(/primary list/i).should("not.exist")
 
     cy.findByTestId("close-drawer-button").should("not.exist")
   })
