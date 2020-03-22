@@ -34,7 +34,7 @@ firestore.settings({})
 
 firestore
   .enablePersistence({
-    experimentalTabSynchronization: true,
+    synchronizeTabs: true,
   })
   .catch(function(err) {
     if (err.code == "failed-precondition") {

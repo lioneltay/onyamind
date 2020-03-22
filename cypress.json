@@ -2,5 +2,6 @@
   "baseUrl": "https://staging.onyamind.app",
   "integrationFolder": "cypress/e2e",
   "viewportHeight": 800,
-  "viewportWidth": 660
+  "viewportWidth": 660,
+  "defaultCommandTimeout": 10000
 }
