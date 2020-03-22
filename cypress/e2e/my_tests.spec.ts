@@ -18,4 +18,14 @@ describe("Intialization", function() {
 
     cy.findByTestId("close-drawer-button").should("not.exist")
   })
+
+  it("Can create a task", () => {
+    cy.visit("/")
+
+    cy.findByText(/todo/i)
+
+    cy.findByPlaceholderText(/add item/i)
+      .click()
+      .type("hello\n")
+  })
 })

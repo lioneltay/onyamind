@@ -158,8 +158,11 @@ export default () => {
             </ListItemText>
 
             <ListItemSecondaryAction>
-              <IconButton>
-                <Clear onClick={toggleDrawer} />
+              <IconButton
+                onClick={toggleDrawer}
+                data-testid="close-drawer-button"
+              >
+                <Clear />
               </IconButton>
             </ListItemSecondaryAction>
           </ListItem>
