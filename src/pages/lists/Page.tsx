@@ -176,7 +176,6 @@ export default ({
       } else {
         selectPrimaryTaskList()
       }
-      closeDrawer()
     }
   }, [taskListsLoaded, listIdParamValid])
 
