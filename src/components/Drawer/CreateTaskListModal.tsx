@@ -1,6 +1,6 @@
 import React from "react"
 
-import { Form, Formik, FormikActions } from "formik"
+import { Form, Formik, FormikHelpers } from "formik"
 
 import { Text } from "lib/components"
 import Modal from "@material-ui/core/Modal"
@@ -18,7 +18,7 @@ type Values = {
 type Props = {
   open: boolean
   onClose: () => void
-  onSubmit: (values: Values, actions: FormikActions<Values>) => Promise<void>
+  onSubmit: (values: Values, actions: FormikHelpers<Values>) => Promise<void>
 }
 
 const CreateTaskListModal: React.FunctionComponent<Props> = ({

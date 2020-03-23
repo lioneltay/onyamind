@@ -20,6 +20,7 @@ module.exports = {
   plugins: [
     ...common_config.plugins,
     new webpack.EnvironmentPlugin({
+      // From TravisCI
       APP_MODE: process.env.APP_MODE || "staging",
     }),
     new CopyWebpackPlugin([

@@ -7,3 +7,5 @@ coverage/
 trash
 cypress/videos
 cypress/screenshots
+.firebase
+**debug.log

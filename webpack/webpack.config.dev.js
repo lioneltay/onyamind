@@ -1,7 +1,7 @@
 const path = require("path")
 const webpack = require("webpack")
 
-const relativeToRoot = relativePath =>
+const relativeToRoot = (relativePath) =>
   path.resolve(__dirname, "../", relativePath)
 
 const common_config = require("./webpack.config.common")
@@ -28,7 +28,7 @@ module.exports = {
   plugins: [
     ...common_config.plugins,
     new webpack.EnvironmentPlugin({
-      APP_MODE: "development",
+      APP_MODE: "staging",
     }),
   ],
 }

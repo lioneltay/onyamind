@@ -89,9 +89,7 @@ export const linkAnonymousAccountWithGoogle = async () => {
     await auth.signInWithCredential(credential)
   } catch (err) {
     const { credential } = err
-    console.log(err)
-    console.log(credential)
-    const user = await auth.signInWithCredential(credential)
+    const { user } = await auth.signInWithCredential(credential)
     assert(user?.uid, "Google sign in fail")
 
     await migrateUserData(anonUser.uid, user.uid)

@@ -1,22 +1,14 @@
-import firebase from "firebase"
+import * as admin from "firebase-admin"
 
-const stagingConfig = {
-  apiKey: "AIzaSyCRc0uxLhDmgl6x6PshIl6jmL8qott55is",
-  authDomain: "onyamind-staging.firebaseapp.com",
-  databaseURL: "https://onyamind-staging.firebaseio.com",
-  projectId: "onyamind-staging",
-  storageBucket: "onyamind-staging.appspot.com",
-  messagingSenderId: "990926290122",
-  appId: "1:990926290122:web:9bc7b229c4b13a9f3e8833",
-  measurementId: "G-6G31QSBL1H",
-}
+admin.initializeApp({
+  credential: "./admin-sdk-key.json",
+  databaseURL: 'https://onyamind-staging.firebaseio.com'
+});
 
-firebase.initializeApp(stagingConfig)
-
-const firestore = firebase.firestore()
+const firestore = admin.firestore()
 
 firestore.enablePersistence({
-  synchronizeTabs: false,
+  synchronizeTabs: true,
 })
 
 const deleteCollection = async collection => {
@@ -28,10 +20,14 @@ const deleteCollection = async collection => {
   return batch.commit()
 }
 
-export const resetDB = () => {
-  return Promise.all([
+export const resetDB = async () => {
+  // cy.clearCookies()
+  // cy.clearLocalStorage()
+  // const databases = await indexedDB.databases()
+  await Promise.all([
     deleteCollection("task"),
     deleteCollection("taskList"),
     deleteCollection("settings"),
   ])
+  // await Promise.all(databases.map(({ name }) => indexedDB.deleteDatabase(name)))
 }

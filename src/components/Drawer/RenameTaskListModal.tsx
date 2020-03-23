@@ -1,11 +1,10 @@
 import React from "react"
 
-import { Form, Formik, FormikActions } from "formik"
+import { Form, Formik, FormikHelpers } from "formik"
 
 import Modal from "lib/components/Modal"
 import TextField from "@material-ui/core/TextField"
 import Button from "@material-ui/core/Button"
-
 
 type Values = {
   name: string
@@ -15,7 +14,7 @@ type Props = {
   taskList: TaskList
   open: boolean
   onClose: () => void
-  onSubmit: (values: Values, actions: FormikActions<Values>) => Promise<void>
+  onSubmit: (values: Values, actions: FormikHelpers<Values>) => Promise<void>
 }
 
 const RenameTaskListModal: React.FunctionComponent<Props> = ({
