@@ -50,6 +50,6 @@ if (isLocal) {
 const doStuff = firebase.functions().httpsCallable("doStuff")
 
 console.log("CALLING")
-doStuff({ shit: "poo" })
+doStuff({ why: "no work" })
   .then((res) => console.log("called doStuff", res))
   .catch((e) => console.error("FAILED TO CALL DOSTUFF", e))
