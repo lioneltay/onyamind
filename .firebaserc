@@ -1,6 +1,7 @@
 {
   "projects": {
-    "default": "tekktekk-notes",
+    "default": "onyamind-staging",
+    "production": "tekktekk-notes",
     "staging": "onyamind-staging"
   }
 }

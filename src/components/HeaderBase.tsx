@@ -83,7 +83,7 @@ export default ({
                 <IconButton
                   style={{ display: "inline-block" }}
                   onClick={toggleDrawer}
-                  data-testid="menu-button"
+                  data-testid="open-drawer-button"
                 >
                   <Menu />
                 </IconButton>

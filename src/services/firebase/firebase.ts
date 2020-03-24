@@ -17,14 +17,17 @@ export const firestore = firebase.firestore()
 export const auth = firebase.auth()
 
 if (isLocal) {
-  console.log("FIRESTORE USING EMULATOR")
+  console.log('emulating firestore')
   firestore.settings({
     host: "localhost:8080",
     ssl: false,
   })
 
-  console.log("FUNCTIONS USING EMULATOR")
+  console.log('emulating functions')
   firebase.functions().useFunctionsEmulator("http://localhost:5001")
+
+  console.log('unpersisted auth')
+  firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE)
 } else {
   firestore
     .enablePersistence({
@@ -46,10 +49,3 @@ if (isLocal) {
       }
     })
 }
-
-const doStuff = firebase.functions().httpsCallable("doStuff")
-
-console.log("CALLING")
-doStuff({ why: "no work" })
-  .then((res) => console.log("called doStuff", res))
-  .catch((e) => console.error("FAILED TO CALL DOSTUFF", e))

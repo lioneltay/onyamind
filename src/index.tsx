@@ -6,6 +6,7 @@ import "regenerator-runtime/runtime"
 import React from "react"
 import { render } from "react-dom"
 
+import "services/firebase"
 import App from "./App"
 
 import "./service-worker/service.worker"

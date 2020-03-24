@@ -6,11 +6,6 @@ import Button from "@material-ui/core/Button"
 import TextField from "@material-ui/core/TextField"
 import Modal from "lib/components/Modal"
 
-const StatusText = styled.div`
-  font-size: 1rem;
-  font-weight: 400;
-`
-
 type Values = {
   title: string
   notes: string
@@ -45,15 +40,16 @@ const CreateTaskModal: React.FunctionComponent<Props> = ({
           }}
         >
           {({ setFieldValue, values, isSubmitting }) => (
-            <Form>
+            <Form data-testid="ggg">
               <div>
                 <TextField
                   autoFocus
                   label="Task"
+                  placeholder="Task"
                   fullWidth
                   variant="outlined"
                   value={values.title}
-                  onChange={e => setFieldValue("title", e.target.value)}
+                  onChange={(e) => setFieldValue("title", e.target.value)}
                 />
               </div>
 
@@ -67,7 +63,7 @@ const CreateTaskModal: React.FunctionComponent<Props> = ({
                   variant="outlined"
                   placeholder="Add notes"
                   value={values.notes}
-                  onChange={e => setFieldValue("notes", e.target.value)}
+                  onChange={(e) => setFieldValue("notes", e.target.value)}
                 />
               </div>
 

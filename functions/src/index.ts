@@ -39,18 +39,6 @@ const dataWithId = (
   doc: FirebaseFirestore.QueryDocumentSnapshot<FirebaseFirestore.DocumentData>,
 ) => ({ id: doc.id, ...doc.data })
 
-export const doStuff = functions.https.onCall((data, context) => {
-  console.log("DOING STUFF", data)
-
-  return Promise.resolve(53)
-})
-
-export const shitEverywhere = functions.firestore
-  .document("/task/{taskId}")
-  .onCreate((doc, context) => {
-    console.log("shitting")
-  })
-
 export const updateDemoListFlag = functions.firestore
   .document("/taskList/{listId}")
   .onUpdate(async (change, context) => {
