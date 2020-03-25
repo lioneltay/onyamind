@@ -17,17 +17,20 @@ export const firestore = firebase.firestore()
 export const auth = firebase.auth()
 
 if (isLocal) {
-  console.log('emulating firestore')
+  console.log("emulating firestore")
   firestore.settings({
     host: "localhost:8080",
     ssl: false,
   })
 
-  console.log('emulating functions')
+  console.log("emulating functions")
   firebase.functions().useFunctionsEmulator("http://localhost:5001")
 
-  console.log('unpersisted auth')
+  console.log("unpersisted auth")
   firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE)
+
+  // WORKAROUND: Cypress is intercepting requests causing functions to fail https://github.com/cypress-io/cypress/issues/6350
+  firebase.firestore().settings({ experimentalForceLongPolling: true })
 } else {
   firestore
     .enablePersistence({

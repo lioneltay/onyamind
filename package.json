@@ -19,7 +19,9 @@
     "deploy:ci": "firebase deploy --token",
     "cy:open": "cypress open",
     "test:watch": "jest --watch",
-    "test": "jest"
+    "test:jest": "jest",
+    "test:cypress": "cypress run",
+    "test": "concurrently \"npm run test:jest\" \"npm run test:cypress\""
   },
   "keywords": [],
   "author": "",

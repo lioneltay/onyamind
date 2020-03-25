@@ -20,7 +20,7 @@ const Overlay = styled.div<{ show: boolean }>`
   pointer-events: none;
   display: none;
 
-  ${props =>
+  ${(props) =>
     props.show
       ? css`
           display: flex;
@@ -84,8 +84,8 @@ export default ({
       // onClick={() => onItemClick(task.id)}
     >
       <ListItemIcon
-        onPointerDown={e => e.stopPropagation()}
-        onClick={e => {
+        onPointerDown={(e) => e.stopPropagation()}
+        onClick={(e) => {
           e.stopPropagation()
           onSelectTask(task.id)
         }}
@@ -101,6 +101,7 @@ export default ({
           size="small"
         >
           <Assignment
+            data-testid="assignment"
             style={{
               color: theme.iconColor,
               transform: `scale(${multiselect ? 0.7 : 1})`,
@@ -136,16 +137,14 @@ export default ({
             >
               {task.notes}
             </span>
-          ) : (
-            undefined
-          )
+          ) : undefined
         }
       />
 
       <Overlay
         show={showHoverActions}
-        onClick={e => e.stopPropagation()}
-        onPointerDown={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
+        onPointerDown={(e) => e.stopPropagation()}
       >
         {hoverActions}
       </Overlay>

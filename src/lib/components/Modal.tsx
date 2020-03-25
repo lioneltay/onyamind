@@ -41,7 +41,7 @@ const Modal: React.FunctionComponent<Props> = ({
         <div className="p-3">
           {children}
 
-          <div className="fj-e mt-2">{actions}</div>
+          {actions ? <div className="fj-e mt-2">{actions}</div> : null}
         </div>
       </Paper>
     </MModal>

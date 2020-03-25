@@ -3,5 +3,6 @@
   "integrationFolder": "cypress/e2e",
   "viewportHeight": 800,
   "viewportWidth": 660,
-  "defaultCommandTimeout": 4000
+  "defaultCommandTimeout": 20000,
+  "videoUploadOnPasses": false
 }

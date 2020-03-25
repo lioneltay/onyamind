@@ -49,7 +49,7 @@ export default () => {
   } = useActions("listPage")
 
   return (
-    <header
+    <div
       css={css`
         position: sticky;
         top: 0;
@@ -69,7 +69,7 @@ export default () => {
                 setMultiselect(false)
               }}
             >
-              <Notifications />
+              <Notifications data-testid="notifications" />
             </IconButton>
 
             {allSelectedTasksComplete || allSelectedTasksIncomplete ? (
@@ -80,27 +80,31 @@ export default () => {
                     : decompleteSelectedTasks
                 }
               >
-                {allSelectedTasksIncomplete ? <Check /> : <Add />}
+                {allSelectedTasksIncomplete ? (
+                  <Check data-testid="check" />
+                ) : (
+                  <Add data-testid="add" />
+                )}
               </IconButton>
             ) : null}
 
             <IconButtonMenu
-              icon={<SwapHoriz />}
+              icon={<SwapHoriz data-testid="swaphoriz" />}
               items={taskLists
-                .filter(list => list.id !== selectedTaskList?.id)
-                .map(list => ({
+                .filter((list) => list.id !== selectedTaskList?.id)
+                .map((list) => ({
                   label: list.name,
                   action: () => moveSelectedTasks({ listId: list.id }),
                 }))}
             />
 
             <IconButton onClick={archiveSelectedTasks}>
-              <Delete />
+              <Delete data-testid="delete" />
             </IconButton>
           </Fragment>
         }
       />
       <TaskAdder />
-    </header>
+    </div>
   )
 }

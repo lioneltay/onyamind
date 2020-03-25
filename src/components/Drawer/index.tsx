@@ -94,10 +94,10 @@ export default () => {
 
   const selectedList =
     selectedId && taskLists
-      ? taskLists.find(list => list.id === selectedId)
+      ? taskLists.find((list) => list.id === selectedId)
       : null
 
-  const primaryList = taskLists ? taskLists.find(list => list.primary) : null
+  const primaryList = taskLists ? taskLists.find((list) => list.primary) : null
 
   if (!user) {
     return null
@@ -143,11 +143,8 @@ export default () => {
             </ListItemAvatar>
             <ListItemText primary={user.displayName} secondary={user.email} />
             <ListItemSecondaryAction>
-              <IconButton
-                onClick={toggleDrawer}
-                data-testid="close-drawer-button"
-              >
-                <Clear />
+              <IconButton onClick={toggleDrawer}>
+                <Clear data-testid="clear" />
               </IconButton>
             </ListItemSecondaryAction>
           </ListItem>
@@ -158,11 +155,8 @@ export default () => {
             </ListItemText>
 
             <ListItemSecondaryAction>
-              <IconButton
-                onClick={toggleDrawer}
-                data-testid="close-drawer-button"
-              >
-                <Clear />
+              <IconButton onClick={toggleDrawer}>
+                <Clear data-testid="clear" />
               </IconButton>
             </ListItemSecondaryAction>
           </ListItem>
@@ -205,7 +199,7 @@ export default () => {
             taskList={primaryList}
             selected={primaryList.id === selectedTaskListId}
             onBodyClick={() => handleSelectTaskList(primaryList.id)}
-            onRename={id => {
+            onRename={(id) => {
               setSelectedId(id)
               setShowRenameModal(true)
             }}
@@ -222,7 +216,7 @@ export default () => {
           className="pb-0 pt-3"
           dense
           button
-          onClick={() => setShowOtherLists(show => !show)}
+          onClick={() => setShowOtherLists((show) => !show)}
         >
           <ListItemText>
             <Text variant="subtitle2">Other Lists</Text>
@@ -231,9 +225,9 @@ export default () => {
         <Collapse in={showOtherLists}>
           {taskLists ? (
             taskLists
-              .filter(list => !list.primary)
+              .filter((list) => !list.primary)
               .sort(comparator((l1, l2) => l1.createdAt > l2.createdAt))
-              .map(list => (
+              .map((list) => (
                 <TaskList
                   key={list.id}
                   taskList={list}
@@ -241,15 +235,15 @@ export default () => {
                   onBodyClick={() => {
                     handleSelectTaskList(list.id)
                   }}
-                  onDelete={id => {
+                  onDelete={(id) => {
                     setSelectedId(id)
                     setShowDeleteModal(true)
                   }}
-                  onRename={id => {
+                  onRename={(id) => {
                     setSelectedId(id)
                     setShowRenameModal(true)
                   }}
-                  onMakePrimary={listId => {
+                  onMakePrimary={(listId) => {
                     setPrimaryTaskList({ listId, userId: user?.uid ?? null })
                   }}
                 />
@@ -311,7 +305,7 @@ export default () => {
       </List>
 
       <CreateTaskListModal
-        onSubmit={async values => {
+        onSubmit={async (values) => {
           setShowCreateModal(false)
           await createTaskList({
             name: values.name,
@@ -325,7 +319,7 @@ export default () => {
       {selectedList && selectedId ? (
         <RenameTaskListModal
           taskList={selectedList}
-          onSubmit={async values => {
+          onSubmit={async (values) => {
             setShowRenameModal(false)
             await editTaskList({
               listId: selectedId,
