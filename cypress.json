@@ -4,5 +4,6 @@
   "viewportHeight": 800,
   "viewportWidth": 660,
   "defaultCommandTimeout": 20000,
+  "video": false,
   "videoUploadOnPasses": false
 }
