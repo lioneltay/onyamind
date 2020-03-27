@@ -4,6 +4,7 @@ node_js:
   - 10
 install:
   - npm install
+  - cd functions && npm install && cd ..
 script:
   - npm run test:ci
   - npm run build
