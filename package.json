@@ -6,7 +6,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node ./dist/server.js",
     "dev": "APP_MODE=staging webpack-dev-server --config ./webpack/webpack.config.dev.js",
     "dev:local": "APP_MODE=local webpack-dev-server --config ./webpack/webpack.config.dev.js",
     "emulators:start": "firebase use staging && firebase emulators:start --only firestore,functions",
@@ -24,8 +23,8 @@
     "test:cypress:emulators:exec:ci": "firebase use staging --token $FIREBASE_DEPLOY_KEY && firebase emulators:exec --only firestore,functions --token $FIREBASE_DEPLOY_KEY",
     "test:cypress:helper": "start-server-and-test dev:local http-get://localhost:7000 cy:run",
     "test:cypress:ci": "npm run test:cypress:emulators:exec:ci -- \"npm run test:cypress:helper\"",
-    "test": "concurrently -k \"npm run test:jest\" \"npm run test:cypress\"",
-    "test:ci": "concurrently -k \"npm run test:jest\" \"npm run test:cypress:ci\""
+    "test": "concurrently -s all \"npm run test:jest\" \"npm run test:cypress\"",
+    "test:ci": "concurrently -s all \"npm run test:jest\" \"npm run test:cypress:ci\""
   },
   "keywords": [],
   "author": "",
