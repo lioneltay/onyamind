@@ -21,7 +21,7 @@
     "test:jest": "jest",
     "test:cypress:emulators:exec": "firebase use staging && firebase emulators:exec --only firestore,functions",
     "test:cypress": "npm run test:cypress:emulators:exec -- \"npm run test:cypress:helper\"",
-    "test:cypress:emulators:exec:ci": "firebase use staging && firebase emulators:exec --only firestore,functions --token $FIREBASE_DEPLOY_KEY",
+    "test:cypress:emulators:exec:ci": "firebase use staging --token $FIREBASE_DEPLOY_KEY && firebase emulators:exec --only firestore,functions --token $FIREBASE_DEPLOY_KEY",
     "test:cypress:helper": "start-server-and-test dev:local http-get://localhost:7000 cy:run",
     "test:cypress:ci": "npm run test:cypress:emulators:exec:ci -- \"npm run test:cypress:helper\"",
     "test": "concurrently -k \"npm run test:jest\" \"npm run test:cypress\"",
