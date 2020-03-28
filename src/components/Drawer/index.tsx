@@ -37,6 +37,7 @@ import Modal from "lib/components/Modal"
 import CreateTaskListModal from "./CreateTaskListModal"
 import RenameTaskListModal from "./RenameTaskListModal"
 import DeleteTaskListModal from "./DeleteTaskListModal"
+import FeedbackModal from "./FeedbackModal"
 
 import { comparator } from "ramda"
 import { GoogleSignInButton } from "components"
@@ -86,6 +87,7 @@ export default () => {
   }
 
   const [showCreateModal, setShowCreateModal] = useState(false)
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [showRenameModal, setShowRenameModal] = useState(false)
   const [selectedId, setSelectedId] = useState(null as ID | null)
@@ -282,7 +284,11 @@ export default () => {
         {/* {!user.isAnonymous && (
           <OptionItem icon={<ExitToApp />} text="Sign out" onClick={signout} />
         )} */}
-        <OptionItem icon={<Feedback />} text="Send feedback" />
+        <OptionItem
+          icon={<Feedback />}
+          text="Send feedback"
+          onClick={() => setShowFeedbackModal(true)}
+        />
         <OptionItem icon={<Help />} text="Help" />
         <Divider />
         <ListItem className="pb-0 pt-3" dense>
@@ -304,9 +310,22 @@ export default () => {
         </ListItem>
       </List>
 
+      <FeedbackModal
+        onSubmit={async (values) => {
+          console.log("SUbmmittinggg")
+          setShowFeedbackModal(false)
+          await api.sendFeedback({
+            subject: values.subject,
+            description: values.description,
+          })
+        }}
+        open={showFeedbackModal}
+        onClose={() => setShowFeedbackModal(false)}
+      />
+
       <CreateTaskListModal
         onSubmit={async (values) => {
-          setShowCreateModal(false)
+          setShowFeedbackModal(false)
           await createTaskList({
             name: values.name,
             primary: values.primary,
