@@ -29,7 +29,7 @@ const Overlay = styled.div<{ show: boolean }>`
         `
       : ""};
 
-  body.hasHover ${StyledListItem}:hover & {
+  .hasHover ${StyledListItem}:hover & {
     display: flex;
     opacity: 1;
     pointer-events: all;
