@@ -32,7 +32,7 @@ export default ({
   } = useActions()
 
   return (
-    <AppBar {...rest} position="relative">
+    <AppBar {...rest} position="relative" component="header">
       <Toolbar
         css={css`
           padding-left: 0;
@@ -84,7 +84,7 @@ export default ({
                   style={{ display: "inline-block" }}
                   onClick={toggleDrawer}
                 >
-                  <Menu />
+                  <Menu data-testid="menu" />
                 </IconButton>
                 <Text variant="h6" style={{ paddingLeft: 18 }}>
                   {title}

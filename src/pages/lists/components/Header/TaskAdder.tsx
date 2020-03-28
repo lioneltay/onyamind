@@ -56,8 +56,8 @@ export default () => {
     selectedTaskIds.length !== 0 &&
     tasks &&
     tasks
-      .filter(task => !task.complete)
-      .every(task => selectedTaskIds.includes(task.id))
+      .filter((task) => !task.complete)
+      .every((task) => selectedTaskIds.includes(task.id))
   )
 
   const mobile = useMediaQuery(`(max-width: ${MOBILE_WIDTH}px)`)
@@ -113,7 +113,10 @@ export default () => {
               divider
             >
               <ListItemIcon>
-                <IconButton onClick={() => setShowCreateModal(true)}>
+                <IconButton
+                  data-testid="add-task-button"
+                  onClick={() => setShowCreateModal(true)}
+                >
                   <Add />
                 </IconButton>
               </ListItemIcon>
@@ -129,8 +132,8 @@ export default () => {
                 placeholder="Add item"
                 className="fg-1"
                 value={newTaskTitle}
-                onChange={e => setNewTaskTitle(e.currentTarget.value)}
-                onKeyPress={e => {
+                onChange={(e) => setNewTaskTitle(e.currentTarget.value)}
+                onKeyPress={(e) => {
                   if (e.key === "Enter" && newTaskTitle.length > 0) {
                     setNewTaskTitle("")
                     createTask({ title: newTaskTitle })
@@ -161,7 +164,7 @@ export default () => {
         initialValues={{
           title: newTaskTitle,
         }}
-        onSubmit={async values => {
+        onSubmit={async (values) => {
           setShowCreateModal(false)
           setNewTaskTitle("")
           await createTask({ ...values })

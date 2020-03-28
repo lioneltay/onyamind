@@ -59,7 +59,7 @@ const Content = () => {
   const [showCompleteTasks, setShowCompleteTasks] = React.useState(false)
 
   const toggleShowCompleteTasks = React.useCallback(() => {
-    setShowCompleteTasks(show => !show)
+    setShowCompleteTasks((show) => !show)
   }, [])
 
   if (loadingTasks) {
@@ -73,13 +73,13 @@ const Content = () => {
   return (
     <Fragment>
       <List className="p-0" style={{ background: theme.backgroundColor }}>
-        {incompleteTasks.map(task => (
+        {incompleteTasks.map((task) => (
           <Fragment key={task.id}>
             <Task backgroundColor={theme.backgroundColor} task={task} />
             <CollapsableEditor
               task={task}
               open={!multiselect && editingTask?.id === task.id}
-              onSubmit={async values => {
+              onSubmit={async (values) => {
                 stopEditingTask()
                 await editTask({
                   taskId: task.id,
@@ -122,13 +122,13 @@ const Content = () => {
 
       <List>
         <Collapse in={showCompleteTasks}>
-          {completeTasks.map(task => (
+          {completeTasks.map((task) => (
             <Fragment key={task.id}>
               <Task backgroundColor={theme.backgroundFadedColor} task={task} />
               <CollapsableEditor
                 task={task}
                 open={!multiselect && editingTask?.id === task.id}
-                onSubmit={async values => {
+                onSubmit={async (values) => {
                   stopEditingTask()
                   await editTask({
                     taskId: task.id,
@@ -155,13 +155,14 @@ export default ({
 }: Props) => {
   const {
     app: { selectTaskList, selectPrimaryTaskList },
-    ui: { closeDrawer },
   } = useActions()
   const { selectedTaskListId, taskListsLoaded, listIdParamValid } = useSelector(
-    state => ({
+    (state) => ({
       selectedTaskListId: state.app.selectedTaskListId,
       taskListsLoaded: !!state.app.taskLists,
-      listIdParamValid: !!state.app.taskLists?.find(list => list.id === listId),
+      listIdParamValid: !!state.app.taskLists?.find(
+        (list) => list.id === listId,
+      ),
     }),
   )
 
@@ -176,9 +177,8 @@ export default ({
       } else {
         selectPrimaryTaskList()
       }
-      closeDrawer()
     }
-  }, [taskListsLoaded, listIdParamValid])
+  }, [taskListsLoaded, listIdParamValid, listId])
 
   // Keep url synced with selectedTaskListId
   React.useEffect(() => {

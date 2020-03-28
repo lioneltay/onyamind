@@ -1,7 +1,7 @@
 import React from "react"
 
 import MModal from "@material-ui/core/Modal"
-import {Text} from "lib/components"
+import { Text } from "lib/components"
 import Button from "@material-ui/core/Button"
 import IconButton from "@material-ui/core/IconButton"
 import Paper from "@material-ui/core/Paper"
@@ -27,7 +27,7 @@ const Modal: React.FunctionComponent<Props> = ({
 }) => {
   return (
     <MModal className="fj-c fa-c" open={open} onClose={onClose}>
-      <Paper style={style} className={className}>
+      <Paper data-testid="modal" style={style} className={className}>
         <div className="fj-sb fa-c pl-3">
           <Text variant="h6">{title}</Text>
 
@@ -41,7 +41,7 @@ const Modal: React.FunctionComponent<Props> = ({
         <div className="p-3">
           {children}
 
-          <div className="fj-e mt-2">{actions}</div>
+          {actions ? <div className="fj-e mt-2">{actions}</div> : null}
         </div>
       </Paper>
     </MModal>

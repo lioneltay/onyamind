@@ -14,6 +14,7 @@ import { ThemeProvider } from "theme"
 
 export default () => {
   return (
+    // <React.StrictMode>
     <ReduxProvider store={store}>
       <Router>
         <StylesProvider injectFirst>
@@ -24,5 +25,6 @@ export default () => {
         </StylesProvider>
       </Router>
     </ReduxProvider>
+    // </React.StrictMode>
   )
 }

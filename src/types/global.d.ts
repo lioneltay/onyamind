@@ -29,7 +29,8 @@ declare global {
 
   export namespace NodeJS {
     export interface ProcessEnv {
-      APP_MODE: "local" | "development" | "production"
+      APP_MODE: "local" | "staging" | "production"
+      NODE_ENV: "test" | "staging" | "production"
     }
   }
 
