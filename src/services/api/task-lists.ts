@@ -6,7 +6,7 @@ export const getTaskList = async (listId: ID): Promise<TaskList | null> => {
     .collection("taskList")
     .doc(listId)
     .get()
-    .then(res => (res.exists ? dataWithId(res) : null))
+    .then((res) => (res.exists ? dataWithId(res) : null))
 
   return x as TaskList | null
 }
@@ -32,10 +32,10 @@ export const createTaskList = async (
       createdAt: Date.now(),
       updatedAt: Date.now(),
     })
-    .then(async x => {
+    .then(async (x) => {
       return dataWithId(await x.get()) as TaskList
     })
-    .catch(e => {
+    .catch((e) => {
       console.log(e)
       return e
     })
@@ -70,10 +70,7 @@ export const editTaskList = async ({
 }
 
 export const deleteTaskList = async (listId: ID): Promise<ID> => {
-  await firestore
-    .collection("taskList")
-    .doc(listId)
-    .delete()
+  await firestore.collection("taskList").doc(listId).delete()
 
   return listId
 }
@@ -83,7 +80,7 @@ export const getTaskLists = async (userId: ID | null): Promise<TaskList[]> => {
     .collection("taskList")
     .where("userId", "==", userId)
     .get()
-    .then(res => res.docs.map(dataWithId) as TaskList[])
+    .then((res) => res.docs.map(dataWithId) as TaskList[])
 }
 
 type SetPrimaryTaskListInput = {
@@ -103,12 +100,30 @@ export const setPrimaryTaskList = async ({
   })
 
   taskLists
-    .filter(list => list.id !== listId && list.primary)
-    .forEach(list => {
+    .filter((list) => list.id !== listId && list.primary)
+    .forEach((list) => {
       batch.update(firestore.collection("taskList").doc(list.id), {
         primary: false,
       })
     })
 
   return batch.commit()
+}
+
+type OnTaskListsChangeInput = {
+  userId: ID
+  onChange: (lists: TaskList[]) => void
+}
+
+export const onTaskListsChange = ({
+  userId,
+  onChange,
+}: OnTaskListsChangeInput) => {
+  return firestore
+    .collection("taskList")
+    .where("userId", "==", userId)
+    .onSnapshot((snapshot) => {
+      const taskLists = snapshot.docs.map((doc) => dataWithId(doc) as TaskList)
+      onChange(taskLists)
+    })
 }

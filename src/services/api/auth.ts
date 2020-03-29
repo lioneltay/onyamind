@@ -1,11 +1,39 @@
 import { firebase, auth, firestore, dataWithId } from "services/firebase"
 import { assert } from "lib/utils"
+import { INITIAL_TASK_LIST_NAME } from "config"
+import { createTaskList } from "services/api/task-lists"
 
 const googleProvider = new firebase.auth.GoogleAuthProvider()
+
+export const onAuthStateChanged = (onChange: (user: User | null) => void) => {
+  return firebase.auth().onAuthStateChanged(onChange)
+}
 
 googleProvider.setCustomParameters({
   prompt: "select_account",
 })
+
+export const initializeUserData = async (userId: ID) => {
+  const list = await createTaskList({
+    name: INITIAL_TASK_LIST_NAME,
+    primary: true,
+    demo: true,
+    userId: userId,
+  })
+
+  // await Promise.all([
+  //   api.createTask({
+  //     title: "My first task!",
+  //     userId: userId,
+  //     listId: list.id,
+  //   }),
+  //   api.createTask({
+  //     title: "My second task!",
+  //     userId: userId,
+  //     listId: list.id,
+  //   }),
+  // ])
+}
 
 export const signinWithGoogle = () => {
   return firebase.auth().signInWithPopup(googleProvider)
@@ -16,21 +44,21 @@ const migrateUserData = async (fromUserId: ID, toUserId: ID) => {
     .collection("taskList")
     .where("userId", "==", fromUserId)
     .get()
-    .then(res => res.docs.map(dataWithId))
+    .then((res) => res.docs.map(dataWithId))
 
   const updateTasks = () =>
     Promise.all(
-      taskLists.map(async list => {
+      taskLists.map(async (list) => {
         const tasks = await firestore
           .collection("task")
           .where("userId", "==", fromUserId)
           .where("listId", "==", list.id)
           .get()
-          .then(res => res.docs.map(dataWithId))
+          .then((res) => res.docs.map(dataWithId))
 
         const batch = firestore.batch()
 
-        tasks.forEach(task =>
+        tasks.forEach((task) =>
           batch.update(firestore.collection("task").doc(task.id), {
             userId: toUserId,
           }),
@@ -48,9 +76,9 @@ const migrateUserData = async (fromUserId: ID, toUserId: ID) => {
       .where("userId", "==", toUserId)
       .where("primary", "==", true)
       .get()
-      .then(res => res.docs.length)) > 0
+      .then((res) => res.docs.length)) > 0
 
-  taskLists.forEach(list => {
+  taskLists.forEach((list) => {
     const ref = firestore.collection("taskList").doc(list.id)
     if (list.demo) {
       listBatch.delete(ref)
@@ -66,11 +94,11 @@ const migrateUserData = async (fromUserId: ID, toUserId: ID) => {
     .collection("settings")
     .where("userId", "==", fromUserId)
     .get()
-    .then(res => res.docs.map(dataWithId))
+    .then((res) => res.docs.map(dataWithId))
 
   const settingsBatch = firestore.batch()
 
-  settings.forEach(settings =>
+  settings.forEach((settings) =>
     settingsBatch.update(firestore.collection("settings").doc(settings.id), {
       userId: toUserId,
     }),
@@ -109,8 +137,8 @@ export const signout = () => {
 export const getUser = () => {
   let unsub = () => {}
 
-  return new Promise<User | null>(res => {
-    unsub = firebase.auth().onAuthStateChanged(user => {
+  return new Promise<User | null>((res) => {
+    unsub = firebase.auth().onAuthStateChanged((user) => {
       unsub()
       res(user)
     })

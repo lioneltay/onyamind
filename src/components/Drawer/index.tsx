@@ -325,7 +325,7 @@ export default () => {
 
       <CreateTaskListModal
         onSubmit={async (values) => {
-          setShowFeedbackModal(false)
+          setShowCreateModal(false)
           await createTaskList({
             name: values.name,
             primary: values.primary,

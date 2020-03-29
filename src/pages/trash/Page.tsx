@@ -10,6 +10,8 @@ import { useTheme } from "theme"
 import { useSelector, useActions } from "services/store"
 import { MOBILE_WIDTH } from "config"
 
+import { onTrashTasksChange } from "./api"
+
 const Content = () => {
   const theme = useTheme()
 
@@ -29,7 +31,7 @@ const Content = () => {
 
   return (
     <List className="p-0">
-      {tasks.map(task => (
+      {tasks.map((task) => (
         <Task
           key={task.id}
           backgroundColor={theme.backgroundColor}
@@ -41,19 +43,18 @@ const Content = () => {
   )
 }
 
-type Props = RouteComponentProps<{ listId: string; listName: string }> & {}
-
-export default ({ match }: Props) => {
-  const {
-    app: { selectTaskList },
-  } = useActions()
+export default () => {
+  const { setTrashTasks } = useActions("trashPage")
+  const userId = useSelector((state) => state.auth.user?.uid)
 
   React.useEffect(() => {
-    selectTaskList(match.params.listId)
-    return () => {
-      selectTaskList(null)
+    if (userId) {
+      return onTrashTasksChange({
+        userId,
+        onChange: (tasks) => setTrashTasks(tasks),
+      })
     }
-  }, [match.params.listId])
+  }, [userId])
 
   return (
     <Fragment>
