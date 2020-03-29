@@ -34,3 +34,37 @@ const container = document.getElementById("app")
 if (container) {
   render(<App />, container)
 }
+
+function watchForHover() {
+  let hasHoverClass = false
+  const container = document.body
+  let lastTouchTime = 0
+
+  function enableHover() {
+    // filter emulated events coming from touch events
+    if (Date.now() - lastTouchTime < 500) return
+    if (hasHoverClass) return
+
+    container.className += " hasHover"
+    hasHoverClass = true
+  }
+
+  function disableHover() {
+    if (!hasHoverClass) return
+
+    container.className = container.className.replace(" hasHover", "")
+    hasHoverClass = false
+  }
+
+  function updateLastTouchTime() {
+    lastTouchTime = Date.now()
+  }
+
+  document.addEventListener("touchstart", updateLastTouchTime, true)
+  document.addEventListener("touchstart", disableHover, true)
+  document.addEventListener("mousemove", enableHover, true)
+
+  enableHover()
+}
+
+watchForHover()
