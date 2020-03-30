@@ -10,7 +10,7 @@ import { useTheme } from "theme"
 import { useSelector, useActions } from "services/store"
 import { MOBILE_WIDTH } from "config"
 
-import { onTrashTasksChange } from "pages/trash/api"
+// import { onTrashTasksChange } from "pages/trash/api"
 
 const Content = () => {
   const theme = useTheme()
@@ -47,14 +47,14 @@ export default () => {
   const { setTrashTasks } = useActions("trashPage")
   const userId = useSelector((state) => state.auth.user?.uid)
 
-  React.useEffect(() => {
-    if (userId) {
-      return onTrashTasksChange({
-        userId,
-        onChange: (tasks) => setTrashTasks(tasks),
-      })
-    }
-  }, [userId])
+  // React.useEffect(() => {
+  //   if (userId) {
+  //     return onTrashTasksChange({
+  //       userId,
+  //       onChange: (tasks) => setTrashTasks(tasks),
+  //     })
+  //   }
+  // }, [userId])
 
   return (
     <Fragment>
