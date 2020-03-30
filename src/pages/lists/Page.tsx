@@ -25,7 +25,8 @@ import { useTheme } from "theme"
 import { useSelector, useActions } from "services/store"
 import { listPageUrl } from "pages/lists/routing"
 
-import { onTasksChange } from "pages/lists/api"
+// import { onTasksChange } from "pages/lists/api"
+import { onTasksChange } from "./api"
 
 const Flip = styled.div<{ flip: boolean }>`
   transform: rotate(${({ flip }) => (flip ? "-180deg" : "0")});
