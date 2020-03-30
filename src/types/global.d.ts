@@ -8,6 +8,10 @@ declare global {
 
   export type FunctionType<A extends any[] = any[], R = any> = (...args: A) => R
 
+  type RecursivePartial<T> = {
+    [K in keyof T]?: RecursivePartial<T[K]>
+  }
+
   // export type Arguments<T extends FunctionType> = T extends FunctionType<
   //   infer A,
   //   any

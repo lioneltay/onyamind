@@ -312,7 +312,6 @@ export default () => {
 
       <FeedbackModal
         onSubmit={async (values) => {
-          console.log("SUbmmittinggg")
           setShowFeedbackModal(false)
           await api.sendFeedback({
             subject: values.subject,

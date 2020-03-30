@@ -2,7 +2,8 @@ import React, { useState, useRef } from "react"
 import styled from "styled-components"
 
 import { useGesture } from "lib/useGesture"
-import { Spring, config } from "react-spring/renderprops"
+import { Spring, config } from "react-spring/renderprops.cjs"
+
 
 import { IconButton, ListItem } from "@material-ui/core"
 

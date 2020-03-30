@@ -5,5 +5,8 @@
   "viewportWidth": 660,
   "defaultCommandTimeout": 20000,
   "video": false,
-  "videoUploadOnPasses": false
+  "videoUploadOnPasses": false,
+  "cypress-watch-and-reload": {
+    "watch": "src/*"
+  }
 }

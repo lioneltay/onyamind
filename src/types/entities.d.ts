@@ -6,7 +6,10 @@ declare global {
 
   export type ID = string
 
-  export type User = firebase.User
+  export type User = Pick<
+    firebase.User,
+    "uid" | "email" | "photoURL" | "displayName" | "isAnonymous"
+  >
 
   export type Settings = {
     id: ID
