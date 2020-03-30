@@ -10,7 +10,7 @@ import { useTheme } from "theme"
 import { useSelector, useActions } from "services/store"
 import { MOBILE_WIDTH } from "config"
 
-import { onTrashTasksChange } from "./api"
+import { onTrashTasksChange } from "pages/trash/api"
 
 const Content = () => {
   const theme = useTheme()
