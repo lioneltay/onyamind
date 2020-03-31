@@ -54,22 +54,22 @@ export const darkMuiTheme = createMuiTheme({
   },
 })
 
-export const getTheme = ({ dark }: ThemeProps) => {
+export const createTheme = ({ dark }: ThemeProps) => {
   const muiTheme = dark ? darkMuiTheme : lightMuiTheme
   return { ...getSCTheme({ dark }), mui: muiTheme }
 }
 
-export type Theme = ReturnType<typeof getTheme>
+export type Theme = ReturnType<typeof createTheme>
 
-const ThemeContext = createContext<Theme>(getTheme({ dark: true }))
+const ThemeContext = createContext<Theme>(createTheme({ dark: true }))
 
 export const useTheme = () => useContext(ThemeContext)
 
 export const ThemeProvider: React.FunctionComponent<ThemeProps> = ({
   children,
 }) => {
-  const dark = useSelector(state => state.settings.darkMode)
-  const theme = getTheme({ dark })
+  const dark = useSelector((state) => state.settings.darkMode)
+  const theme = createTheme({ dark })
 
   return (
     <MuiThemeProvider theme={theme.mui}>

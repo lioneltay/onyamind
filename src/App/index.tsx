@@ -5,7 +5,7 @@ import Root from "pages"
 import GlobalStyles from "styles/global"
 
 import { StylesProvider } from "@material-ui/core"
-import { Text } from "lib/components"
+import { GlobalSnackbar } from "components"
 
 import { store } from "services/store"
 import { Provider as ReduxProvider } from "react-redux"
@@ -25,6 +25,7 @@ export default () => {
         <StylesProvider injectFirst>
           <ThemeProvider dark={false}>
             <GlobalStyles />
+            <GlobalSnackbar />
             <App />
           </ThemeProvider>
         </StylesProvider>
@@ -38,6 +39,7 @@ const App = () => {
   const {
     app: { setTaskLists },
     auth: { setUser },
+    ui: { openSnackbar, closeSnackbar },
   } = useActions()
 
   const userId = useSelector((state) => state.auth.user?.uid)
@@ -63,5 +65,33 @@ const App = () => {
     })
   })
 
-  return <Root />
+  return (
+    <div>
+      <button
+        style={{
+          height: 100,
+          width: 100,
+        }}
+        onClick={() => {
+          openSnackbar({
+            text: Date.now(),
+          })
+        }}
+      >
+        blarg
+      </button>
+      <button
+        style={{
+          height: 100,
+          width: 100,
+        }}
+        onClick={() => {
+          closeSnackbar()
+        }}
+      >
+        close
+      </button>
+      <Root />
+    </div>
+  )
 }
