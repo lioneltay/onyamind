@@ -68,3 +68,33 @@ function watchForHover() {
 }
 
 watchForHover()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// try {
+//   const recognition = new SpeechRecognition()
+//   recognition.
+// } catch (e) {
+//   console.log(e)
+// }
+
+
+
+
+
+
+
+
+

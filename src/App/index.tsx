@@ -39,7 +39,6 @@ const App = () => {
   const {
     app: { setTaskLists },
     auth: { setUser },
-    ui: { openSnackbar, closeSnackbar },
   } = useActions()
 
   const userId = useSelector((state) => state.auth.user?.uid)
@@ -65,33 +64,5 @@ const App = () => {
     })
   })
 
-  return (
-    <div>
-      <button
-        style={{
-          height: 100,
-          width: 100,
-        }}
-        onClick={() => {
-          openSnackbar({
-            text: Date.now(),
-          })
-        }}
-      >
-        blarg
-      </button>
-      <button
-        style={{
-          height: 100,
-          width: 100,
-        }}
-        onClick={() => {
-          closeSnackbar()
-        }}
-      >
-        close
-      </button>
-      <Root />
-    </div>
-  )
+  return <Root />
 }
