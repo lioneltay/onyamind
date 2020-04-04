@@ -31,24 +31,32 @@ export default async function getResponse(
 ): Promise<Response> {
   const request = event.request
 
+  // Resolve index.html from network then cache
   if (shouldResolveToIndexHTML(request)) {
-    console.log("GET ON DOMAIN", request)
+    try {
+      const response = await fetch("/index.html")
+      const cache = await caches.open(CACHE_KEY)
+      await cache.put("/index.html", response.clone())
+      console.log("Recached index.html")
+      return response
+    } catch (e) {
+      const response = await caches.match("/index.html")
+      if (!response) {
+        throw Error("Cannot get index.html from cache or network")
+      }
+      return response
+    }
   }
 
+  // Try resolve anything else
   const result = await caches.match(request)
   if (result) {
     return result
   }
 
-  if (shouldResolveToIndexHTML(request)) {
-    const indexHtml = await caches.match("/index.html")
-    if (indexHtml) {
-      return indexHtml
-    }
-  }
-
   const response = await fetch(request)
 
+  // Cache JS assets
   if (isJSAsset(request) || isPublicAsset(request)) {
     console.log("Caching Asset: ", `${request.method}|${request.url}`)
     const cache = await caches.open(CACHE_KEY)
