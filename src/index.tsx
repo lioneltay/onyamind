@@ -13,6 +13,10 @@ import "./service-worker/service.worker"
 
 import { registerServiceWorker } from "services/notifications"
 
+import { initializeErrorReporting } from "services/analytics/error-reporting"
+
+initializeErrorReporting()
+
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
     try {
