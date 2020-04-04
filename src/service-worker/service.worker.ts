@@ -1,47 +1,56 @@
-// docs https://developers.google.com/web/fundamentals/primers/service-workers
-
-import * as assetsSW from "./assets"
-import { VERSION } from "./constants"
-
-import { firebase } from "services/firebase"
+// https://developers.google.com/web/fundamentals/primers/service-workers
+// https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers
+import "core-js/stable"
+import "regenerator-runtime/runtime"
+import { CACHE_KEY, CACHE_KEY_LIST } from "./constants"
+import fetchHandler from "./fetch-handler"
 
 declare const self: ServiceWorkerGlobalScope
-
-const CACHE = {
-  PREFETCHED: `${VERSION}_PREFETCHED`,
-  BUILT: `${VERSION}_BUILT`,
-}
 
 function precache() {
   const cacheList = ["/", "/index.html", "/public/manifest.json"]
 
   return caches
-    .open(CACHE.PREFETCHED)
-    .then(cache => cache.addAll(cacheList))
+    .open(CACHE_KEY)
+    .then((cache) => cache.addAll(cacheList))
     .then(() => self.skipWaiting())
-    .catch(res => console.dir(res))
+    .catch((res) => console.dir(res))
 }
 
-self.addEventListener("fetch", evt => {
-  assetsSW.fetchHandler(evt)
+self.addEventListener("fetch", (event) => {
+  event.respondWith(fetchHandler(event))
 })
 
-self.addEventListener("install", evt => {
+self.addEventListener("install", (evt) => {
   console.log("Service Worker Installed")
   evt.waitUntil(precache())
   // Replace the existing service worker
   return self.skipWaiting()
 })
 
-self.addEventListener("activate", evt => {
+self.addEventListener("activate", (event) => {
   console.log("Service Worker Activated")
+
+  // Clean up old caches
+  event.waitUntil(
+    caches.keys().then((keyList) => {
+      return Promise.all(
+        keyList.map((key) => {
+          if (CACHE_KEY_LIST.indexOf(key) === -1) {
+            return caches.delete(key)
+          }
+        }),
+      )
+    }),
+  )
+
   // Become the service worker for clients which do not already have a service worker
   return self.clients.claim()
 })
 
 self.addEventListener(
   "notificationclick",
-  function(event) {
+  function (event) {
     switch (event.action) {
       case "DISMISS": {
         return

@@ -28,10 +28,10 @@ if ("serviceWorker" in navigator) {
 
       registerServiceWorker(registration)
 
-      console.log("SW registered: ", registration)
+      logEvent("SERVICE_WORKER_REGISTRATION|SUCCESS")
       return registration
     } catch (e) {
-      console.log("SW registration failed: ", e)
+      logEvent("SERVICE_WORKER_REGISTRATION|FAILURE")
     }
   })
 }
