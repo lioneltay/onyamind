@@ -6,7 +6,7 @@ import * as api from "services/api"
 const setTaskLists = (taskLists: TaskList[]) =>
   ({ type: "APP|SET_TASK_LISTS", payload: { taskLists } } as const)
 
-const selectTaskList = (listId: ID | null) =>
+const selectTaskList = (listId: ID) =>
   ({
     type: "APP|SELECT_TASK_LIST",
     payload: { listId },
@@ -33,7 +33,7 @@ const createTaskList = ({ primary = true, name }: CreateTaskListInput) => (
   return api
     .createTaskList({ userId, primary, name })
     .then(() => dispatch(createTaskListSuccess()))
-    .catch(e => {
+    .catch((e) => {
       dispatch(createTaskListFailure())
       throw e
     })
@@ -60,7 +60,7 @@ const editTaskList = ({
   return api
     .editTaskList({ listId, data: { name, primary } })
     .then(() => dispatch(editTaskListSuccess()))
-    .catch(e => {
+    .catch((e) => {
       dispatch(editTaskListFailure())
       throw e
     })
@@ -83,7 +83,7 @@ const setPrimaryTaskList = ({ listId, userId }: SetPrimaryTaskListInput) => (
   return api
     .setPrimaryTaskList({ listId, userId })
     .then(() => dispatch(setPrimaryTaskListSuccess()))
-    .catch(e => {
+    .catch((e) => {
       dispatch(setPrimaryTaskListFailure())
       throw e
     })
@@ -100,7 +100,7 @@ const deleteTaskList = (listId: ID) => (dispatch: Dispatch) => {
   return api
     .deleteTaskList(listId)
     .then(() => dispatch(deleteTaskListSuccess()))
-    .catch(e => {
+    .catch((e) => {
       dispatch(deleteTaskListFailure())
       throw e
     })
@@ -112,7 +112,7 @@ const selectPrimaryTaskList = () => async (
 ) => {
   const { taskLists } = getState().app
   assert(taskLists, "Task lists havent loaded yet")
-  const primaryList = taskLists.find(list => list.primary)
+  const primaryList = taskLists.find((list) => list.primary)
 
   const listId = primaryList?.id ?? taskLists[0].id
 

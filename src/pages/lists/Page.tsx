@@ -25,6 +25,8 @@ import { useTheme } from "theme"
 import { useSelector, useActions } from "services/store"
 import { listPageUrl } from "pages/lists/routing"
 
+import { onTasksChange } from "pages/lists/api"
+
 const Flip = styled.div<{ flip: boolean }>`
   transform: rotate(${({ flip }) => (flip ? "-180deg" : "0")});
   transition: 300ms;
@@ -154,17 +156,31 @@ export default ({
   history,
 }: Props) => {
   const {
-    app: { selectTaskList, selectPrimaryTaskList },
+    app: { selectTaskList, selectPrimaryTaskList, setTaskLists },
+    listPage: { setTasks },
   } = useActions()
-  const { selectedTaskListId, taskListsLoaded, listIdParamValid } = useSelector(
-    (state) => ({
-      selectedTaskListId: state.app.selectedTaskListId,
-      taskListsLoaded: !!state.app.taskLists,
-      listIdParamValid: !!state.app.taskLists?.find(
-        (list) => list.id === listId,
-      ),
-    }),
-  )
+
+  const {
+    selectedTaskListId,
+    taskListsLoaded,
+    listIdParamValid,
+    userId,
+  } = useSelector((state) => ({
+    userId: state.auth.user?.uid,
+    selectedTaskListId: state.app.selectedTaskListId,
+    taskListsLoaded: !!state.app.taskLists,
+    listIdParamValid: !!state.app.taskLists?.find((list) => list.id === listId),
+  }))
+
+  React.useEffect(() => {
+    if (userId && listId) {
+      return onTasksChange({
+        userId,
+        listId,
+        onChange: (tasks) => setTasks({ tasks, listId }),
+      })
+    }
+  }, [userId, listId])
 
   /**
    * Run once when taskLists are first loaded

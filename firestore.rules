@@ -1,51 +1,51 @@
 service cloud.firestore {
   match /databases/{database}/documents {
     match /{document=**} {
-      allow read, write: if true;
+      allow read, write: if false;
     }
-    
+
   	match /task/{taskId} {
-    	allow create: if 
+    	allow create: if
       	request.auth.uid == request.resource.data.userId;
-        
-      allow delete: if 
+
+      allow delete: if
       	request.auth.uid == resource.data.userId;
-  	  
-      allow update: if 
+
+      allow update: if
       	request.auth.uid == resource.data.userId &&
         request.resource.data.userId == resource.data.userId;
-      
-      allow read: if 
+
+      allow read: if
       	request.auth.uid == resource.data.userId;
   	}
-    
+
     match /taskList/{listId} {
-    	allow create: if 
+    	allow create: if
       	request.auth.uid == request.resource.data.userId;
-        
-      allow delete: if 
+
+      allow delete: if
       	request.auth.uid == resource.data.userId;
-  	  
-      allow update: if 
+
+      allow update: if
       	request.auth.uid == resource.data.userId &&
         request.resource.data.userId == resource.data.userId
-      
-      allow read: if 
+
+      allow read: if
       	request.auth.uid == resource.data.userId;
   	}
-    
+
     match /settings/{settingsId} {
-    	allow create: if 
+    	allow create: if
       	request.auth.uid == request.resource.data.userId;
-        
-      allow delete: if 
+
+      allow delete: if
       	request.auth.uid == resource.data.userId;
-  	  
-      allow update: if 
+
+      allow update: if
       	request.auth.uid == resource.data.userId &&
         request.resource.data.userId == resource.data.userId
-      
-      allow read: if 
+
+      allow read: if
       	request.auth.uid == resource.data.userId;
   	}
   }

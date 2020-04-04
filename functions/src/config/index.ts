@@ -1,5 +1,6 @@
 import * as functions from "firebase-functions"
 
+// https://firebase.google.com/docs/functions/config-env
 type Config = {
   private_keys: {
     github_access_token: string
@@ -7,7 +8,5 @@ type Config = {
 }
 
 const config = functions.config() as Config
-
-console.log(config)
 
 export const githubAccessToken = config.private_keys.github_access_token

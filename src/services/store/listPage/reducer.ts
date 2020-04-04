@@ -32,7 +32,7 @@ export const reducer = (state: State = initialState, action: Action): State => {
     case "APP|SELECT_TASK_LIST": {
       return {
         ...state,
-        tasks: null,
+        tasks: state.tasksByListId[action.payload.listId] ?? null,
       }
     }
     case "LIST|SET_MULTISELECT": {
@@ -56,11 +56,11 @@ export const reducer = (state: State = initialState, action: Action): State => {
     }
     case "LIST|TOGGLE_TASK_SELECTION": {
       const selected = !!state.selectedTaskIds.find(
-        taskId => taskId === action.payload.taskId,
+        (taskId) => taskId === action.payload.taskId,
       )
 
       const selectedTaskIds = selected
-        ? state.selectedTaskIds.filter(id => id !== action.payload.taskId)
+        ? state.selectedTaskIds.filter((id) => id !== action.payload.taskId)
         : state.selectedTaskIds.concat(action.payload.taskId)
 
       return {
@@ -72,7 +72,7 @@ export const reducer = (state: State = initialState, action: Action): State => {
     case "LIST|SELECT_ALL_TASKS": {
       return {
         ...state,
-        selectedTaskIds: state.tasks?.map(task => task.id) ?? [],
+        selectedTaskIds: state.tasks?.map((task) => task.id) ?? [],
       }
     }
     case "LIST|DESELECT_ALL_TASKS": {
@@ -132,7 +132,8 @@ export const reducer = (state: State = initialState, action: Action): State => {
     }
     case "LIST|SELECT_INCOMPLETE_TASKS": {
       const incompleteTaskIds =
-        state.tasks?.filter(task => !task.complete).map(task => task.id) ?? []
+        state.tasks?.filter((task) => !task.complete).map((task) => task.id) ??
+        []
       return {
         ...state,
         selectedTaskIds: union(state.selectedTaskIds, incompleteTaskIds),
@@ -140,11 +141,12 @@ export const reducer = (state: State = initialState, action: Action): State => {
     }
     case "LIST|DESELECT_INCOMPLETE_TASKS": {
       const incompleteTaskIds =
-        state.tasks?.filter(task => !task.complete).map(task => task.id) ?? []
+        state.tasks?.filter((task) => !task.complete).map((task) => task.id) ??
+        []
       return {
         ...state,
         selectedTaskIds: state.selectedTaskIds.filter(
-          id => !incompleteTaskIds.includes(id),
+          (id) => !incompleteTaskIds.includes(id),
         ),
       }
     }

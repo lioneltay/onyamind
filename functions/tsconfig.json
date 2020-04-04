@@ -10,5 +10,5 @@
     "typeRoots": ["node_modules/@types"]
   },
   "compileOnSave": true,
-  "include": ["src"]
+  "include": ["src", "../@types/shared"]
 }

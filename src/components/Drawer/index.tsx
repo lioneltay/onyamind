@@ -312,7 +312,6 @@ export default () => {
 
       <FeedbackModal
         onSubmit={async (values) => {
-          console.log("SUbmmittinggg")
           setShowFeedbackModal(false)
           await api.sendFeedback({
             subject: values.subject,
@@ -325,7 +324,7 @@ export default () => {
 
       <CreateTaskListModal
         onSubmit={async (values) => {
-          setShowFeedbackModal(false)
+          setShowCreateModal(false)
           await createTaskList({
             name: values.name,
             primary: values.primary,

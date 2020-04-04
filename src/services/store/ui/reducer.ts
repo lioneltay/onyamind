@@ -1,16 +1,25 @@
 import { assertNever } from "lib/utils"
 import { Action } from "./actions"
 
+export type SnackbarAction = {
+  label: string
+  handler?: () => void
+}
+
 export type State = {
   showDrawer: boolean
-  showUndoSnackbar: boolean
-  showWarningFooter: boolean
+  snackbar: null | {
+    duration: number
+    text: string
+    actions: SnackbarAction[]
+    closable: boolean
+    onClose?: () => void
+  }
 }
 
 const initialState: State = {
   showDrawer: false,
-  showUndoSnackbar: false,
-  showWarningFooter: false,
+  snackbar: null,
 }
 
 export const reducer = (state: State = initialState, action: Action): State => {
@@ -33,16 +42,24 @@ export const reducer = (state: State = initialState, action: Action): State => {
         showDrawer: !state.showDrawer,
       }
     }
-    case "CLOSE_UNDO_SNACKBAR": {
+    case "CLOSE_SNACKBAR": {
       return {
         ...state,
-        showUndoSnackbar: false,
+        snackbar: null,
       }
     }
-    case "OPEN_UNDO_SNACKBAR": {
+    case "OPEN_SNACKBAR": {
+      const { text, closable, actions, onClose, duration } = action.payload
+
       return {
         ...state,
-        showUndoSnackbar: true,
+        snackbar: {
+          actions,
+          closable,
+          text,
+          onClose,
+          duration,
+        },
       }
     }
     default: {

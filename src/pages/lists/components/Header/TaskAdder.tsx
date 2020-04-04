@@ -4,7 +4,7 @@ import { useTheme, styled } from "theme"
 import { useMediaQuery } from "@tekktekk/react-media-query"
 import { MOBILE_WIDTH } from "config"
 
-import { Add, Clear, Mic } from "@material-ui/icons"
+import { Add, Clear } from "@material-ui/icons"
 
 import {
   IconButton,
@@ -147,7 +147,7 @@ export default () => {
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton onClick={() => setNewTaskTitle("")}>
-                        {newTaskTitle ? <Clear /> : <Mic />}
+                        {newTaskTitle ? <Clear /> : null}
                       </IconButton>
                     </InputAdornment>
                   ),

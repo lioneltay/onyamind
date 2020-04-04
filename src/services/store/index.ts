@@ -2,11 +2,21 @@ import { createStore, applyMiddleware, compose } from "redux"
 import { createEpicMiddleware } from "redux-observable"
 import thunkMiddleware from "redux-thunk"
 
-import { reducer } from "./reducer"
+import { reducer, State } from "./reducer"
 
 import { rootEpic } from "./epics"
 
-export const configureStore = () => {
+type ConfigureStoreOptions = {
+  initialState?: RecursivePartial<State>
+}
+
+const defaultConfig: ConfigureStoreOptions = {
+  initialState: undefined,
+}
+
+export const configureStore = ({
+  initialState,
+}: ConfigureStoreOptions = defaultConfig) => {
   const epicMiddleware = createEpicMiddleware()
 
   // TODO Only use this in development
@@ -15,6 +25,7 @@ export const configureStore = () => {
 
   const store = createStore(
     reducer,
+    initialState as State,
     composeEnhancers(applyMiddleware(epicMiddleware, thunkMiddleware)),
   )
 
@@ -32,3 +43,15 @@ export { useActions, Action } from "./actions"
 export { useSelector } from "./selectors"
 
 export { State, GetState } from "./reducer"
+
+type gg = {
+  hello: {
+    there: {
+      how: {
+        are: {
+          you: string
+        }
+      }
+    }
+  }
+}
