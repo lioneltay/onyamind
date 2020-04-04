@@ -6,6 +6,8 @@ export const config = {
     projectId: "tekktekk-notes",
     storageBucket: "tekktekk-notes.appspot.com",
     messagingSenderId: "84965345227",
+    appId: "1:84965345227:web:29dbafcbba6db3c750584e",
+    measurementId: "G-HTG5HCLQLQ",
   },
   staging: {
     apiKey: "AIzaSyCRc0uxLhDmgl6x6PshIl6jmL8qott55is",
