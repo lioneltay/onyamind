@@ -21,6 +21,8 @@ if (isLocal) {
   firestore.settings({
     host: "localhost:8080",
     ssl: false,
+    // WORKAROUND: Cypress is intercepting requests causing functions to fail https://github.com/cypress-io/cypress/issues/6350
+    experimentalForceLongPolling: true,
   })
 
   console.log("emulating functions")
@@ -28,9 +30,6 @@ if (isLocal) {
 
   console.log("unpersisted auth")
   firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE)
-
-  // WORKAROUND: Cypress is intercepting requests causing functions to fail https://github.com/cypress-io/cypress/issues/6350
-  firebase.firestore().settings({ experimentalForceLongPolling: true })
 } else {
   firestore
     .enablePersistence({

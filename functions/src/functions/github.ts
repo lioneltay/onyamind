@@ -2,13 +2,9 @@ import * as functions from "firebase-functions"
 import axios from "axios"
 import { githubAccessToken } from "../config"
 
-type SendFeedbackData = {
-  subject: string
-  description?: string
-}
 
 export const sendFeedback = functions.https.onCall(
-  async (data: SendFeedbackData, context) => {
+  async (data: CallableFunction.SendFeedbackData, context) => {
     if (!data.subject) {
       return
     }

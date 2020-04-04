@@ -8,6 +8,4 @@ type Config = {
 
 const config = functions.config() as Config
 
-console.log(config)
-
 export const githubAccessToken = config.private_keys.github_access_token

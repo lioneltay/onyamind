@@ -40,12 +40,13 @@ const RenameTaskListModal: React.FunctionComponent<Props> = ({
         >
           <Form>
             <TextField
+              autoFocus
               required
               fullWidth
               variant="outlined"
               label="Name"
               value={values.name}
-              onChange={e => setFieldValue("name", e.currentTarget.value)}
+              onChange={(e) => setFieldValue("name", e.currentTarget.value)}
             />
 
             <div className="fj-e mt-2">
