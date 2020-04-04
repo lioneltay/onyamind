@@ -2,20 +2,20 @@ import { bindActionCreators, Dispatch } from "redux"
 import { useDispatch } from "react-redux"
 import { ActionsUnion, ActionTypesUnion } from "services/store/helpers"
 import * as api from "services/api"
-import { firebase } from "services/firebase"
 
 const setUser = (user: User | null) =>
   ({ type: "SET_USER", payload: { user } } as const)
 
 const signinPending = () => ({ type: "SIGNIN|PENDING" } as const)
 const signinFailure = () => ({ type: "SIGNIN|FAILURE" } as const)
-const signinSuccess = () => ({ type: "SIGNIN|SUCCESS" } as const)
+const signinSuccess = (user: User) =>
+  ({ type: "SIGNIN|SUCCESS", payload: { user } } as const)
 const signin = () => (dispatch: Dispatch) => {
   dispatch(signinPending())
   return api
     .linkAnonymousAccountWithGoogle()
-    .then(res => dispatch(signinSuccess()))
-    .catch(e => {
+    .then((user) => dispatch(signinSuccess(user)))
+    .catch((e) => {
       dispatch(signinFailure())
       throw e
     })
@@ -28,8 +28,8 @@ const signout = () => (dispatch: Dispatch) => {
   dispatch(signoutPending())
   return api
     .signinAnonymously()
-    .then(res => dispatch(signoutSuccess()))
-    .catch(e => {
+    .then(() => dispatch(signoutSuccess()))
+    .catch((e) => {
       dispatch(signoutFailure())
       throw e
     })

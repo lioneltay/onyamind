@@ -40,29 +40,28 @@ export const signinWithGoogle = () => {
   return firebase.auth().signInWithPopup(googleProvider)
 }
 
-export const linkAnonymousAccountWithGoogle = async () => {
+export const linkAnonymousAccountWithGoogle = async (): Promise<User> => {
   const anonUser = auth.currentUser
   assert(anonUser?.isAnonymous, "No anonymous user currently signed in")
 
   try {
-    const { credential } = await anonUser.linkWithPopup(googleProvider)
-    // assert(credential)
-    // await auth.signInWithCredential(credential)
+    const { user } = await anonUser.linkWithPopup(googleProvider)
+    assert(user?.uid, "Link Fail")
+    return user
   } catch (err) {
-    console.log('err')
     const { credential } = err
     const { user } = await auth.signInWithCredential(credential)
     assert(user?.uid, "Google sign in fail")
 
-    console.log('MIGRATING')
     await migrateUserData({ fromUserId: anonUser.uid, toUserId: user.uid })
 
     await anonUser.delete()
+    return user
   }
 }
 
 export const signinAnonymously = () => {
-  console.log('signinanonymously')
+  console.log("signinanonymously")
   return firebase.auth().signInAnonymously()
 }
 

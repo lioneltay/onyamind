@@ -18,11 +18,25 @@ export const reducer = (state: State = initialState, action: Action): State => {
         user: action.payload.user,
       }
     }
-    case "SIGNIN|PENDING":
-    case "SIGNIN|FAILURE":
-    case "SIGNIN|SUCCESS":
-    case "SIGNOUT|PENDING":
-    case "SIGNOUT|FAILURE":
+    case "SIGNIN|PENDING": {
+      return state
+    }
+    case "SIGNIN|FAILURE": {
+      return state
+    }
+    case "SIGNIN|SUCCESS": {
+      return {
+        ...state,
+        // Explicitly create a new object so that any ui dependent on the user object will update
+        user: { ...action.payload.user },
+      }
+    }
+    case "SIGNOUT|PENDING": {
+      return state
+    }
+    case "SIGNOUT|FAILURE": {
+      return state
+    }
     case "SIGNOUT|SUCCESS": {
       return state
     }
