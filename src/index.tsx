@@ -14,7 +14,9 @@ import "./service-worker/service.worker"
 import { registerServiceWorker } from "services/notifications"
 
 import { initializeErrorReporting } from "services/analytics/error-reporting"
+import { logEvent } from "services/analytics/events"
 
+logEvent("APP_LOADED", { time: performance.now() })
 initializeErrorReporting()
 
 if ("serviceWorker" in navigator) {

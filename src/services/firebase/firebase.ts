@@ -2,6 +2,7 @@ import firebaseImport from "firebase/app"
 import "firebase/firestore"
 import "firebase/functions"
 import "firebase/auth"
+import "firebase/analytics"
 
 import { config } from "./config"
 
