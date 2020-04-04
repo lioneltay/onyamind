@@ -2,13 +2,18 @@ import { CACHE_KEY } from "./constants"
 
 const PUBLIC_FOLDER = `${location.origin}/public`
 
+function cypressRelated(url: string) {
+  return /cypress/i.test(url)
+}
+
 function shouldResolveToIndexHTML(request: Request) {
   return (
     request.method === "GET" &&
     !request.url.startsWith(PUBLIC_FOLDER) &&
     request.url.startsWith(location.origin) &&
     !/sockjs-node/.test(request.url) &&
-    !/\.js$/.test(request.url)
+    !/\.js$/.test(request.url) &&
+    !cypressRelated(request.url)
   )
 }
 
@@ -18,12 +23,17 @@ function isJSAsset(request: Request) {
     !request.url.startsWith(PUBLIC_FOLDER) &&
     request.url.startsWith(location.origin) &&
     !/sockjs-node/.test(request.url) &&
-    /\.js$/.test(request.url)
+    new RegExp(`^${location.origin}/[^/]*\\.js`).test(request.url) &&
+    !cypressRelated(request.url)
   )
 }
 
 function isPublicAsset(request: Request) {
-  return request.method === "GET" && request.url.startsWith(PUBLIC_FOLDER)
+  return (
+    request.method === "GET" &&
+    request.url.startsWith(PUBLIC_FOLDER) &&
+    !cypressRelated(request.url)
+  )
 }
 
 export default async function getResponse(
@@ -37,7 +47,7 @@ export default async function getResponse(
       const response = await fetch("/index.html")
       const cache = await caches.open(CACHE_KEY)
       await cache.put("/index.html", response.clone())
-      console.log("Recached index.html")
+      console.log("Recached index.html", request.url)
       return response
     } catch (e) {
       const response = await caches.match("/index.html")
