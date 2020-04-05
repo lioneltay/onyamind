@@ -9,7 +9,7 @@ import { render } from "react-dom"
 import "services/firebase"
 import App from "./App"
 
-import "./service-worker/service.worker"
+// import "./service-worker/service.worker"
 
 import { registerServiceWorker } from "services/notifications"
 

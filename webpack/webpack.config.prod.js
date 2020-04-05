@@ -2,7 +2,7 @@ const path = require("path")
 const CopyWebpackPlugin = require("copy-webpack-plugin")
 const webpack = require("webpack")
 
-const relativeToRoot = relativePath =>
+const relativeToRoot = (relativePath) =>
   path.resolve(__dirname, "../", relativePath)
 
 const common_config = require("./webpack.config.common")
@@ -16,6 +16,8 @@ module.exports = {
     path: relativeToRoot("./dist"),
     publicPath: "/",
   },
+
+  devtool: "source-map",
 
   plugins: [
     ...common_config.plugins,

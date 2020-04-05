@@ -1,7 +1,7 @@
 const path = require("path")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
 
-const relativeToRoot = relativePath =>
+const relativeToRoot = (relativePath) =>
   path.resolve(__dirname, "../", relativePath)
 
 const babel_loader = {
@@ -13,7 +13,10 @@ const babel_loader = {
 
 module.exports = {
   entry: {
-    main: [relativeToRoot("./src/index.tsx")],
+    main: [
+      relativeToRoot("./src/index.tsx"),
+      relativeToRoot("./src/service-worker/service.worker.ts"),
+    ],
   },
 
   resolve: {
