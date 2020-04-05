@@ -24,6 +24,7 @@ module.exports = {
     new webpack.EnvironmentPlugin({
       // From TravisCI
       APP_MODE: process.env.APP_MODE || "staging",
+      NODE_ENV: "production",
     }),
     new CopyWebpackPlugin([
       {

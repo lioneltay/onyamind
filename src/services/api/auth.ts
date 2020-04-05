@@ -61,7 +61,6 @@ export const linkAnonymousAccountWithGoogle = async (): Promise<User> => {
 }
 
 export const signinAnonymously = () => {
-  console.log("signinanonymously")
   return firebase.auth().signInAnonymously()
 }
 

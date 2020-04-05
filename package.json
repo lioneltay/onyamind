@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "APP_MODE=staging webpack-dev-server --config ./webpack/webpack.config.dev.js",
     "dev:local": "APP_MODE=local webpack-dev-server --config ./webpack/webpack.config.dev.js",
+    "dev:local:test": "APP_MODE=local NODE_ENV=test webpack-dev-server --config ./webpack/webpack.config.dev.js",
     "emulators:start": "firebase use staging && firebase emulators:start --only firestore,functions",
     "build:functions": "cd functions && tsc --watch > /dev/null",
     "clean": "rimraf dist",
@@ -19,10 +20,10 @@
     "jest:watch": "jest --watch",
     "test:jest": "jest",
     "test:cypress:emulators:exec": "firebase use staging && firebase emulators:exec --only firestore,functions,firestore:rules",
-    "test:cypress": "NODE_ENV=test npm run test:cypress:emulators:exec -- \"npm run test:cypress:helper\"",
+    "test:cypress": "npm run test:cypress:emulators:exec -- \"npm run test:cypress:helper\"",
     "test:cypress:emulators:exec:ci": "firebase use staging --token $FIREBASE_DEPLOY_KEY && firebase emulators:exec --only firestore,functions,firestore:rules --token $FIREBASE_DEPLOY_KEY",
-    "test:cypress:helper": "start-server-and-test dev:local http-get://localhost:7000 cy:run",
-    "test:cypress:ci": "NODE_ENV=test npm run test:cypress:emulators:exec:ci -- \"npm run test:cypress:helper\"",
+    "test:cypress:helper": "start-server-and-test dev:local:test http-get://localhost:7000 cy:run",
+    "test:cypress:ci": "npm run test:cypress:emulators:exec:ci -- \"npm run test:cypress:helper\"",
     "test": "npm run test:jest && npm run test:cypress",
     "test:ci": "npm run test:jest && npm run test:cypress:ci"
   },

@@ -29,6 +29,7 @@ module.exports = {
     ...common_config.plugins,
     new webpack.EnvironmentPlugin({
       APP_MODE: process.env.APP_MODE || "staging",
+      NODE_ENV: process.env.NODE_ENV || "development",
     }),
   ],
 }

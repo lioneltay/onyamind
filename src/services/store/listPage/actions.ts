@@ -89,7 +89,6 @@ const moveSelectedTasks = ({ listId }: MoveSelectTasksInput) => (
 
   const tasks = selectors.selectedTasks(state)
 
-  console.log("moveseletedt asks", tasks, listId)
   dispatch(moveSelectedTasksPending())
   return api
     .editTasks(tasks.map(task => ({ ...task, listId })))

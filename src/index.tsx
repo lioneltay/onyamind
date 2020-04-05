@@ -19,7 +19,7 @@ import { logEvent } from "services/analytics/events"
 logEvent("APP_LOADED", { time: performance.now() })
 initializeErrorReporting()
 
-if ("serviceWorker" in navigator) {
+if (process.env.NODE_ENV !== "test" && "serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
     try {
       const registration = await navigator.serviceWorker.register(

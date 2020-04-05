@@ -49,7 +49,6 @@ export const editTaskList = async ({
   listId,
   data,
 }: EditTaskListInput): Promise<TaskList> => {
-  console.log("editing", listId, data)
   await firestore
     .collection("taskList")
     .doc(listId)
