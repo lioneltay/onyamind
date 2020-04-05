@@ -1,7 +1,7 @@
 import React from "react"
 import { noop } from "lib/utils"
 import { Button, Snackbar, IconButton, Slide } from "@material-ui/core"
-import { Clear } from "@material-ui/icons"
+import { ClearIcon } from "lib/icons"
 import { TransitionProps } from "@material-ui/core/transitions"
 
 import { useSelector, useActions } from "services/store"
@@ -93,7 +93,7 @@ export default () => {
               style={{ color: dark ? "rgba(0, 0, 0, 0.54)" : "white" }}
               onClick={handleClose}
             >
-              <Clear data-testid="clear" />
+              <ClearIcon />
             </IconButton>
           ) : (
             []

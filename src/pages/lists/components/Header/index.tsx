@@ -3,12 +3,12 @@ import { noopTemplate as css } from "lib/utils"
 
 import { IconButton } from "@material-ui/core"
 import {
-  SwapHoriz,
-  Add,
-  Check,
-  Delete,
-  Notifications,
-} from "@material-ui/icons"
+  SwapHorizIcon,
+  AddIcon,
+  CheckIcon,
+  DeleteIcon,
+  NotificationsIcon,
+} from "lib/icons"
 
 import IconButtonMenu from "lib/components/IconButtonMenu"
 import TaskAdder from "./TaskAdder"
@@ -69,7 +69,7 @@ export default () => {
                 setMultiselect(false)
               }}
             >
-              <Notifications data-testid="notifications" />
+              <NotificationsIcon />
             </IconButton>
 
             {allSelectedTasksComplete || allSelectedTasksIncomplete ? (
@@ -80,16 +80,12 @@ export default () => {
                     : decompleteSelectedTasks
                 }
               >
-                {allSelectedTasksIncomplete ? (
-                  <Check data-testid="check" />
-                ) : (
-                  <Add data-testid="add" />
-                )}
+                {allSelectedTasksIncomplete ? <CheckIcon /> : <AddIcon />}
               </IconButton>
             ) : null}
 
             <IconButtonMenu
-              icon={<SwapHoriz data-testid="swaphoriz" />}
+              icon={<SwapHorizIcon />}
               items={taskLists
                 .filter((list) => list.id !== selectedTaskList?.id)
                 .map((list) => ({
@@ -99,7 +95,7 @@ export default () => {
             />
 
             <IconButton onClick={archiveSelectedTasks}>
-              <Delete data-testid="delete" />
+              <DeleteIcon />
             </IconButton>
           </Fragment>
         }

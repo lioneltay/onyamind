@@ -2,7 +2,7 @@ import React, { Fragment } from "react"
 import { useTheme } from "theme"
 import { noopTemplate as css, noop } from "lib/utils"
 
-import { ArrowBack, Menu } from "@material-ui/icons"
+import { ArrowBackIcon, MenuIcon } from "lib/icons"
 import { Toolbar, AppBar, IconButton } from "@material-ui/core"
 import { Text } from "lib/components"
 
@@ -67,7 +67,7 @@ export default ({
                   style={{ display: "inline-block" }}
                   onClick={onEndMultiselect}
                 >
-                  <ArrowBack />
+                  <ArrowBackIcon />
                 </IconButton>
                 <div
                   style={{
@@ -84,7 +84,7 @@ export default ({
                   style={{ display: "inline-block" }}
                   onClick={toggleDrawer}
                 >
-                  <Menu data-testid="menu" />
+                  <MenuIcon />
                 </IconButton>
                 <Text variant="h6" style={{ paddingLeft: 18 }}>
                   {title}

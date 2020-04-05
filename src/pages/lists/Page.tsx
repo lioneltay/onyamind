@@ -15,7 +15,7 @@ import {
 
 import { ListItemText, IconButtonMenu } from "lib/components"
 
-import { ExpandMore, MoreVert } from "@material-ui/icons"
+import { ExpandMoreIcon, MoreVertIcon } from "lib/icons"
 
 import Task from "./components/Task"
 
@@ -99,7 +99,7 @@ const Content = () => {
           <ListItemIcon>
             <Flip flip={showCompleteTasks}>
               <IconButton>
-                <ExpandMore />
+                <ExpandMoreIcon />
               </IconButton>
             </Flip>
           </ListItemIcon>
@@ -107,7 +107,7 @@ const Content = () => {
           <ListItemText primary={`${completeTasks.length} checked off`} />
 
           <IconButtonMenu
-            icon={<MoreVert />}
+            icon={<MoreVertIcon />}
             items={[
               {
                 label: "Uncheck all items",

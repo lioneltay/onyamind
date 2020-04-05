@@ -13,15 +13,15 @@ it("Initialize the anonymous user create first 'Todo' list and redirect", () => 
 it("Clicking menu opens drawer", () => {
   cy.visit("/")
 
-  cy.findByTestId("menu").click()
+  cy.findByIconName("menu").click()
 
   cy.findByText(/primary list/i)
 
-  cy.findByTestId("clear").click()
+  cy.findByIconName("clear").click()
 
   cy.findByText(/primary list/i).should("not.exist")
 
-  cy.findByTestId("clear").should("not.exist")
+  cy.findByIconName("clear").should("not.exist")
 })
 
 it("Can create a task by pressing enter", () => {
@@ -38,7 +38,7 @@ it("Can create a task by clicking button with notes", () => {
   const title = "Created by pressing '+' button"
   const notes = "Notes created in modal"
 
-  cy.findByTestId("add-task-button").click()
+  cy.findByIconName("add").click()
   cy.findByTestId("modal").findByPlaceholderText(/task/i).click().type(title)
   cy.findByTestId("modal").findByPlaceholderText(/notes/i).click().type(notes)
   cy.findByTestId("modal").findByText(/save/i).click()

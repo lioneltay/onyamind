@@ -4,7 +4,7 @@ import { noopTemplate as css } from "lib/utils"
 import { IconButtonMenu } from "lib/components"
 
 import { IconButton } from "@material-ui/core"
-import { Delete, DeleteSweep, SwapHoriz } from "@material-ui/icons"
+import { DeleteIcon, DeleteSweepIcon, SwapHorizIcon } from "lib/icons"
 
 import { HeaderBase } from "components"
 
@@ -19,7 +19,7 @@ export default () => {
   } = useActions("trashPage")
 
   const { taskLists, multiselect, numberOfSelectedTasks } = useSelector(
-    state => ({
+    (state) => ({
       taskLists: state.app.taskLists ?? [],
       multiselect: state.trashPage.multiselect,
       numberOfSelectedTasks: state.trashPage.trashTasks?.length ?? 0,
@@ -40,21 +40,21 @@ export default () => {
       multiselectActions={
         <Fragment>
           <IconButtonMenu
-            icon={<SwapHoriz />}
-            items={taskLists.map(list => ({
+            icon={<SwapHorizIcon />}
+            items={taskLists.map((list) => ({
               label: list.name,
               action: () => moveSelectedTasks({ listId: list.id }),
             }))}
           />
 
           <IconButton onClick={deleteSelectedTasks}>
-            <Delete />
+            <DeleteIcon />
           </IconButton>
         </Fragment>
       }
       actions={
         <IconButton onClick={emptyTrash}>
-          <DeleteSweep />
+          <DeleteSweepIcon />
         </IconButton>
       }
     />
