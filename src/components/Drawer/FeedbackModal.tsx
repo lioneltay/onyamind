@@ -23,11 +23,7 @@ type Props = {
   onSubmit: (values: Values, actions: FormikHelpers<Values>) => Promise<void>
 }
 
-const CreateTaskListModal: React.FunctionComponent<Props> = ({
-  open,
-  onClose,
-  onSubmit,
-}) => {
+export default ({ open, onClose, onSubmit }: Props) => {
   return (
     <Modal
       className="p-3"
@@ -88,5 +84,3 @@ const CreateTaskListModal: React.FunctionComponent<Props> = ({
     </Modal>
   )
 }
-
-export default CreateTaskListModal

@@ -27,6 +27,7 @@ import {
   ClearIcon,
   AccountCircleIcon,
   DeleteIcon,
+  CheckIcon,
 } from "lib/icons"
 
 import Modal from "lib/components/Modal"
@@ -52,7 +53,7 @@ export default () => {
   const history = useHistory()
   const theme = useTheme()
   const {
-    ui: { toggleDrawer, closeDrawer },
+    ui: { toggleDrawer, closeDrawer, openSnackbar },
     auth: { signin, signout },
     app: {
       deleteTaskList,
@@ -309,11 +310,12 @@ export default () => {
 
       <FeedbackModal
         onSubmit={async (values) => {
-          setShowFeedbackModal(false)
           await api.sendFeedback({
             subject: values.subject,
             description: values.description,
           })
+          openSnackbar({ text: "Feedback sent!" })
+          setShowFeedbackModal(false)
         }}
         open={showFeedbackModal}
         onClose={() => setShowFeedbackModal(false)}

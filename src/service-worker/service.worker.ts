@@ -48,22 +48,32 @@ self.addEventListener("activate", (event) => {
   return self.clients.claim()
 })
 
-self.addEventListener(
-  "notificationclick",
-  function (event) {
-    switch (event.action) {
-      case "DISMISS": {
-        return
-      }
-      case "COMPLETE_TASK": {
-        const task = event.notification.data
-        // firestore
-        //   .collection("task")
-        //   .doc(task.id)
-        //   .update({ complete: true })
-        console.log("completeTask", task)
-      }
-    }
-  },
-  false,
-)
+const broadcast = new BroadcastChannel("notification-action")
+
+self.addEventListener("notificationclose", (event) => {
+  broadcast.postMessage({
+    action: "COMPLETE_TASK",
+    payload: {
+      taskId: event.notification.data.id,
+    },
+  })
+})
+
+self.addEventListener("notificationclick", (event) => {
+  // switch (event.action) {
+  //   case "DISMISS": {
+  //     event.notification.close()
+  //     return
+  //   }
+  //   case "COMPLETE_TASK": {
+  //     broadcast.postMessage({
+  //       action: "COMPLETE_TASK",
+  //       payload: {
+  //         taskId: event.notification.data.id,
+  //       },
+  //     })
+  //     event.notification.close()
+  //     return
+  //   }
+  // }
+})

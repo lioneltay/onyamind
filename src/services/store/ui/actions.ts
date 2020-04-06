@@ -1,3 +1,4 @@
+import React from "react"
 import { bindActionCreators, Dispatch } from "redux"
 import { useDispatch } from "react-redux"
 import { ActionsUnion, ActionTypesUnion } from "services/store/helpers"
@@ -14,6 +15,7 @@ type OpenSnackbarInput = {
   duration?: number
   closable?: boolean
   onClose?: () => void
+  icon?: React.ReactNode
 }
 const openSnackbar = ({
   text,
@@ -21,6 +23,7 @@ const openSnackbar = ({
   duration = 5000,
   closable = false,
   onClose,
+  icon,
 }: OpenSnackbarInput) => {
   return {
     type: "OPEN_SNACKBAR",
@@ -30,6 +33,7 @@ const openSnackbar = ({
       closable,
       onClose,
       duration,
+      icon,
     },
   } as const
 }

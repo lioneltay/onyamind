@@ -62,6 +62,7 @@
     "eslint-plugin-cypress": "^2.10.3",
     "eslint-plugin-react": "^7.19.0",
     "eslint-plugin-react-hooks": "^2.5.1",
+    "fake-indexeddb": "^3.0.0",
     "faker": "^4.1.0",
     "firebase-admin": "^8.10.0",
     "firebase-tools": "^7.16.0",

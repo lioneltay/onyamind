@@ -3,6 +3,7 @@ import "firebase/firestore"
 import "firebase/functions"
 import "firebase/auth"
 import "firebase/analytics"
+import "firebase/performance"
 
 import { config } from "./config"
 

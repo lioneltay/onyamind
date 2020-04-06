@@ -1,5 +1,5 @@
 import React from "react"
-import { render, wait } from "@testing-library/react"
+import { render, wait } from "testing"
 import user from "@testing-library/user-event"
 import FeedbackModal from "../Drawer/FeedbackModal"
 

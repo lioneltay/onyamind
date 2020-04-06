@@ -70,7 +70,12 @@ export default () => {
         onClickAway: noop,
       }}
       message={
-        <span style={{ userSelect: "none" }}>{currentSnackbar?.text}</span>
+        <span style={{ userSelect: "none" }}>
+          {currentSnackbar?.icon ? (
+            <span style={{ marginRight: 4 }}>{currentSnackbar.icon}</span>
+          ) : null}
+          {currentSnackbar?.text}
+        </span>
       }
       action={currentSnackbar?.actions
         .map(({ label, handler }) => (
