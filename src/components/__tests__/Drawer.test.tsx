@@ -6,7 +6,12 @@ import Drawer from "../Drawer"
 
 import { sendFeedback as mockSendFeedback } from "services/api"
 
-jest.mock("services/api")
+jest.mock("services/api", () => {
+  return {
+    ...jest.requireActual("services/api"),
+    sendFeedBack: jest.fn(() => Promise.resolve()),
+  }
+})
 
 // test('placeholder', () => expect(5).toBe(5))
 
