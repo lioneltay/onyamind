@@ -19,7 +19,6 @@ export const firestore = firebase.firestore()
 export const auth = firebase.auth()
 
 if (isLocal) {
-  console.log("emulating firestore")
   firestore.settings({
     host: "localhost:8080",
     ssl: false,
@@ -27,10 +26,8 @@ if (isLocal) {
     experimentalForceLongPolling: true,
   })
 
-  console.log("emulating functions")
   firebase.functions().useFunctionsEmulator("http://localhost:5001")
 
-  console.log("unpersisted auth")
   firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE)
 } else {
   firestore
