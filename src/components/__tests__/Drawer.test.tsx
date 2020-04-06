@@ -6,17 +6,8 @@ import Drawer from "../Drawer"
 
 import { sendFeedback as mockSendFeedback } from "services/api"
 
-jest.mock("services/api", () => {
-  return {
-    ...jest.requireActual("services/api"),
-    sendFeedBack: jest.fn(() => Promise.resolve()),
-  }
-})
-
-// test('placeholder', () => expect(5).toBe(5))
-
 describe("<Drawer />", () => {
-  test("FeedbackModal allows user to submit feedback", () => {
+  test("FeedbackModal allows user to submit feedback", async () => {
     const { getByText, getByPlaceholderText } = renderWithWrappers(<Drawer />, {
       initialState: {
         auth: {
@@ -39,7 +30,7 @@ describe("<Drawer />", () => {
 
     user.click(getByText(/submit/i))
 
-    wait(() => {
+    await wait(() => {
       expect(mockSendFeedback).toHaveBeenCalledTimes(1)
       expect(mockSendFeedback).toHaveBeenCalledWith({ subject, description })
     })
