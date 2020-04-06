@@ -40,7 +40,7 @@ const CreateTaskModal: React.FunctionComponent<Props> = ({
           }}
         >
           {({ setFieldValue, values, isSubmitting }) => (
-            <Form data-testid="ggg">
+            <Form>
               <div>
                 <TextField
                   autoFocus

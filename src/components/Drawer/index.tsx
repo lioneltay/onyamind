@@ -22,15 +22,13 @@ import {
 import { Text } from "lib/components"
 
 import {
-  Help,
-  ExpandMore,
-  ExpandLess,
-  Feedback,
-  Clear,
-  AccountCircle,
-  ExitToApp,
-  Delete,
-} from "@material-ui/icons"
+  HelpIcon,
+  FeedbackIcon,
+  ClearIcon,
+  AccountCircleIcon,
+  DeleteIcon,
+  CheckIcon,
+} from "lib/icons"
 
 import Modal from "lib/components/Modal"
 
@@ -55,7 +53,7 @@ export default () => {
   const history = useHistory()
   const theme = useTheme()
   const {
-    ui: { toggleDrawer, closeDrawer },
+    ui: { toggleDrawer, closeDrawer, openSnackbar },
     auth: { signin, signout },
     app: {
       deleteTaskList,
@@ -139,14 +137,14 @@ export default () => {
                 <Avatar src={user.photoURL} />
               ) : (
                 <Avatar>
-                  <AccountCircle style={{ transform: "scale(1.9)" }} />
+                  <AccountCircleIcon style={{ transform: "scale(1.9)" }} />
                 </Avatar>
               )}
             </ListItemAvatar>
             <ListItemText primary={user.displayName} secondary={user.email} />
             <ListItemSecondaryAction>
               <IconButton onClick={toggleDrawer}>
-                <Clear data-testid="clear" />
+                <ClearIcon />
               </IconButton>
             </ListItemSecondaryAction>
           </ListItem>
@@ -158,7 +156,7 @@ export default () => {
 
             <ListItemSecondaryAction>
               <IconButton onClick={toggleDrawer}>
-                <Clear data-testid="clear" />
+                <ClearIcon />
               </IconButton>
             </ListItemSecondaryAction>
           </ListItem>
@@ -167,7 +165,7 @@ export default () => {
           <ListItemText className="fa-c">
             <Text variant="subtitle2" className="fa-c">
               <span className="mr-3">Primary List</span>
-              <Help
+              <HelpIcon
                 className="cursor-pointer"
                 style={{ color: theme.iconColor }}
                 onClick={() => setShowHelpModal(true)}
@@ -274,7 +272,7 @@ export default () => {
         </ListItem>
         <Divider />
         <OptionItem
-          icon={<Delete />}
+          icon={<DeleteIcon />}
           text="Trash"
           onClick={() => {
             history.push("/trash")
@@ -285,11 +283,11 @@ export default () => {
           <OptionItem icon={<ExitToApp />} text="Sign out" onClick={signout} />
         )} */}
         <OptionItem
-          icon={<Feedback />}
+          icon={<FeedbackIcon />}
           text="Send feedback"
           onClick={() => setShowFeedbackModal(true)}
         />
-        <OptionItem icon={<Help />} text="Help" />
+        <OptionItem icon={<HelpIcon />} text="Help" />
         <Divider />
         <ListItem className="pb-0 pt-3" dense>
           <ListItemText>
@@ -312,11 +310,12 @@ export default () => {
 
       <FeedbackModal
         onSubmit={async (values) => {
-          setShowFeedbackModal(false)
           await api.sendFeedback({
             subject: values.subject,
             description: values.description,
           })
+          openSnackbar({ text: "Feedback sent!" })
+          setShowFeedbackModal(false)
         }}
         open={showFeedbackModal}
         onClose={() => setShowFeedbackModal(false)}

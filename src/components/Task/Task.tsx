@@ -7,7 +7,7 @@ import { ListItem, ListItemIcon, Fab } from "@material-ui/core"
 
 import { ListItemText } from "lib/components"
 
-import { Assignment } from "@material-ui/icons"
+import { AssignmentIcon } from "lib/icons"
 import { useGesture } from "lib/useGesture"
 
 const StyledListItem = styled(ListItem)`
@@ -100,8 +100,7 @@ export default ({
           }}
           size="small"
         >
-          <Assignment
-            data-testid="assignment"
+          <AssignmentIcon
             style={{
               color: theme.iconColor,
               transform: `scale(${multiselect ? 0.7 : 1})`,

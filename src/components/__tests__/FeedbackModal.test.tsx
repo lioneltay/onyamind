@@ -1,11 +1,11 @@
 import React from "react"
-import { render, wait } from "@testing-library/react"
+import { render, wait } from "testing"
 import user from "@testing-library/user-event"
 import FeedbackModal from "../Drawer/FeedbackModal"
 
-jest.mock("services/api", () => ({
-  sendFeedback: jest.fn(() => Promise.resolve(null)),
-}))
+// jest.mock("services/api", () => ({
+//   sendFeedback: jest.fn(() => Promise.resolve(null)),
+// }))
 
 test("Feedback form calls on submit with input values", async () => {
   const onSubmit = jest.fn(() => Promise.resolve())

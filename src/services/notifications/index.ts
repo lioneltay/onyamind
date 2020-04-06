@@ -1,3 +1,5 @@
+import { completeTask } from "services/api"
+
 let registration: ServiceWorkerRegistration | null = null
 
 export const registerServiceWorker = (reg: ServiceWorkerRegistration) => {
@@ -16,7 +18,8 @@ export const createTaskNotification = async (task: Task) => {
     tag: task.id,
     data: task,
     // Shows in notification
-    // badge: "/public/favicon/favicon-16x16.png",
+    // badge: "/public/pencil-check.png",
+    badge: "/public/notepad.png",
     // Shows in notification bar
     icon: "/public/favicon/favicon.ico",
     // Large image to show in notification
@@ -42,4 +45,10 @@ export const createTaskNotifications = async (tasks: Task[]) => {
   tasks.forEach((task, index) =>
     setTimeout(() => createTaskNotification(task), index * 1000),
   )
+}
+
+const broadcast = new BroadcastChannel("notification-action")
+
+broadcast.onmessage = async (event) => {
+  await completeTask(event.data.payload.taskId)
 }

@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "APP_MODE=staging webpack-dev-server --config ./webpack/webpack.config.dev.js",
     "dev:local": "APP_MODE=local webpack-dev-server --config ./webpack/webpack.config.dev.js",
+    "dev:local:test": "APP_MODE=local NODE_ENV=test webpack-dev-server --config ./webpack/webpack.config.dev.js",
     "emulators:start": "firebase use staging && firebase emulators:start --only firestore,functions",
     "build:functions": "cd functions && tsc --watch > /dev/null",
     "clean": "rimraf dist",
@@ -21,7 +22,7 @@
     "test:cypress:emulators:exec": "firebase use staging && firebase emulators:exec --only firestore,functions,firestore:rules",
     "test:cypress": "npm run test:cypress:emulators:exec -- \"npm run test:cypress:helper\"",
     "test:cypress:emulators:exec:ci": "firebase use staging --token $FIREBASE_DEPLOY_KEY && firebase emulators:exec --only firestore,functions,firestore:rules --token $FIREBASE_DEPLOY_KEY",
-    "test:cypress:helper": "start-server-and-test dev:local http-get://localhost:7000 cy:run",
+    "test:cypress:helper": "start-server-and-test dev:local:test http-get://localhost:7000 cy:run",
     "test:cypress:ci": "npm run test:cypress:emulators:exec:ci -- \"npm run test:cypress:helper\"",
     "test": "npm run test:jest && npm run test:cypress",
     "test:ci": "npm run test:jest && npm run test:cypress:ci"
@@ -61,6 +62,7 @@
     "eslint-plugin-cypress": "^2.10.3",
     "eslint-plugin-react": "^7.19.0",
     "eslint-plugin-react-hooks": "^2.5.1",
+    "fake-indexeddb": "^3.0.0",
     "faker": "^4.1.0",
     "firebase-admin": "^8.10.0",
     "firebase-tools": "^7.16.0",

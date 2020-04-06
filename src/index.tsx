@@ -9,7 +9,7 @@ import { render } from "react-dom"
 import "services/firebase"
 import App from "./App"
 
-import "./service-worker/service.worker"
+// import "./service-worker/service.worker"
 
 import { registerServiceWorker } from "services/notifications"
 
@@ -19,7 +19,7 @@ import { logEvent } from "services/analytics/events"
 logEvent("APP_LOADED", { time: performance.now() })
 initializeErrorReporting()
 
-if ("serviceWorker" in navigator) {
+if (process.env.NODE_ENV !== "test" && "serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
     try {
       const registration = await navigator.serviceWorker.register(
@@ -28,10 +28,10 @@ if ("serviceWorker" in navigator) {
 
       registerServiceWorker(registration)
 
-      console.log("SW registered: ", registration)
+      logEvent("SERVICE_WORKER_REGISTRATION|SUCCESS")
       return registration
     } catch (e) {
-      console.log("SW registration failed: ", e)
+      logEvent("SERVICE_WORKER_REGISTRATION|FAILURE")
     }
   })
 }

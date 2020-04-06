@@ -59,7 +59,11 @@ describe("<GlobalSnackbar />", () => {
       },
     ]
 
-    const { getByText, queryByText, queryByTestId } = renderWithWrappers(
+    const {
+      getByText,
+      queryByText,
+      queryByIconName,
+    } = renderWithWrappers(
       <Tester text="text" onClose={onClose} actions={actions} />,
     )
 
@@ -71,7 +75,7 @@ describe("<GlobalSnackbar />", () => {
       getByText(actions[0].label)
       getByText(actions[1].label)
       // Close button is not enabled by default
-      expect(queryByTestId("clear")).toBeNull()
+      expect(queryByIconName("clear")).toBeNull()
     })
 
     user.click(getByText(actions[0].label))
@@ -89,46 +93,19 @@ describe("<GlobalSnackbar />", () => {
   test("snackbar closeable functionality works", async () => {
     const onClose = jest.fn()
 
-    const { queryByTestId, getByTestId, getByText } = renderWithWrappers(
+    const { queryByIconName, getByIconName, getByText } = renderWithWrappers(
       <Tester text="text" onClose={onClose} closable />,
     )
 
     user.click(getByText(openButtonLabel))
     await wait(() => {
-      getByTestId("clear")
+      getByIconName("clear")
     })
-    user.click(getByTestId("clear"))
+    user.click(getByIconName("clear"))
 
     await wait(() => {
       expect(onClose).toHaveBeenCalledTimes(1)
-      expect(queryByTestId("clear")).toBeNull()
+      expect(queryByIconName("clear")).toBeNull()
     })
   })
-
-  //   test.only("snackbar closes automatically after some time", async () => {
-  //     jest.useFakeTimers()
-  //     const text = "snackbar text"
-  //     const onClose = jest.fn()
-
-  //     const { getByText, queryByText } = renderWithWrappers(
-  //       <Tester text={text} onClose={onClose} />,
-  //     )
-
-  //     user.click(getByText(openButtonLabel))
-  //     // https://github.com/testing-library/react-testing-library/issues/244
-  //     Promise.resolve().then(() => jest.runOnlyPendingTimers())
-
-  //     await wait(() => {
-  //       getByText(text)
-  //     })
-
-  //     // Promise.resolve().then(jest.runAllTimers)
-
-  //     // await wait(() => {
-  //       expect(queryByText(text)).toBeNull()
-  //       expect(onClose).toHaveBeenCalledTimes(1)
-  //     // })
-
-  //     jest.useRealTimers()
-  //   })
 })

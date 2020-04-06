@@ -2,7 +2,7 @@ const path = require("path")
 const CopyWebpackPlugin = require("copy-webpack-plugin")
 const webpack = require("webpack")
 
-const relativeToRoot = relativePath =>
+const relativeToRoot = (relativePath) =>
   path.resolve(__dirname, "../", relativePath)
 
 const common_config = require("./webpack.config.common")
@@ -17,11 +17,14 @@ module.exports = {
     publicPath: "/",
   },
 
+  devtool: "source-map",
+
   plugins: [
     ...common_config.plugins,
     new webpack.EnvironmentPlugin({
       // From TravisCI
       APP_MODE: process.env.APP_MODE || "staging",
+      NODE_ENV: "production",
     }),
     new CopyWebpackPlugin([
       {

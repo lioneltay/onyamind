@@ -27,7 +27,7 @@ const Modal: React.FunctionComponent<Props> = ({
 }) => {
   return (
     <MModal className="fj-c fa-c" open={open} onClose={onClose}>
-      <Paper data-testid="modal" style={style} className={className}>
+      <Paper style={style} className={className} data-testid="modal">
         <div className="fj-sb fa-c pl-3">
           <Text variant="h6">{title}</Text>
 

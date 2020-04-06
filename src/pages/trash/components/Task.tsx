@@ -2,7 +2,7 @@ import React, { Fragment } from "react"
 
 import { IconButton } from "@material-ui/core"
 
-import { Delete, SwapHoriz, Restore } from "@material-ui/icons"
+import { DeleteIcon, SwapHorizIcon, RestoreIcon } from "lib/icons"
 
 import Task from "components/Task"
 import IconButtonMenu from "lib/components/IconButtonMenu"
@@ -30,7 +30,7 @@ export default ({
     moveTask,
   } = useActions("trashPage")
   const { taskLists, selectedTaskIds, multiselect, touchScreen } = useSelector(
-    state => ({
+    (state) => ({
       taskLists: state.app.taskLists,
       selectedTaskIds: state.trashPage.selectedTaskIds,
       multiselect: state.trashPage.multiselect,
@@ -43,20 +43,20 @@ export default ({
   }
 
   const selected =
-    Selected || selectedTaskIds.findIndex(id => id === task.id) >= 0
+    Selected || selectedTaskIds.findIndex((id) => id === task.id) >= 0
 
   return (
     <Task
       onSwipeLeft={() => deleteTask(task.id)}
       onSwipeRight={() => unarchiveTask(task.id)}
-      swipeRightIcon={<Restore />}
+      swipeRightIcon={<RestoreIcon />}
       backgroundColor={backgroundColor}
       style={style}
       className={className}
       selected={selected}
       multiselect={multiselect}
       task={task}
-      onSelectTask={id => {
+      onSelectTask={(id) => {
         toggleTaskSelection(id)
         if (!multiselect) {
           setMultiselect(true)
@@ -66,12 +66,12 @@ export default ({
         multiselect || touchScreen ? null : (
           <Fragment>
             <IconButton onClick={() => unarchiveTask(task.id)}>
-              <Restore />
+              <RestoreIcon />
             </IconButton>
 
             <IconButtonMenu
-              icon={<SwapHoriz />}
-              items={taskLists.map(list => ({
+              icon={<SwapHorizIcon />}
+              items={taskLists.map((list) => ({
                 label: list.name,
                 action: () =>
                   moveTask({
@@ -82,7 +82,7 @@ export default ({
             />
 
             <IconButton onClick={() => deleteTask(task.id)}>
-              <Delete />
+              <DeleteIcon />
             </IconButton>
           </Fragment>
         )

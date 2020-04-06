@@ -23,3 +23,53 @@
 //
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+
+Cypress.Commands.add(
+  "findByIconName",
+  {
+    prevSubject: "optional",
+  },
+  (subject, iconName) => {
+    const log = (message) =>
+      Cypress.log({
+        name: "findByIconName",
+        displayName: "findByIconName",
+        message,
+      })
+
+    if (subject) {
+      return cy.wrap(subject).within(() => {
+        log(iconName)
+        cy.get(`[data-icon-name=${iconName}]`, { log: false })
+      })
+    } else {
+      log(iconName)
+      return cy.get(`[data-icon-name=${iconName}]`, { log: false })
+    }
+  },
+)
+
+Cypress.Commands.add(
+  "findAllByIconName",
+  {
+    prevSubject: "optional",
+  },
+  (subject, iconName) => {
+    const log = (message) =>
+      Cypress.log({
+        name: "findAllByIconName",
+        displayName: "findAllByIconName",
+        message,
+      })
+
+    if (subject) {
+      return cy.wrap(subject).within(() => {
+        log(iconName)
+        cy.get(`[data-icon-name=${iconName}]`, { log: false })
+      })
+    } else {
+      log(iconName)
+      return cy.get(`[data-icon-name=${iconName}]`, { log: false })
+    }
+  },
+)

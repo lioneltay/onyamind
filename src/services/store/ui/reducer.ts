@@ -1,3 +1,4 @@
+import React from "react"
 import { assertNever } from "lib/utils"
 import { Action } from "./actions"
 
@@ -9,6 +10,7 @@ export type SnackbarAction = {
 export type State = {
   showDrawer: boolean
   snackbar: null | {
+    icon?: React.ReactNode
     duration: number
     text: string
     actions: SnackbarAction[]
@@ -49,7 +51,14 @@ export const reducer = (state: State = initialState, action: Action): State => {
       }
     }
     case "OPEN_SNACKBAR": {
-      const { text, closable, actions, onClose, duration } = action.payload
+      const {
+        text,
+        closable,
+        actions,
+        onClose,
+        duration,
+        icon,
+      } = action.payload
 
       return {
         ...state,
@@ -59,6 +68,7 @@ export const reducer = (state: State = initialState, action: Action): State => {
           text,
           onClose,
           duration,
+          icon,
         },
       }
     }

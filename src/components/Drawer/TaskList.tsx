@@ -9,7 +9,7 @@ import {
   MenuItem,
 } from "@material-ui/core"
 
-import { MoreVert } from "@material-ui/icons"
+import { MoreVertIcon } from "lib/icons"
 
 type Props = {
   taskList: TaskList
@@ -48,8 +48,8 @@ export default ({
         }
       />
       <ListItemSecondaryAction>
-        <IconButton onClick={e => setAnchorEl(e.currentTarget)}>
-          <MoreVert />
+        <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
+          <MoreVertIcon />
         </IconButton>
 
         <Menu

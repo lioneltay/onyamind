@@ -6,39 +6,33 @@ import Drawer from "../Drawer"
 
 import { sendFeedback as mockSendFeedback } from "services/api"
 
-jest.mock("services/api", () => ({
-  sendFeedback: jest.fn(),
-}))
+describe("<Drawer />", () => {
+  test("FeedbackModal allows user to submit feedback", async () => {
+    const { getByText, getByPlaceholderText } = renderWithWrappers(<Drawer />, {
+      initialState: {
+        auth: {
+          user: generateUser(),
+        },
+        ui: {
+          showDrawer: true,
+        },
+      },
+    })
 
-test('placeholder', () => expect(5).toBe(5))
+    user.click(getByText(/send feedback/i))
 
-// describe("<Drawer />", () => {
-//   test("FeedbackModal allows user to submit feedback", () => {
-//     const { getByText, getByPlaceholderText } = renderWithWrappers(<Drawer />, {
-//       initialState: {
-//         auth: {
-//           user: generateUser(),
-//         },
-//         ui: {
-//           showDrawer: true,
-//         },
-//       },
-//     })
+    const subject = "some subject"
+    const description = "some description"
 
-//     user.click(getByText(/send feedback/i))
+    user.type(getByPlaceholderText(/subject/i), subject)
 
-//     const subject = "some subject"
-//     const description = "some description"
+    user.type(getByPlaceholderText(/description/i), description)
 
-//     user.type(getByPlaceholderText(/subject/i), subject)
+    user.click(getByText(/submit/i))
 
-//     user.type(getByPlaceholderText(/description/i), description)
-
-//     user.click(getByText(/submit/i))
-
-//     wait(() => {
-//       expect(mockSendFeedback).toHaveBeenCalledTimes(1)
-//       expect(mockSendFeedback).toHaveBeenCalledWith({ subject, description })
-//     })
-//   })
-// })
+    await wait(() => {
+      expect(mockSendFeedback).toHaveBeenCalledTimes(1)
+      expect(mockSendFeedback).toHaveBeenCalledWith({ subject, description })
+    })
+  })
+})

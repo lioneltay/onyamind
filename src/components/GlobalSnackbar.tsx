@@ -1,7 +1,7 @@
 import React from "react"
 import { noop } from "lib/utils"
 import { Button, Snackbar, IconButton, Slide } from "@material-ui/core"
-import { Clear } from "@material-ui/icons"
+import { ClearIcon } from "lib/icons"
 import { TransitionProps } from "@material-ui/core/transitions"
 
 import { useSelector, useActions } from "services/store"
@@ -70,7 +70,12 @@ export default () => {
         onClickAway: noop,
       }}
       message={
-        <span style={{ userSelect: "none" }}>{currentSnackbar?.text}</span>
+        <span style={{ userSelect: "none" }}>
+          {currentSnackbar?.icon ? (
+            <span style={{ marginRight: 4 }}>{currentSnackbar.icon}</span>
+          ) : null}
+          {currentSnackbar?.text}
+        </span>
       }
       action={currentSnackbar?.actions
         .map(({ label, handler }) => (
@@ -93,7 +98,7 @@ export default () => {
               style={{ color: dark ? "rgba(0, 0, 0, 0.54)" : "white" }}
               onClick={handleClose}
             >
-              <Clear data-testid="clear" />
+              <ClearIcon />
             </IconButton>
           ) : (
             []

@@ -4,10 +4,9 @@ import styled from "styled-components"
 import { useGesture } from "lib/useGesture"
 import { Spring, config } from "react-spring/renderprops.cjs"
 
-
 import { IconButton, ListItem } from "@material-ui/core"
 
-import { Delete, Check } from "@material-ui/icons"
+import { DeleteIcon, CheckIcon } from "lib/icons"
 
 import Task, { TaskProps } from "./Task"
 
@@ -30,9 +29,9 @@ export default ({
   onSwipeLeft = () => {},
   onSwipeRight = () => {},
   swipeLeftBackground = "tomato",
-  swipeLeftIcon = <Delete />,
+  swipeLeftIcon = <DeleteIcon />,
   swipeRightBackground = "dodgerblue",
-  swipeRightIcon = <Check />,
+  swipeRightIcon = <CheckIcon />,
   ...taskProps
 }: Props) => {
   const [percent, setPercent] = useState(0)
@@ -71,7 +70,7 @@ export default ({
 
   return (
     <Spring config={config.stiff} from={{ percent }} to={{ percent }}>
-      {spring => {
+      {(spring) => {
         if (Math.abs(spring.percent) > 95 && !done) {
           if (status === "left" && spring.percent) {
             onSwipeLeft()
@@ -108,7 +107,7 @@ export default ({
               </IconButton>
             </ListItem>
             <div
-              onPointerDown={e => e.stopPropagation()}
+              onPointerDown={(e) => e.stopPropagation()}
               {...bind({ ref: containerRef })}
               style={{
                 transform:

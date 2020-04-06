@@ -3,13 +3,13 @@ import React, { Fragment } from "react"
 import { IconButton } from "@material-ui/core"
 
 import {
-  Delete,
-  Add,
-  Check,
-  SwapHoriz,
-  Close,
-  Notifications,
-} from "@material-ui/icons"
+  DeleteIcon,
+  AddIcon,
+  CheckIcon,
+  SwapHorizIcon,
+  CloseIcon,
+  NotificationsIcon,
+} from "lib/icons"
 
 import Task from "components/Task"
 import IconButtonMenu from "lib/components/IconButtonMenu"
@@ -40,7 +40,7 @@ export default ({ style, className, task, backgroundColor }: Props) => {
     multiselect,
     touchScreen,
     selectedTaskListId,
-  } = useSelector(state => ({
+  } = useSelector((state) => ({
     taskLists: state.app.taskLists,
     selectedTaskIds: state.listPage.selectedTaskIds,
     multiselect: state.listPage.multiselect,
@@ -52,7 +52,7 @@ export default ({ style, className, task, backgroundColor }: Props) => {
     return null
   }
 
-  const selected = selectedTaskIds.findIndex(id => id === task.id) >= 0
+  const selected = selectedTaskIds.findIndex((id) => id === task.id) >= 0
 
   return (
     <Task
@@ -64,14 +64,14 @@ export default ({ style, className, task, backgroundColor }: Props) => {
         })
       }
       backgroundColor={backgroundColor}
-      swipeRightIcon={task.complete ? <Close /> : undefined}
+      swipeRightIcon={task.complete ? <CloseIcon /> : undefined}
       style={style}
       className={className}
       selected={selected}
       multiselect={multiselect}
       task={task}
       onItemClick={() => toggleEditingTask(task.id)}
-      onSelectTask={id => {
+      onSelectTask={(id) => {
         stopEditingTask()
         toggleTaskSelection(id)
         if (!multiselect) {
@@ -89,21 +89,21 @@ export default ({ style, className, task, backgroundColor }: Props) => {
                 })
               }
             >
-              {task.complete ? <Add /> : <Check />}
+              {task.complete ? <AddIcon /> : <CheckIcon />}
             </IconButton>
 
             <IconButtonMenu
-              icon={<SwapHoriz />}
+              icon={<SwapHorizIcon />}
               items={taskLists
-                .filter(list => list.id !== selectedTaskListId)
-                .map(list => ({
+                .filter((list) => list.id !== selectedTaskListId)
+                .map((list) => ({
                   label: list.name,
                   action: () => moveTask({ taskId: task.id, listId: list.id }),
                 }))}
             />
 
             <IconButton onClick={() => archiveTask(task.id)}>
-              <Delete />
+              <DeleteIcon />
             </IconButton>
 
             <IconButton
@@ -111,7 +111,7 @@ export default ({ style, className, task, backgroundColor }: Props) => {
                 createTaskNotification(task)
               }}
             >
-              <Notifications />
+              <NotificationsIcon />
             </IconButton>
           </Fragment>
         )

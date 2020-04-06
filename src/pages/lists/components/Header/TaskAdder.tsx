@@ -4,7 +4,7 @@ import { useTheme, styled } from "theme"
 import { useMediaQuery } from "@tekktekk/react-media-query"
 import { MOBILE_WIDTH } from "config"
 
-import { Add, Clear } from "@material-ui/icons"
+import { AddIcon, ClearIcon } from "lib/icons"
 
 import {
   IconButton,
@@ -113,11 +113,8 @@ export default () => {
               divider
             >
               <ListItemIcon>
-                <IconButton
-                  data-testid="add-task-button"
-                  onClick={() => setShowCreateModal(true)}
-                >
-                  <Add />
+                <IconButton onClick={() => setShowCreateModal(true)}>
+                  <AddIcon />
                 </IconButton>
               </ListItemIcon>
 
@@ -147,7 +144,7 @@ export default () => {
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton onClick={() => setNewTaskTitle("")}>
-                        {newTaskTitle ? <Clear /> : null}
+                        {newTaskTitle ? <ClearIcon /> : null}
                       </IconButton>
                     </InputAdornment>
                   ),

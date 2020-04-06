@@ -17,10 +17,10 @@ export const createTask = async (
       createdAt: Date.now(),
       updatedAt: Date.now(),
     })
-    .then(async x => {
+    .then(async (x) => {
       return dataWithId(await x.get()) as Task
     })
-    .catch(err => {
+    .catch((err) => {
       console.log(err)
       return err
     })
@@ -56,7 +56,7 @@ export const editTask = async ({
 export const editTasks = async (tasks: PartialTaskWithID[]): Promise<void> => {
   const batch = firestore.batch()
 
-  tasks.forEach(task => {
+  tasks.forEach((task) => {
     batch.update(firestore.collection("task").doc(task.id), {
       ...task,
       updatedAt: Date.now(),
@@ -67,17 +67,14 @@ export const editTasks = async (tasks: PartialTaskWithID[]): Promise<void> => {
 }
 
 export const deleteTask = async (taskId: ID): Promise<ID> => {
-  await firestore
-    .collection("task")
-    .doc(taskId)
-    .delete()
+  await firestore.collection("task").doc(taskId).delete()
   return taskId
 }
 
 export const deleteTasks = (taskIds: ID[]) => {
   const batch = firestore.batch()
 
-  taskIds.forEach(id => {
+  taskIds.forEach((id) => {
     batch.delete(firestore.collection("task").doc(id))
   })
 
@@ -110,3 +107,6 @@ export const moveTask = async ({
 
   return batch.commit()
 }
+
+export const completeTask = (taskId: ID) =>
+  firestore.collection("task").doc(taskId).update({ complete: true })
