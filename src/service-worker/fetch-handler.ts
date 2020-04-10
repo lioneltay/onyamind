@@ -6,15 +6,8 @@ function cypressRelated(url: string) {
   return /cypress/i.test(url)
 }
 
-function shouldResolveToIndexHTML(request: Request) {
-  return (
-    request.method === "GET" &&
-    !request.url.startsWith(PUBLIC_FOLDER) &&
-    request.url.startsWith(location.origin) &&
-    !/sockjs-node/.test(request.url) &&
-    !/\.js$/.test(request.url) &&
-    !cypressRelated(request.url)
-  )
+function staticFile(url: string) {
+  return /\.[^\\/]+$/i.test(url)
 }
 
 function isJSAsset(request: Request) {
@@ -32,6 +25,18 @@ function isPublicAsset(request: Request) {
   return (
     request.method === "GET" &&
     request.url.startsWith(PUBLIC_FOLDER) &&
+    !cypressRelated(request.url)
+  )
+}
+
+function shouldResolveToIndexHTML(request: Request) {
+  return (
+    request.method === "GET" &&
+    !isPublicAsset(request) &&
+    !staticFile(request.url) &&
+    request.url.startsWith(location.origin) &&
+    !/sockjs-node/.test(request.url) &&
+    !/\.js$/.test(request.url) &&
     !cypressRelated(request.url)
   )
 }
