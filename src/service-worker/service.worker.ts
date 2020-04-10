@@ -23,9 +23,10 @@ self.addEventListener("fetch", (event) => {
 
 self.addEventListener("install", (evt) => {
   console.log("Service Worker Installed")
-  evt.waitUntil(precache())
+  //
   // Replace the existing service worker
-  return self.skipWaiting()
+  self.skipWaiting()
+  evt.waitUntil(precache())
 })
 
 self.addEventListener("activate", (event) => {
