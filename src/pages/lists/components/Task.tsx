@@ -102,16 +102,18 @@ export default ({ style, className, task, backgroundColor }: Props) => {
                 }))}
             />
 
+            {!task.complete ? (
+              <IconButton
+                onClick={async () => {
+                  createTaskNotification(task)
+                }}
+              >
+                <NotificationsIcon />
+              </IconButton>
+            ) : null}
+
             <IconButton onClick={() => archiveTask(task.id)}>
               <DeleteIcon />
-            </IconButton>
-
-            <IconButton
-              onClick={async () => {
-                createTaskNotification(task)
-              }}
-            >
-              <NotificationsIcon />
             </IconButton>
           </Fragment>
         )

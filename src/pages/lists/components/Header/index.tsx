@@ -63,14 +63,16 @@ export default () => {
         onEndMultiselect={() => setMultiselect(false)}
         multiselectActions={
           <Fragment>
-            <IconButton
-              onClick={() => {
-                selectedTasks.forEach(createTaskNotification)
-                setMultiselect(false)
-              }}
-            >
-              <NotificationsIcon />
-            </IconButton>
+            {allSelectedTasksIncomplete ? (
+              <IconButton
+                onClick={() => {
+                  selectedTasks.forEach(createTaskNotification)
+                  setMultiselect(false)
+                }}
+              >
+                <NotificationsIcon />
+              </IconButton>
+            ) : null}
 
             {allSelectedTasksComplete || allSelectedTasksIncomplete ? (
               <IconButton

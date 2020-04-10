@@ -299,6 +299,7 @@ export default () => {
           icon={<DeleteIcon />}
           text="Trash"
           onClick={() => {
+            selectTaskList(null)
             history.push("/trash")
             toggleDrawer()
           }}
