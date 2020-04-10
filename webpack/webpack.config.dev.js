@@ -23,6 +23,8 @@ module.exports = {
     hot: false,
     port: 7000,
     historyApiFallback: true,
+    publicPath: "/",
+    contentBase: relativeToRoot("static"),
   },
 
   plugins: [
