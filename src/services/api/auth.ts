@@ -10,9 +10,9 @@ export const onAuthStateChanged = (onChange: (user: User | null) => void) => {
   return firebase.auth().onAuthStateChanged(onChange)
 }
 
-googleProvider.setCustomParameters({
-  prompt: "select_account",
-})
+// googleProvider.setCustomParameters({
+//   prompt: "select_account",
+// })
 
 export const initializeUserData = async (userId: ID) => {
   const list = await createTaskList({

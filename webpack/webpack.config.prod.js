@@ -28,8 +28,8 @@ module.exports = {
     }),
     new CopyWebpackPlugin([
       {
-        from: relativeToRoot("./public"),
-        to: relativeToRoot("./dist/public"),
+        from: relativeToRoot("./static"),
+        to: relativeToRoot("./dist"),
       },
     ]),
   ],

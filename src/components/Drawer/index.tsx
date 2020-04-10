@@ -1,4 +1,5 @@
 import React, { useState } from "react"
+import { noopTemplate as css } from "lib/utils"
 import ContentLoader from "react-content-loader"
 
 import {
@@ -19,7 +20,7 @@ import {
   Switch,
 } from "@material-ui/core"
 
-import { Text } from "lib/components"
+import { Text, Modal, PopoverMenu } from "lib/components"
 
 import {
   HelpIcon,
@@ -30,12 +31,11 @@ import {
   CheckIcon,
 } from "lib/icons"
 
-import Modal from "lib/components/Modal"
-
 import CreateTaskListModal from "./CreateTaskListModal"
 import RenameTaskListModal from "./RenameTaskListModal"
 import DeleteTaskListModal from "./DeleteTaskListModal"
 import FeedbackModal from "./FeedbackModal"
+import SigninModal from "./SigninModal"
 
 import { comparator } from "ramda"
 import { GoogleSignInButton } from "components"
@@ -84,6 +84,7 @@ export default () => {
     closeDrawer()
   }
 
+  const [showSigninModal, setShowSigninModal] = useState(false)
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [showFeedbackModal, setShowFeedbackModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -132,15 +133,32 @@ export default () => {
                 : theme.backgroundFadedColor,
             }}
           >
-            <ListItemAvatar>
-              {user.photoURL ? (
-                <Avatar src={user.photoURL} />
-              ) : (
-                <Avatar>
-                  <AccountCircleIcon style={{ transform: "scale(1.9)" }} />
-                </Avatar>
+            <PopoverMenu
+              items={[
+                {
+                  label: "Switch account",
+                  action: () => setShowSigninModal(true),
+                },
+              ]}
+            >
+              {({ setAnchorEl }) => (
+                <ListItemAvatar
+                  css={css`
+                    cursor: pointer;
+                  `}
+                >
+                  <Avatar
+                    src={user.photoURL ? user.photoURL : undefined}
+                    onClick={(e: any) => setAnchorEl(e.currentTarget)}
+                  >
+                    {user.photoURL ? null : (
+                      <AccountCircleIcon style={{ transform: "scale(1.9)" }} />
+                    )}
+                  </Avatar>
+                </ListItemAvatar>
               )}
-            </ListItemAvatar>
+            </PopoverMenu>
+
             <ListItemText primary={user.displayName} secondary={user.email} />
             <ListItemSecondaryAction>
               <IconButton onClick={toggleDrawer}>
@@ -151,7 +169,13 @@ export default () => {
         ) : (
           <ListItem style={{ backgroundColor: theme.backgroundColor }}>
             <ListItemText>
-              <GoogleSignInButton onClick={signin} />
+              <Button
+                variant="outlined"
+                onClick={() => setShowSigninModal(true)}
+                color="primary"
+              >
+                Sign In
+              </Button>
             </ListItemText>
 
             <ListItemSecondaryAction>
@@ -360,6 +384,11 @@ export default () => {
           }}
         />
       ) : null}
+
+      <SigninModal
+        open={showSigninModal}
+        onClose={() => setShowSigninModal(false)}
+      />
     </SwipeableDrawer>
   )
 }

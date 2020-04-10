@@ -10,7 +10,7 @@ import {
   NotificationsIcon,
 } from "lib/icons"
 
-import IconButtonMenu from "lib/components/IconButtonMenu"
+import { IconButtonMenu } from "lib/components"
 import TaskAdder from "./TaskAdder"
 import HeaderBase from "components/HeaderBase"
 

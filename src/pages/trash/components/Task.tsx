@@ -4,8 +4,8 @@ import { IconButton } from "@material-ui/core"
 
 import { DeleteIcon, SwapHorizIcon, RestoreIcon } from "lib/icons"
 
-import Task from "components/Task"
-import IconButtonMenu from "lib/components/IconButtonMenu"
+import { Task } from "components"
+import { IconButtonMenu } from "lib/components"
 
 import { useSelector, useActions } from "services/store"
 
