@@ -8,6 +8,7 @@ export type SnackbarAction = {
 }
 
 export type State = {
+  showFeedbackModal: boolean
   showDrawer: boolean
   snackbar: null | {
     icon?: React.ReactNode
@@ -20,12 +21,25 @@ export type State = {
 }
 
 const initialState: State = {
+  showFeedbackModal: false,
   showDrawer: false,
   snackbar: null,
 }
 
 export const reducer = (state: State = initialState, action: Action): State => {
   switch (action.type) {
+    case "OPEN_FEEDBACK_MODAL": {
+      return {
+        ...state,
+        showFeedbackModal: true,
+      }
+    }
+    case "CLOSE_FEEDBACK_MODAL": {
+      return {
+        ...state,
+        showFeedbackModal: false,
+      }
+    }
     case "OPEN_DRAWER": {
       return {
         ...state,

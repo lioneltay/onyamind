@@ -28,17 +28,14 @@ import {
   ClearIcon,
   AccountCircleIcon,
   DeleteIcon,
-  CheckIcon,
 } from "lib/icons"
 
 import CreateTaskListModal from "./CreateTaskListModal"
 import RenameTaskListModal from "./RenameTaskListModal"
 import DeleteTaskListModal from "./DeleteTaskListModal"
-import FeedbackModal from "./FeedbackModal"
 import SigninModal from "./SigninModal"
 
 import { comparator } from "ramda"
-import { GoogleSignInButton } from "components"
 import TaskList from "./TaskList"
 import { useHistory } from "react-router-dom"
 
@@ -47,13 +44,11 @@ import { useActions, useSelector } from "services/store"
 import { useTheme } from "theme"
 import { listPageUrl } from "pages/lists/routing"
 
-import * as api from "services/api"
-
 export default () => {
   const history = useHistory()
   const theme = useTheme()
   const {
-    ui: { toggleDrawer, closeDrawer, openSnackbar },
+    ui: { toggleDrawer, closeDrawer, openFeedbackModal },
     auth: { signin, signout },
     app: {
       deleteTaskList,
@@ -86,7 +81,6 @@ export default () => {
 
   const [showSigninModal, setShowSigninModal] = useState(false)
   const [showCreateModal, setShowCreateModal] = useState(false)
-  const [showFeedbackModal, setShowFeedbackModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [showRenameModal, setShowRenameModal] = useState(false)
   const [selectedId, setSelectedId] = useState(null as ID | null)
@@ -304,13 +298,10 @@ export default () => {
             toggleDrawer()
           }}
         />
-        {/* {!user.isAnonymous && (
-          <OptionItem icon={<ExitToApp />} text="Sign out" onClick={signout} />
-        )} */}
         <OptionItem
           icon={<FeedbackIcon />}
           text="Send feedback"
-          onClick={() => setShowFeedbackModal(true)}
+          onClick={openFeedbackModal}
         />
         <OptionItem icon={<HelpIcon />} text="Help" />
         <Divider />
@@ -332,19 +323,6 @@ export default () => {
           </ListItemSecondaryAction>
         </ListItem>
       </List>
-
-      <FeedbackModal
-        onSubmit={async (values) => {
-          await api.sendFeedback({
-            subject: values.subject,
-            description: values.description,
-          })
-          openSnackbar({ text: "Feedback sent!" })
-          setShowFeedbackModal(false)
-        }}
-        open={showFeedbackModal}
-        onClose={() => setShowFeedbackModal(false)}
-      />
 
       <CreateTaskListModal
         onSubmit={async (values) => {

@@ -40,7 +40,13 @@ const openSnackbar = ({
 
 const closeSnackbar = () => ({ type: "CLOSE_SNACKBAR" } as const)
 
+const openFeedbackModal = () => ({ type: "OPEN_FEEDBACK_MODAL" } as const)
+const closeFeedbackModal = () => ({ type: "CLOSE_FEEDBACK_MODAL" } as const)
+
 export const actionCreators = {
+  openFeedbackModal,
+  closeFeedbackModal,
+
   openDrawer,
   closeDrawer,
   toggleDrawer,
