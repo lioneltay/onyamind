@@ -1,7 +1,7 @@
 import React from "react"
 import { noopTemplate as css } from "lib/utils"
 
-import { Modal, Button, Text } from "lib/components"
+import { PlainModal, Button, Text, A } from "lib/components"
 
 import * as api from "services/api"
 
@@ -18,35 +18,88 @@ type Props = {
 }
 
 export default ({ open, onClose }: Props) => {
+  const [newUser, setNewUser] = React.useState(false)
+  const method = newUser ? "Sign up" : "Sign in"
+
   return (
-    <Modal open={true} onClose={onClose} title="Sign In">
+    <PlainModal
+      open={true}
+      onClose={onClose}
+      title="Sign In"
+      className="fj-c"
+      css={css`
+        width: 480px;
+        max-width: 100vw;
+      `}
+    >
       <div
+        className="fd-c fa-c"
         css={css`
-          display: flex;
-          flex-direction: column;
-
-          & > * {
-            margin-top: 10px;
-          }
-
-          &:first-child {
-            margin-top: 0px;
-          }
-
-          & button {
-            display: flex;
-            justify-content: flex-start;
-          }
+          padding: 16px;
+          max-width: 320px;
         `}
       >
-        <ButtonOption icon={<GoogleIcon />}>Sign in with Google</ButtonOption>
-        <ButtonOption icon={<FacebookIcon />}>
-          Sign in with Facebook
-        </ButtonOption>
-        <ButtonOption icon={<TwitterIcon />}>Sign in with Twitter</ButtonOption>
-        <ButtonOption icon={<EmailIcon />}>Sign in with Email</ButtonOption>
+        <Text variant="h5" align="center" style={{ marginBottom: 24 }}>
+          Welcome back
+        </Text>
+
+        <Text variant="body2" align="center" style={{ marginBottom: 24 }}>
+          Sign in to synchronize your tasks and view them across multiple
+          devices
+        </Text>
+
+        <div
+          css={css`
+            display: flex;
+            flex-direction: column;
+
+            & > * {
+              margin-top: 10px;
+            }
+
+            &:first-child {
+              margin-top: 0px;
+            }
+
+            & button {
+              display: flex;
+              justify-content: flex-start;
+              min-width: 210px;
+            }
+          `}
+        >
+          <ButtonOption icon={<GoogleIcon />}>
+            {method} with Google
+          </ButtonOption>
+          <ButtonOption icon={<FacebookIcon />}>
+            {method} with Facebook
+          </ButtonOption>
+          <ButtonOption icon={<TwitterIcon />}>
+            {method} with Twitter
+          </ButtonOption>
+          <ButtonOption icon={<EmailIcon />}>{method} with Email</ButtonOption>
+        </div>
+
+        <Text
+          variant="body2"
+          css={css`
+            margin-top: 24px;
+            margin-bottom: 24px;
+          `}
+        >
+          No account?{" "}
+          <Text
+            inline
+            color="primary"
+            variant="body2"
+            role="button"
+            onClick={() => setNewUser((x) => !x)}
+          >
+            Create one
+          </Text>
+        </Text>
       </div>
-    </Modal>
+    </PlainModal>
   )
 }
 

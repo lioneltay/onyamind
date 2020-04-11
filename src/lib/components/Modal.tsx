@@ -1,6 +1,6 @@
 import React from "react"
 
-import MModal from "@material-ui/core/Modal"
+import PlainModal, { PlainModalProps } from "./PlainModal"
 import { Text } from "lib/components"
 import Button from "@material-ui/core/Button"
 import IconButton from "@material-ui/core/IconButton"
@@ -9,9 +9,7 @@ import Divider from "@material-ui/core/Divider"
 
 import Clear from "@material-ui/icons/Clear"
 
-type Props = Stylable & {
-  open: boolean
-  onClose: () => void
+type Props = Omit<PlainModalProps, "title"> & {
   title?: React.ReactNode
   actions?: React.ReactNode
 }
@@ -26,25 +24,28 @@ const Modal: React.FunctionComponent<Props> = ({
   children,
 }) => {
   return (
-    <MModal className="fj-c fa-c" open={open} onClose={onClose}>
-      <Paper style={style} className={className} data-testid="modal">
-        <div className="fj-sb fa-c pl-3">
-          <Text variant="h6">{title}</Text>
+    <PlainModal
+      style={style}
+      className={className}
+      open={open}
+      onClose={onClose}
+    >
+      <div className="fj-sb fa-c pl-3">
+        <Text variant="h6">{title}</Text>
 
-          <IconButton onClick={onClose}>
-            <Clear />
-          </IconButton>
-        </div>
+        <IconButton onClick={onClose}>
+          <Clear />
+        </IconButton>
+      </div>
 
-        <Divider />
+      <Divider />
 
-        <div className="p-3">
-          {children}
+      <div className="p-3">
+        {children}
 
-          {actions ? <div className="fj-e mt-2">{actions}</div> : null}
-        </div>
-      </Paper>
-    </MModal>
+        {actions ? <div className="fj-e mt-2">{actions}</div> : null}
+      </div>
+    </PlainModal>
   )
 }
 
