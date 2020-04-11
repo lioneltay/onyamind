@@ -33,7 +33,6 @@ import {
 import CreateTaskListModal from "./CreateTaskListModal"
 import RenameTaskListModal from "./RenameTaskListModal"
 import DeleteTaskListModal from "./DeleteTaskListModal"
-import SigninModal from "./SigninModal"
 
 import { comparator } from "ramda"
 import TaskList from "./TaskList"
@@ -48,8 +47,7 @@ export default () => {
   const history = useHistory()
   const theme = useTheme()
   const {
-    ui: { toggleDrawer, closeDrawer, openFeedbackModal },
-    auth: { signin, signout },
+    ui: { toggleDrawer, closeDrawer, openFeedbackModal, openAuthModal },
     app: {
       deleteTaskList,
       createTaskList,
@@ -61,7 +59,7 @@ export default () => {
   } = useActions()
 
   const { show, taskLists, selectedTaskListId, user, darkMode } = useSelector(
-    (state, s) => ({
+    (state) => ({
       show: state.ui.showDrawer,
       taskLists: state.app.taskLists,
       selectedTaskListId: state.app.selectedTaskListId,
@@ -79,7 +77,6 @@ export default () => {
     closeDrawer()
   }
 
-  const [showSigninModal, setShowSigninModal] = useState(false)
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [showRenameModal, setShowRenameModal] = useState(false)
@@ -131,7 +128,7 @@ export default () => {
               items={[
                 {
                   label: "Switch account",
-                  action: () => setShowSigninModal(true),
+                  action: openAuthModal,
                 },
               ]}
             >
@@ -165,7 +162,7 @@ export default () => {
             <ListItemText>
               <Button
                 variant="outlined"
-                onClick={() => setShowSigninModal(true)}
+                onClick={openAuthModal}
                 color="primary"
               >
                 Sign In
@@ -363,11 +360,6 @@ export default () => {
           }}
         />
       ) : null}
-
-      <SigninModal
-        open={showSigninModal}
-        onClose={() => setShowSigninModal(false)}
-      />
     </SwipeableDrawer>
   )
 }

@@ -9,6 +9,7 @@ export type SnackbarAction = {
 
 export type State = {
   showFeedbackModal: boolean
+  showAuthModal: boolean
   showDrawer: boolean
   snackbar: null | {
     icon?: React.ReactNode
@@ -22,12 +23,25 @@ export type State = {
 
 const initialState: State = {
   showFeedbackModal: false,
+  showAuthModal: false,
   showDrawer: false,
   snackbar: null,
 }
 
 export const reducer = (state: State = initialState, action: Action): State => {
   switch (action.type) {
+    case "OPEN_AUTH_MODAL": {
+      return {
+        ...state,
+        showAuthModal: true,
+      }
+    }
+    case "CLOSE_AUTH_MODAL": {
+      return {
+        ...state,
+        showAuthModal: false,
+      }
+    }
     case "OPEN_FEEDBACK_MODAL": {
       return {
         ...state,
