@@ -58,9 +58,7 @@ const App = () => {
       if (user) {
         setUser(user)
       } else {
-        const { user: anonUser } = await api.signinAnonymously()
-        assert(anonUser, "signinAnonmously Failed")
-        await api.initializeUserData(anonUser.uid)
+        await api.signInAnonymouslyAndInitializeData()
       }
     })
   })

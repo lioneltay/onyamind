@@ -43,6 +43,8 @@ import { useActions, useSelector } from "services/store"
 import { useTheme } from "theme"
 import { listPageUrl } from "pages/lists/routing"
 
+import { signOut } from "services/api"
+
 export default () => {
   const history = useHistory()
   const theme = useTheme()
@@ -127,8 +129,8 @@ export default () => {
             <PopoverMenu
               items={[
                 {
-                  label: "Switch account",
-                  action: openAuthModal,
+                  label: "Sign out",
+                  action: signOut,
                 },
               ]}
             >

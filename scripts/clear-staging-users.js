@@ -16,4 +16,4 @@ async function listAllUsers(nextPageToken) {
   }
 }
 
-listAllUsers()
+listAllUsers().then(() => process.exit())
