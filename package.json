@@ -13,6 +13,7 @@
     "build:functions": "cd functions && tsc --watch > /dev/null",
     "clean": "rimraf dist",
     "build": "npm run clean && webpack --config ./webpack/webpack.config.prod.js",
+    "build:analyze": "npm run clean && ANALYZE=true webpack --config ./webpack/webpack.config.prod.js",
     "typecheck": "tsc --noEmit --watch --skipLibCheck",
     "lint": "eslint . --ext .ts,.tsx",
     "cy:run": "cypress run",
@@ -74,6 +75,7 @@
     "start-server-and-test": "^1.10.11",
     "typescript": "^3.8.3",
     "webpack": "^4.42.0",
+    "webpack-bundle-analyzer": "^3.6.1",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.10.3",
     "workbox-webpack-plugin": "^3.6.3",
@@ -103,5 +105,6 @@
     "rxjs": "^6.5.4",
     "slugify": "^1.4.0",
     "styled-components": "^5.0.1"
-  }
+  },
+  "sideEffects": false
 }

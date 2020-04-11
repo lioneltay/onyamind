@@ -1,6 +1,8 @@
 const path = require("path")
 const CopyWebpackPlugin = require("copy-webpack-plugin")
 const webpack = require("webpack")
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
+  .BundleAnalyzerPlugin
 
 const relativeToRoot = (relativePath) =>
   path.resolve(__dirname, "../", relativePath)
@@ -15,6 +17,10 @@ module.exports = {
     filename: "[name].[hash].js",
     path: relativeToRoot("./dist"),
     publicPath: "/",
+  },
+
+  optimization: {
+    usedExports: true,
   },
 
   devtool: "source-map",
@@ -32,5 +38,13 @@ module.exports = {
         to: relativeToRoot("./dist"),
       },
     ]),
+    ...(process.env.ANALYZE
+      ? [
+          new BundleAnalyzerPlugin({
+            analyzerMode: "static",
+            openAnalyzer: false,
+          }),
+        ]
+      : []),
   ],
 }
