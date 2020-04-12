@@ -114,13 +114,6 @@ const Content = () => {
         </ButtonOption>
 
         <ButtonOption
-          onClick={() => providerSignIn("twitter")}
-          icon={<TwitterIcon />}
-        >
-          {method} with Twitter
-        </ButtonOption>
-
-        <ButtonOption
           icon={<EmailIcon />}
           onClick={() => setEmailAuth((x) => !x)}
         >
