@@ -2,9 +2,9 @@ import { completeTask } from "services/api"
 
 let registration: ServiceWorkerRegistration | null = null
 
-export const registerServiceWorker = (reg: ServiceWorkerRegistration) => {
+navigator.serviceWorker.ready.then((reg) => {
   registration = reg
-}
+})
 
 export const createTaskNotification = async (task: Task) => {
   if (Notification.permission !== "granted") {
@@ -50,5 +50,10 @@ export const createTaskNotifications = async (tasks: Task[]) => {
 const broadcast = new BroadcastChannel("notification-action")
 
 broadcast.onmessage = async (event) => {
-  await completeTask(event.data.payload.taskId)
+  if (event.data.action === "COMPLETE_TASK") {
+    return completeTask(event.data.payload.task.id)
+  }
+  if (event.data.action === "NAVIGATE_TO_TASK") {
+    return history.pushState({}, "", `/lists/${event.data.payload.task.listId}`)
+  }
 }

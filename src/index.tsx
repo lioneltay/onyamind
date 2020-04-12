@@ -9,10 +9,6 @@ import { render } from "react-dom"
 import "services/firebase"
 import App from "./App"
 
-// import "./service-worker/service.worker"
-
-import { registerServiceWorker } from "services/notifications"
-
 import { initializeErrorReporting } from "services/analytics/error-reporting"
 import { logEvent } from "services/analytics/events"
 
@@ -25,8 +21,6 @@ if (process.env.NODE_ENV !== "test" && "serviceWorker" in navigator) {
       const registration = await navigator.serviceWorker.register(
         "/service.worker.js",
       )
-
-      registerServiceWorker(registration)
 
       logEvent("SERVICE_WORKER_REGISTRATION|SUCCESS")
       return registration
