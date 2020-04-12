@@ -53,7 +53,4 @@ broadcast.onmessage = async (event) => {
   if (event.data.action === "COMPLETE_TASK") {
     return completeTask(event.data.payload.task.id)
   }
-  if (event.data.action === "NAVIGATE_TO_TASK") {
-    return history.pushState({}, "", `/lists/${event.data.payload.task.listId}`)
-  }
 }
