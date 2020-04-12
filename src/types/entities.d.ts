@@ -7,7 +7,12 @@ declare global {
 
   export type User = Pick<
     firebase.User,
-    "uid" | "email" | "photoURL" | "displayName" | "isAnonymous"
+    | "uid"
+    | "email"
+    | "photoURL"
+    | "displayName"
+    | "isAnonymous"
+    | "providerData"
   >
 }
 

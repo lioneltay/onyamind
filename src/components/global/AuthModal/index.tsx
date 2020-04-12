@@ -8,16 +8,13 @@ import { ClearIcon } from "lib/icons"
 
 import { signInWithProvider } from "services/api"
 
-import {
-  GoogleIcon,
-  FacebookIcon,
-  TwitterIcon,
-  EmailIcon,
-} from "./provider-icons"
+import { GoogleIcon, FacebookIcon, EmailIcon } from "lib/icons"
 
 import EmailSignInForm from "./EmailSignInForm"
 
 import { useActions, useSelector } from "services/store"
+
+import { GoogleButton, FacebookButton, EmailButton } from "lib/login-buttons"
 
 const ContentContainer = styled.div`
   position: relative;
@@ -100,26 +97,17 @@ const Content = () => {
           }
         `}
       >
-        <ButtonOption
-          onClick={() => providerSignIn("google")}
-          icon={<GoogleIcon />}
-        >
+        <GoogleButton onClick={() => providerSignIn("google")}>
           {method} with Google
-        </ButtonOption>
+        </GoogleButton>
 
-        <ButtonOption
-          onClick={() => providerSignIn("facebook")}
-          icon={<FacebookIcon />}
-        >
+        <FacebookButton onClick={() => providerSignIn("facebook")}>
           {method} with Facebook
-        </ButtonOption>
+        </FacebookButton>
 
-        <ButtonOption
-          icon={<EmailIcon />}
-          onClick={() => setEmailAuth((x) => !x)}
-        >
+        <EmailButton onClick={() => setEmailAuth((x) => !x)}>
           {method} with Email
-        </ButtonOption>
+        </EmailButton>
       </div>
 
       <Text
@@ -131,7 +119,7 @@ const Content = () => {
       >
         {creatingAccount ? "Already have an account?" : "No account?"}{" "}
         <Text
-          inline
+          display="inline"
           color="primary"
           variant="body2"
           role="button"
@@ -177,47 +165,5 @@ export default () => {
 
       <Content />
     </PlainModal>
-  )
-}
-
-type ButtonOptionProps = ButtonProps & {
-  icon: React.ReactNode
-}
-
-const ButtonOption = ({
-  icon,
-  children,
-  ...buttonProps
-}: ButtonOptionProps) => {
-  const iconContainerSize = 24
-  const iconSize = 18
-
-  return (
-    <Button variant="outlined" color="default" {...buttonProps}>
-      <div
-        style={{
-          height: iconContainerSize,
-          width: iconContainerSize,
-        }}
-        css={css`
-          display: flex;
-          justify-content: center;
-          align-items: center;
-
-          margin-right: 8px;
-
-          width: ${iconContainerSize}px;
-          height: ${iconContainerSize}px;
-
-          & > svg {
-            width: ${iconSize}px;
-            height: ${iconSize}px;
-          }
-        `}
-      >
-        {icon}
-      </div>
-      <Text variant="body2">{children}</Text>
-    </Button>
   )
 }

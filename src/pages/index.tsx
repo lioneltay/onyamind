@@ -4,6 +4,7 @@ import { Switch, Route, Redirect } from "react-router-dom"
 
 import ListPage from "./lists/Page"
 import TrashPage from "./trash/Page"
+import ProfilePage from "./profile/Page"
 
 import { useTheme } from "theme"
 
@@ -18,6 +19,7 @@ export default () => {
       `}
     >
       <Switch>
+        <Route path="/profile" component={ProfilePage} />
         <Route path="/lists/:listId?" component={ListPage} />
         <Route path="/trash" component={TrashPage} />
         <Route>{() => <Redirect to="/lists" />}</Route>

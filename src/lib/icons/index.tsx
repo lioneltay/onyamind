@@ -58,3 +58,5 @@ export const NotificationsIcon = iconFromMaterialIcon(
   Notifications,
 )
 export const ChevronLeftIcon = iconFromMaterialIcon("ChevronLeft", ChevronLeft)
+
+export * from "./provider-icons"
