@@ -12,6 +12,8 @@ import { MOBILE_WIDTH } from "config"
 
 import { onTrashTasksChange } from "./api"
 
+import { Helmet } from "react-helmet"
+
 const Content = () => {
   const theme = useTheme()
 
@@ -45,7 +47,10 @@ const Content = () => {
 
 export default () => {
   const { setTrashTasks } = useActions("trashPage")
-  const userId = useSelector((state) => state.auth.user?.uid)
+  const { userId, trashTasksCount } = useSelector((state) => ({
+    userId: state.auth.user?.uid,
+    trashTasksCount: (state.trashPage.trashTasks ?? []).length,
+  }))
 
   React.useEffect(() => {
     if (userId) {
@@ -58,6 +63,10 @@ export default () => {
 
   return (
     <Fragment>
+      <Helmet>
+        <title>Trash ({trashTasksCount.toString()})</title>
+      </Helmet>
+
       <Header />
 
       <section

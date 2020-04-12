@@ -55,7 +55,7 @@ self.addEventListener("notificationclose", (event) => {
   broadcast.postMessage({
     action: "COMPLETE_TASK",
     payload: {
-      taskId: event.notification.data.id,
+      task: event.notification.data,
     },
   })
 })

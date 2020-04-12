@@ -27,6 +27,8 @@ import { listPageUrl } from "pages/lists/routing"
 
 import { onTasksChange } from "pages/lists/api"
 
+import { Helmet } from "react-helmet"
+
 const Flip = styled.div<{ flip: boolean }>`
   transform: rotate(${({ flip }) => (flip ? "-180deg" : "0")});
   transition: 300ms;
@@ -165,11 +167,17 @@ export default ({
     taskListsLoaded,
     listIdParamValid,
     userId,
-  } = useSelector((state) => ({
+    selectedTaskList,
+    completeTasksCount,
+    incompleteTasksCount,
+  } = useSelector((state, s) => ({
     userId: state.auth.user?.uid,
     selectedTaskListId: state.app.selectedTaskListId,
+    selectedTaskList: s.app.selectedTaskList(state),
     taskListsLoaded: !!state.app.taskLists,
     listIdParamValid: !!state.app.taskLists?.find((list) => list.id === listId),
+    completeTasksCount: s.listPage.completedTasks(state).length,
+    incompleteTasksCount: s.listPage.incompletedTasks(state).length,
   }))
 
   React.useEffect(() => {
@@ -205,6 +213,18 @@ export default ({
 
   return (
     <Fragment>
+      <Helmet>
+        {selectedTaskList?.name ? (
+          incompleteTasksCount + completeTasksCount === 0 ? (
+            <title>{selectedTaskList.name}</title>
+          ) : (
+            <title>{`${selectedTaskList?.name} ${completeTasksCount}/${
+              completeTasksCount + incompleteTasksCount
+            }`}</title>
+          )
+        ) : null}
+      </Helmet>
+
       <Header />
 
       <section

@@ -13,6 +13,6 @@ export function visitListPage(listInfo) {
     cy.findByText(new RegExp(`${listInfo.name}`, "i"))
   } else {
     cy.visit("/lists")
-    cy.findByText(/todo/i)
+    cy.get("body").findByText(/todo/i)
   }
 }
