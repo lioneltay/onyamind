@@ -1,5 +1,6 @@
 import * as functions from "firebase-functions"
 
+import { auth } from "firebase-admin"
 import { admin } from "../utils/firebase"
 
 const dataWithId = (
@@ -7,6 +8,10 @@ const dataWithId = (
 ) => ({ id: doc.id, ...doc.data })
 
 const firestore = admin.firestore()
+
+function isAnonymouseUser(user: auth.UserRecord) {
+  return user.providerData.length === 0
+}
 
 export const migrateUserData = functions.https.onCall(
   async (
@@ -25,7 +30,7 @@ export const migrateUserData = functions.https.onCall(
      * Someone could potential steal your data if you never signed in and they somehow got a hold of your anonymous userId. However they would have to have access to your device to do that in which case they could do whatever they want anyway
      */
 
-    if (context.auth?.uid !== toUserId && fromUser.providerData.length !== 0) {
+    if (context.auth?.uid !== toUserId && !isAnonymouseUser(fromUser)) {
       return new Error("Not authorized")
     }
 

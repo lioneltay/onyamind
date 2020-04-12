@@ -1,11 +1,7 @@
 import { css } from "styled-components"
 
 function spacing() {
-  const sizes = [0].concat(
-    Array(5)
-      .fill(null)
-      .map((_, index) => 4 * 2 ** index)
-  )
+  const sizes = [0, 2, 4, 8, 16, 24, 32, 48, 64]
 
   return sizes
     .map((size, index) => {

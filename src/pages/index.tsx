@@ -2,8 +2,6 @@ import React from "react"
 import { noopTemplate as css } from "lib/utils"
 import { Switch, Route, Redirect } from "react-router-dom"
 
-import { Drawer } from "components"
-
 import ListPage from "./lists/Page"
 import TrashPage from "./trash/Page"
 
@@ -19,8 +17,6 @@ export default () => {
         min-height: 100vh;
       `}
     >
-      <Drawer />
-
       <Switch>
         <Route path="/lists/:listId?" component={ListPage} />
         <Route path="/trash" component={TrashPage} />

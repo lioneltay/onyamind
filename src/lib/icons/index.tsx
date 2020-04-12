@@ -19,6 +19,7 @@ import {
   AccountCircle,
   Notifications,
   Close,
+  ChevronLeft,
   SvgIconComponent,
 } from "@material-ui/icons"
 
@@ -56,3 +57,4 @@ export const NotificationsIcon = iconFromMaterialIcon(
   "Notifications",
   Notifications,
 )
+export const ChevronLeftIcon = iconFromMaterialIcon("ChevronLeft", ChevronLeft)

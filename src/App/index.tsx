@@ -5,7 +5,6 @@ import Root from "pages"
 import GlobalStyles from "styles/global"
 
 import { StylesProvider } from "@material-ui/core"
-import { GlobalSnackbar } from "components"
 
 import { store } from "services/store"
 import { Provider as ReduxProvider } from "react-redux"
@@ -17,6 +16,8 @@ import { useActions, useSelector } from "services/store"
 
 import { assert } from "lib/utils"
 
+import { GlobalComponents } from "components"
+
 export default () => {
   return (
     // <React.StrictMode>
@@ -25,7 +26,7 @@ export default () => {
         <StylesProvider injectFirst>
           <ThemeProvider dark={false}>
             <GlobalStyles />
-            <GlobalSnackbar />
+            <GlobalComponents />
             <App />
           </ThemeProvider>
         </StylesProvider>
@@ -57,9 +58,7 @@ const App = () => {
       if (user) {
         setUser(user)
       } else {
-        const { user: anonUser } = await api.signinAnonymously()
-        assert(anonUser, "signinAnonmously Failed")
-        await api.initializeUserData(anonUser.uid)
+        await api.signInAnonymouslyAndInitializeData()
       }
     })
   })

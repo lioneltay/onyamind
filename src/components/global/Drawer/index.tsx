@@ -28,17 +28,13 @@ import {
   ClearIcon,
   AccountCircleIcon,
   DeleteIcon,
-  CheckIcon,
 } from "lib/icons"
 
 import CreateTaskListModal from "./CreateTaskListModal"
 import RenameTaskListModal from "./RenameTaskListModal"
 import DeleteTaskListModal from "./DeleteTaskListModal"
-import FeedbackModal from "./FeedbackModal"
-import SigninModal from "./SigninModal"
 
 import { comparator } from "ramda"
-import { GoogleSignInButton } from "components"
 import TaskList from "./TaskList"
 import { useHistory } from "react-router-dom"
 
@@ -47,14 +43,13 @@ import { useActions, useSelector } from "services/store"
 import { useTheme } from "theme"
 import { listPageUrl } from "pages/lists/routing"
 
-import * as api from "services/api"
+import { signOut } from "services/api"
 
 export default () => {
   const history = useHistory()
   const theme = useTheme()
   const {
-    ui: { toggleDrawer, closeDrawer, openSnackbar },
-    auth: { signin, signout },
+    ui: { toggleDrawer, closeDrawer, openFeedbackModal, openAuthModal },
     app: {
       deleteTaskList,
       createTaskList,
@@ -66,7 +61,7 @@ export default () => {
   } = useActions()
 
   const { show, taskLists, selectedTaskListId, user, darkMode } = useSelector(
-    (state, s) => ({
+    (state) => ({
       show: state.ui.showDrawer,
       taskLists: state.app.taskLists,
       selectedTaskListId: state.app.selectedTaskListId,
@@ -84,9 +79,7 @@ export default () => {
     closeDrawer()
   }
 
-  const [showSigninModal, setShowSigninModal] = useState(false)
   const [showCreateModal, setShowCreateModal] = useState(false)
-  const [showFeedbackModal, setShowFeedbackModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [showRenameModal, setShowRenameModal] = useState(false)
   const [selectedId, setSelectedId] = useState(null as ID | null)
@@ -136,8 +129,8 @@ export default () => {
             <PopoverMenu
               items={[
                 {
-                  label: "Switch account",
-                  action: () => setShowSigninModal(true),
+                  label: "Sign out",
+                  action: signOut,
                 },
               ]}
             >
@@ -171,7 +164,7 @@ export default () => {
             <ListItemText>
               <Button
                 variant="outlined"
-                onClick={() => setShowSigninModal(true)}
+                onClick={openAuthModal}
                 color="primary"
               >
                 Sign In
@@ -299,17 +292,15 @@ export default () => {
           icon={<DeleteIcon />}
           text="Trash"
           onClick={() => {
+            selectTaskList(null)
             history.push("/trash")
             toggleDrawer()
           }}
         />
-        {/* {!user.isAnonymous && (
-          <OptionItem icon={<ExitToApp />} text="Sign out" onClick={signout} />
-        )} */}
         <OptionItem
           icon={<FeedbackIcon />}
           text="Send feedback"
-          onClick={() => setShowFeedbackModal(true)}
+          onClick={openFeedbackModal}
         />
         <OptionItem icon={<HelpIcon />} text="Help" />
         <Divider />
@@ -331,19 +322,6 @@ export default () => {
           </ListItemSecondaryAction>
         </ListItem>
       </List>
-
-      <FeedbackModal
-        onSubmit={async (values) => {
-          await api.sendFeedback({
-            subject: values.subject,
-            description: values.description,
-          })
-          openSnackbar({ text: "Feedback sent!" })
-          setShowFeedbackModal(false)
-        }}
-        open={showFeedbackModal}
-        onClose={() => setShowFeedbackModal(false)}
-      />
 
       <CreateTaskListModal
         onSubmit={async (values) => {
@@ -384,11 +362,6 @@ export default () => {
           }}
         />
       ) : null}
-
-      <SigninModal
-        open={showSigninModal}
-        onClose={() => setShowSigninModal(false)}
-      />
     </SwipeableDrawer>
   )
 }

@@ -6,7 +6,7 @@ import * as api from "services/api"
 const setTaskLists = (taskLists: TaskList[]) =>
   ({ type: "APP|SET_TASK_LISTS", payload: { taskLists } } as const)
 
-const selectTaskList = (listId: ID) =>
+const selectTaskList = (listId: ID | null) =>
   ({
     type: "APP|SELECT_TASK_LIST",
     payload: { listId },

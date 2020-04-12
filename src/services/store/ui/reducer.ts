@@ -2,30 +2,53 @@ import React from "react"
 import { assertNever } from "lib/utils"
 import { Action } from "./actions"
 
-export type SnackbarAction = {
-  label: string
-  handler?: () => void
-}
+export type SnackbarType = "error" | "warning" | "info" | "success"
 
 export type State = {
+  showFeedbackModal: boolean
+  showAuthModal: boolean
   showDrawer: boolean
   snackbar: null | {
-    icon?: React.ReactNode
+    type: SnackbarType
     duration: number
     text: string
-    actions: SnackbarAction[]
     closable: boolean
-    onClose?: () => void
   }
 }
 
 const initialState: State = {
+  showFeedbackModal: false,
+  showAuthModal: false,
   showDrawer: false,
   snackbar: null,
 }
 
 export const reducer = (state: State = initialState, action: Action): State => {
   switch (action.type) {
+    case "OPEN_AUTH_MODAL": {
+      return {
+        ...state,
+        showAuthModal: true,
+      }
+    }
+    case "CLOSE_AUTH_MODAL": {
+      return {
+        ...state,
+        showAuthModal: false,
+      }
+    }
+    case "OPEN_FEEDBACK_MODAL": {
+      return {
+        ...state,
+        showFeedbackModal: true,
+      }
+    }
+    case "CLOSE_FEEDBACK_MODAL": {
+      return {
+        ...state,
+        showFeedbackModal: false,
+      }
+    }
     case "OPEN_DRAWER": {
       return {
         ...state,
@@ -51,25 +74,9 @@ export const reducer = (state: State = initialState, action: Action): State => {
       }
     }
     case "OPEN_SNACKBAR": {
-      const {
-        text,
-        closable,
-        actions,
-        onClose,
-        duration,
-        icon,
-      } = action.payload
-
       return {
         ...state,
-        snackbar: {
-          actions,
-          closable,
-          text,
-          onClose,
-          duration,
-          icon,
-        },
+        snackbar: action.payload,
       }
     }
     default: {

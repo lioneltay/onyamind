@@ -8,6 +8,7 @@ import size from "./size"
 import spacing from "./spacing"
 import text from "./text"
 import widgets from "./widgets"
+import accessibility from "./accessibility"
 
 export default createGlobalStyle`
   * {
@@ -36,4 +37,5 @@ export default createGlobalStyle`
   ${spacing}
   ${text}
   ${widgets}
+  ${accessibility}
 `
