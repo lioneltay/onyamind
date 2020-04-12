@@ -18,6 +18,8 @@ import { assert } from "lib/utils"
 
 import { GlobalComponents } from "components"
 
+import { Helmet } from "react-helmet"
+
 export default () => {
   return (
     // <React.StrictMode>
@@ -25,6 +27,11 @@ export default () => {
       <Router>
         <StylesProvider injectFirst>
           <ThemeProvider dark={false}>
+            <Helmet>
+              <title>Onyamind Tasks</title>
+              <meta name="description" content="Simple task management" />
+            </Helmet>
+
             <GlobalStyles />
             <GlobalComponents />
             <App />
