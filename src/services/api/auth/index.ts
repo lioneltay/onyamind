@@ -3,6 +3,7 @@ import { assert } from "lib/utils"
 import { INITIAL_TASK_LIST_NAME } from "config"
 import { createTaskList } from "services/api/task-lists"
 import { migrateUserData } from "services/api/callable-functions"
+import { logEvent } from "services/analytics/events"
 
 export const onAuthStateChanged = (onChange: (user: User | null) => void) => {
   return firebase.auth().onAuthStateChanged(onChange)
@@ -26,6 +27,7 @@ export async function createUserWithEmailAndPassword({
   email,
   password,
 }: EmailCredentials) {
+  logEvent("CreateUserWithEmailAndPassword|Begin")
   const anonUser = firebase.auth().currentUser
   assert(
     anonUser?.isAnonymous,
@@ -37,6 +39,7 @@ export async function createUserWithEmailAndPassword({
   const { user } = await anonUser.linkWithCredential(credential)
 
   user?.reload()
+  logEvent("CreateUserWithEmailAndPassword|Complete")
   return user
 }
 
@@ -44,6 +47,7 @@ export async function signInWithEmailAndPassword({
   email,
   password,
 }: EmailCredentials) {
+  logEvent("SignInWithEmailAndPassword|Begin")
   const anonUser = firebase.auth().currentUser
   assert(anonUser?.isAnonymous, "No anonymous user signed in")
 
@@ -55,6 +59,7 @@ export async function signInWithEmailAndPassword({
 
   await migrateUserData({ fromUserId: anonUser.uid, toUserId: user.uid })
 
+  logEvent("SignInWithEmailAndPassword|Complete")
   return user
 }
 
@@ -103,6 +108,7 @@ export const signInWithProvider = async (
   providerName: ProviderType,
   options?: GetProviderOptions,
 ) => {
+  logEvent(`SignInWithProvider|${providerName}|Begin`)
   const anonUser = firebase.auth().currentUser
   assert(anonUser?.isAnonymous, "No anonymous user signed in")
 
@@ -111,6 +117,7 @@ export const signInWithProvider = async (
   try {
     const { user } = await anonUser.linkWithPopup(provider)
     assert(user?.uid, `Link sign in fail [${providerName}]`)
+    logEvent(`SignInWithProvider|Link|${providerName}|Complete`)
     return user
   } catch (error) {
     if (error.code === "auth/account-exists-with-different-credential") {
@@ -123,12 +130,16 @@ export const signInWithProvider = async (
 
     await migrateUserData({ fromUserId: anonUser.uid, toUserId: user.uid })
 
+    logEvent(`SignInWithProvider|Merge|${providerName}|Complete`)
     return user
   }
 }
 
-function signInAnonymously() {
-  return firebase.auth().signInAnonymously()
+async function signInAnonymously() {
+  logEvent(`SignInAnonymously|Begin`)
+  const res = await firebase.auth().signInAnonymously()
+  logEvent(`SignInAnonymously|Complete`)
+  return res
 }
 
 export async function signInAnonymouslyAndInitializeData() {
@@ -138,5 +149,7 @@ export async function signInAnonymouslyAndInitializeData() {
 }
 
 export async function signOut() {
+  logEvent(`SignOut|Begin`)
   await signInAnonymouslyAndInitializeData()
+  logEvent(`SignOut|Complete`)
 }
