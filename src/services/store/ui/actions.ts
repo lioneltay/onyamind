@@ -3,7 +3,7 @@ import { bindActionCreators, Dispatch } from "redux"
 import { useDispatch } from "react-redux"
 import { ActionsUnion, ActionTypesUnion } from "services/store/helpers"
 
-import { SnackbarAction } from "./reducer"
+import { SnackbarType } from "./reducer"
 
 const openDrawer = () => ({ type: "OPEN_DRAWER" } as const)
 const closeDrawer = () => ({ type: "CLOSE_DRAWER" } as const)
@@ -11,29 +11,23 @@ const toggleDrawer = () => ({ type: "TOGGLE_DRAWER" } as const)
 
 type OpenSnackbarInput = {
   text: string
-  actions?: SnackbarAction[]
   duration?: number
   closable?: boolean
-  onClose?: () => void
-  icon?: React.ReactNode
+  type: SnackbarType
 }
 const openSnackbar = ({
   text,
-  actions = [],
   duration = 5000,
   closable = false,
-  onClose,
-  icon,
+  type,
 }: OpenSnackbarInput) => {
   return {
     type: "OPEN_SNACKBAR",
     payload: {
       text,
-      actions,
       closable,
-      onClose,
       duration,
-      icon,
+      type,
     },
   } as const
 }

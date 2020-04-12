@@ -60,6 +60,7 @@ const Content = () => {
       .catch((error) => {
         if (error.code === "auth/account-exists-with-different-credential") {
           openSnackbar({
+            type: "error",
             text: "An account with this email already exists",
           })
           return

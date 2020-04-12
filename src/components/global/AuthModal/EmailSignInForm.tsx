@@ -62,15 +62,19 @@ export default ({ goBack, creatingAccount }: Props) => {
             .catch((error) => {
               if (error.code === "auth/email-already-in-use") {
                 return openSnackbar({
+                  type: "error",
                   text: "An account with this email address already exists",
                 })
               }
               if (error.code === "auth/invalid-email") {
-                return openSnackbar({ text: "Invalid email address" })
+                return openSnackbar({
+                  type: "error",
+                  text: "Invalid email address",
+                })
               }
 
               if (error.code === "auth/weak-password") {
-                return openSnackbar({ text: error.message })
+                return openSnackbar({ type: "error", text: error.message })
               }
 
               throw error
@@ -90,6 +94,7 @@ export default ({ goBack, creatingAccount }: Props) => {
                 error.code === "auth/wrong-password"
               ) {
                 return openSnackbar({
+                  type: "error",
                   text: "Your password or email address is incorrect",
                 })
               }

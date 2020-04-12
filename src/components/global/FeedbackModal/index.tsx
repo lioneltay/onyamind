@@ -19,7 +19,7 @@ export default () => {
           subject: values.subject,
           description: values.description,
         })
-        openSnackbar({ text: "Feedback sent!" })
+        openSnackbar({ type: "success", text: "Feedback sent!" })
         closeFeedbackModal()
       }}
       open={open}

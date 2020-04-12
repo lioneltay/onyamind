@@ -1,6 +1,7 @@
 import React from "react"
 import { noop } from "lib/utils"
 import { Button, Snackbar, IconButton, Slide } from "@material-ui/core"
+import Alert, { AlertProps } from "@material-ui/lab/Alert"
 import { ClearIcon } from "lib/icons"
 import { TransitionProps } from "@material-ui/core/transitions"
 
@@ -12,7 +13,7 @@ const SlideTransition = (props: TransitionProps) => {
 
 export default () => {
   const { closeSnackbar } = useActions("ui")
-  const { snackbar, dark } = useSelector((state) => ({
+  const { snackbar } = useSelector((state) => ({
     dark: state.settings.darkMode,
     snackbar: state.ui.snackbar,
   }))
@@ -50,7 +51,6 @@ export default () => {
 
   const handleClose = () => {
     closeSnackbar()
-    currentSnackbar?.onClose?.()
     setOpen(false)
   }
 
@@ -69,41 +69,10 @@ export default () => {
       ClickAwayListenerProps={{
         onClickAway: noop,
       }}
-      message={
-        <span style={{ userSelect: "none" }}>
-          {currentSnackbar?.icon ? (
-            <span style={{ marginRight: 4 }}>{currentSnackbar.icon}</span>
-          ) : null}
-          {currentSnackbar?.text}
-        </span>
-      }
-      action={currentSnackbar?.actions
-        .map(({ label, handler }) => (
-          <Button
-            key={label}
-            color="secondary"
-            size="small"
-            onClick={() => {
-              handleClose()
-              handler?.()
-            }}
-          >
-            {label}
-          </Button>
-        ))
-        .concat(
-          currentSnackbar.closable ? (
-            <IconButton
-              key="close"
-              style={{ color: dark ? "rgba(0, 0, 0, 0.54)" : "white" }}
-              onClick={handleClose}
-            >
-              <ClearIcon />
-            </IconButton>
-          ) : (
-            []
-          ),
-        )}
-    />
+    >
+      <Alert variant="filled" severity={currentSnackbar?.type}>
+        {currentSnackbar?.text}
+      </Alert>
+    </Snackbar>
   )
 }
