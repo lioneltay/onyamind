@@ -31,6 +31,7 @@ const ContentContainer = styled.div`
 const Content = () => {
   const {
     ui: { closeAuthModal, openSnackbar },
+    auth: { setUser },
   } = useActions()
 
   const [creatingAccount, setCreatingAccount] = React.useState(false)
@@ -51,18 +52,21 @@ const Content = () => {
   async function providerSignIn(
     ...args: Parameters<typeof signInWithProvider>
   ) {
-    await signInWithProvider(...args).catch((error) => {
-      if (error.code === "auth/account-exists-with-different-credential") {
-        openSnackbar({
-          text: "An account with this email already exists",
-        })
-        return
-      }
+    await signInWithProvider(...args)
+      .then((user) => {
+        setUser(user)
+        closeAuthModal()
+      })
+      .catch((error) => {
+        if (error.code === "auth/account-exists-with-different-credential") {
+          openSnackbar({
+            text: "An account with this email already exists",
+          })
+          return
+        }
 
-      throw error
-    })
-
-    closeAuthModal()
+        throw error
+      })
   }
 
   return (

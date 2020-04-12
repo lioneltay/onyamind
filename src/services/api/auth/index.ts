@@ -36,6 +36,7 @@ export async function createUserWithEmailAndPassword({
 
   const { user } = await anonUser.linkWithCredential(credential)
 
+  user?.reload()
   return user
 }
 
