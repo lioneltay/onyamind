@@ -5,7 +5,9 @@ function checkCounts(incomplete, complete) {
   if (incomplete + complete === 0) {
     cy.findByText(/no tasks/i)
   } else {
-    cy.findByText(new RegExp(`${complete}\/${incomplete + complete}`))
+    cy.get("body").findByText(
+      new RegExp(`${complete}\/${incomplete + complete}`),
+    )
   }
   cy.findByIconName("clear").click()
 }
