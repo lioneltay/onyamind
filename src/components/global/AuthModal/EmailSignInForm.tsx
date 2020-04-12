@@ -5,6 +5,8 @@ import { ChevronLeftIcon } from "lib/icons"
 import { Text, Button } from "lib/components"
 import { Formik, Form } from "formik"
 
+import { useActions } from "services/store"
+
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -22,6 +24,10 @@ type Props = {
 }
 
 export default ({ goBack, creatingAccount }: Props) => {
+  const {
+    ui: { openSnackbar, closeAuthModal },
+  } = useActions()
+
   const method = creatingAccount ? "Sign up" : "Sign in"
 
   return (
@@ -33,14 +39,37 @@ export default ({ goBack, creatingAccount }: Props) => {
             email: values.email,
             password: values.password,
           })
+            .then(closeAuthModal)
+            .catch((error) => {
+              if (error.code === "auth/invalid-email") {
+                openSnackbar({ text: "Invalid email address" })
+              }
+
+              if (error.code === "auth/weak-password") {
+                openSnackbar({ text: error.message })
+              }
+              console.error(error)
+              throw error
+            })
         } else {
           await signInWithEmailAndPassword({
             email: values.email,
             password: values.password,
           })
-        }
+            .then(closeAuthModal)
+            .catch((error) => {
+              if (
+                error.code === "auth/user-not-found" ||
+                error.code === "auth/wrong-password"
+              ) {
+                openSnackbar({
+                  text: "Your password or email address is incorrect",
+                })
+              }
 
-        console.log("done", values)
+              throw error
+            })
+        }
       }}
     >
       {({ values, setFieldValue }) => (
@@ -51,27 +80,39 @@ export default ({ goBack, creatingAccount }: Props) => {
 
           <TextField
             label="Email"
+            placeholder="Email"
             variant="outlined"
             type="email"
+            InputLabelProps={{
+              shrink: true,
+            }}
             value={values.email}
             onChange={(e) => setFieldValue("email", e.target.value)}
           />
 
           <TextField
             label="Password"
+            placeholder="Password"
             className="mt-4"
             variant="outlined"
             type="password"
+            InputLabelProps={{
+              shrink: true,
+            }}
             value={values.password}
             onChange={(e) => setFieldValue("password", e.target.value)}
           />
 
           {creatingAccount ? (
             <TextField
-              label="Confirm Password"
+              label="Confirm password"
+              placeholder="Confirm password"
               className="mt-4"
               variant="outlined"
               type="password"
+              InputLabelProps={{
+                shrink: true,
+              }}
               value={values.confirmPassword}
               onChange={(e) => setFieldValue("confirmPassword", e.target.value)}
             />

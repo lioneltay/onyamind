@@ -3,8 +3,6 @@ import { css } from "styled-components"
 function spacing() {
   const sizes = [0, 2, 4, 8, 16, 24, 32, 48, 64]
 
-  console.log(sizes)
-
   return sizes
     .map((size, index) => {
       const num = index

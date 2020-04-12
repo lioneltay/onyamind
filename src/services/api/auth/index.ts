@@ -22,35 +22,40 @@ type EmailCredentials = {
   password: string
 }
 
-export const createUserWithEmailAndPassword = ({
+export async function createUserWithEmailAndPassword({
   email,
   password,
-}: EmailCredentials) =>
-  firebase
-    .auth()
-    .createUserWithEmailAndPassword(email, password)
-    .catch((error) => {
-      const errorCode = error.code
-      const errorMessage = error.message
-      console.error(errorCode, errorMessage)
+}: EmailCredentials) {
+  const anonUser = firebase.auth().currentUser
+  assert(
+    anonUser?.isAnonymous,
+    "signInWithProvider fail: No anonymous user signed in",
+  )
 
-      throw error
-    })
+  const credential = firebase.auth.EmailAuthProvider.credential(email, password)
 
-export const signInWithEmailAndPassword = ({
+  const { user } = await anonUser.linkWithCredential(credential)
+
+  return user
+}
+
+export async function signInWithEmailAndPassword({
   email,
   password,
-}: EmailCredentials) =>
-  firebase
+}: EmailCredentials) {
+  const anonUser = firebase.auth().currentUser
+  assert(anonUser?.isAnonymous, "No anonymous user signed in")
+
+  const { user } = await firebase
     .auth()
     .signInWithEmailAndPassword(email, password)
-    .catch(function (error) {
-      const errorCode = error.code
-      const errorMessage = error.message
-      console.error(errorCode, errorMessage)
 
-      throw error
-    })
+  assert(user, "No user")
+
+  await migrateUserData({ fromUserId: anonUser.uid, toUserId: user.uid })
+
+  return user
+}
 
 type ProviderType = "google" | "facebook" | "twitter"
 
@@ -98,10 +103,7 @@ export const signInWithProvider = async (
   options?: GetProviderOptions,
 ) => {
   const anonUser = firebase.auth().currentUser
-  assert(
-    anonUser?.isAnonymous,
-    "signInWithProvider fail: No anonymous user signed in",
-  )
+  assert(anonUser?.isAnonymous, "No anonymous user signed in")
 
   const provider = getProvider(providerName, options)
 
@@ -116,7 +118,7 @@ export const signInWithProvider = async (
 
     const { credential } = error
     const { user } = await firebase.auth().signInWithCredential(credential)
-    assert(user?.uid, `Merge sign in fail ${providerName}`)
+    assert(user?.uid, `Merge sign in fail [${providerName}]`)
 
     await migrateUserData({ fromUserId: anonUser.uid, toUserId: user.uid })
 
