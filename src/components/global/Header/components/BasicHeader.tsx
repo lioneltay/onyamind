@@ -3,10 +3,15 @@ import { noopTemplate as css } from "lib/utils"
 
 import { MenuIcon } from "lib/icons"
 import { Toolbar, AppBar, IconButton } from "@material-ui/core"
+import { Text } from "lib/components"
 
 import { useActions } from "services/store"
 
-export default () => {
+type Props = {
+  title?: string
+}
+
+export default ({ title }: Props) => {
   const {
     ui: { toggleDrawer },
   } = useActions()
@@ -54,6 +59,10 @@ export default () => {
             >
               <MenuIcon />
             </IconButton>
+
+            <Text variant="h6" style={{ paddingLeft: 18 }}>
+              {title}
+            </Text>
           </div>
         </div>
       </Toolbar>

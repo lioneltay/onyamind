@@ -20,6 +20,8 @@ import {
   Notifications,
   Close,
   ChevronLeft,
+  ExitToApp,
+  Settings,
   SvgIconComponent,
 } from "@material-ui/icons"
 
@@ -58,5 +60,7 @@ export const NotificationsIcon = iconFromMaterialIcon(
   Notifications,
 )
 export const ChevronLeftIcon = iconFromMaterialIcon("ChevronLeft", ChevronLeft)
+export const ExitToAppIcon = iconFromMaterialIcon("ExitToApp", ExitToApp)
+export const SettingsIcon = iconFromMaterialIcon("Settings", Settings)
 
 export * from "./provider-icons"

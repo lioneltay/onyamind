@@ -17,10 +17,9 @@ import {
   IconButton,
   LinearProgress,
   Fade,
-  Switch,
 } from "@material-ui/core"
 
-import { Text, Modal, PopoverMenu } from "lib/components"
+import { Text, Modal } from "lib/components"
 
 import {
   HelpIcon,
@@ -28,6 +27,8 @@ import {
   ClearIcon,
   AccountCircleIcon,
   DeleteIcon,
+  ExitToAppIcon,
+  SettingsIcon,
 } from "lib/icons"
 
 import CreateTaskListModal from "./CreateTaskListModal"
@@ -57,7 +58,6 @@ export default () => {
       setPrimaryTaskList,
       selectTaskList,
     },
-    settings: { toggleDarkMode },
   } = useActions()
 
   const { show, taskLists, selectedTaskListId, user, darkMode } = useSelector(
@@ -97,6 +97,9 @@ export default () => {
     return null
   }
 
+  console.log(user)
+  console.log(user.photoURL)
+
   return (
     <SwipeableDrawer
       open={show}
@@ -126,41 +129,13 @@ export default () => {
                 : theme.backgroundFadedColor,
             }}
           >
-            <PopoverMenu
-              items={[
-                {
-                  label: "Profile",
-                  action: () => {
-                    history.push("/profile")
-                    closeDrawer()
-                  },
-                },
-                {
-                  label: "Sign out",
-                  action: async () => {
-                    await signOut()
-                    closeDrawer()
-                  },
-                },
-              ]}
-            >
-              {({ setAnchorEl }) => (
-                <ListItemAvatar
-                  css={css`
-                    cursor: pointer;
-                  `}
-                >
-                  <Avatar
-                    src={user.photoURL ? user.photoURL : undefined}
-                    onClick={(e: any) => setAnchorEl(e.currentTarget)}
-                  >
-                    {user.photoURL ? null : (
-                      <AccountCircleIcon style={{ transform: "scale(1.9)" }} />
-                    )}
-                  </Avatar>
-                </ListItemAvatar>
-              )}
-            </PopoverMenu>
+            <ListItemAvatar>
+              <Avatar src={user.photoURL ? user.photoURL : undefined}>
+                {user.photoURL ? null : (
+                  <AccountCircleIcon style={{ transform: "scale(1.9)" }} />
+                )}
+              </Avatar>
+            </ListItemAvatar>
 
             <ListItemText primary={user.displayName} secondary={user.email} />
             <ListItemSecondaryAction>
@@ -289,7 +264,9 @@ export default () => {
             CREATE NEW LIST
           </Button>
         </ListItem>
+
         <Divider />
+
         <OptionItem
           icon={<DeleteIcon />}
           text="Trash"
@@ -299,30 +276,34 @@ export default () => {
             toggleDrawer()
           }}
         />
+
+        <OptionItem
+          icon={<SettingsIcon />}
+          text="Settings"
+          onClick={() => {
+            history.push("/profile")
+            closeDrawer()
+          }}
+        />
+
+        <Divider />
+
         <OptionItem
           icon={<FeedbackIcon />}
           text="Send feedback"
           onClick={openFeedbackModal}
         />
-        <OptionItem icon={<HelpIcon />} text="Help" />
-        <Divider />
-        <ListItem className="pb-0 pt-3" dense>
-          <ListItemText>
-            <Text variant="subtitle2">Settings</Text>
-          </ListItemText>
-        </ListItem>
 
-        <ListItem button onClick={toggleDarkMode}>
-          <ListItemText>Dark mode</ListItemText>
-          <ListItemSecondaryAction>
-            <Switch
-              checked={darkMode}
-              value="checkedB"
-              color="primary"
-              onChange={toggleDarkMode}
-            />
-          </ListItemSecondaryAction>
-        </ListItem>
+        {/* <OptionItem icon={<HelpIcon />} text="Help" /> */}
+
+        <OptionItem
+          icon={<ExitToAppIcon />}
+          text="Sign out"
+          onClick={async () => {
+            await signOut()
+            closeDrawer()
+          }}
+        />
       </List>
 
       <CreateTaskListModal

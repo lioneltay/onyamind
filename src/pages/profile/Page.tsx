@@ -1,8 +1,8 @@
 import React from "react"
 import { noopTemplate as css } from "lib/utils"
 
-import { Text, Button } from "lib/components"
-import { Divider } from "@material-ui/core"
+import { Text, TextProps, Button } from "lib/components"
+import { Divider, Switch } from "@material-ui/core"
 
 import { GoogleButton, FacebookButton } from "lib/login-buttons"
 
@@ -11,8 +11,13 @@ import { useSelector, useActions } from "services/store"
 import { linkProvider, unlinkProvider } from "services/api"
 
 export default () => {
-  const { user } = useSelector((state) => ({
+  const {
+    settings: { toggleDarkMode },
+  } = useActions()
+
+  const { user, darkMode } = useSelector((state) => ({
     user: state.auth.user,
+    darkMode: state.settings.darkMode,
   }))
 
   if (!user) {
@@ -38,7 +43,7 @@ export default () => {
         margin-right: auto;
       `}
     >
-      <Text variant="h5">Connections</Text>
+      <SectionTitle>Conections</SectionTitle>
 
       <Divider className="my-4" />
 
@@ -49,9 +54,24 @@ export default () => {
       <SocialConnectionInfo provider="facebook" data={facebookData} />
 
       <Divider className="my-4" />
+
+      <SectionTitle gutterBottom>Preferences</SectionTitle>
+
+      <div className="fj-sb fa-c">
+        <Text>Dark mode</Text>
+
+        <Switch
+          checked={darkMode}
+          value="checkedB"
+          color="primary"
+          onChange={toggleDarkMode}
+        />
+      </div>
     </section>
   )
 }
+
+const SectionTitle = (props: TextProps) => <Text variant="h5" {...props} />
 
 const PROVIDER_INFO = {
   google: {
