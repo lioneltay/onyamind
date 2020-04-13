@@ -18,11 +18,6 @@ export const migrateUserData = functions.https.onCall(
     { fromUserId, toUserId }: CallableFunction.MigrateUserDataData,
     context,
   ) => {
-    console.log(
-      context.auth?.uid,
-      context.auth?.token.uid,
-      context.auth?.token.user_id,
-    )
     const fromUser = await admin.auth().getUser(fromUserId)
 
     /**

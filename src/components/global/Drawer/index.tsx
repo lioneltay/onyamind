@@ -97,9 +97,6 @@ export default () => {
     return null
   }
 
-  console.log(user)
-  console.log(user.photoURL)
-
   return (
     <SwipeableDrawer
       open={show}

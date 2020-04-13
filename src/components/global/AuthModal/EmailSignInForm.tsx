@@ -112,7 +112,6 @@ export default ({ goBack, creatingAccount }: Props) => {
         setFieldTouched,
         isValid,
       }) => {
-        console.log(errors, touched)
         return (
           <Form className="fd-c fa-c">
             <Text variant="h5" align="center" style={{ marginBottom: 24 }}>

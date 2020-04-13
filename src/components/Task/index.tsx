@@ -1,8 +1,8 @@
-import React, { useState, useRef } from "react"
-import styled from "styled-components"
+import React from "react"
+import { noopTemplate as css } from "lib/utils"
 
-import { useGesture } from "lib/useGesture"
-import { Spring, config } from "react-spring/renderprops.cjs"
+import { useSpring, config, animated } from "react-spring"
+import { useDrag } from "react-use-gesture"
 
 import { IconButton, ListItem } from "@material-ui/core"
 
@@ -10,11 +10,7 @@ import { DeleteIcon, CheckIcon } from "lib/icons"
 
 import Task, { TaskProps } from "./Task"
 
-const Container = styled.div`
-  width: 100%;
-  position: relative;
-  overflow-x: hidden;
-`
+import { logError } from "services/analytics/error-reporting"
 
 type Props = TaskProps & {
   onSwipeLeft?: () => void
@@ -34,93 +30,95 @@ export default ({
   swipeRightIcon = <CheckIcon />,
   ...taskProps
 }: Props) => {
-  const [percent, setPercent] = useState(0)
-  const [status, setStatus] = useState(
-    "default" as "default" | "pulling" | "left" | "right",
+  const [direction, setDirection] = React.useState<"left" | "right" | "none">(
+    "none",
   )
-  const containerRef = useRef(null as null | HTMLElement)
-  const [done, setDone] = useState(false)
+  const overRef = React.useRef(false)
+  const directionRef = React.useRef(direction)
+  directionRef.current = direction
 
-  const bind = useGesture({
-    onPull: ({ displacement: [dx] }) => {
-      setStatus("pulling")
-      if (containerRef.current) {
-        const box = containerRef.current.getBoundingClientRect()
-        setPercent((dx / box.width) * 100)
+  const [spring, set] = useSpring(() => ({
+    config: config.stiff,
+    to: { x: 0 },
+    onRest: () => {
+      const direction = directionRef.current
+      if (overRef.current) {
+        if (direction === "left") {
+          console.log("SWIPE LEFT")
+          onSwipeLeft()
+        } else if (direction === "right") {
+          console.log("SWIPE RIGHT")
+          onSwipeRight()
+        } else {
+          logError(new Error("Animation ended without direction"))
+        }
+      } else {
+        setDirection("none")
       }
     },
+  })) as any[]
 
-    onPullEnd: () => {
-      if (status === "pulling") {
-        setStatus("default")
-        setPercent(0)
+  const bind = useDrag(
+    ({ down, movement: [mx], direction: [xDir], velocity }) => {
+      const trigger = velocity > 0.2 // If you flick hard enough it should trigger the card to fly out
+      const dir = xDir < 0 ? -1 : 1 // Direction should either point left or right
+
+      const isOver = !down && trigger
+      const x = isOver ? window.innerWidth * dir : down ? mx : 0
+
+      const dirVal = mx < 0 ? "left" : "right"
+      if (direction !== dirVal) {
+        setDirection(dirVal)
       }
-    },
 
-    onSwipeLeft: () => {
-      setStatus("left")
-      setPercent(-100)
-    },
+      if (isOver) {
+        overRef.current = true
+      }
 
-    onSwipeRight: () => {
-      setStatus("right")
-      setPercent(100)
+      set({ x })
     },
-  })
+  )
+
+  const left = direction === "left"
+  const right = direction === "right"
 
   return (
-    <Spring config={config.stiff} from={{ percent }} to={{ percent }}>
-      {(spring) => {
-        if (Math.abs(spring.percent) > 95 && !done) {
-          if (status === "left" && spring.percent) {
-            onSwipeLeft()
-            setDone(true)
-          }
-          if (status === "right") {
-            onSwipeRight()
-            setDone(true)
-          }
-        }
+    <div
+      css={css`
+        width: 100%;
+        position: relative;
+        overflow-x: hidden;
+      `}
+    >
+      <ListItem
+        className={right ? "fj-s" : left ? "fj-e" : undefined}
+        style={{
+          position: "absolute",
+          width: "100%",
+          height: "100%",
+          top: 0,
+          left: 0,
+          backgroundColor: right
+            ? swipeRightBackground
+            : left
+            ? swipeLeftBackground
+            : undefined,
+        }}
+      >
+        <IconButton style={{ color: "white" }}>
+          {right ? swipeRightIcon : left ? swipeLeftIcon : undefined}
+        </IconButton>
+      </ListItem>
 
-        const left = spring.percent < 0
-        const right = spring.percent > 0
-
-        return (
-          <Container>
-            <ListItem
-              className={right ? "fj-s" : left ? "fj-e" : undefined}
-              style={{
-                position: "absolute",
-                width: "100%",
-                height: "100%",
-                top: 0,
-                left: 0,
-                backgroundColor: right
-                  ? swipeRightBackground
-                  : left
-                  ? swipeLeftBackground
-                  : undefined,
-              }}
-            >
-              <IconButton style={{ color: "white" }}>
-                {right ? swipeRightIcon : left ? swipeLeftIcon : undefined}
-              </IconButton>
-            </ListItem>
-            <div
-              onPointerDown={(e) => e.stopPropagation()}
-              {...bind({ ref: containerRef })}
-              style={{
-                transform:
-                  status === "pulling"
-                    ? `translateX(${percent}%)`
-                    : `translateX(${spring.percent}%)`,
-              }}
-            >
-              <Task {...taskProps} />
-            </div>
-          </Container>
-        )
-      }}
-    </Spring>
+      <animated.div
+        onPointerDown={(e) => e.stopPropagation()}
+        {...bind()}
+        style={{
+          transform: spring.x.interpolate((x: any) => `translateX(${x}px)`),
+        }}
+      >
+        <Task {...taskProps} />
+      </animated.div>
+    </div>
   )
 }

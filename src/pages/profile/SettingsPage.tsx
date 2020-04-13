@@ -24,8 +24,6 @@ export default () => {
     return null
   }
 
-  console.log(user.providerData)
-
   const googleData = user.providerData.find(
     (data) => data?.providerId === "google.com",
   )
