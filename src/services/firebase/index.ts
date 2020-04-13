@@ -8,4 +8,4 @@ export function dataWithId(
   return { ...data, id: doc.id }
 }
 
-export { firebase, firestore, auth } from "./firebase"
+export * from "./firebase"

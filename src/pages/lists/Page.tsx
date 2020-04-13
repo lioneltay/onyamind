@@ -218,9 +218,9 @@ export default ({
           incompleteTasksCount + completeTasksCount === 0 ? (
             <title>{selectedTaskList.name}</title>
           ) : (
-            <title>{`${selectedTaskList?.name} ${completeTasksCount}/${
+            <title>{`${selectedTaskList?.name} (${completeTasksCount}/${
               completeTasksCount + incompleteTasksCount
-            }`}</title>
+            })`}</title>
           )
         ) : null}
       </Helmet>

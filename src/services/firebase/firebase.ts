@@ -17,6 +17,7 @@ firebase.initializeApp(isProduction ? config.production : config.staging)
 
 export const firestore = firebase.firestore()
 export const auth = firebase.auth()
+export const perf = firebase.performance()
 
 if (isLocal) {
   firestore.settings({
