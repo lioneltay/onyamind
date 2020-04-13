@@ -281,7 +281,7 @@ export default () => {
           icon={<SettingsIcon />}
           text="Settings"
           onClick={() => {
-            history.push("/profile")
+            history.push("/profile/settings")
             closeDrawer()
           }}
         />
