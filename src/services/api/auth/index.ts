@@ -153,3 +153,21 @@ export async function signOut() {
   await signInAnonymouslyAndInitializeData()
   logEvent(`SignOut|Complete`)
 }
+
+export async function linkProvider(providerName: ProviderType) {
+  const provider = getProvider(providerName)
+
+  const user = firebase.auth().currentUser
+  assert(user, "Unable to link provider without a user signed in")
+
+  const userCredential = await user.linkWithPopup(provider)
+
+  return userCredential
+}
+
+export async function unlinkProvider(providerId: string) {
+  const user = firebase.auth().currentUser
+  assert(user, "Unable to link provider without a user signed in")
+
+  return user.unlink(providerId)
+}

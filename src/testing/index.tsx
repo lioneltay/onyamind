@@ -95,6 +95,7 @@ export const generateUser = (user?: Partial<User>): User => {
     isAnonymous: faker.random.boolean(),
     photoURL: faker.image.imageUrl(),
     uid: faker.random.alphaNumeric(),
+    providerData: [],
     ...user,
   }
 }

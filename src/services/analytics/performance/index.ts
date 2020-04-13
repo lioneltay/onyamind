@@ -1,3 +1,3 @@
-import { firebase } from "services/firebase"
+import { firebase, perf as firebasePerf } from "services/firebase"
 
-export const perf = firebase.performance()
+export const perf = firebasePerf

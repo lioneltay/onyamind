@@ -129,6 +129,10 @@ export default () => {
             <PopoverMenu
               items={[
                 {
+                  label: "Profile",
+                  action: () => history.push("/profile"),
+                },
+                {
                   label: "Sign out",
                   action: signOut,
                 },
