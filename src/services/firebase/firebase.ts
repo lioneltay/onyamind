@@ -10,6 +10,7 @@ import { config } from "./config"
 const isProduction = process.env.APP_MODE === "production"
 const isLocal =
   process.env.NODE_ENV === "test" || process.env.APP_MODE === "local"
+const isTest = process.env.NODE_ENV === "test"
 
 export const firebase = firebaseImport
 
@@ -29,7 +30,9 @@ if (isLocal) {
 
   firebase.functions().useFunctionsEmulator("http://localhost:5001")
 
-  firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE)
+  if (isTest) {
+    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE)
+  }
 } else {
   firestore
     .enablePersistence({

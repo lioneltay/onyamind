@@ -18,7 +18,6 @@ declare global {
     numberOfCompleteTasks: number
     numberOfIncompleteTasks: number
     primary: boolean
-    demo?: boolean
   }
 
   export type Task = {

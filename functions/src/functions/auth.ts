@@ -5,7 +5,7 @@ import { admin } from "../utils/firebase"
 
 const dataWithId = (
   doc: FirebaseFirestore.QueryDocumentSnapshot<FirebaseFirestore.DocumentData>,
-) => ({ id: doc.id, ...doc.data })
+) => ({ id: doc.id, ...doc.data() })
 
 const firestore = admin.firestore()
 
@@ -74,7 +74,12 @@ export const migrateUserData = functions.https.onCall(
 
     taskLists.forEach((list) => {
       const ref = firestore.collection("taskList").doc(list.id)
-      if (list.demo) {
+      if (
+        list.name === "Todo" &&
+        (list.numberOfCompleteTasks || 0) +
+          (list.numberOfIncompleteTasks || 0) ===
+          0
+      ) {
         listBatch.delete(ref)
       } else {
         listBatch.update(ref, {
