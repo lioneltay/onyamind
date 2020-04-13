@@ -23,6 +23,7 @@ describe("HeaderBase", () => {
         title="anything"
         multiselect={true}
         numberOfSelectedTasks={1}
+        numberOfTasks={3}
         multiselectActions={<div>{text}</div>}
       />,
     )
@@ -37,6 +38,7 @@ describe("HeaderBase", () => {
         title="anything"
         multiselect={false}
         numberOfSelectedTasks={1}
+        numberOfTasks={3}
         multiselectActions={<div>{text}</div>}
       />,
     )

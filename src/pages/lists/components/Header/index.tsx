@@ -30,14 +30,16 @@ export default () => {
     multiselect,
     numberOfSelectedTasks,
     selectedTasks,
+    numberOfTasks,
   } = useSelector((state, s) => ({
     taskLists: state.app.taskLists || [],
     allSelectedTasksComplete: s.listPage.allSelectedTasksComplete(state),
     allSelectedTasksIncomplete: s.listPage.allSelectedTasksInComplete(state),
     selectedTaskList: s.app.selectedTaskList(state),
     multiselect: state.listPage.multiselect,
-    numberOfSelectedTasks: s.listPage.selectedTasks(state).length,
     selectedTasks: s.listPage.selectedTasks(state),
+    numberOfSelectedTasks: state.listPage.selectedTaskIds.length,
+    numberOfTasks: state.listPage.tasks?.length ?? 0,
   }))
 
   const {
@@ -59,6 +61,7 @@ export default () => {
       <HeaderBase
         title={selectedTaskList?.name ?? ""}
         numberOfSelectedTasks={numberOfSelectedTasks}
+        numberOfTasks={numberOfTasks}
         multiselect={multiselect}
         onEndMultiselect={() => setMultiselect(false)}
         multiselectActions={

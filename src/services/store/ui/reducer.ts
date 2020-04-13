@@ -4,6 +4,11 @@ import { Action } from "./actions"
 
 export type SnackbarType = "error" | "warning" | "info" | "success"
 
+export type ModalAction = {
+  label: string
+  action: (closeModal: () => void) => void
+}
+
 export type State = {
   showFeedbackModal: boolean
   showAuthModal: boolean
@@ -14,6 +19,11 @@ export type State = {
     text: string
     closable: boolean
   }
+  modal: null | {
+    title: string
+    content: React.ReactNode
+    actions?: null | ModalAction[]
+  }
 }
 
 const initialState: State = {
@@ -21,10 +31,31 @@ const initialState: State = {
   showAuthModal: false,
   showDrawer: false,
   snackbar: null,
+  modal: null,
+  // modal: {
+  //   title: "Global Modal",
+  //   content: "hello",
+  //   actions: [
+  //     { label: "Cancel", action: () => console.log("cancel") },
+  //     { label: "Confirm", action: () => console.log("confirm") },
+  //   ],
+  // },
 }
 
 export const reducer = (state: State = initialState, action: Action): State => {
   switch (action.type) {
+    case "OPEN_MODAL": {
+      return {
+        ...state,
+        modal: action.payload,
+      }
+    }
+    case "CLOSE_MODAL": {
+      return {
+        ...state,
+        modal: null,
+      }
+    }
     case "OPEN_AUTH_MODAL": {
       return {
         ...state,

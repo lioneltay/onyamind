@@ -2,7 +2,6 @@ import React from "react"
 
 import Modal from "lib/components/Modal"
 import { Text } from "lib/components"
-import Button from "@material-ui/core/Button"
 
 type Props = {
   open: boolean
@@ -23,11 +22,12 @@ const DeleteTaskListModal: React.FunctionComponent<Props> = ({
       open={open}
       onClose={onClose}
       title={`Delete ${taskListName}`}
-      actions={
-        <Button variant="outlined" color="primary" onClick={onConfirmDelete}>
-          Confirm
-        </Button>
-      }
+      actions={[
+        {
+          label: "Confirm",
+          action: onConfirmDelete,
+        },
+      ]}
     >
       <Text variant="body2">Are you sure you want to delete this list?</Text>
     </Modal>

@@ -199,15 +199,7 @@ export default () => {
           onClose={() => setShowHelpModal(false)}
           title="Primary List"
           style={{ width: 500, maxWidth: "100%" }}
-          actions={
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={() => setShowHelpModal(false)}
-            >
-              Got it
-            </Button>
-          }
+          actions={[{ label: "Got it", action: () => setShowHelpModal(false) }]}
         >
           <Text>
             The primary list will be selected by default when you open the
