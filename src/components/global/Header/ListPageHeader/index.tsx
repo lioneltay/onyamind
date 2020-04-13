@@ -12,7 +12,7 @@ import {
 
 import { IconButtonMenu } from "lib/components"
 import TaskAdder from "./TaskAdder"
-import HeaderBase from "components/HeaderBase"
+import HeaderBase from "components/global/Header/components/HeaderBase"
 
 import { useSelector, useActions } from "services/store"
 

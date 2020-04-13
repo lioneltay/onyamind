@@ -2,7 +2,7 @@ import { completeTask } from "services/api"
 
 let registration: ServiceWorkerRegistration | null = null
 
-navigator.serviceWorker.ready.then((reg) => {
+navigator.serviceWorker?.ready?.then?.((reg) => {
   registration = reg
 })
 
@@ -47,10 +47,12 @@ export const createTaskNotifications = async (tasks: Task[]) => {
   )
 }
 
-const broadcast = new BroadcastChannel("notification-action")
+if (window.BroadcastChannel) {
+  const broadcast = new BroadcastChannel("notification-action")
 
-broadcast.onmessage = async (event) => {
-  if (event.data.action === "COMPLETE_TASK") {
-    return completeTask(event.data.payload.task.id)
+  broadcast.onmessage = async (event) => {
+    if (event.data.action === "COMPLETE_TASK") {
+      return completeTask(event.data.payload.task.id)
+    }
   }
 }

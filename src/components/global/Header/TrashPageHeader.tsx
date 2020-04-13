@@ -6,7 +6,7 @@ import { IconButtonMenu } from "lib/components"
 import { IconButton } from "@material-ui/core"
 import { DeleteIcon, DeleteSweepIcon, SwapHorizIcon } from "lib/icons"
 
-import { HeaderBase } from "components"
+import HeaderBase from "components/global/Header/components/HeaderBase"
 
 import { useActions, useSelector } from "services/store"
 

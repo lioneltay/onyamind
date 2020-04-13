@@ -30,6 +30,7 @@ export default () => {
 
   return (
     <section
+      className="pt-5"
       css={css`
         max-width: 600px;
         width: 100%;

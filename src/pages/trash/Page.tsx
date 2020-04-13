@@ -4,7 +4,7 @@ import { noopTemplate as css } from "lib/utils"
 
 import { List, LinearProgress, Fade } from "@material-ui/core"
 
-import { Task, Header } from "./components"
+import { Task } from "./components"
 
 import { useTheme } from "theme"
 import { useSelector, useActions } from "services/store"
@@ -66,8 +66,6 @@ export default () => {
       <Helmet>
         <title>Trash ({trashTasksCount.toString()})</title>
       </Helmet>
-
-      <Header />
 
       <section
         css={css`

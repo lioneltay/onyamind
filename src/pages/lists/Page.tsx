@@ -19,7 +19,7 @@ import { ExpandMoreIcon, MoreVertIcon } from "lib/icons"
 
 import Task from "./components/Task"
 
-import { CollapsableEditor, Header } from "./components"
+import { CollapsableEditor } from "./components"
 
 import { useTheme } from "theme"
 import { useSelector, useActions } from "services/store"
@@ -224,8 +224,6 @@ export default ({
           )
         ) : null}
       </Helmet>
-
-      <Header />
 
       <section
         css={css`

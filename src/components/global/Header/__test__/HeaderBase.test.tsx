@@ -1,7 +1,7 @@
 import React from "react"
 import { render } from "@testing-library/react"
 // import { renderWithWrappers as render } from "testing"
-import HeaderBase from "../HeaderBase"
+import HeaderBase from "../components/HeaderBase"
 
 jest.mock("services/store", () => ({
   useActions: () => ({

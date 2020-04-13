@@ -130,11 +130,17 @@ export default () => {
               items={[
                 {
                   label: "Profile",
-                  action: () => history.push("/profile"),
+                  action: () => {
+                    history.push("/profile")
+                    closeDrawer()
+                  },
                 },
                 {
                   label: "Sign out",
-                  action: signOut,
+                  action: async () => {
+                    await signOut()
+                    closeDrawer()
+                  },
                 },
               ]}
             >
