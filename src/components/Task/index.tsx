@@ -51,6 +51,7 @@ export default ({
   })) as any[]
 
   const bind = useGesture({
+    onDragStart: () => console.log("dragstart"),
     onDragEnd: ({ distance }) => {
       if (overRef.current !== true && distance < 30) {
         onItemClick(task.id)

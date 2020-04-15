@@ -73,9 +73,11 @@ export default ({
     >
       <ListItemIcon
         onPointerDown={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
         onClick={(e) => {
           e.stopPropagation()
           onSelectTask(task.id)
+          console.log("seelct task lcick icon")
         }}
       >
         <Fab

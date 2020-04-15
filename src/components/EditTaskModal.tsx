@@ -50,6 +50,7 @@ const EditModal: React.FunctionComponent<Props> = ({
               <TextField
                 autoFocus
                 label="Task"
+                placeholder="Task"
                 fullWidth
                 variant="outlined"
                 value={values.title}
@@ -60,12 +61,12 @@ const EditModal: React.FunctionComponent<Props> = ({
             <div className="mt-3">
               <TextField
                 label="Notes"
+                placeholder="Notes"
                 fullWidth
                 multiline={true}
                 rows={3}
                 rowsMax={5}
                 variant="outlined"
-                placeholder="Add notes"
                 value={values.notes}
                 onChange={(e) => setFieldValue("notes", e.target.value)}
               />
