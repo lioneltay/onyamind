@@ -1,8 +1,8 @@
-import React, { useState, useRef } from "react"
-import styled from "styled-components"
+import React from "react"
+import { noopTemplate as css } from "lib/utils"
 
-import { useGesture } from "lib/useGesture"
-import { Spring, config } from "react-spring/renderprops.cjs"
+import { useSpring, config, animated } from "react-spring"
+import { useGesture } from "react-use-gesture"
 
 import { IconButton, ListItem } from "@material-ui/core"
 
@@ -10,11 +10,9 @@ import { DeleteIcon, CheckIcon } from "lib/icons"
 
 import Task, { TaskProps } from "./Task"
 
-const Container = styled.div`
-  width: 100%;
-  position: relative;
-  overflow-x: hidden;
-`
+import { logError } from "services/analytics/error-reporting"
+
+type Direction = "left" | "right" | "none"
 
 type Props = TaskProps & {
   onSwipeLeft?: () => void
@@ -23,6 +21,7 @@ type Props = TaskProps & {
   swipeRightBackground?: string
   swipeLeftIcon?: React.ReactNode
   swipeRightIcon?: React.ReactNode
+  onItemClick?: (id: ID) => void
 }
 
 export default ({
@@ -32,95 +31,102 @@ export default ({
   swipeLeftIcon = <DeleteIcon />,
   swipeRightBackground = "dodgerblue",
   swipeRightIcon = <CheckIcon />,
+  onItemClick = () => {},
+  task,
   ...taskProps
 }: Props) => {
-  const [percent, setPercent] = useState(0)
-  const [status, setStatus] = useState(
-    "default" as "default" | "pulling" | "left" | "right",
-  )
-  const containerRef = useRef(null as null | HTMLElement)
-  const [done, setDone] = useState(false)
+  const [direction, setDirection] = React.useState<Direction>("none")
+  const directionRef = React.useRef(direction)
+  directionRef.current = direction
+  function updateDirection(val: Direction) {
+    setDirection(val)
+    directionRef.current = val
+  }
+  const overRef = React.useRef(false)
+
+  const [spring, set] = useSpring(() => ({
+    config: config.stiff,
+    to: { x: 0 },
+    onRest: () => {},
+  })) as any[]
 
   const bind = useGesture({
-    onPull: ({ displacement: [dx] }) => {
-      setStatus("pulling")
-      if (containerRef.current) {
-        const box = containerRef.current.getBoundingClientRect()
-        setPercent((dx / box.width) * 100)
+    onDragStart: () => console.log("dragstart"),
+    onDragEnd: ({ distance }) => {
+      if (overRef.current !== true && distance < 30) {
+        onItemClick(task.id)
       }
     },
+    onDrag: ({ down, movement: [mx], direction: [xDir], velocity }) => {
+      const trigger = velocity > 0.3
+      const dir = xDir < 0 ? -1 : 1
 
-    onPullEnd: () => {
-      if (status === "pulling") {
-        setStatus("default")
-        setPercent(0)
+      const isOver = !down && trigger
+      const x = isOver ? window.innerWidth * dir : down ? mx : 0
+
+      const dirVal = mx < 0 ? "left" : "right"
+      if (direction !== dirVal) {
+        updateDirection(dirVal)
       }
-    },
 
-    onSwipeLeft: () => {
-      setStatus("left")
-      setPercent(-100)
-    },
+      if (isOver) {
+        overRef.current = true
+      }
 
-    onSwipeRight: () => {
-      setStatus("right")
-      setPercent(100)
+      if (overRef.current) {
+        const direction = directionRef.current
+        if (direction === "left") {
+          setTimeout(onSwipeLeft, 500)
+        } else if (direction === "right") {
+          setTimeout(onSwipeRight, 500)
+        } else {
+          logError(new Error("Animation ended without direction"))
+        }
+      }
+
+      set({ x })
     },
   })
 
+  const left = direction === "left"
+  const right = direction === "right"
+
   return (
-    <Spring config={config.stiff} from={{ percent }} to={{ percent }}>
-      {(spring) => {
-        if (Math.abs(spring.percent) > 95 && !done) {
-          if (status === "left" && spring.percent) {
-            onSwipeLeft()
-            setDone(true)
-          }
-          if (status === "right") {
-            onSwipeRight()
-            setDone(true)
-          }
-        }
+    <div
+      css={css`
+        width: 100%;
+        position: relative;
+        overflow-x: hidden;
+      `}
+    >
+      <ListItem
+        className={right ? "fj-s" : left ? "fj-e" : undefined}
+        style={{
+          position: "absolute",
+          width: "100%",
+          height: "100%",
+          top: 0,
+          left: 0,
+          backgroundColor: right
+            ? swipeRightBackground
+            : left
+            ? swipeLeftBackground
+            : undefined,
+        }}
+      >
+        <IconButton style={{ color: "white" }}>
+          {right ? swipeRightIcon : left ? swipeLeftIcon : undefined}
+        </IconButton>
+      </ListItem>
 
-        const left = spring.percent < 0
-        const right = spring.percent > 0
-
-        return (
-          <Container>
-            <ListItem
-              className={right ? "fj-s" : left ? "fj-e" : undefined}
-              style={{
-                position: "absolute",
-                width: "100%",
-                height: "100%",
-                top: 0,
-                left: 0,
-                backgroundColor: right
-                  ? swipeRightBackground
-                  : left
-                  ? swipeLeftBackground
-                  : undefined,
-              }}
-            >
-              <IconButton style={{ color: "white" }}>
-                {right ? swipeRightIcon : left ? swipeLeftIcon : undefined}
-              </IconButton>
-            </ListItem>
-            <div
-              onPointerDown={(e) => e.stopPropagation()}
-              {...bind({ ref: containerRef })}
-              style={{
-                transform:
-                  status === "pulling"
-                    ? `translateX(${percent}%)`
-                    : `translateX(${spring.percent}%)`,
-              }}
-            >
-              <Task {...taskProps} />
-            </div>
-          </Container>
-        )
-      }}
-    </Spring>
+      <animated.div
+        {...bind()}
+        style={{
+          transform: spring.x.interpolate((x: any) => `translateX(${x}px)`),
+        }}
+      >
+        <Task {...taskProps} task={task} />
+      </animated.div>
+    </div>
   )
 }

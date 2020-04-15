@@ -72,7 +72,7 @@ it("TaskList count remains in sync when operating on tasks create/check/uncheck/
   checkCounts(1, 0)
 })
 
-it("TaskList count remains in sync when operating on tasks move-checked/move-unchecked", () => {
+it.only("TaskList count remains in sync when operating on tasks move-checked/move-unchecked", () => {
   visitListPage()
 
   // Create

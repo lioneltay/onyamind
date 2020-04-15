@@ -6,7 +6,7 @@ import { IconButtonMenu } from "lib/components"
 import { IconButton } from "@material-ui/core"
 import { DeleteIcon, DeleteSweepIcon, SwapHorizIcon } from "lib/icons"
 
-import { HeaderBase } from "components"
+import HeaderBase from "components/global/Header/components/HeaderBase"
 
 import { useActions, useSelector } from "services/store"
 
@@ -18,13 +18,17 @@ export default () => {
     setMultiselect,
   } = useActions("trashPage")
 
-  const { taskLists, multiselect, numberOfSelectedTasks } = useSelector(
-    (state) => ({
-      taskLists: state.app.taskLists ?? [],
-      multiselect: state.trashPage.multiselect,
-      numberOfSelectedTasks: state.trashPage.trashTasks?.length ?? 0,
-    }),
-  )
+  const {
+    taskLists,
+    multiselect,
+    numberOfSelectedTasks,
+    numberOfTasks,
+  } = useSelector((state) => ({
+    taskLists: state.app.taskLists ?? [],
+    multiselect: state.trashPage.multiselect,
+    numberOfSelectedTasks: state.trashPage.selectedTaskIds?.length ?? 0,
+    numberOfTasks: state.trashPage.trashTasks?.length ?? 0,
+  }))
 
   return (
     <HeaderBase
@@ -35,6 +39,7 @@ export default () => {
       `}
       title="Trash"
       numberOfSelectedTasks={numberOfSelectedTasks}
+      numberOfTasks={numberOfTasks}
       multiselect={multiselect}
       onEndMultiselect={() => setMultiselect(false)}
       multiselectActions={

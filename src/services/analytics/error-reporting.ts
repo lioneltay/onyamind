@@ -7,3 +7,6 @@ export const initializeErrorReporting = () => {
     release: "v1",
   })
 }
+
+export const logError = (...args: Parameters<typeof Sentry.captureException>) =>
+  Sentry.captureException(...args)

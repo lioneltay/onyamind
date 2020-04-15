@@ -1,7 +1,7 @@
 import React from "react"
 import { render } from "@testing-library/react"
 // import { renderWithWrappers as render } from "testing"
-import HeaderBase from "../HeaderBase"
+import HeaderBase from "../components/HeaderBase"
 
 jest.mock("services/store", () => ({
   useActions: () => ({
@@ -23,6 +23,7 @@ describe("HeaderBase", () => {
         title="anything"
         multiselect={true}
         numberOfSelectedTasks={1}
+        numberOfTasks={3}
         multiselectActions={<div>{text}</div>}
       />,
     )
@@ -37,6 +38,7 @@ describe("HeaderBase", () => {
         title="anything"
         multiselect={false}
         numberOfSelectedTasks={1}
+        numberOfTasks={3}
         multiselectActions={<div>{text}</div>}
       />,
     )

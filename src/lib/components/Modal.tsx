@@ -1,17 +1,14 @@
 import React from "react"
 
 import PlainModal, { PlainModalProps } from "./PlainModal"
-import { Text } from "lib/components"
-import Button from "@material-ui/core/Button"
-import IconButton from "@material-ui/core/IconButton"
-import Paper from "@material-ui/core/Paper"
-import Divider from "@material-ui/core/Divider"
+import { Text, Button } from "lib/components"
+import { IconButton, Divider } from "@material-ui/core"
 
-import Clear from "@material-ui/icons/Clear"
+import { ClearIcon } from "lib/icons"
 
 type Props = Omit<PlainModalProps, "title"> & {
   title?: React.ReactNode
-  actions?: React.ReactNode
+  actions?: { label: string; action?: (onClose: () => void) => void }[] | null
 }
 
 const Modal: React.FunctionComponent<Props> = ({
@@ -30,20 +27,34 @@ const Modal: React.FunctionComponent<Props> = ({
       open={open}
       onClose={onClose}
     >
-      <div className="fj-sb fa-c pl-3">
+      <div className="fj-sb fa-c fa-c pl-4">
         <Text variant="h6">{title}</Text>
 
         <IconButton onClick={onClose}>
-          <Clear />
+          <ClearIcon />
         </IconButton>
       </div>
 
       <Divider />
 
-      <div className="p-3">
+      <div className="p-4">
         {children}
 
-        {actions ? <div className="fj-e mt-2">{actions}</div> : null}
+        {actions ? (
+          <div className="mt-4 fj-e">
+            {actions.map?.(({ label, action }) => (
+              <Button
+                key={label}
+                onClick={() => action?.(onClose)}
+                variant="outlined"
+                color="primary"
+                className="ml-3"
+              >
+                {label}
+              </Button>
+            ))}
+          </div>
+        ) : null}
       </div>
     </PlainModal>
   )

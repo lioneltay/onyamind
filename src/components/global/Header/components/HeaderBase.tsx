@@ -14,6 +14,7 @@ type Props = Stylable & {
   multiselect: boolean
   onEndMultiselect?: () => void
   numberOfSelectedTasks: number
+  numberOfTasks: number
   actions?: React.ReactNode
 }
 
@@ -24,6 +25,7 @@ export default ({
   onEndMultiselect = noop,
   multiselect,
   numberOfSelectedTasks,
+  numberOfTasks,
   ...rest
 }: Props) => {
   const theme = useTheme()
@@ -75,7 +77,7 @@ export default ({
                     paddingLeft: 18,
                   }}
                 >
-                  {numberOfSelectedTasks} selected
+                  ({numberOfSelectedTasks}/{numberOfTasks})
                 </div>
               </Fragment>
             ) : (

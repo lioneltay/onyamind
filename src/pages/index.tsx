@@ -8,6 +8,8 @@ import ProfilePage from "./profile/Page"
 
 import { useTheme } from "theme"
 
+import { GlobalComponents } from "components"
+
 export default () => {
   const theme = useTheme()
 
@@ -18,6 +20,8 @@ export default () => {
         min-height: 100vh;
       `}
     >
+      <GlobalComponents />
+
       <Switch>
         <Route path="/profile" component={ProfilePage} />
         <Route path="/lists/:listId?" component={ListPage} />

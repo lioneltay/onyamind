@@ -1,5 +1,4 @@
 import React from "react"
-import { styled } from "theme"
 import { noUndefinedValues } from "lib/utils"
 
 import { Formik, Form } from "formik"
@@ -7,24 +6,21 @@ import Button from "@material-ui/core/Button"
 import TextField from "@material-ui/core/TextField"
 import Modal from "lib/components/Modal"
 
-const StatusText = styled.div`
-  font-size: 1rem;
-  font-weight: 400;
-`
-
 type Values = {
   title?: string
   notes?: string
 }
 
 type Props = {
+  title: string
   open: boolean
   onClose: () => void
-  initialValues: Values
+  initialValues?: Values
   onSubmit: (values: Values) => Promise<void> | void
 }
 
 const EditModal: React.FunctionComponent<Props> = ({
+  title,
   open,
   onClose,
   initialValues,
@@ -47,37 +43,36 @@ const EditModal: React.FunctionComponent<Props> = ({
           open={open}
           onClose={onClose}
           style={{ width: 500, maxWidth: "100%" }}
-          title={
-            <StatusText>{isSubmitting ? "Saving..." : "Saved"}</StatusText>
-          }
+          title={title}
         >
           <Form>
             <div>
               <TextField
                 autoFocus
                 label="Task"
+                placeholder="Task"
                 fullWidth
                 variant="outlined"
                 value={values.title}
-                onChange={e => setFieldValue("title", e.target.value)}
+                onChange={(e) => setFieldValue("title", e.target.value)}
               />
             </div>
 
             <div className="mt-3">
               <TextField
                 label="Notes"
+                placeholder="Notes"
                 fullWidth
                 multiline={true}
                 rows={3}
                 rowsMax={5}
                 variant="outlined"
-                placeholder="Add notes"
                 value={values.notes}
-                onChange={e => setFieldValue("notes", e.target.value)}
+                onChange={(e) => setFieldValue("notes", e.target.value)}
               />
             </div>
 
-            <div className="fj-e mt-2">
+            <div className="fj-e mt-4">
               <Button
                 variant="outlined"
                 color="primary"

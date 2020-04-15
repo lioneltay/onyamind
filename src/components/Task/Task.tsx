@@ -8,7 +8,6 @@ import { ListItem, ListItemIcon, Fab } from "@material-ui/core"
 import { ListItemText } from "lib/components"
 
 import { AssignmentIcon } from "lib/icons"
-import { useGesture } from "lib/useGesture"
 
 const StyledListItem = styled(ListItem)`
   position: relative;
@@ -43,7 +42,6 @@ export type TaskProps = Stylable & {
   backgroundColor?: string
 
   onSelectTask?: (id: ID) => void
-  onItemClick?: (id: ID) => void
 
   hoverActions?: React.ReactNode
   showHoverActions?: boolean
@@ -60,34 +58,26 @@ export default ({
   multiselect,
 
   onSelectTask = () => {},
-  onItemClick = () => {},
 
   hoverActions,
   showHoverActions = false,
 }: TaskProps) => {
   const theme = useTheme()
 
-  const containerRef = React.useRef()
-
-  const bind = useGesture({
-    onTap: () => onItemClick(task.id),
-  })
-
   return (
     <StyledListItem
-      ref={containerRef}
-      {...bind({ ref: containerRef })}
       style={{ ...style, backgroundColor }}
       className={className}
       selected={selected}
       button
-      // onClick={() => onItemClick(task.id)}
     >
       <ListItemIcon
         onPointerDown={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
         onClick={(e) => {
           e.stopPropagation()
           onSelectTask(task.id)
+          console.log("seelct task lcick icon")
         }}
       >
         <Fab

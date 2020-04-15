@@ -19,7 +19,7 @@ import {
 
 import { useSelector, useActions } from "services/store"
 
-import CreateTaskModal from "./CreateTaskModal"
+import { EditTaskModal } from "components"
 
 const OuterContainer = styled.div`
   position: relative;
@@ -61,6 +61,14 @@ export default () => {
   )
 
   const mobile = useMediaQuery(`(max-width: ${MOBILE_WIDTH}px)`)
+
+  async function handleCreateTask(...args: Parameters<typeof createTask>) {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    })
+    return createTask(...args)
+  }
 
   return (
     <Fragment>
@@ -133,7 +141,7 @@ export default () => {
                 onKeyPress={(e) => {
                   if (e.key === "Enter" && newTaskTitle.length > 0) {
                     setNewTaskTitle("")
-                    createTask({ title: newTaskTitle })
+                    handleCreateTask({ title: newTaskTitle })
                   }
                 }}
                 inputProps={{
@@ -155,7 +163,8 @@ export default () => {
         </Container>
       </OuterContainer>
 
-      <CreateTaskModal
+      <EditTaskModal
+        title="New Task"
         open={showCreateModal}
         onClose={() => setShowCreateModal(false)}
         initialValues={{
@@ -164,7 +173,7 @@ export default () => {
         onSubmit={async (values) => {
           setShowCreateModal(false)
           setNewTaskTitle("")
-          await createTask({ ...values })
+          await handleCreateTask({ ...values })
         }}
       />
     </Fragment>

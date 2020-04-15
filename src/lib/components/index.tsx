@@ -1,4 +1,4 @@
-export { default as Text } from "./Text"
+export { default as Text, TextProps } from "./Text"
 export { default as PlainModal } from "./PlainModal"
 export { default as Modal } from "./Modal"
 export { default as ListItemText } from "./ListItemText"

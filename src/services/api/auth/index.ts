@@ -13,7 +13,6 @@ export const initializeUserData = async (userId: ID) => {
   await createTaskList({
     name: INITIAL_TASK_LIST_NAME,
     primary: true,
-    demo: true,
     userId: userId,
   })
 }
