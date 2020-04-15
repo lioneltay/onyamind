@@ -75,9 +75,9 @@ export default ({
       if (overRef.current) {
         const direction = directionRef.current
         if (direction === "left") {
-          onSwipeLeft()
+          setTimeout(onSwipeLeft, 500)
         } else if (direction === "right") {
-          onSwipeRight()
+          setTimeout(onSwipeRight, 500)
         } else {
           logError(new Error("Animation ended without direction"))
         }

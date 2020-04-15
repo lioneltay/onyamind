@@ -9,6 +9,7 @@
     "dev": "APP_MODE=staging webpack-dev-server --config ./webpack/webpack.config.dev.js",
     "dev:local": "APP_MODE=local webpack-dev-server --config ./webpack/webpack.config.dev.js",
     "dev:local:test": "APP_MODE=local NODE_ENV=test webpack-dev-server --config ./webpack/webpack.config.dev.js",
+    "start:local": "npm run build && firebase use staging && firebase emulators:start --only hosting",
     "emulators:start": "firebase use staging && firebase emulators:start --only firestore,functions",
     "build:functions": "cd functions && tsc --watch > /dev/null",
     "clean": "rimraf dist",
