@@ -19,7 +19,7 @@ import {
 
 import { useSelector, useActions } from "services/store"
 
-import CreateTaskModal from "./CreateTaskModal"
+import { EditTaskModal } from "components"
 
 const OuterContainer = styled.div`
   position: relative;
@@ -163,7 +163,8 @@ export default () => {
         </Container>
       </OuterContainer>
 
-      <CreateTaskModal
+      <EditTaskModal
+        title="New Task"
         open={showCreateModal}
         onClose={() => setShowCreateModal(false)}
         initialValues={{

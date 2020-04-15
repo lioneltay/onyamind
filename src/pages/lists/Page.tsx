@@ -19,7 +19,7 @@ import { ExpandMoreIcon, MoreVertIcon } from "lib/icons"
 
 import Task from "./components/Task"
 
-import { CollapsableEditor } from "./components"
+import { EditTaskModal } from "components"
 
 import { useTheme } from "theme"
 import { useSelector, useActions } from "services/store"
@@ -78,21 +78,11 @@ const Content = () => {
     <Fragment>
       <List className="p-0" style={{ background: theme.backgroundColor }}>
         {incompleteTasks.map((task) => (
-          <Fragment key={task.id}>
-            <Task backgroundColor={theme.backgroundColor} task={task} />
-            <CollapsableEditor
-              task={task}
-              open={!multiselect && editingTask?.id === task.id}
-              onSubmit={async (values) => {
-                stopEditingTask()
-                await editTask({
-                  taskId: task.id,
-                  title: values.title,
-                  notes: values.notes,
-                })
-              }}
-            />
-          </Fragment>
+          <Task
+            key={task.id}
+            backgroundColor={theme.backgroundColor}
+            task={task}
+          />
         ))}
       </List>
 
@@ -127,24 +117,31 @@ const Content = () => {
       <List>
         <Collapse in={showCompleteTasks}>
           {completeTasks.map((task) => (
-            <Fragment key={task.id}>
-              <Task backgroundColor={theme.backgroundFadedColor} task={task} />
-              <CollapsableEditor
-                task={task}
-                open={!multiselect && editingTask?.id === task.id}
-                onSubmit={async (values) => {
-                  stopEditingTask()
-                  await editTask({
-                    taskId: task.id,
-                    title: values.title,
-                    notes: values.notes,
-                  })
-                }}
-              />
-            </Fragment>
+            <Task
+              key={task.id}
+              backgroundColor={theme.backgroundFadedColor}
+              task={task}
+            />
           ))}
         </Collapse>
       </List>
+
+      {editingTask ? (
+        <EditTaskModal
+          title="Edit Task"
+          onClose={() => stopEditingTask()}
+          open={!multiselect && !!editingTask}
+          initialValues={editingTask}
+          onSubmit={async (values) => {
+            stopEditingTask()
+            await editTask({
+              taskId: editingTask.id,
+              title: values.title,
+              notes: values.notes,
+            })
+          }}
+        />
+      ) : null}
     </Fragment>
   )
 }
