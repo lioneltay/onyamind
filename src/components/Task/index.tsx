@@ -2,7 +2,7 @@ import React from "react"
 import { noopTemplate as css } from "lib/utils"
 
 import { useSpring, config, animated } from "react-spring"
-import { useDrag } from "react-use-gesture"
+import { useGesture } from "react-use-gesture"
 
 import { IconButton, ListItem } from "@material-ui/core"
 
@@ -12,6 +12,8 @@ import Task, { TaskProps } from "./Task"
 
 import { logError } from "services/analytics/error-reporting"
 
+type Direction = "left" | "right" | "none"
+
 type Props = TaskProps & {
   onSwipeLeft?: () => void
   onSwipeRight?: () => void
@@ -19,6 +21,7 @@ type Props = TaskProps & {
   swipeRightBackground?: string
   swipeLeftIcon?: React.ReactNode
   swipeRightIcon?: React.ReactNode
+  onItemClick?: (id: ID) => void
 }
 
 export default ({
@@ -28,56 +31,61 @@ export default ({
   swipeLeftIcon = <DeleteIcon />,
   swipeRightBackground = "dodgerblue",
   swipeRightIcon = <CheckIcon />,
+  onItemClick = () => {},
+  task,
   ...taskProps
 }: Props) => {
-  const [direction, setDirection] = React.useState<"left" | "right" | "none">(
-    "none",
-  )
-  const overRef = React.useRef(false)
+  const [direction, setDirection] = React.useState<Direction>("none")
   const directionRef = React.useRef(direction)
   directionRef.current = direction
+  function updateDirection(val: Direction) {
+    setDirection(val)
+    directionRef.current = val
+  }
+  const overRef = React.useRef(false)
 
   const [spring, set] = useSpring(() => ({
     config: config.stiff,
     to: { x: 0 },
-    onRest: () => {
-      const direction = directionRef.current
-      if (overRef.current) {
-        if (direction === "left") {
-          console.log("SWIPE LEFT")
-          onSwipeLeft()
-        } else if (direction === "right") {
-          console.log("SWIPE RIGHT")
-          onSwipeRight()
-        } else {
-          logError(new Error("Animation ended without direction"))
-        }
-      } else {
-        setDirection("none")
-      }
-    },
+    onRest: () => {},
   })) as any[]
 
-  const bind = useDrag(
-    ({ down, movement: [mx], direction: [xDir], velocity }) => {
-      const trigger = velocity > 0.2 // If you flick hard enough it should trigger the card to fly out
-      const dir = xDir < 0 ? -1 : 1 // Direction should either point left or right
+  const bind = useGesture({
+    onDragEnd: ({ distance }) => {
+      if (overRef.current !== true && distance < 30) {
+        onItemClick(task.id)
+      }
+    },
+    onDrag: ({ down, movement: [mx], direction: [xDir], velocity }) => {
+      const trigger = velocity > 0.3
+      const dir = xDir < 0 ? -1 : 1
 
       const isOver = !down && trigger
       const x = isOver ? window.innerWidth * dir : down ? mx : 0
 
       const dirVal = mx < 0 ? "left" : "right"
       if (direction !== dirVal) {
-        setDirection(dirVal)
+        updateDirection(dirVal)
       }
 
       if (isOver) {
         overRef.current = true
       }
 
+      if (overRef.current) {
+        const direction = directionRef.current
+        if (direction === "left") {
+          onSwipeLeft()
+        } else if (direction === "right") {
+          onSwipeRight()
+        } else {
+          logError(new Error("Animation ended without direction"))
+        }
+      }
+
       set({ x })
     },
-  )
+  })
 
   const left = direction === "left"
   const right = direction === "right"
@@ -111,13 +119,12 @@ export default ({
       </ListItem>
 
       <animated.div
-        onPointerDown={(e) => e.stopPropagation()}
         {...bind()}
         style={{
           transform: spring.x.interpolate((x: any) => `translateX(${x}px)`),
         }}
       >
-        <Task {...taskProps} />
+        <Task {...taskProps} task={task} />
       </animated.div>
     </div>
   )

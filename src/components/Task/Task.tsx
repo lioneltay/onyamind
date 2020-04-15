@@ -8,7 +8,6 @@ import { ListItem, ListItemIcon, Fab } from "@material-ui/core"
 import { ListItemText } from "lib/components"
 
 import { AssignmentIcon } from "lib/icons"
-import { useGesture } from "lib/useGesture"
 
 const StyledListItem = styled(ListItem)`
   position: relative;
@@ -67,21 +66,13 @@ export default ({
 }: TaskProps) => {
   const theme = useTheme()
 
-  const containerRef = React.useRef()
-
-  const bind = useGesture({
-    onTap: () => onItemClick(task.id),
-  })
-
   return (
     <StyledListItem
-      ref={containerRef}
-      {...bind({ ref: containerRef })}
       style={{ ...style, backgroundColor }}
       className={className}
       selected={selected}
       button
-      // onClick={() => onItemClick(task.id)}
+      onClick={() => onItemClick(task.id)}
     >
       <ListItemIcon
         onPointerDown={(e) => e.stopPropagation()}
