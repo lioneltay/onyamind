@@ -26,6 +26,10 @@ const ContentContainer = styled.div`
 `
 
 const Content = () => {
+  const { mode } = useSelector((state) => ({
+    mode: state.ui.authModal?.mode,
+  }))
+
   const {
     ui: { closeAuthModal, openSnackbar },
     auth: { setUser },
@@ -81,6 +85,7 @@ const Content = () => {
         css={css`
           display: flex;
           flex-direction: column;
+          margin-bottom: 24px;
 
           & > * {
             margin-top: 10px;
@@ -110,24 +115,25 @@ const Content = () => {
         </EmailButton>
       </div>
 
-      <Text
-        variant="body2"
-        css={css`
-          margin-top: 24px;
-          margin-bottom: 24px;
-        `}
-      >
-        {creatingAccount ? "Already have an account?" : "No account?"}{" "}
+      {!mode ? (
         <Text
-          display="inline"
-          color="primary"
           variant="body2"
-          role="button"
-          onClick={() => setCreatingAccount((x) => !x)}
+          css={css`
+            margin-top: 24px;
+          `}
         >
-          {creatingAccount ? "Sign in" : "Create one"}
+          {creatingAccount ? "Already have an account?" : "No account?"}{" "}
+          <Text
+            display="inline"
+            color="primary"
+            variant="body2"
+            role="button"
+            onClick={() => setCreatingAccount((x) => !x)}
+          >
+            {creatingAccount ? "Sign in" : "Create one"}
+          </Text>
         </Text>
-      </Text>
+      ) : null}
     </ContentContainer>
   )
 }
@@ -138,7 +144,7 @@ export default () => {
   } = useActions()
 
   const { open } = useSelector((state) => ({
-    open: state.ui.showAuthModal,
+    open: !!state.ui.authModal,
   }))
 
   return (

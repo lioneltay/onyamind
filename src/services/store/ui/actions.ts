@@ -3,7 +3,7 @@ import { bindActionCreators, Dispatch } from "redux"
 import { useDispatch } from "react-redux"
 import { ActionsUnion, ActionTypesUnion } from "services/store/helpers"
 
-import { SnackbarType, ModalAction } from "./reducer"
+import { SnackbarType, ModalAction, AuthModalMode } from "./reducer"
 
 const openDrawer = () => ({ type: "OPEN_DRAWER" } as const)
 const closeDrawer = () => ({ type: "CLOSE_DRAWER" } as const)
@@ -17,7 +17,7 @@ type OpenSnackbarInput = {
 }
 const openSnackbar = ({
   text,
-  duration = 5000,
+  duration = 8000,
   closable = false,
   type,
 }: OpenSnackbarInput) => {
@@ -37,7 +37,8 @@ const closeSnackbar = () => ({ type: "CLOSE_SNACKBAR" } as const)
 const openFeedbackModal = () => ({ type: "OPEN_FEEDBACK_MODAL" } as const)
 const closeFeedbackModal = () => ({ type: "CLOSE_FEEDBACK_MODAL" } as const)
 
-const openAuthModal = () => ({ type: "OPEN_AUTH_MODAL" } as const)
+const openAuthModal = (mode?: AuthModalMode) =>
+  ({ type: "OPEN_AUTH_MODAL", payload: { mode } } as const)
 const closeAuthModal = () => ({ type: "CLOSE_AUTH_MODAL" } as const)
 
 type OpenModalInput = {

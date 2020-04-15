@@ -1,8 +1,8 @@
 import React from "react"
 import { noopTemplate as css } from "lib/utils"
 
-import { Text, TextProps, Button } from "lib/components"
-import { Divider, Switch } from "@material-ui/core"
+import { Text, TextProps } from "lib/components"
+import { Divider } from "@material-ui/core"
 
 import { GoogleButton, FacebookButton } from "lib/login-buttons"
 
@@ -10,12 +10,16 @@ import { useSelector, useActions } from "services/store"
 
 import { linkProvider, unlinkProvider } from "services/api"
 
-export default () => {
+import { SectionTitle, SubSectionTitle } from "./components"
+
+import { logError } from "services/analytics/error-reporting"
+
+export default (props: Stylable) => {
   const {
-    settings: { toggleDarkMode },
+    ui: { openSnackbar },
   } = useActions()
 
-  const { user, darkMode } = useSelector((state) => ({
+  const { user } = useSelector((state) => ({
     user: state.auth.user,
     darkMode: state.settings.darkMode,
   }))
@@ -31,17 +35,25 @@ export default () => {
     (data) => data?.providerId === "facebook.com",
   )
 
+  React.useEffect(() => {
+    if (user.providerData.length === 0) {
+      openSnackbar({
+        type: "warning",
+        text: "You have no connected login methods",
+      })
+    }
+  }, [user.providerData.length])
+
   return (
-    <section
-      className="pt-5"
-      css={css`
-        max-width: 600px;
-        width: 100%;
-        margin-left: auto;
-        margin-right: auto;
-      `}
-    >
-      <SectionTitle>Conections</SectionTitle>
+    <div {...props}>
+      <SectionTitle className="mt-7">Connections</SectionTitle>
+
+      {user.providerData.length === 0 ? (
+        <Text color="error" variant="body2">
+          You have no connected login methods and will have to sign in by email
+          in the future
+        </Text>
+      ) : null}
 
       <Divider className="my-4" />
 
@@ -51,25 +63,10 @@ export default () => {
 
       <SocialConnectionInfo provider="facebook" data={facebookData} />
 
-      <Divider className="my-4" />
-
-      <SectionTitle gutterBottom>Preferences</SectionTitle>
-
-      <div className="fj-sb fa-c">
-        <Text>Dark mode</Text>
-
-        <Switch
-          checked={darkMode}
-          value="checkedB"
-          color="primary"
-          onChange={toggleDarkMode}
-        />
-      </div>
-    </section>
+      <Divider className="mt-4" />
+    </div>
   )
 }
-
-const SectionTitle = (props: TextProps) => <Text variant="h5" {...props} />
 
 const PROVIDER_INFO = {
   google: {
@@ -92,6 +89,8 @@ const SocialConnectionInfo = ({
   provider,
   ...rest
 }: SocialConnectionInfoProps) => {
+  const [disconnecting, setDisconnecting] = React.useState(false)
+
   const {
     ui: { openSnackbar },
     auth: { setUser },
@@ -109,9 +108,9 @@ const SocialConnectionInfo = ({
       {...rest}
     >
       <div>
-        <Text variant="h6" gutterBottom>
+        <SubSectionTitle gutterBottom>
           {data ? `You are connected to ${name}` : `Connect to ${name}`}
-        </Text>
+        </SubSectionTitle>
 
         <Text variant="body2">
           {data
@@ -129,31 +128,35 @@ const SocialConnectionInfo = ({
 
             {data.email ? <Text variant="body2">{data.email}</Text> : null}
 
-            <Text
-              variant="caption"
-              color="textSecondary"
-              role="button"
-              onClick={() => {
-                unlinkProvider(data.providerId)
-                  .then((user) => {
-                    setUser(user)
-                    openSnackbar({
-                      type: "success",
-                      text: `Disconnected from ${name}`,
+            {disconnecting ? null : (
+              <Text
+                variant="caption"
+                color="textSecondary"
+                role="button"
+                onClick={async () => {
+                  setDisconnecting(true)
+                  await unlinkProvider(data.providerId)
+                    .then((user) => {
+                      setUser(user)
+                      openSnackbar({
+                        type: "success",
+                        text: `Disconnected from ${name}`,
+                      })
                     })
-                  })
-                  .catch((error) => {
-                    console.log("ERROR", error)
-                    openSnackbar({
-                      type: "error",
-                      text: "FAILURE",
+                    .catch((error) => {
+                      console.error("ERROR", error)
+                      openSnackbar({
+                        type: "error",
+                        text: error.message,
+                      })
+                      logError(error)
                     })
-                    throw error
-                  })
-              }}
-            >
-              (disconnect)
-            </Text>
+                  setDisconnecting(false)
+                }}
+              >
+                (disconnect)
+              </Text>
+            )}
           </div>
 
           {data.photoURL ? (
@@ -180,12 +183,12 @@ const SocialConnectionInfo = ({
                 })
               })
               .catch((error) => {
-                console.log("ERROR", error)
+                console.error("ERROR", error)
                 openSnackbar({
                   type: "error",
-                  text: "FAILURE",
+                  text: error.message,
                 })
-                throw error
+                logError(error)
               })
           }}
         >

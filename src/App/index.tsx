@@ -16,6 +16,8 @@ import { useActions, useSelector } from "services/store"
 
 import { Helmet } from "react-helmet"
 
+api.completeSignInWithEmailLink()
+
 export default () => {
   return (
     // <React.StrictMode>

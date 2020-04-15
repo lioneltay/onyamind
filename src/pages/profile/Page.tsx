@@ -1,7 +1,7 @@
 import React from "react"
 import { Switch, Route } from "react-router-dom"
 
-import SettingsPage from "./SettingsPage"
+import SettingsPage from "./settings/Page"
 
 export default () => {
   return (
