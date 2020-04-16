@@ -21,7 +21,6 @@ type Props = TaskProps & {
   swipeRightBackground?: string
   swipeLeftIcon?: React.ReactNode
   swipeRightIcon?: React.ReactNode
-  onItemClick?: (id: ID) => void
 }
 
 export default ({
@@ -31,8 +30,6 @@ export default ({
   swipeLeftIcon = <DeleteIcon />,
   swipeRightBackground = "dodgerblue",
   swipeRightIcon = <CheckIcon />,
-  onItemClick = () => {},
-  task,
   ...taskProps
 }: Props) => {
   const [direction, setDirection] = React.useState<Direction>("none")
@@ -50,43 +47,42 @@ export default ({
     onRest: () => {},
   })) as any[]
 
-  const bind = useGesture({
-    onDragStart: () => console.log("dragstart"),
-    onDragEnd: ({ distance }) => {
-      if (overRef.current !== true && distance < 30) {
-        onItemClick(task.id)
-      }
-    },
-    onDrag: ({ down, movement: [mx], direction: [xDir], velocity }) => {
-      const trigger = velocity > 0.3
-      const dir = xDir < 0 ? -1 : 1
+  const bind = useGesture(
+    {
+      onDragStart: () => console.log("dragstart"),
+      onDragEnd: () => console.log("dragend"),
+      onDrag: ({ down, movement: [mx], direction: [xDir], velocity }) => {
+        const trigger = velocity > 0.5
+        const dir = xDir < 0 ? -1 : 1
 
-      const isOver = !down && trigger
-      const x = isOver ? window.innerWidth * dir : down ? mx : 0
+        const isOver = !down && trigger
+        const x = isOver ? window.innerWidth * dir : down ? mx : 0
 
-      const dirVal = mx < 0 ? "left" : "right"
-      if (direction !== dirVal) {
-        updateDirection(dirVal)
-      }
-
-      if (isOver) {
-        overRef.current = true
-      }
-
-      if (overRef.current) {
-        const direction = directionRef.current
-        if (direction === "left") {
-          setTimeout(onSwipeLeft, 500)
-        } else if (direction === "right") {
-          setTimeout(onSwipeRight, 500)
-        } else {
-          logError(new Error("Animation ended without direction"))
+        const dirVal = mx < 0 ? "left" : "right"
+        if (direction !== dirVal) {
+          updateDirection(dirVal)
         }
-      }
 
-      set({ x })
+        if (isOver) {
+          overRef.current = true
+        }
+
+        if (overRef.current) {
+          const direction = directionRef.current
+          if (direction === "left") {
+            setTimeout(onSwipeLeft, 500)
+          } else if (direction === "right") {
+            setTimeout(onSwipeRight, 500)
+          } else {
+            logError(new Error("Animation ended without direction"))
+          }
+        }
+
+        set({ x })
+      },
     },
-  })
+    { drag: { axis: "x" } },
+  )
 
   const left = direction === "left"
   const right = direction === "right"
@@ -125,7 +121,7 @@ export default ({
           transform: spring.x.interpolate((x: any) => `translateX(${x}px)`),
         }}
       >
-        <Task {...taskProps} task={task} />
+        <Task {...taskProps} />
       </animated.div>
     </div>
   )

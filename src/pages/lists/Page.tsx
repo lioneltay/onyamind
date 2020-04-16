@@ -128,6 +128,7 @@ const Content = () => {
 
       {editingTask ? (
         <EditTaskModal
+          disableBackdropClick
           title="Edit Task"
           onClose={() => stopEditingTask()}
           open={!multiselect && !!editingTask}
@@ -198,6 +199,10 @@ export default ({
       } else {
         selectPrimaryTaskList()
       }
+    }
+
+    return () => {
+      selectTaskList(null)
     }
   }, [taskListsLoaded, listIdParamValid, listId])
 

@@ -1,6 +1,6 @@
 export { default as Text, TextProps } from "./Text"
-export { default as PlainModal } from "./PlainModal"
-export { default as Modal } from "./Modal"
+export { default as PlainModal, PlainModalProps } from "./PlainModal"
+export { default as Modal, ModalProps } from "./Modal"
 export { default as ListItemText } from "./ListItemText"
 export { default as Button, ButtonProps } from "./Button"
 export { A, Link } from "./Anchor"

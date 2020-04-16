@@ -7,30 +7,20 @@ import { IconButton, Divider } from "@material-ui/core"
 
 import { ClearIcon } from "lib/icons"
 
-type Props = Omit<PlainModalProps, "title"> & {
+export type ModalProps = Omit<PlainModalProps, "title"> & {
   title?: React.ReactNode
   actions?: { label: string; action?: (onClose: () => void) => void }[] | null
 }
 
-const Modal: React.FunctionComponent<Props> = ({
-  className,
-  style,
-  open,
-  onClose,
-  title,
-  actions,
-  children,
-}) => {
+const Modal = ({ title, actions, children, onClose, ...rest }: ModalProps) => {
   return (
     <PlainModal
-      style={style}
-      className={className}
-      open={open}
       onClose={onClose}
       css={css`
         width: 400px;
         max-width: 100vw;
       `}
+      {...rest}
     >
       <div className="fj-sb fa-c fa-c pl-4">
         <Text variant="h6">{title}</Text>
