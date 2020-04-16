@@ -4,7 +4,10 @@
     "target": {
       "namespace": "android_app",
       "package_name": "xyz.appmaker.nbsyzd",
-      "sha256_cert_fingerprints": ["00:2D:7A:C4:71:7B:97:EA:9B:1B:BA:09:48:3E:29:F3:C5:88:2A:D6:38:41:8D:06:19:B9:84:86:AE:BE:0C:8E"]
+      "sha256_cert_fingerprints": [
+        "00:2D:7A:C4:71:7B:97:EA:9B:1B:BA:09:48:3E:29:F3:C5:88:2A:D6:38:41:8D:06:19:B9:84:86:AE:BE:0C:8E",
+        "SHA256: CC:17:81:95:65:BF:4D:9B:4E:48:5F:A6:DD:3A:30:27:2C:A0:A8:76:B5:A5:13:B2:27:84:79:C7:C3:AC:29:B4"
+      ]
     }
   }
 ]
