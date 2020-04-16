@@ -146,7 +146,7 @@ export default () => {
             <ListItemText>
               <Button
                 variant="outlined"
-                onClick={openAuthModal}
+                onClick={() => openAuthModal()}
                 color="primary"
               >
                 Sign In

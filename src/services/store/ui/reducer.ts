@@ -4,6 +4,8 @@ import { Action } from "./actions"
 
 export type SnackbarType = "error" | "warning" | "info" | "success"
 
+export type AuthModalMode = "signin-only" | null
+
 export type ModalAction = {
   label: string
   action: (closeModal: () => void) => void
@@ -11,7 +13,9 @@ export type ModalAction = {
 
 export type State = {
   showFeedbackModal: boolean
-  showAuthModal: boolean
+  authModal: null | {
+    mode: AuthModalMode
+  }
   showDrawer: boolean
   snackbar: null | {
     type: SnackbarType
@@ -28,7 +32,7 @@ export type State = {
 
 const initialState: State = {
   showFeedbackModal: false,
-  showAuthModal: false,
+  authModal: null,
   showDrawer: false,
   snackbar: null,
   modal: null,
@@ -59,13 +63,15 @@ export const reducer = (state: State = initialState, action: Action): State => {
     case "OPEN_AUTH_MODAL": {
       return {
         ...state,
-        showAuthModal: true,
+        authModal: {
+          mode: action.payload.mode ?? null,
+        },
       }
     }
     case "CLOSE_AUTH_MODAL": {
       return {
         ...state,
-        showAuthModal: false,
+        authModal: null,
       }
     }
     case "OPEN_FEEDBACK_MODAL": {

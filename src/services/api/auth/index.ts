@@ -47,8 +47,8 @@ export async function signInWithEmailAndPassword({
   password,
 }: EmailCredentials) {
   logEvent("SignInWithEmailAndPassword|Begin")
-  const anonUser = firebase.auth().currentUser
-  assert(anonUser?.isAnonymous, "No anonymous user signed in")
+  const existingUser = firebase.auth().currentUser
+  assert(existingUser?.isAnonymous, "No user signed in")
 
   const { user } = await firebase
     .auth()
@@ -56,7 +56,9 @@ export async function signInWithEmailAndPassword({
 
   assert(user, "No user")
 
-  await migrateUserData({ fromUserId: anonUser.uid, toUserId: user.uid })
+  if (existingUser.isAnonymous) {
+    await migrateUserData({ fromUserId: existingUser.uid, toUserId: user.uid })
+  }
 
   logEvent("SignInWithEmailAndPassword|Complete")
   return user
@@ -108,13 +110,19 @@ export const signInWithProvider = async (
   options?: GetProviderOptions,
 ) => {
   logEvent(`SignInWithProvider|${providerName}|Begin`)
-  const anonUser = firebase.auth().currentUser
-  assert(anonUser?.isAnonymous, "No anonymous user signed in")
+  const existingUser = firebase.auth().currentUser
+
+  assert(existingUser, "No user signed in")
 
   const provider = getProvider(providerName, options)
 
+  if (!existingUser.isAnonymous) {
+    const { user } = await firebase.auth().signInWithPopup(provider)
+    return user
+  }
+
   try {
-    const { user } = await anonUser.linkWithPopup(provider)
+    const { user } = await existingUser.linkWithPopup(provider)
     assert(user?.uid, `Link sign in fail [${providerName}]`)
     logEvent(`SignInWithProvider|Link|${providerName}|Complete`)
     return user
@@ -127,7 +135,7 @@ export const signInWithProvider = async (
     const { user } = await firebase.auth().signInWithCredential(credential)
     assert(user?.uid, `Merge sign in fail [${providerName}]`)
 
-    await migrateUserData({ fromUserId: anonUser.uid, toUserId: user.uid })
+    await migrateUserData({ fromUserId: existingUser.uid, toUserId: user.uid })
 
     logEvent(`SignInWithProvider|Merge|${providerName}|Complete`)
     return user
@@ -169,4 +177,63 @@ export async function unlinkProvider(providerId: string) {
   assert(user, "Unable to link provider without a user signed in")
 
   return user.unlink(providerId)
+}
+
+export async function updateEmail(email: string) {
+  const user = firebase.auth().currentUser
+  assert(user, "Must be signed in to update email")
+  await user.updateEmail(email)
+  return firebase.auth().currentUser
+}
+
+export async function sendSignInLinkToEmail(email: string, url: string) {
+  return firebase
+    .auth()
+    .sendSignInLinkToEmail(email, {
+      // URL you want to redirect back to. The domain (www.example.com) for this
+      // URL must be whitelisted in the Firebase Console.
+      url,
+      // This must be true.
+      handleCodeInApp: true,
+      // iOS: {
+      //   bundleId: "com.example.ios",
+      // },
+      // android: {
+      //   packageName: "com.example.android",
+      //   installApp: true,
+      //   minimumVersion: "12",
+      // },
+      // dynamicLinkDomain: "example.page.link",
+    })
+    .then(function () {
+      // The link was successfully sent. Inform the user.
+      // Save the email locally so you don't need to ask the user for it again
+      // if they open the link on the same device.
+      window.localStorage.setItem("emailForSignIn", email)
+    })
+}
+
+// sendSignInLinkToEmail('lionel.lt.tay@gmail.com', window.location.href).then(() => {
+//   console.log('sentt')
+// })
+
+export async function completeSignInWithEmailLink() {
+  if (firebase.auth().isSignInWithEmailLink(window.location.href)) {
+    const email =
+      window.localStorage.getItem("emailForSignIn") ??
+      window.prompt("Please provider you email for confirmation")
+
+    if (!email) {
+      throw new Error("No email")
+    }
+
+    const res = await firebase
+      .auth()
+      .signInWithEmailLink(email, window.location.href)
+    window.localStorage.removeItem("emailForSignIn")
+
+    console.log("SIGNIEND INNN")
+
+    return res
+  }
 }

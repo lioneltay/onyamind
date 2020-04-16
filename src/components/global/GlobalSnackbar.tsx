@@ -13,6 +13,7 @@ const SlideTransition = (props: TransitionProps) => {
 
 export default () => {
   const { closeSnackbar } = useActions("ui")
+
   const { snackbar } = useSelector((state) => ({
     dark: state.settings.darkMode,
     snackbar: state.ui.snackbar,

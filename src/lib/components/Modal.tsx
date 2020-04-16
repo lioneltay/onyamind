@@ -1,4 +1,5 @@
 import React from "react"
+import { noopTemplate as css } from "lib/utils"
 
 import PlainModal, { PlainModalProps } from "./PlainModal"
 import { Text, Button } from "lib/components"
@@ -26,6 +27,10 @@ const Modal: React.FunctionComponent<Props> = ({
       className={className}
       open={open}
       onClose={onClose}
+      css={css`
+        width: 400px;
+        max-width: 100vw;
+      `}
     >
       <div className="fj-sb fa-c fa-c pl-4">
         <Text variant="h6">{title}</Text>
