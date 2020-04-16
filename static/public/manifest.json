@@ -1,11 +1,11 @@
 {
-  "name": "Notes",
-  "short_name": "Notes",
-  "description": "A Todo App made with PWA Technology",
+  "name": "Onyamind Tasks",
+  "short_name": "Tasks",
+  "description": "Simple task management",
   "start_url": "/",
   "display": "standalone",
   "theme_color": "#000000",
-  "background_color": "#ffffff",
+  "background_color": "#333333",
   "orientation": "portrait",
   "icons": [
     {
