@@ -4,27 +4,22 @@ import { noUndefinedValues } from "lib/utils"
 import { Formik, Form } from "formik"
 import Button from "@material-ui/core/Button"
 import TextField from "@material-ui/core/TextField"
-import Modal from "lib/components/Modal"
+import { Modal, ModalProps } from "lib/components"
 
 type Values = {
   title?: string
   notes?: string
 }
 
-type Props = {
-  title: string
-  open: boolean
-  onClose: () => void
+type Props = Omit<ModalProps, "children" | "onSubmit"> & {
   initialValues?: Values
   onSubmit: (values: Values) => Promise<void> | void
 }
 
 const EditModal: React.FunctionComponent<Props> = ({
-  title,
-  open,
-  onClose,
   initialValues,
   onSubmit,
+  ...rest
 }) => {
   return (
     <Formik<Values>
@@ -39,12 +34,7 @@ const EditModal: React.FunctionComponent<Props> = ({
       }}
     >
       {({ setFieldValue, values, isSubmitting }) => (
-        <Modal
-          open={open}
-          onClose={onClose}
-          style={{ width: 500, maxWidth: "100%" }}
-          title={title}
-        >
+        <Modal style={{ width: 500, maxWidth: "100%" }} {...rest}>
           <Form>
             <div>
               <TextField

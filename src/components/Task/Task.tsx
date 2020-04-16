@@ -42,6 +42,7 @@ export type TaskProps = Stylable & {
   backgroundColor?: string
 
   onSelectTask?: (id: ID) => void
+  onItemClick?: (id: ID) => void
 
   hoverActions?: React.ReactNode
   showHoverActions?: boolean
@@ -58,6 +59,7 @@ export default ({
   multiselect,
 
   onSelectTask = () => {},
+  onItemClick = () => {},
 
   hoverActions,
   showHoverActions = false,
@@ -70,14 +72,15 @@ export default ({
       className={className}
       selected={selected}
       button
+      onClick={() => onItemClick(task.id)}
     >
       <ListItemIcon
         onPointerDown={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
+        onTouchStart={(e) => e.stopPropagation()}
         onClick={(e) => {
           e.stopPropagation()
           onSelectTask(task.id)
-          console.log("seelct task lcick icon")
         }}
       >
         <Fab

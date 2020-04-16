@@ -11,12 +11,11 @@ export type PlainModalProps = Omit<ModalProps, "children" | "onClose"> & {
 const PlainModal = ({
   className,
   style,
-  open,
-  onClose,
   children,
+  ...rest
 }: PlainModalProps) => {
   return (
-    <Modal className="fj-c fa-c" open={open} onClose={onClose}>
+    <Modal className="fj-c fa-c" {...rest}>
       <Paper style={style} className={className} data-testid="modal">
         {children}
       </Paper>
