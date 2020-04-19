@@ -27,7 +27,7 @@ it("Clicking menu opens drawer", () => {
 it("Can create a task by pressing enter", () => {
   visitListPage()
 
-  cy.findByPlaceholderText(/add item/i)
+  cy.findByPlaceholderText(/add task/i)
     .click()
     .type("Created by pressing enter\n")
 })
