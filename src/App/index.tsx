@@ -18,6 +18,8 @@ import { Helmet } from "react-helmet"
 
 api.completeSignInWithEmailLink()
 
+import Demo from "./Demo"
+
 export default () => {
   return (
     // <React.StrictMode>
@@ -31,7 +33,8 @@ export default () => {
             </Helmet>
 
             <GlobalStyles />
-            <App />
+            {/* <App /> */}
+            <Demo />
           </ThemeProvider>
         </StylesProvider>
       </Router>
