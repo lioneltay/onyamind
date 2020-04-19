@@ -29,17 +29,11 @@ export default ({ style, className, task, backgroundColor }: Props) => {
     archiveTask,
     editTask,
     toggleTaskSelection,
-    moveTask,
     toggleEditingTask,
     stopEditingTask,
     setMultiselect,
   } = useActions("listPage")
-  const {
-    taskLists,
-    selectedTaskIds,
-    multiselect,
-    selectedTaskListId,
-  } = useSelector((state) => ({
+  const { taskLists, selectedTaskIds, multiselect } = useSelector((state) => ({
     taskLists: state.app.taskLists,
     selectedTaskIds: state.listPage.selectedTaskIds,
     multiselect: state.listPage.multiselect,
@@ -76,46 +70,6 @@ export default ({ style, className, task, backgroundColor }: Props) => {
           setMultiselect(true)
         }
       }}
-      hoverActions={
-        multiselect ? null : (
-          <Fragment>
-            <IconButton
-              onClick={() =>
-                editTask({
-                  taskId: task.id,
-                  complete: !task.complete,
-                })
-              }
-            >
-              {task.complete ? <AddIcon /> : <CheckIcon />}
-            </IconButton>
-
-            <IconButtonMenu
-              icon={<SwapHorizIcon />}
-              items={taskLists
-                .filter((list) => list.id !== selectedTaskListId)
-                .map((list) => ({
-                  label: list.name,
-                  action: () => moveTask({ taskId: task.id, listId: list.id }),
-                }))}
-            />
-
-            {!task.complete ? (
-              <IconButton
-                onClick={async () => {
-                  createTaskNotification(task)
-                }}
-              >
-                <NotificationsIcon />
-              </IconButton>
-            ) : null}
-
-            <IconButton onClick={() => archiveTask(task.id)}>
-              <DeleteIcon />
-            </IconButton>
-          </Fragment>
-        )
-      }
     />
   )
 }

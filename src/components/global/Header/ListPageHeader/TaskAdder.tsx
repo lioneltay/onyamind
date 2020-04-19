@@ -164,6 +164,7 @@ export default () => {
       </OuterContainer>
 
       <EditTaskModal
+        key={newTaskTitle}
         title="New Task"
         open={showCreateModal}
         onClose={() => setShowCreateModal(false)}

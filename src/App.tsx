@@ -16,8 +16,6 @@ import { useActions, useSelector } from "services/store"
 
 import { Helmet } from "react-helmet"
 
-import Demo from "./Demo"
-
 export default () => {
   return (
     // <React.StrictMode>
@@ -32,7 +30,6 @@ export default () => {
 
             <GlobalStyles />
             <App />
-            {/* <Demo /> */}
           </ThemeProvider>
         </StylesProvider>
       </Router>
