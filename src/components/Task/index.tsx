@@ -8,7 +8,7 @@ import { IconButton, ListItem } from "@material-ui/core"
 
 import { DeleteIcon, CheckIcon } from "lib/icons"
 
-import Task, { TaskProps } from "./Task"
+import Task, { TaskProps as TaskComponentProps } from "./Task"
 
 import { logError } from "services/analytics/error-reporting"
 
@@ -19,7 +19,7 @@ const useInstance = <T extends Object>(initialValue: T) => {
 
 type Direction = "left" | "right" | "none"
 
-type Props = TaskProps & {
+export type TaskProps = TaskComponentProps & {
   onSwipeLeft?: () => void
   onSwipeRight?: () => void
   swipeLeftBackground?: string
@@ -38,7 +38,7 @@ export default ({
   onSelectTask = noop,
   onItemClick = noop,
   ...taskProps
-}: Props) => {
+}: TaskProps) => {
   const instance = useInstance({
     over: false,
     direction: "none",

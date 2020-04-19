@@ -29,6 +29,8 @@ import { onTasksChange } from "pages/lists/api"
 
 import { Helmet } from "react-helmet"
 
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd"
+
 const Flip = styled.div<{ flip: boolean }>`
   transform: rotate(${({ flip }) => (flip ? "-180deg" : "0")});
   transition: 300ms;
@@ -76,15 +78,53 @@ const Content = () => {
 
   return (
     <Fragment>
-      <List className="p-0" style={{ background: theme.backgroundColor }}>
-        {incompleteTasks.map((task) => (
-          <Task
-            key={task.id}
-            backgroundColor={theme.backgroundColor}
-            task={task}
-          />
-        ))}
-      </List>
+      <DragDropContext
+        onDragEnd={(result) => {
+          console.log("onDragEnd", result)
+        }}
+      >
+        <Droppable droppableId="dropzone">
+          {(provided, snapshot) => (
+            <List
+              {...provided.droppableProps}
+              innerRef={provided.innerRef}
+              className="p-0"
+              style={{ background: theme.backgroundColor }}
+            >
+              {incompleteTasks.map((task, index) => (
+                <Draggable key={task.id} draggableId={task.id} index={index}>
+                  {(provided, snapshot) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      style={{
+                        ...provided.draggableProps.style,
+                        transform: provided.draggableProps.style?.transform
+                          ? provided.draggableProps.style.transform.replace(
+                              /-?\d*\.?\d*px,/,
+                              "0px,",
+                            )
+                          : undefined,
+                      }}
+                    >
+                      <Task
+                        IconProps={provided.dragHandleProps}
+                        backgroundColor={
+                          snapshot.isDragging
+                            ? theme.primary
+                            : theme.backgroundColor
+                        }
+                        task={task}
+                      />
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </List>
+          )}
+        </Droppable>
+      </DragDropContext>
 
       <List className="p-0" onClick={toggleShowCompleteTasks}>
         <ListItem button>

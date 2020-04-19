@@ -2,14 +2,17 @@ import React from "react"
 import { noopTemplate as css } from "lib/utils"
 import { useTheme } from "theme"
 
-import { ListItem, ListItemIcon, Fab } from "@material-ui/core"
+import { Fab } from "@material-ui/core"
+import ListItem, { ListItemProps } from "@material-ui/core/ListItem"
+import ListItemIcon, { ListItemIconProps } from "@material-ui/core/ListItemIcon"
 
 import { ListItemText } from "lib/components"
 
 import { AssignmentIcon } from "lib/icons"
 
-export type TaskProps = Stylable & {
-  selected: boolean
+export type TaskProps = ListItemProps & {
+  IconProps?: Omit<ListItemIconProps, "children">
+
   task: Task
   multiselect: boolean
   backgroundColor?: string
@@ -19,17 +22,17 @@ export type TaskProps = Stylable & {
 }
 
 export default ({
-  style,
-  className,
-
   backgroundColor = "transparent",
 
-  selected,
   task,
   multiselect,
 
   onSelectTask = () => {},
   onItemClick = () => {},
+  selected,
+
+  IconProps,
+  ...listItemProps
 }: TaskProps) => {
   const theme = useTheme()
 
@@ -39,16 +42,33 @@ export default ({
         position: relative;
         min-height: 70px;
       `}
-      style={{ ...style, backgroundColor }}
-      className={className}
+      style={{ ...listItemProps.style, backgroundColor }}
+      button={true as any}
       selected={selected}
-      button
-      onClick={() => onItemClick(task.id)}
+      {...(listItemProps as ListItemProps)}
+      onClick={(event) => {
+        onItemClick(task.id)
+        listItemProps.onClick?.(event)
+      }}
     >
       <ListItemIcon
-        onClick={(e) => {
-          e.stopPropagation()
+        {...IconProps}
+        onPointerDown={(event) => {
+          event.stopPropagation()
+          IconProps?.onPointerDown?.(event)
+        }}
+        onMouseDown={(event) => {
+          event.stopPropagation()
+          IconProps?.onMouseDown?.(event)
+        }}
+        onTouchStart={(event) => {
+          event.stopPropagation()
+          IconProps?.onTouchStart?.(event)
+        }}
+        onClick={(event) => {
+          event.stopPropagation()
           onSelectTask(task.id)
+          IconProps?.onClick?.(event)
         }}
       >
         <Fab

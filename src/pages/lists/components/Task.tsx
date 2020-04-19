@@ -1,15 +1,15 @@
 import React from "react"
 import { CloseIcon } from "lib/icons"
-import { Task } from "components"
+import { Task, TaskProps } from "components"
 import { useSelector, useActions } from "services/store"
 
-export type Props = Stylable & {
+export type Props = Omit<TaskProps, "multiselect"> & {
   selected?: boolean
   task: Task
   backgroundColor?: string
 }
 
-export default ({ style, className, task, backgroundColor }: Props) => {
+const ListPageTask = ({ task, backgroundColor, ...taskProps }: Props) => {
   const {
     archiveTask,
     editTask,
@@ -33,6 +33,7 @@ export default ({ style, className, task, backgroundColor }: Props) => {
 
   return (
     <Task
+      {...taskProps}
       onSwipeLeft={() => archiveTask(task.id)}
       onSwipeRight={() =>
         editTask({
@@ -42,8 +43,6 @@ export default ({ style, className, task, backgroundColor }: Props) => {
       }
       backgroundColor={backgroundColor}
       swipeRightIcon={task.complete ? <CloseIcon /> : undefined}
-      style={style}
-      className={className}
       selected={selected}
       multiselect={multiselect}
       task={task}
@@ -58,3 +57,5 @@ export default ({ style, className, task, backgroundColor }: Props) => {
     />
   )
 }
+
+export default React.memo(ListPageTask)

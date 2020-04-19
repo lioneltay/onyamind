@@ -17,6 +17,8 @@ const getSCTheme = ({ dark }: ThemeProps) => {
     greyText: "#6a6a6a",
     iconColor: dark ? "ffffff" : "#0000008a",
     errorColor: red["500"],
+    primary: blue["500"],
+    secondary: teal["500"],
   }
 }
 
