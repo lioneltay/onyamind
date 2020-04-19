@@ -16,8 +16,6 @@ import { useActions, useSelector } from "services/store"
 
 import { Helmet } from "react-helmet"
 
-api.completeSignInWithEmailLink()
-
 import Demo from "./Demo"
 
 export default () => {

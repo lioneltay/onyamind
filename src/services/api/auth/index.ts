@@ -17,53 +17,6 @@ export const initializeUserData = async (userId: ID) => {
   })
 }
 
-type EmailCredentials = {
-  email: string
-  password: string
-}
-
-export async function createUserWithEmailAndPassword({
-  email,
-  password,
-}: EmailCredentials) {
-  logEvent("CreateUserWithEmailAndPassword|Begin")
-  const anonUser = firebase.auth().currentUser
-  assert(
-    anonUser?.isAnonymous,
-    "signInWithProvider fail: No anonymous user signed in",
-  )
-
-  const credential = firebase.auth.EmailAuthProvider.credential(email, password)
-
-  const { user } = await anonUser.linkWithCredential(credential)
-
-  user?.reload()
-  logEvent("CreateUserWithEmailAndPassword|Complete")
-  return user
-}
-
-export async function signInWithEmailAndPassword({
-  email,
-  password,
-}: EmailCredentials) {
-  logEvent("SignInWithEmailAndPassword|Begin")
-  const existingUser = firebase.auth().currentUser
-  assert(existingUser?.isAnonymous, "No user signed in")
-
-  const { user } = await firebase
-    .auth()
-    .signInWithEmailAndPassword(email, password)
-
-  assert(user, "No user")
-
-  if (existingUser.isAnonymous) {
-    await migrateUserData({ fromUserId: existingUser.uid, toUserId: user.uid })
-  }
-
-  logEvent("SignInWithEmailAndPassword|Complete")
-  return user
-}
-
 type ProviderType = "google" | "facebook" | "twitter"
 
 type GetProviderOptions = {
@@ -184,56 +137,4 @@ export async function updateEmail(email: string) {
   assert(user, "Must be signed in to update email")
   await user.updateEmail(email)
   return firebase.auth().currentUser
-}
-
-export async function sendSignInLinkToEmail(email: string, url: string) {
-  return firebase
-    .auth()
-    .sendSignInLinkToEmail(email, {
-      // URL you want to redirect back to. The domain (www.example.com) for this
-      // URL must be whitelisted in the Firebase Console.
-      url,
-      // This must be true.
-      handleCodeInApp: true,
-      // iOS: {
-      //   bundleId: "com.example.ios",
-      // },
-      // android: {
-      //   packageName: "com.example.android",
-      //   installApp: true,
-      //   minimumVersion: "12",
-      // },
-      // dynamicLinkDomain: "example.page.link",
-    })
-    .then(function () {
-      // The link was successfully sent. Inform the user.
-      // Save the email locally so you don't need to ask the user for it again
-      // if they open the link on the same device.
-      window.localStorage.setItem("emailForSignIn", email)
-    })
-}
-
-// sendSignInLinkToEmail('lionel.lt.tay@gmail.com', window.location.href).then(() => {
-//   console.log('sentt')
-// })
-
-export async function completeSignInWithEmailLink() {
-  if (firebase.auth().isSignInWithEmailLink(window.location.href)) {
-    const email =
-      window.localStorage.getItem("emailForSignIn") ??
-      window.prompt("Please provider you email for confirmation")
-
-    if (!email) {
-      throw new Error("No email")
-    }
-
-    const res = await firebase
-      .auth()
-      .signInWithEmailLink(email, window.location.href)
-    window.localStorage.removeItem("emailForSignIn")
-
-    console.log("SIGNIEND INNN")
-
-    return res
-  }
 }
