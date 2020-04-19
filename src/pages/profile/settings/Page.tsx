@@ -16,14 +16,10 @@ export default () => {
     settings: { toggleDarkMode },
   } = useActions()
 
-  const { user, darkMode } = useSelector((state) => ({
-    user: state.auth.user,
+  const { permanentUser, darkMode } = useSelector((state) => ({
+    permanentUser: !!(state.auth.user && !state.auth.user.isAnonymous),
     darkMode: state.settings.darkMode,
   }))
-
-  if (!user) {
-    return null
-  }
 
   return (
     <section
@@ -36,26 +32,30 @@ export default () => {
         padding-bottom: 100px;
       `}
     >
-      <EmailSettings />
+      {permanentUser ? (
+        <React.Fragment>
+          <EmailSettings className="mb-7" />
 
-      <Connections className="mt-7" />
+          <Connections className="mb-7" />
+        </React.Fragment>
+      ) : null}
 
-      <SectionTitle className="mt-7" gutterBottom>
-        Preferences
-      </SectionTitle>
+      <section className="mb-7">
+        <SectionTitle gutterBottom>Preferences</SectionTitle>
 
-      <div className="fj-sb fa-c">
-        <Text variant="body2">Dark mode</Text>
+        <div className="fj-sb fa-c">
+          <Text variant="body2">Dark mode</Text>
 
-        <Switch
-          checked={darkMode}
-          value="checkedB"
-          color="primary"
-          onChange={toggleDarkMode}
-        />
-      </div>
+          <Switch
+            checked={darkMode}
+            value="checkedB"
+            color="primary"
+            onChange={toggleDarkMode}
+          />
+        </div>
 
-      <Divider className="mt-4" />
+        <Divider className="mt-4" />
+      </section>
     </section>
   )
 }
