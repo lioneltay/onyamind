@@ -38,13 +38,11 @@ export default ({ style, className, task, backgroundColor }: Props) => {
     taskLists,
     selectedTaskIds,
     multiselect,
-    touchScreen,
     selectedTaskListId,
   } = useSelector((state) => ({
     taskLists: state.app.taskLists,
     selectedTaskIds: state.listPage.selectedTaskIds,
     multiselect: state.listPage.multiselect,
-    touchScreen: false,
     selectedTaskListId: state.app.selectedTaskListId,
   }))
 
@@ -79,7 +77,7 @@ export default ({ style, className, task, backgroundColor }: Props) => {
         }
       }}
       hoverActions={
-        multiselect || touchScreen ? null : (
+        multiselect ? null : (
           <Fragment>
             <IconButton
               onClick={() =>

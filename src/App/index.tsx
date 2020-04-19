@@ -33,8 +33,8 @@ export default () => {
             </Helmet>
 
             <GlobalStyles />
-            {/* <App /> */}
-            <Demo />
+            <App />
+            {/* <Demo /> */}
           </ThemeProvider>
         </StylesProvider>
       </Router>

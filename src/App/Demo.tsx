@@ -1,161 +1,163 @@
-import React, { Component } from "react"
-import ReactDOM from "react-dom"
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd"
+export default 5
 
-// fake data generator
-const getItems = (count) =>
-  Array.from({ length: count }, (v, k) => k).map((k) => ({
-    id: `item-${k}`,
-    content: `item ${k}`,
-  }))
+// import React, { Component } from "react"
+// import ReactDOM from "react-dom"
+// import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd"
 
-const grid = 8
+// // fake data generator
+// const getItems = (count) =>
+//   Array.from({ length: count }, (v, k) => k).map((k) => ({
+//     id: `item-${k}`,
+//     content: `item ${k}`,
+//   }))
 
-const getItemStyle = (isDragging, draggableStyle) => ({
-  // some basic styles to make the items look a bit nicer
-  userSelect: "none",
-  padding: grid * 2,
-  margin: `0 0 ${grid}px 0`,
+// const grid = 8
 
-  // change background colour if dragging
-  background: isDragging ? "lightgreen" : "grey",
+// const getItemStyle = (isDragging, draggableStyle) => ({
+//   // some basic styles to make the items look a bit nicer
+//   userSelect: "none",
+//   padding: grid * 2,
+//   margin: `0 0 ${grid}px 0`,
 
-  // styles we need to apply on draggables
-  ...draggableStyle,
-})
+//   // change background colour if dragging
+//   background: isDragging ? "lightgreen" : "grey",
 
-const getListStyle = (isDraggingOver) => ({
-  background: isDraggingOver ? "lightblue" : "lightgrey",
-  padding: grid,
-  width: 250,
-})
+//   // styles we need to apply on draggables
+//   ...draggableStyle,
+// })
 
-export default class Demo extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      items: getItems(10),
-    }
-    this.onDragEnd = this.onDragEnd.bind(this)
-  }
+// const getListStyle = (isDraggingOver) => ({
+//   background: isDraggingOver ? "lightblue" : "lightgrey",
+//   padding: grid,
+//   width: 250,
+// })
 
-  onDragEnd(result) {
-    // dropped outside the list
-    if (!result.destination) {
-      return
-    }
+// export default class Demo extends Component {
+//   constructor(props) {
+//     super(props)
+//     this.state = {
+//       items: getItems(10),
+//     }
+//     this.onDragEnd = this.onDragEnd.bind(this)
+//   }
 
-    const items = reorder(
-      this.state.items,
-      result.source.index,
-      result.destination.index,
-    )
+//   onDragEnd(result) {
+//     // dropped outside the list
+//     if (!result.destination) {
+//       return
+//     }
 
-    this.setState({
-      items,
-    })
-  }
+//     const items = reorder(
+//       this.state.items,
+//       result.source.index,
+//       result.destination.index,
+//     )
 
-  // Normally you would want to split things out into separate components.
-  // But in this example everything is just done in one place for simplicity
-  render() {
-    return (
-      <DragDropContext onDragEnd={this.onDragEnd}>
-        <Droppable droppableId="droppable">
-          {(provided, snapshot) => (
-            <div
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-              style={getListStyle(snapshot.isDraggingOver)}
-            >
-              {this.state.items.map((item, index) => (
-                <Draggable key={item.id} draggableId={item.id} index={index}>
-                  {(provided, snapshot) => (
-                    <div
-                      onClick={() => console.log(item.content)}
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      style={getItemStyle(
-                        snapshot.isDragging,
-                        provided.draggableProps.style,
-                      )}
-                    >
-                      {item.content}
-                    </div>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
-    )
-  }
-}
+//     this.setState({
+//       items,
+//     })
+//   }
 
-// a little function to help us with reordering the result
-function reorder<T extends any>(
-  list: T[],
-  startIndex: number,
-  endIndex: number,
-): T[] {
-  const result = Array.from(list)
-  const [removed] = result.splice(startIndex, 1)
-  result.splice(endIndex, 0, removed)
+//   // Normally you would want to split things out into separate components.
+//   // But in this example everything is just done in one place for simplicity
+//   render() {
+//     return (
+//       <DragDropContext onDragEnd={this.onDragEnd}>
+//         <Droppable droppableId="droppable">
+//           {(provided, snapshot) => (
+//             <div
+//               {...provided.droppableProps}
+//               ref={provided.innerRef}
+//               style={getListStyle(snapshot.isDraggingOver)}
+//             >
+//               {this.state.items.map((item, index) => (
+//                 <Draggable key={item.id} draggableId={item.id} index={index}>
+//                   {(provided, snapshot) => (
+//                     <div
+//                       onClick={() => console.log(item.content)}
+//                       ref={provided.innerRef}
+//                       {...provided.draggableProps}
+//                       {...provided.dragHandleProps}
+//                       style={getItemStyle(
+//                         snapshot.isDragging,
+//                         provided.draggableProps.style,
+//                       )}
+//                     >
+//                       {item.content}
+//                     </div>
+//                   )}
+//                 </Draggable>
+//               ))}
+//               {provided.placeholder}
+//             </div>
+//           )}
+//         </Droppable>
+//       </DragDropContext>
+//     )
+//   }
+// }
 
-  return result
-}
+// // a little function to help us with reordering the result
+// function reorder<T extends any>(
+//   list: T[],
+//   startIndex: number,
+//   endIndex: number,
+// ): T[] {
+//   const result = Array.from(list)
+//   const [removed] = result.splice(startIndex, 1)
+//   result.splice(endIndex, 0, removed)
 
-type SortableListProps<T> = {
-  items: T[]
-  onReorder: (items: T[]) => void
-}
+//   return result
+// }
 
-const SortableList = <T extends any>({
-  items,
-  onReorder,
-}: SortableListProps<T>) => {
-  return (
-    <DragDropContext
-      onDragEnd={({ destination, source }) => {
-        if (!destination) {
-          return
-        }
-        const reorderedItems = reorder(items, source.index, destination.index)
-        onReorder(reorderedItems)
-      }}
-    >
-      <Droppable droppableId="droppable">
-        {(provided, snapshot) => (
-          <div
-            {...provided.droppableProps}
-            ref={provided.innerRef}
-            style={getListStyle(snapshot.isDraggingOver)}
-          >
-            {items.map((item, index) => (
-              <Draggable key={item.id} draggableId={item.id} index={index}>
-                {(provided, snapshot) => (
-                  <div
-                    onClick={() => console.log(item.content)}
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                    style={getItemStyle(
-                      snapshot.isDragging,
-                      provided.draggableProps.style,
-                    )}
-                  >
-                    {item.content}
-                  </div>
-                )}
-              </Draggable>
-            ))}
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
-    </DragDropContext>
-  )
-}
+// type SortableListProps<T> = {
+//   items: T[]
+//   onReorder: (items: T[]) => void
+// }
+
+// const SortableList = <T extends any>({
+//   items,
+//   onReorder,
+// }: SortableListProps<T>) => {
+//   return (
+//     <DragDropContext
+//       onDragEnd={({ destination, source }) => {
+//         if (!destination) {
+//           return
+//         }
+//         const reorderedItems = reorder(items, source.index, destination.index)
+//         onReorder(reorderedItems)
+//       }}
+//     >
+//       <Droppable droppableId="droppable">
+//         {(provided, snapshot) => (
+//           <div
+//             {...provided.droppableProps}
+//             ref={provided.innerRef}
+//             style={getListStyle(snapshot.isDraggingOver)}
+//           >
+//             {items.map((item, index) => (
+//               <Draggable key={item.id} draggableId={item.id} index={index}>
+//                 {(provided, snapshot) => (
+//                   <div
+//                     onClick={() => console.log(item.content)}
+//                     ref={provided.innerRef}
+//                     {...provided.draggableProps}
+//                     {...provided.dragHandleProps}
+//                     style={getItemStyle(
+//                       snapshot.isDragging,
+//                       provided.draggableProps.style,
+//                     )}
+//                   >
+//                     {item.content}
+//                   </div>
+//                 )}
+//               </Draggable>
+//             ))}
+//             {provided.placeholder}
+//           </div>
+//         )}
+//       </Droppable>
+//     </DragDropContext>
+//   )
+// }

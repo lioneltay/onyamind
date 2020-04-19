@@ -75,9 +75,6 @@ export default ({
       onClick={() => onItemClick(task.id)}
     >
       <ListItemIcon
-        onPointerDown={(e) => e.stopPropagation()}
-        onMouseDown={(e) => e.stopPropagation()}
-        onTouchStart={(e) => e.stopPropagation()}
         onClick={(e) => {
           e.stopPropagation()
           onSelectTask(task.id)

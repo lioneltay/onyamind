@@ -1,5 +1,5 @@
 import React from "react"
-import { noopTemplate as css } from "lib/utils"
+import { noopTemplate as css, noop } from "lib/utils"
 
 import { useSpring, config, animated } from "react-spring"
 import { useGesture } from "react-use-gesture"
@@ -11,6 +11,11 @@ import { DeleteIcon, CheckIcon } from "lib/icons"
 import Task, { TaskProps } from "./Task"
 
 import { logError } from "services/analytics/error-reporting"
+
+const useInstance = <T extends Object>(initialValue: T) => {
+  const { current } = React.useRef(initialValue)
+  return current
+}
 
 type Direction = "left" | "right" | "none"
 
@@ -24,22 +29,29 @@ type Props = TaskProps & {
 }
 
 export default ({
-  onSwipeLeft = () => {},
-  onSwipeRight = () => {},
+  onSwipeLeft = noop,
+  onSwipeRight = noop,
   swipeLeftBackground = "tomato",
   swipeLeftIcon = <DeleteIcon />,
   swipeRightBackground = "dodgerblue",
   swipeRightIcon = <CheckIcon />,
+  onSelectTask = noop,
+  onItemClick = noop,
   ...taskProps
 }: Props) => {
+  const instance = useInstance({
+    over: false,
+    direction: "none",
+    isDragging: false,
+  })
+
   const [direction, setDirection] = React.useState<Direction>("none")
-  const directionRef = React.useRef(direction)
-  directionRef.current = direction
+  instance.direction = direction
+
   function updateDirection(val: Direction) {
     setDirection(val)
-    directionRef.current = val
+    instance.direction = val
   }
-  const overRef = React.useRef(false)
 
   const [spring, set] = useSpring(() => ({
     config: config.stiff,
@@ -49,8 +61,15 @@ export default ({
 
   const bind = useGesture(
     {
-      onDragStart: () => console.log("dragstart"),
-      onDragEnd: () => console.log("dragend"),
+      onDragStart: () => {
+        instance.isDragging = true
+      },
+      onDragEnd: () => {
+        // Delay to ensure this runs after any click events run
+        setTimeout(() => {
+          instance.isDragging = false
+        }, 0)
+      },
       onDrag: ({ down, movement: [mx], direction: [xDir], velocity }) => {
         const trigger = velocity > 0.5
         const dir = xDir < 0 ? -1 : 1
@@ -64,14 +83,13 @@ export default ({
         }
 
         if (isOver) {
-          overRef.current = true
+          instance.over = true
         }
 
-        if (overRef.current) {
-          const direction = directionRef.current
-          if (direction === "left") {
+        if (instance.over) {
+          if (instance.direction === "left") {
             setTimeout(onSwipeLeft, 500)
-          } else if (direction === "right") {
+          } else if (instance.direction === "right") {
             setTimeout(onSwipeRight, 500)
           } else {
             logError(new Error("Animation ended without direction"))
@@ -82,6 +100,24 @@ export default ({
       },
     },
     { drag: { axis: "x" } },
+  )
+
+  const dragAwareOnItemClick = React.useCallback(
+    (id: ID) => {
+      if (!instance.isDragging) {
+        onItemClick(id)
+      }
+    },
+    [onItemClick],
+  )
+
+  const dragAwareOnSelectTask = React.useCallback(
+    (id: ID) => {
+      if (!instance.isDragging) {
+        onSelectTask(id)
+      }
+    },
+    [onSelectTask],
   )
 
   const left = direction === "left"
@@ -121,7 +157,11 @@ export default ({
           transform: spring.x.interpolate((x: any) => `translateX(${x}px)`),
         }}
       >
-        <Task {...taskProps} />
+        <Task
+          {...taskProps}
+          onItemClick={dragAwareOnItemClick}
+          onSelectTask={dragAwareOnSelectTask}
+        />
       </animated.div>
     </div>
   )
