@@ -16,8 +16,6 @@ export type TaskProps = Stylable & {
 
   onSelectTask?: (id: ID) => void
   onItemClick?: (id: ID) => void
-
-  showHoverActions?: boolean
 }
 
 export default ({
@@ -32,8 +30,6 @@ export default ({
 
   onSelectTask = () => {},
   onItemClick = () => {},
-
-  showHoverActions = false,
 }: TaskProps) => {
   const theme = useTheme()
 

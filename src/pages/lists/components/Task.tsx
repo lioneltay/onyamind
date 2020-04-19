@@ -1,22 +1,7 @@
-import React, { Fragment } from "react"
-
-import { IconButton } from "@material-ui/core"
-
-import {
-  DeleteIcon,
-  AddIcon,
-  CheckIcon,
-  SwapHorizIcon,
-  CloseIcon,
-  NotificationsIcon,
-} from "lib/icons"
-
+import React from "react"
+import { CloseIcon } from "lib/icons"
 import { Task } from "components"
-import { IconButtonMenu } from "lib/components"
-
 import { useSelector, useActions } from "services/store"
-
-import { createTaskNotification } from "services/notifications"
 
 export type Props = Stylable & {
   selected?: boolean
