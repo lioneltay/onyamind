@@ -28,19 +28,19 @@ it("TaskList count remains in sync when operating on tasks create/check/uncheck/
   checkCounts(0, 0)
 
   // Create
-  cy.findByPlaceholderText(/add item/i)
+  cy.findByPlaceholderText(/add task/i)
     .click()
     .type("Task1\n")
   checkCounts(1, 0)
 
   // Create
-  cy.findByPlaceholderText(/add item/i)
+  cy.findByPlaceholderText(/add task/i)
     .click()
     .type("Task2\n")
   checkCounts(2, 0)
 
   // Create
-  cy.findByPlaceholderText(/add item/i)
+  cy.findByPlaceholderText(/add task/i)
     .click()
     .type("Task3\n")
   checkCounts(3, 0)
@@ -76,12 +76,12 @@ it.only("TaskList count remains in sync when operating on tasks move-checked/mov
   visitListPage()
 
   // Create
-  cy.findByPlaceholderText(/add item/i)
+  cy.findByPlaceholderText(/add task/i)
     .click()
     .type("Task1\n")
 
   // Create
-  cy.findByPlaceholderText(/add item/i)
+  cy.findByPlaceholderText(/add task/i)
     .click()
     .type("Task2\n")
 

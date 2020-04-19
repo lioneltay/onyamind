@@ -183,7 +183,9 @@ export default ({
       return onTasksChange({
         userId,
         listId,
-        onChange: (tasks) => setTasks({ tasks, listId }),
+        onChange: (tasks) => {
+          setTasks({ tasks, listId })
+        },
       })
     }
   }, [userId, listId])

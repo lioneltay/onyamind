@@ -20,10 +20,6 @@ export const firestore = firebase.firestore()
 export const auth = firebase.auth()
 export const perf = firebase.performance()
 
-console.log("@@@@@@@@@", auth.currentUser)
-
-setTimeout(() => console.log("@@@@@@@@@", auth.currentUser), 3000)
-
 if (isLocal) {
   firestore.settings({
     host: "localhost:8080",

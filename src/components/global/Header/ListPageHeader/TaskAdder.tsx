@@ -134,7 +134,7 @@ export default () => {
                 `}
                 variant="outlined"
                 onFocus={stopEditingTask}
-                placeholder="Add item"
+                placeholder="Add task"
                 className="fg-1"
                 value={newTaskTitle}
                 onChange={(e) => setNewTaskTitle(e.currentTarget.value)}
