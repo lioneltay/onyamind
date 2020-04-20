@@ -18,7 +18,6 @@ const reorderSyncEpic = (
     debounceTime(3000),
     mergeMap((action) => {
       assert(action.type === "REORDER_TASKS")
-      console.log("SYNCING")
       return from(reorderTasks(action.payload))
     }),
     mergeMap(() => empty()),
