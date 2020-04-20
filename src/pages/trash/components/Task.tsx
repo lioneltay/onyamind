@@ -44,7 +44,7 @@ export default ({
 
   return (
     <Task
-      onSwipeLeft={() => deleteTask(task.id)}
+      onSwipeLeft={() => deleteTask({ taskId: task.id, listId: task.listId })}
       onSwipeRight={() => unarchiveTask(task.id)}
       swipeRightIcon={<RestoreIcon />}
       backgroundColor={backgroundColor}

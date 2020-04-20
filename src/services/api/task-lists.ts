@@ -1,5 +1,6 @@
 import { firebase, firestore, dataWithId } from "services/firebase"
 import { noUndefinedValues } from "lib/utils"
+import { move } from "ramda"
 
 export const getTaskList = async (listId: ID): Promise<TaskList | null> => {
   const x = await firestore
@@ -31,6 +32,7 @@ export const createTaskList = async (
       primary: list.primary ?? false,
       createdAt: Date.now(),
       updatedAt: Date.now(),
+      taskOrder: [],
     })
     .then(async (x) => {
       return dataWithId(await x.get()) as TaskList
@@ -124,5 +126,35 @@ export const onTaskListsChange = ({
     .onSnapshot((snapshot) => {
       const taskLists = snapshot.docs.map((doc) => dataWithId(doc) as TaskList)
       onChange(taskLists)
+    })
+}
+
+type ReorderTasksInput = {
+  listId: ID
+  /** Current task order of the listId list */
+  taskOrder: ID[] | undefined
+  fromTaskId: ID
+  toTaskId: ID
+}
+export async function reorderTasks({
+  listId,
+  taskOrder = [],
+  fromTaskId,
+  toTaskId,
+}: ReorderTasksInput) {
+  const fromIndex = taskOrder.indexOf(fromTaskId)
+  const toIndex = taskOrder.indexOf(toTaskId)
+
+  console.log(listId, taskOrder, fromTaskId, toTaskId)
+
+  if (fromIndex < 0 || toIndex < 0) {
+    throw Error("Invalid arguments")
+  }
+
+  return firestore
+    .collection("taskList")
+    .doc(listId)
+    .update({
+      taskOrder: move(fromIndex, toIndex, taskOrder),
     })
 }

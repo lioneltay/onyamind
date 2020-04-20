@@ -1,4 +1,4 @@
-import { firestore, dataWithId } from "services/firebase"
+import { firestore, dataWithId, firebase } from "services/firebase"
 
 import { noUndefinedValues } from "lib/utils"
 
@@ -6,24 +6,26 @@ type PartialTaskWithID = Partial<Task> & { id: ID }
 
 export const createTask = async (
   task: Omit<Task, "id" | "createdAt" | "updatedAt" | "complete" | "archived">,
-): Promise<Task> => {
-  return firestore
-    .collection("task")
-    .add({
-      ...task,
-      userId: task.userId || null,
-      complete: false,
-      archived: false,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-    })
-    .then(async (x) => {
-      return dataWithId(await x.get()) as Task
-    })
-    .catch((err) => {
-      console.log(err)
-      return err
-    })
+) => {
+  const batch = firestore.batch()
+
+  const newTaskRef = firestore.collection("task").doc()
+  const taskData = {
+    ...task,
+    userId: task.userId || null,
+    complete: false,
+    archived: false,
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+  }
+
+  batch.set(newTaskRef, taskData)
+
+  batch.update(firestore.collection("taskList").doc(task.listId), {
+    taskOrder: firebase.firestore.FieldValue.arrayUnion(newTaskRef.id),
+  })
+
+  await batch.commit()
 }
 
 type EditTaskPayload = {
@@ -66,16 +68,29 @@ export const editTasks = async (tasks: PartialTaskWithID[]): Promise<void> => {
   return batch.commit()
 }
 
-export const deleteTask = async (taskId: ID): Promise<ID> => {
-  await firestore.collection("task").doc(taskId).delete()
-  return taskId
+type DeleteTaskInput = {
+  taskId: ID
+  listId: ID
 }
-
-export const deleteTasks = (taskIds: ID[]) => {
+export const deleteTask = async ({ taskId, listId }: DeleteTaskInput) => {
   const batch = firestore.batch()
 
-  taskIds.forEach((id) => {
-    batch.delete(firestore.collection("task").doc(id))
+  batch.delete(firestore.collection("task").doc(taskId))
+  batch.update(firestore.collection("taskList").doc(listId), {
+    taskOrder: firebase.firestore.FieldValue.arrayRemove(taskId),
+  })
+
+  await batch.commit()
+}
+
+export const deleteTasks = (inputs: DeleteTaskInput[]) => {
+  const batch = firestore.batch()
+
+  inputs.forEach(({ taskId, listId }) => {
+    batch.delete(firestore.collection("task").doc(taskId))
+    batch.update(firestore.collection("taskList").doc(listId), {
+      taskOrder: firebase.firestore.FieldValue.arrayRemove(taskId),
+    })
   })
 
   return batch.commit()

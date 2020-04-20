@@ -2,6 +2,7 @@ import React, { Fragment } from "react"
 import { RouteComponentProps } from "react-router-dom"
 import { noopTemplate as css } from "lib/utils"
 import styled from "styled-components"
+import { reverse } from "ramda"
 
 import {
   List,
@@ -46,6 +47,7 @@ const Content = () => {
       decompleteCompletedTasks,
       archiveCompletedTasks,
     },
+    app: { reorderTasks },
   } = useActions()
 
   const {
@@ -54,13 +56,22 @@ const Content = () => {
     incompleteTasks,
     loadingTasks,
     multiselect,
-  } = useSelector((state, s) => ({
-    multiselect: state.listPage.multiselect,
-    editingTask: s.listPage.editingTask(state),
-    completeTasks: s.listPage.completedTasks(state),
-    incompleteTasks: s.listPage.incompletedTasks(state),
-    loadingTasks: s.listPage.loadingTasks(state),
-  }))
+    selectedTaskList,
+  } = useSelector((state, s) => {
+    const selectedTaskList = s.app.selectedTaskList(state)
+    const incompleteTasks = s.listPage.incompletedTasks(state)
+
+    return {
+      selectedTaskList,
+      multiselect: state.listPage.multiselect,
+      editingTask: s.listPage.editingTask(state),
+      completeTasks: s.listPage.completedTasks(state),
+      incompleteTasks: reverse(selectedTaskList?.taskOrder ?? [])
+        .map((taskId) => incompleteTasks.find((task) => task.id === taskId))
+        .filter(Boolean) as Task[],
+      loadingTasks: s.listPage.loadingTasks(state),
+    }
+  })
 
   const [showCompleteTasks, setShowCompleteTasks] = React.useState(false)
 
@@ -80,7 +91,19 @@ const Content = () => {
     <Fragment>
       <DragDropContext
         onDragEnd={(result) => {
-          console.log("onDragEnd", result)
+          if (!result.destination?.index || !selectedTaskList) {
+            return
+          }
+
+          const fromTaskId = incompleteTasks[result.source.index].id
+          const toTaskId = incompleteTasks[result.destination.index].id
+
+          reorderTasks({
+            fromTaskId,
+            toTaskId,
+            taskOrder: selectedTaskList.taskOrder,
+            listId: selectedTaskList.id,
+          })
         }}
       >
         <Droppable droppableId="dropzone">
@@ -109,11 +132,7 @@ const Content = () => {
                     >
                       <Task
                         IconProps={provided.dragHandleProps}
-                        backgroundColor={
-                          snapshot.isDragging
-                            ? theme.primary
-                            : theme.backgroundColor
-                        }
+                        backgroundColor={theme.backgroundColor}
                         task={task}
                       />
                     </div>

@@ -121,7 +121,25 @@ const selectPrimaryTaskList = () => async (
   dispatch(selectTaskList(listId))
 }
 
+type ReorderTasksInput = {
+  listId: ID
+  /** Current task order of the listId list */
+  taskOrder: ID[] | undefined
+  fromTaskId: ID
+  toTaskId: ID
+}
+const reorderTasks = (payload: ReorderTasksInput) =>
+  ({
+    type: "REORDER_TASKS",
+    payload: {
+      ...payload,
+      taskOrder: payload.taskOrder ?? [],
+    },
+  } as const)
+
 export const actionCreators = {
+  reorderTasks,
+
   selectPrimaryTaskList,
   setTaskLists,
   selectTaskList,

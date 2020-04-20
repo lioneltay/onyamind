@@ -18,16 +18,10 @@ const ListPageTask = ({ task, backgroundColor, ...taskProps }: Props) => {
     stopEditingTask,
     setMultiselect,
   } = useActions("listPage")
-  const { taskLists, selectedTaskIds, multiselect } = useSelector((state) => ({
-    taskLists: state.app.taskLists,
+  const { selectedTaskIds, multiselect } = useSelector((state) => ({
     selectedTaskIds: state.listPage.selectedTaskIds,
     multiselect: state.listPage.multiselect,
-    selectedTaskListId: state.app.selectedTaskListId,
   }))
-
-  if (!taskLists) {
-    return null
-  }
 
   const selected = selectedTaskIds.findIndex((id) => id === task.id) >= 0
 
