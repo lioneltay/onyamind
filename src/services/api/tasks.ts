@@ -17,6 +17,7 @@ export const createTask = async (
     archived: false,
     createdAt: Date.now(),
     updatedAt: Date.now(),
+    completedAt: null,
   }
 
   batch.set(newTaskRef, taskData)
