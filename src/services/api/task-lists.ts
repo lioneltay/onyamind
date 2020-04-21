@@ -145,8 +145,6 @@ export async function reorderTasks({
   const fromIndex = taskOrder.indexOf(fromTaskId)
   const toIndex = taskOrder.indexOf(toTaskId)
 
-  console.log(listId, taskOrder, fromTaskId, toTaskId)
-
   if (fromIndex < 0 || toIndex < 0) {
     throw Error("Invalid arguments")
   }
