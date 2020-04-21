@@ -1,3 +1,0 @@
-- [x] Creating a task adds it to the lists taskOrder
-- [x] Deleting a task removes it from the lists taskOrder
-- [ ] Reordering calls the reordering function but doesn't overwrite the entire order

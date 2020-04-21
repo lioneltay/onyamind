@@ -53,18 +53,18 @@ export default ({
     >
       <ListItemIcon
         {...IconProps}
-        onPointerDown={(event) => {
-          event.stopPropagation()
-          IconProps?.onPointerDown?.(event)
-        }}
-        onMouseDown={(event) => {
-          event.stopPropagation()
-          IconProps?.onMouseDown?.(event)
-        }}
-        onTouchStart={(event) => {
-          event.stopPropagation()
-          IconProps?.onTouchStart?.(event)
-        }}
+        // onPointerDown={(event) => {
+        //   event.stopPropagation()
+        //   IconProps?.onPointerDown?.(event)
+        // }}
+        // onMouseDown={(event) => {
+        //   event.stopPropagation()
+        //   IconProps?.onMouseDown?.(event)
+        // }}
+        // onTouchStart={(event) => {
+        //   event.stopPropagation()
+        //   IconProps?.onTouchStart?.(event)
+        // }}
         onClick={(event) => {
           event.stopPropagation()
           onSelectTask(task.id)

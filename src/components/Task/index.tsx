@@ -12,14 +12,15 @@ import Task, { TaskProps as TaskComponentProps } from "./Task"
 
 import { logError } from "services/analytics/error-reporting"
 
-const useInstance = <T extends Object>(initialValue: T) => {
+const useInstance = <T extends Record<string, any>>(initialValue: T) => {
   const { current } = React.useRef(initialValue)
   return current
 }
 
 type Direction = "left" | "right" | "none"
 
-export type TaskProps = TaskComponentProps & {
+export type SwipeableTaskProps = TaskComponentProps & {
+  disableSwipe?: boolean
   onSwipeLeft?: () => void
   onSwipeRight?: () => void
   swipeLeftBackground?: string
@@ -28,7 +29,8 @@ export type TaskProps = TaskComponentProps & {
   swipeRightIcon?: React.ReactNode
 }
 
-export default ({
+const SwipeableTask = ({
+  disableSwipe,
   onSwipeLeft = noop,
   onSwipeRight = noop,
   swipeLeftBackground = "tomato",
@@ -38,7 +40,7 @@ export default ({
   onSelectTask = noop,
   onItemClick = noop,
   ...taskProps
-}: TaskProps) => {
+}: SwipeableTaskProps) => {
   const instance = useInstance({
     over: false,
     direction: "none",
@@ -152,7 +154,7 @@ export default ({
       </ListItem>
 
       <animated.div
-        {...bind()}
+        {...(disableSwipe ? undefined : bind())}
         style={{
           transform: spring.x.interpolate((x: any) => `translateX(${x}px)`),
         }}
@@ -166,3 +168,5 @@ export default ({
     </div>
   )
 }
+
+export default SwipeableTask
