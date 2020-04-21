@@ -169,26 +169,57 @@
   <body>
     <noscript><h1>Javascript is required to run this page!</h1> </noscript>
 
-    <div id="app">
+    <div id="appshell">
       <style>
         body {
           margin: 0;
           padding: 0;
         }
 
-        .container {
+        #appshell-container {
+          z-index: 5000;
+          position: fixed;
+          top: 0px;
+          left: 0px;
+          width: 100%;
+          height: 100%;
           min-height: 100vh;
-          background: #282828;
-          color: white;
+          background: white;
           display: flex;
           justify-content: center;
           align-items: center;
+
+          transition: 500ms;
+        }
+
+        #appshell-icon {
+          transform: translateY(100vh);
+          transition: 750ms;
         }
       </style>
 
-      <div class="container">
-        <img src="/public/pencil.svg" />
+      <div id="appshell-container">
+        <img id="appshell-icon" src="/public/pencil.svg" />
       </div>
+
+      <script>
+        setTimeout(() => {
+          const container = document.querySelector("#appshell-container")
+
+          if (container) {
+            // container.style.transition = "500ms"
+            // container.style.background = "#282828"
+          }
+
+          const icon = document.querySelector("#appshell-icon")
+
+          if (icon) {
+            icon.style.transform = "none"
+          }
+        })
+      </script>
     </div>
+
+    <div id="app"></div>
   </body>
 </html>
