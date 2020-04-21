@@ -22,9 +22,9 @@ export const createTask = async (
 
   batch.set(newTaskRef, taskData)
 
-  batch.update(firestore.collection("taskList").doc(task.listId), {
-    taskOrder: firebase.firestore.FieldValue.arrayUnion(newTaskRef.id),
-  })
+  // batch.update(firestore.collection("taskList").doc(task.listId), {
+  //   taskOrder: firebase.firestore.FieldValue.arrayUnion(newTaskRef.id),
+  // })
 
   await batch.commit()
 }

@@ -2,7 +2,7 @@ import React, { Fragment } from "react"
 import { RouteComponentProps } from "react-router-dom"
 import { noopTemplate as css } from "lib/utils"
 import styled from "styled-components"
-import { reverse } from "ramda"
+import { partition } from "ramda"
 
 import {
   List,
@@ -37,6 +37,20 @@ const Flip = styled.div<{ flip: boolean }>`
   transition: 300ms;
 `
 
+function orderTasks(tasks: Task[], taskOrder: ID[]): Task[] {
+  const [inOrderTasks, otherTasks] = partition(
+    (task) => !!taskOrder.find((id) => task.id === id),
+    tasks,
+  )
+
+  return [
+    ...otherTasks,
+    ...(taskOrder
+      .map((id) => inOrderTasks.find((task) => task.id === id))
+      .filter(Boolean) as Task[]),
+  ]
+}
+
 const Content = () => {
   const theme = useTheme()
 
@@ -66,9 +80,10 @@ const Content = () => {
       multiselect: state.listPage.multiselect,
       editingTask: s.listPage.editingTask(state),
       completeTasks: s.listPage.completedTasks(state),
-      incompleteTasks: reverse(selectedTaskList?.taskOrder ?? [])
-        .map((taskId) => incompleteTasks.find((task) => task.id === taskId))
-        .filter(Boolean) as Task[],
+      incompleteTasks: orderTasks(
+        incompleteTasks,
+        selectedTaskList?.taskOrder ?? [],
+      ),
       loadingTasks: s.listPage.loadingTasks(state),
     }
   })
@@ -101,7 +116,7 @@ const Content = () => {
           reorderTasks({
             fromTaskId,
             toTaskId,
-            taskOrder: selectedTaskList.taskOrder,
+            taskOrder: incompleteTasks.map((task) => task.id),
             listId: selectedTaskList.id,
           })
         }}
