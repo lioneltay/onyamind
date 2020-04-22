@@ -1,4 +1,4 @@
-import { completeTask } from "services/api"
+import { checkTask } from "services/api"
 
 let registration: ServiceWorkerRegistration | null = null
 
@@ -52,7 +52,7 @@ if (window.BroadcastChannel) {
 
   broadcast.onmessage = async (event) => {
     if (event.data.action === "COMPLETE_TASK") {
-      return completeTask(event.data.payload.task.id)
+      return checkTask(event.data.payload.task.id)
     }
   }
 }

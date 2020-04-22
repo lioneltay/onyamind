@@ -21,17 +21,19 @@ const createTaskListSuccess = () =>
 type CreateTaskListInput = {
   name: string
   primary?: boolean
+  routine?: boolean
 }
-const createTaskList = ({ primary = true, name }: CreateTaskListInput) => (
-  dispatch: Dispatch,
-  getState: GetState,
-) => {
+const createTaskList = ({
+  primary = true,
+  name,
+  routine = false,
+}: CreateTaskListInput) => (dispatch: Dispatch, getState: GetState) => {
   const userId = getState().auth.user?.uid
   assert(userId, "No userId")
 
   dispatch(createTaskListPending())
   return api
-    .createTaskList({ userId, primary, name })
+    .createTaskList({ userId, primary, name, routine })
     .then(() => dispatch(createTaskListSuccess()))
     .catch((e) => {
       dispatch(createTaskListFailure())
@@ -39,29 +41,27 @@ const createTaskList = ({ primary = true, name }: CreateTaskListInput) => (
     })
 }
 
-const editTaskListPending = () =>
-  ({ type: "APP|EDIT_TASK_DATA|PENDING" } as const)
-const editTaskListFailure = () =>
-  ({ type: "APP|EDIT_TASK_DATA|FAILURE" } as const)
-const editTaskListSuccess = () =>
-  ({ type: "APP|EDIT_TASK_DATA|SUCCESS" } as const)
-type EditTaskListInput = {
+const editListPending = () => ({ type: "APP|EDIT_TASK_DATA|PENDING" } as const)
+const editListFailure = () => ({ type: "APP|EDIT_TASK_DATA|FAILURE" } as const)
+const editListSuccess = () => ({ type: "APP|EDIT_TASK_DATA|SUCCESS" } as const)
+type EditListInput = {
   listId: ID
   data: {
     name: string
     primary?: boolean
+    routine?: boolean
   }
 }
-const editTaskList = ({
-  data: { name, primary },
+const editList = ({
+  data: { name, primary, routine },
   listId,
-}: EditTaskListInput) => (dispatch: Dispatch) => {
-  dispatch(editTaskListPending())
+}: EditListInput) => (dispatch: Dispatch) => {
+  dispatch(editListPending())
   return api
-    .editTaskList({ listId, data: { name, primary } })
-    .then(() => dispatch(editTaskListSuccess()))
+    .editList({ listId, data: { name, primary, routine } })
+    .then(() => dispatch(editListSuccess()))
     .catch((e) => {
-      dispatch(editTaskListFailure())
+      dispatch(editListFailure())
       throw e
     })
 }
@@ -149,10 +149,10 @@ export const actionCreators = {
   createTaskListFailure,
   createTaskListSuccess,
 
-  editTaskList,
-  editTaskListPending,
-  editTaskListFailure,
-  editTaskListSuccess,
+  editList,
+  editListPending,
+  editListFailure,
+  editListSuccess,
 
   deleteTaskList,
   deleteTaskListPending,

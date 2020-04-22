@@ -58,9 +58,9 @@ const archiveSelectedTasks = () => (dispatch: Dispatch, getState: GetState) => {
 
   dispatch(archiveSelectedTasksPending())
   return api
-    .editTasks(tasks.map(task => ({ ...task, archived: true })))
+    .editTasks(tasks.map((task) => ({ ...task, archived: true })))
     .then(() => dispatch(archiveSelectedTasksSuccess()))
-    .catch(e => {
+    .catch((e) => {
       dispatch(archiveSelectedTasksFailure())
       throw e
     })
@@ -91,9 +91,9 @@ const moveSelectedTasks = ({ listId }: MoveSelectTasksInput) => (
 
   dispatch(moveSelectedTasksPending())
   return api
-    .editTasks(tasks.map(task => ({ ...task, listId })))
+    .editTasks(tasks.map((task) => ({ ...task, listId })))
     .then(() => dispatch(moveSelectedTasksSuccess()))
-    .catch(e => {
+    .catch((e) => {
       dispatch(moveSelectedTasksFailure())
       throw e
     })
@@ -113,9 +113,9 @@ const completeSelectedTasks = () => (
 
   dispatch(completeSelectedTasksPending())
   return api
-    .editTasks(selectedTasks.map(task => ({ ...task, complete: true })))
+    .editTasks(selectedTasks.map((task) => ({ ...task, complete: true })))
     .then(() => dispatch(completeSelectedTasksSuccess()))
-    .catch(e => {
+    .catch((e) => {
       dispatch(completeSelectedTasksFailure())
       throw e
     })
@@ -135,9 +135,9 @@ const archiveCompletedTasks = () => (
 
   dispatch(archiveCompletedTasksPending())
   return api
-    .editTasks(tasks.map(task => ({ ...task, archived: true })))
+    .editTasks(tasks.map((task) => ({ ...task, archived: true })))
     .then(() => dispatch(archiveCompletedTasksSuccess()))
-    .catch(e => {
+    .catch((e) => {
       dispatch(archiveCompletedTasksFailure())
       throw e
     })
@@ -157,9 +157,9 @@ const decompleteSelectedTasks = () => (
 
   dispatch(decompleteSelectedTasksPending())
   return api
-    .editTasks(selectedTasks.map(task => ({ ...task, complete: false })))
+    .editTasks(selectedTasks.map((task) => ({ ...task, complete: false })))
     .then(() => dispatch(decompleteSelectedTasksSuccess()))
-    .catch(e => {
+    .catch((e) => {
       dispatch(decompleteSelectedTasksFailure())
       throw e
     })
@@ -179,9 +179,9 @@ const decompleteCompletedTasks = () => (
 
   dispatch(decompleteCompletedTasksPending())
   return api
-    .editTasks(tasks.map(task => ({ ...task, complete: false })))
+    .editTasks(tasks.map((task) => ({ ...task, complete: false })))
     .then(() => dispatch(decompleteCompletedTasksSuccess()))
-    .catch(e => {
+    .catch((e) => {
       dispatch(decompleteCompletedTasksFailure())
       throw e
     })
@@ -212,7 +212,7 @@ const createTask = ({ title = "", notes = "" }: CreateTaskInput) => (
   return api
     .createTask({ listId, userId, title, notes })
     .then(() => dispatch(createTaskSuccess()))
-    .catch(e => {
+    .catch((e) => {
       dispatch(createTaskFailure())
       throw e
     })
@@ -235,7 +235,7 @@ const editTask = ({ taskId, title, notes, complete }: EditTaskInput) => (
   return api
     .editTask({ taskId, data: { title, notes, complete } })
     .then(() => dispatch(editTaskSuccess()))
-    .catch(e => {
+    .catch((e) => {
       dispatch(editTaskFailure())
       throw e
     })
@@ -252,42 +252,39 @@ const archiveTask = (taskId: ID) => (dispatch: Dispatch) => {
   return api
     .editTask({ taskId, data: { archived: true } })
     .then(() => dispatch(archiveTaskSuccess()))
-    .catch(e => {
+    .catch((e) => {
       dispatch(archiveTaskFailure())
       throw e
     })
 }
 
-const completeTaskPending = () =>
-  ({ type: "LIST|COMPLETE_TASK|PENDING" } as const)
-const completeTaskFailure = () =>
-  ({ type: "LIST|COMPLETE_TASK|FAILURE" } as const)
-const completeTaskSuccess = () =>
-  ({ type: "LIST|COMPLETE_TASK|SUCCESS" } as const)
-const completeTask = (taskId: ID) => (dispatch: Dispatch) => {
-  dispatch(completeTaskPending())
+const checkTaskPending = () => ({ type: "LIST|CHECK_TASK|PENDING" } as const)
+const checkTaskFailure = () => ({ type: "LIST|CHECK_TASK|FAILURE" } as const)
+const checkTaskSuccess = () => ({ type: "LIST|CHECK_TASK|SUCCESS" } as const)
+const checkTask = (taskId: ID) => (dispatch: Dispatch) => {
+  dispatch(checkTaskPending())
   return api
-    .editTask({ taskId, data: { complete: true } })
-    .then(() => dispatch(completeTaskSuccess()))
-    .catch(e => {
-      dispatch(completeTaskFailure())
+    .checkTask(taskId)
+    .then(() => dispatch(checkTaskSuccess()))
+    .catch((e) => {
+      dispatch(checkTaskFailure())
       throw e
     })
 }
 
-const decompleteTaskPending = () =>
-  ({ type: "LIST|DECOMPLETE_TASK|PENDING" } as const)
-const decompleteTaskFailure = () =>
-  ({ type: "LIST|DECOMPLETE_TASK|FAILURE" } as const)
-const decompleteTaskSuccess = () =>
-  ({ type: "LIST|DECOMPLETE_TASK|SUCCESS" } as const)
-const decompleteTask = (taskId: ID) => (dispatch: Dispatch) => {
-  dispatch(decompleteTaskPending())
+const uncheckTaskPending = () =>
+  ({ type: "LIST|UNCHECK_TASK|PENDING" } as const)
+const uncheckTaskFailure = () =>
+  ({ type: "LIST|UNCHECK_TASK|FAILURE" } as const)
+const uncheckTaskSuccess = () =>
+  ({ type: "LIST|UNCHECK_TASK|SUCCESS" } as const)
+const uncheckTask = (taskId: ID) => (dispatch: Dispatch) => {
+  dispatch(uncheckTaskPending())
   return api
-    .editTask({ taskId, data: { complete: false } })
-    .then(() => dispatch(decompleteTaskSuccess()))
-    .catch(e => {
-      dispatch(decompleteTaskFailure())
+    .uncheckTask(taskId)
+    .then(() => dispatch(uncheckTaskSuccess()))
+    .catch((e) => {
+      dispatch(uncheckTaskFailure())
       throw e
     })
 }
@@ -303,7 +300,7 @@ const moveTask = ({ taskId, listId }: MoveTaskInput) => (
   dispatch: Dispatch,
   getState: GetState,
 ) => {
-  const task = selectors.tasks(getState())?.find(t => t.id === taskId)
+  const task = selectors.tasks(getState())?.find((t) => t.id === taskId)
 
   assert(task, "No task")
 
@@ -311,7 +308,7 @@ const moveTask = ({ taskId, listId }: MoveTaskInput) => (
   return api
     .editTask({ taskId: task.id, data: { listId } })
     .then(() => dispatch(moveTaskSuccess()))
-    .catch(e => {
+    .catch((e) => {
       dispatch(moveTaskFailure())
       throw e
     })
@@ -363,13 +360,15 @@ export const actionCreators = {
   archiveTaskFailure,
   archiveTaskSuccess,
 
-  completeTaskPending,
-  completeTaskFailure,
-  completeTaskSuccess,
+  checkTaskPending,
+  checkTaskFailure,
+  checkTaskSuccess,
+  checkTask,
 
-  decompleteTaskPending,
-  decompleteTaskFailure,
-  decompleteTaskSuccess,
+  uncheckTaskPending,
+  uncheckTaskFailure,
+  uncheckTaskSuccess,
+  uncheckTask,
 
   moveTaskPending,
   moveTaskFailure,
@@ -385,8 +384,6 @@ export const actionCreators = {
   createTask,
   editTask,
   archiveTask,
-  completeTask,
-  decompleteTask,
   moveTask,
   archiveCompletedTasks,
 }

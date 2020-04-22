@@ -21,6 +21,8 @@ declare global {
     primary: boolean
     /** The order of tasks in the list, may not include all tasks of the list. */
     taskOrder?: ID[]
+    /** Whether or not this list is a routine list */
+    routine?: boolean
   }
 
   export type Task = {

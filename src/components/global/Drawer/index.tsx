@@ -50,11 +50,17 @@ export default () => {
   const history = useHistory()
   const theme = useTheme()
   const {
-    ui: { toggleDrawer, closeDrawer, openFeedbackModal, openAuthModal },
+    ui: {
+      toggleDrawer,
+      closeDrawer,
+      openFeedbackModal,
+      openAuthModal,
+      openModal,
+    },
     app: {
       deleteTaskList,
       createTaskList,
-      editTaskList,
+      editList,
       setPrimaryTaskList,
       selectTaskList,
     },
@@ -84,7 +90,6 @@ export default () => {
   const [showRenameModal, setShowRenameModal] = useState(false)
   const [selectedId, setSelectedId] = useState(null as ID | null)
   const [showOtherLists, setShowOtherLists] = useState(true)
-  const [showHelpModal, setShowHelpModal] = useState(false)
 
   const selectedList =
     selectedId && taskLists
@@ -167,23 +172,22 @@ export default () => {
               <HelpIcon
                 className="cursor-pointer"
                 style={{ color: theme.iconColor }}
-                onClick={() => setShowHelpModal(true)}
+                // onClick={() => setShowHelpModal(true)}
+                onClick={() =>
+                  openModal({
+                    title: "Primary List",
+                    content:
+                      "The primary list will be selected by default when you open the application.",
+                    actions: [
+                      { label: "Got it", action: (closeModal) => closeModal() },
+                    ],
+                  })
+                }
               />
             </Text>
           </ListItemText>
         </ListItem>
-        <Modal
-          open={showHelpModal}
-          onClose={() => setShowHelpModal(false)}
-          title="Primary List"
-          style={{ width: 500, maxWidth: "100%" }}
-          actions={[{ label: "Got it", action: () => setShowHelpModal(false) }]}
-        >
-          <Text>
-            The primary list will be selected by default when you open the
-            application.
-          </Text>
-        </Modal>
+
         {primaryList ? (
           <TaskList
             key={primaryList.id}
@@ -308,6 +312,7 @@ export default () => {
           await createTaskList({
             name: values.name,
             primary: values.primary,
+            routine: values.routine,
           })
         }}
         open={showCreateModal}
@@ -319,7 +324,7 @@ export default () => {
           taskList={selectedList}
           onSubmit={async (values) => {
             setShowRenameModal(false)
-            await editTaskList({
+            await editList({
               listId: selectedId,
               data: { ...values },
             })

@@ -12,7 +12,8 @@ export type Props = Omit<TaskProps, "multiselect"> & {
 const ListPageTask = ({ task, backgroundColor, ...taskProps }: Props) => {
   const {
     archiveTask,
-    editTask,
+    checkTask,
+    uncheckTask,
     toggleTaskSelection,
     toggleEditingTask,
     stopEditingTask,
@@ -30,10 +31,7 @@ const ListPageTask = ({ task, backgroundColor, ...taskProps }: Props) => {
       {...taskProps}
       onSwipeLeft={() => archiveTask(task.id)}
       onSwipeRight={() =>
-        editTask({
-          taskId: task.id,
-          complete: !task.complete,
-        })
+        task.complete ? uncheckTask(task.id) : checkTask(task.id)
       }
       backgroundColor={backgroundColor}
       swipeRightIcon={task.complete ? <CloseIcon /> : undefined}

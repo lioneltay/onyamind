@@ -51,6 +51,32 @@ function orderTasks(tasks: Task[], taskOrder: ID[]): Task[] {
   ]
 }
 
+type PartitionTaskOptions = {
+  routine?: boolean
+}
+
+function partitionTasks(tasks: Task[], { routine }: PartitionTaskOptions) {
+  const [completeTasks, incompleteTasks] = partition((task) => {
+    if (!routine) {
+      return task.complete
+    }
+
+    if (task.completedAt) {
+      const completedDate = new Date(task.completedAt)
+      const lastMidnight = new Date()
+      lastMidnight.setHours(4)
+      lastMidnight.setMinutes(0)
+      lastMidnight.setSeconds(0)
+
+      return completedDate > lastMidnight
+    } else {
+      return task.complete
+    }
+  }, tasks)
+
+  return { completeTasks, incompleteTasks }
+}
+
 const Content = () => {
   const theme = useTheme()
 
@@ -73,13 +99,16 @@ const Content = () => {
     selectedTaskList,
   } = useSelector((state, s) => {
     const selectedTaskList = s.app.selectedTaskList(state)
-    const incompleteTasks = s.listPage.incompletedTasks(state)
+    const tasks = s.listPage.tasks(state) ?? []
+    const { completeTasks, incompleteTasks } = partitionTasks(tasks, {
+      routine: selectedTaskList?.routine,
+    })
 
     return {
       selectedTaskList,
       multiselect: state.listPage.multiselect,
       editingTask: s.listPage.editingTask(state),
-      completeTasks: s.listPage.completedTasks(state),
+      completeTasks,
       incompleteTasks: orderTasks(
         incompleteTasks,
         selectedTaskList?.taskOrder ?? [],

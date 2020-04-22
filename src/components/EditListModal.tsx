@@ -18,23 +18,20 @@ import { useTheme } from "theme"
 
 type Values = {
   name: string
-  primary: boolean
-  routine: boolean
+  routine?: boolean
 }
 
 type Props = {
   open: boolean
   onClose: () => void
-  onSubmit: (values: Values, actions: FormikHelpers<Values>) => Promise<void>
+  initialValues: Values
+  listId: ID
 }
 
-const CreateTaskListModal: React.FunctionComponent<Props> = ({
-  open,
-  onClose,
-  onSubmit,
-}) => {
+const EditListModal = ({ open, onClose, initialValues, listId }: Props) => {
   const {
     ui: { openModal },
+    app: { editList },
   } = useActions()
 
   const theme = useTheme()
@@ -45,13 +42,14 @@ const CreateTaskListModal: React.FunctionComponent<Props> = ({
       style={{ width: 500, maxWidth: "100%" }}
       open={open}
       onClose={onClose}
-      title="Create a new list"
+      title={initialValues.name}
     >
       <Formik<Values>
-        initialValues={{ name: "", primary: false, routine: false }}
+        initialValues={initialValues}
         onSubmit={async (values, actions) => {
-          await onSubmit(values, actions)
+          await editList({ listId, data: values })
           actions.setSubmitting(false)
+          onClose()
         }}
       >
         {({ values, setFieldValue, isSubmitting }) => (
@@ -97,25 +95,12 @@ const CreateTaskListModal: React.FunctionComponent<Props> = ({
               />
             </div>
 
-            <div className="mt-3">
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={values.primary}
-                    onChange={(e, checked) => setFieldValue("primary", checked)}
-                    color="primary"
-                  />
-                }
-                label="Make this my primary list"
-              />
-            </div>
-
             <div className="fj-e">
               <Button color="primary" onClick={onClose}>
                 Cancel
               </Button>
               <Button disabled={isSubmitting} color="primary" type="submit">
-                Create
+                Save
               </Button>
             </div>
           </Form>
@@ -125,4 +110,4 @@ const CreateTaskListModal: React.FunctionComponent<Props> = ({
   )
 }
 
-export default CreateTaskListModal
+export default EditListModal

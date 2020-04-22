@@ -124,5 +124,10 @@ export const moveTask = async ({
   return batch.commit()
 }
 
-export const completeTask = (taskId: ID) =>
-  firestore.collection("task").doc(taskId).update({ complete: true })
+export async function checkTask(taskId: ID) {
+  return editTask({ taskId, data: { complete: true, completedAt: Date.now() } })
+}
+
+export async function uncheckTask(taskId: ID) {
+  return editTask({ taskId, data: { complete: false, completedAt: null } })
+}

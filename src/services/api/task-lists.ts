@@ -23,11 +23,16 @@ type AddTaskListInput = Omit<
 export const createTaskList = async (
   list: AddTaskListInput,
 ): Promise<TaskList> => {
+  if (list.primary) {
+    await unsetPrimaryLists(list.userId)
+  }
+
   return firestore
     .collection("taskList")
     .add({
       numberOfIncompleteTasks: 0,
       numberOfCompleteTasks: 0,
+      routine: false,
       ...list,
       primary: list.primary ?? false,
       createdAt: Date.now(),
@@ -37,20 +42,16 @@ export const createTaskList = async (
     .then(async (x) => {
       return dataWithId(await x.get()) as TaskList
     })
-    .catch((e) => {
-      console.log(e)
-      return e
-    })
 }
 
-type EditTaskListInput = {
+type EditListInput = {
   listId: ID
   data: Partial<Omit<TaskList, "id" | "createdAt" | "updatedAt">>
 }
-export const editTaskList = async ({
+export const editList = async ({
   listId,
   data,
-}: EditTaskListInput): Promise<TaskList> => {
+}: EditListInput): Promise<TaskList> => {
   await firestore
     .collection("taskList")
     .doc(listId)
@@ -84,29 +85,40 @@ export const getTaskLists = async (userId: ID | null): Promise<TaskList[]> => {
     .then((res) => res.docs.map(dataWithId) as TaskList[])
 }
 
+async function unsetPrimaryLists(userId: ID) {
+  const batch = firestore.batch()
+
+  const primaryTaskLists = await firestore
+    .collection("taskList")
+    .where("userId", "==", userId)
+    .where("primary", "==", true)
+    .get()
+    .then((res) => res.docs.map(dataWithId) as TaskList[])
+
+  primaryTaskLists.forEach((list) => {
+    batch.update(firestore.collection("taskList").doc(list.id), {
+      primary: false,
+    })
+  })
+
+  return batch.commit()
+}
+
 type SetPrimaryTaskListInput = {
-  userId: ID | null
+  userId: ID
   listId: ID
 }
 export const setPrimaryTaskList = async ({
   userId,
   listId,
 }: SetPrimaryTaskListInput) => {
-  const taskLists = await getTaskLists(userId)
+  await unsetPrimaryLists(userId)
 
   const batch = firestore.batch()
 
   batch.update(firestore.collection("taskList").doc(listId), {
     primary: true,
   })
-
-  taskLists
-    .filter((list) => list.id !== listId && list.primary)
-    .forEach((list) => {
-      batch.update(firestore.collection("taskList").doc(list.id), {
-        primary: false,
-      })
-    })
 
   return batch.commit()
 }
