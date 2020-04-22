@@ -1,70 +1,40 @@
-import React, { Fragment } from "react"
-
-import { IconButton } from "@material-ui/core"
-
-import {
-  DeleteIcon,
-  AddIcon,
-  CheckIcon,
-  SwapHorizIcon,
-  CloseIcon,
-  NotificationsIcon,
-} from "lib/icons"
-
-import { Task } from "components"
-import { IconButtonMenu } from "lib/components"
-
+import React from "react"
+import { CloseIcon } from "lib/icons"
+import { Task, TaskProps } from "components"
 import { useSelector, useActions } from "services/store"
 
-import { createTaskNotification } from "services/notifications"
-
-export type Props = Stylable & {
+export type Props = Omit<TaskProps, "multiselect"> & {
   selected?: boolean
   task: Task
   backgroundColor?: string
 }
 
-export default ({ style, className, task, backgroundColor }: Props) => {
+const ListPageTask = ({ task, backgroundColor, ...taskProps }: Props) => {
   const {
     archiveTask,
-    editTask,
+    checkTask,
+    uncheckTask,
     toggleTaskSelection,
-    moveTask,
     toggleEditingTask,
     stopEditingTask,
     setMultiselect,
   } = useActions("listPage")
-  const {
-    taskLists,
-    selectedTaskIds,
-    multiselect,
-    selectedTaskListId,
-  } = useSelector((state) => ({
-    taskLists: state.app.taskLists,
+  const { selectedTaskIds, multiselect } = useSelector((state) => ({
     selectedTaskIds: state.listPage.selectedTaskIds,
     multiselect: state.listPage.multiselect,
-    selectedTaskListId: state.app.selectedTaskListId,
   }))
-
-  if (!taskLists) {
-    return null
-  }
 
   const selected = selectedTaskIds.findIndex((id) => id === task.id) >= 0
 
   return (
     <Task
+      {...taskProps}
       onSwipeLeft={() => archiveTask(task.id)}
       onSwipeRight={() =>
-        editTask({
-          taskId: task.id,
-          complete: !task.complete,
-        })
+        task.complete ? uncheckTask(task.id) : checkTask(task.id)
       }
       backgroundColor={backgroundColor}
       swipeRightIcon={task.complete ? <CloseIcon /> : undefined}
-      style={style}
-      className={className}
       selected={selected}
       multiselect={multiselect}
       task={task}
@@ -76,46 +46,8 @@ export default ({ style, className, task, backgroundColor }: Props) => {
           setMultiselect(true)
         }
       }}
-      hoverActions={
-        multiselect ? null : (
-          <Fragment>
-            <IconButton
-              onClick={() =>
-                editTask({
-                  taskId: task.id,
-                  complete: !task.complete,
-                })
-              }
-            >
-              {task.complete ? <AddIcon /> : <CheckIcon />}
-            </IconButton>
-
-            <IconButtonMenu
-              icon={<SwapHorizIcon />}
-              items={taskLists
-                .filter((list) => list.id !== selectedTaskListId)
-                .map((list) => ({
-                  label: list.name,
-                  action: () => moveTask({ taskId: task.id, listId: list.id }),
-                }))}
-            />
-
-            {!task.complete ? (
-              <IconButton
-                onClick={async () => {
-                  createTaskNotification(task)
-                }}
-              >
-                <NotificationsIcon />
-              </IconButton>
-            ) : null}
-
-            <IconButton onClick={() => archiveTask(task.id)}>
-              <DeleteIcon />
-            </IconButton>
-          </Fragment>
-        )
-      }
     />
   )
 }
+
+export default React.memo(ListPageTask)

@@ -27,16 +27,13 @@ export default ({
     toggleTaskSelection,
     unarchiveTask,
     setMultiselect,
-    moveTask,
   } = useActions("trashPage")
-  const { taskLists, selectedTaskIds, multiselect, touchScreen } = useSelector(
-    (state) => ({
-      taskLists: state.app.taskLists,
-      selectedTaskIds: state.trashPage.selectedTaskIds,
-      multiselect: state.trashPage.multiselect,
-      touchScreen: false,
-    }),
-  )
+  const { taskLists, selectedTaskIds, multiselect } = useSelector((state) => ({
+    taskLists: state.app.taskLists,
+    selectedTaskIds: state.trashPage.selectedTaskIds,
+    multiselect: state.trashPage.multiselect,
+    touchScreen: false,
+  }))
 
   if (!taskLists) {
     return null
@@ -47,7 +44,7 @@ export default ({
 
   return (
     <Task
-      onSwipeLeft={() => deleteTask(task.id)}
+      onSwipeLeft={() => deleteTask({ taskId: task.id, listId: task.listId })}
       onSwipeRight={() => unarchiveTask(task.id)}
       swipeRightIcon={<RestoreIcon />}
       backgroundColor={backgroundColor}
@@ -62,31 +59,6 @@ export default ({
           setMultiselect(true)
         }
       }}
-      hoverActions={
-        multiselect || touchScreen ? null : (
-          <Fragment>
-            <IconButton onClick={() => unarchiveTask(task.id)}>
-              <RestoreIcon />
-            </IconButton>
-
-            <IconButtonMenu
-              icon={<SwapHorizIcon />}
-              items={taskLists.map((list) => ({
-                label: list.name,
-                action: () =>
-                  moveTask({
-                    taskId: task.id,
-                    listId: list.id,
-                  }),
-              }))}
-            />
-
-            <IconButton onClick={() => deleteTask(task.id)}>
-              <DeleteIcon />
-            </IconButton>
-          </Fragment>
-        )
-      }
     />
   )
 }

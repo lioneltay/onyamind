@@ -42,9 +42,14 @@ export default ({
       <ListItemText
         primary={taskList.name}
         secondary={
-          totalTasks > 0
-            ? `${taskList.numberOfCompleteTasks}/${totalTasks} tasks complete`
-            : "No tasks"
+          <div>
+            <span>
+              {totalTasks > 0
+                ? `${taskList.numberOfCompleteTasks}/${totalTasks} tasks complete`
+                : "No tasks"}
+            </span>
+            {taskList.routine ? <span> (Routine)</span> : null}
+          </div>
         }
       />
       <ListItemSecondaryAction>

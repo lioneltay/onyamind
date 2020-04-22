@@ -36,9 +36,9 @@ const moveSelectedTasks = ({ listId }: MoveSelectTasksInput) => (
 
   dispatch(moveSelectedTasksPending())
   return api
-    .editTasks(tasks.map(task => ({ ...task, archived: false, listId })))
+    .editTasks(tasks.map((task) => ({ ...task, archived: false, listId })))
     .then(() => dispatch(moveSelectedTasksSuccess()))
-    .catch(e => {
+    .catch((e) => {
       dispatch(moveSelectedTasksFailure())
       throw e
     })
@@ -47,12 +47,14 @@ const moveSelectedTasks = ({ listId }: MoveSelectTasksInput) => (
 const deleteTaskPending = () => ({ type: "TRASH|DELETE_TASK|PENDING" } as const)
 const deleteTaskFailure = () => ({ type: "TRASH|DELETE_TASK|FAILURE" } as const)
 const deleteTaskSuccess = () => ({ type: "TRASH|DELETE_TASK|SUCCESS" } as const)
-const deleteTask = (taskId: ID) => (dispatch: Dispatch) => {
+const deleteTask = (...args: Parameters<typeof api.deleteTask>) => (
+  dispatch: Dispatch,
+) => {
   dispatch(deleteTaskPending())
   return api
-    .deleteTask(taskId)
+    .deleteTask(...args)
     .then(() => dispatch(deleteTaskSuccess()))
-    .catch(e => {
+    .catch((e) => {
       dispatch(deleteTaskFailure())
       throw e
     })
@@ -69,7 +71,7 @@ const unarchiveTask = (taskId: ID) => (dispatch: Dispatch) => {
   return api
     .editTask({ taskId, data: { archived: false } })
     .then(() => dispatch(unarchiveTaskSuccess()))
-    .catch(e => {
+    .catch((e) => {
       dispatch(unarchiveTaskFailure())
       throw e
     })
@@ -83,9 +85,11 @@ const emptyTrash = () => (dispatch: Dispatch, getState: GetState) => {
 
   dispatch(emptyTrashPending())
   return api
-    .deleteTasks(tasks.map(task => task.id))
+    .deleteTasks(
+      tasks.map((task) => ({ taskId: task.id, listId: task.listId })),
+    )
     .then(() => dispatch(emptyTrashSuccess()))
-    .catch(e => {
+    .catch((e) => {
       dispatch(emptyTrashFailure())
       throw e
     })
@@ -102,14 +106,14 @@ const moveTask = ({ taskId, listId }: MoveTaskInput) => (
   dispatch: Dispatch,
   getState: GetState,
 ) => {
-  const task = getState().trashPage.trashTasks?.find(t => t.id === taskId)
+  const task = getState().trashPage.trashTasks?.find((t) => t.id === taskId)
   assert(task, "No task")
 
   dispatch(moveTaskPending())
   return api
     .editTask({ taskId: task.id, data: { listId, archived: false } })
     .then(() => dispatch(moveTaskSuccess()))
-    .catch(e => {
+    .catch((e) => {
       dispatch(moveTaskFailure())
       throw e
     })
@@ -122,13 +126,15 @@ const deleteSelectedTasksFailure = () =>
 const deleteSelectedTasksSuccess = () =>
   ({ type: "TRASH|DELETE_SELECTED_TASKS|SUCCESS" } as const)
 const deleteSelectedTasks = () => (dispatch: Dispatch, getState: GetState) => {
-  const selectedTaskIds = selectors.selectedTaskIds(getState())
+  const selectedTasks = selectors.selectedTasks(getState())
 
   dispatch(deleteSelectedTasksPending())
   return api
-    .deleteTasks(selectedTaskIds)
+    .deleteTasks(
+      selectedTasks.map((task) => ({ taskId: task.id, listId: task.listId })),
+    )
     .then(() => dispatch(deleteSelectedTasksSuccess()))
-    .catch(e => {
+    .catch((e) => {
       dispatch(deleteSelectedTasksFailure())
       throw e
     })

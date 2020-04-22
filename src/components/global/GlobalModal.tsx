@@ -20,8 +20,8 @@ export default () => {
       onClose={closeModal}
       title={modal?.title}
       css={css`
-        width: 300px;
-        max-width: 100vw;
+        max-width: 600px;
+        width: 100vw;
       `}
       actions={modal?.actions}
     >

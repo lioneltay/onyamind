@@ -8,6 +8,7 @@ import {
   CheckIcon,
   DeleteIcon,
   NotificationsIcon,
+  MoreVertIcon,
 } from "lib/icons"
 
 import { IconButtonMenu } from "lib/components"
@@ -20,6 +21,8 @@ import {
   createTaskNotification,
   createTaskNotifications,
 } from "services/notifications"
+
+import { EditListModal } from "components"
 
 export default () => {
   const {
@@ -50,62 +53,88 @@ export default () => {
     setMultiselect,
   } = useActions("listPage")
 
+  const [showEditListModal, setShowEditListModal] = React.useState(false)
+
   return (
-    <div
-      css={css`
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-      `}
-    >
-      <HeaderBase
-        title={selectedTaskList?.name ?? ""}
-        numberOfSelectedTasks={numberOfSelectedTasks}
-        numberOfTasks={numberOfTasks}
-        multiselect={multiselect}
-        onEndMultiselect={() => setMultiselect(false)}
-        multiselectActions={
-          <Fragment>
-            {allSelectedTasksIncomplete ? (
-              <IconButton
-                onClick={() => {
-                  selectedTasks.forEach(createTaskNotification)
-                  setMultiselect(false)
-                }}
-              >
-                <NotificationsIcon />
+    <React.Fragment>
+      <div
+        css={css`
+          position: sticky;
+          top: 0;
+          z-index: 1000;
+        `}
+      >
+        <HeaderBase
+          title={selectedTaskList?.name ?? ""}
+          numberOfSelectedTasks={numberOfSelectedTasks}
+          numberOfTasks={numberOfTasks}
+          multiselect={multiselect}
+          onEndMultiselect={() => setMultiselect(false)}
+          actions={
+            <React.Fragment>
+              <IconButtonMenu
+                icon={<MoreVertIcon />}
+                items={[
+                  {
+                    label: "Edit",
+                    action: () => setShowEditListModal(true),
+                  },
+                ]}
+              />
+            </React.Fragment>
+          }
+          multiselectActions={
+            <Fragment>
+              {allSelectedTasksIncomplete ? (
+                <IconButton
+                  onClick={() => {
+                    selectedTasks.forEach(createTaskNotification)
+                    setMultiselect(false)
+                  }}
+                >
+                  <NotificationsIcon />
+                </IconButton>
+              ) : null}
+
+              {allSelectedTasksComplete || allSelectedTasksIncomplete ? (
+                <IconButton
+                  onClick={
+                    allSelectedTasksIncomplete
+                      ? completeSelectedTasks
+                      : decompleteSelectedTasks
+                  }
+                >
+                  {allSelectedTasksIncomplete ? <CheckIcon /> : <AddIcon />}
+                </IconButton>
+              ) : null}
+
+              <IconButtonMenu
+                icon={<SwapHorizIcon />}
+                items={taskLists
+                  .filter((list) => list.id !== selectedTaskList?.id)
+                  .map((list) => ({
+                    label: list.name,
+                    action: () => moveSelectedTasks({ listId: list.id }),
+                  }))}
+              />
+
+              <IconButton onClick={archiveSelectedTasks}>
+                <DeleteIcon />
               </IconButton>
-            ) : null}
+            </Fragment>
+          }
+        />
+        <TaskAdder />
+      </div>
 
-            {allSelectedTasksComplete || allSelectedTasksIncomplete ? (
-              <IconButton
-                onClick={
-                  allSelectedTasksIncomplete
-                    ? completeSelectedTasks
-                    : decompleteSelectedTasks
-                }
-              >
-                {allSelectedTasksIncomplete ? <CheckIcon /> : <AddIcon />}
-              </IconButton>
-            ) : null}
-
-            <IconButtonMenu
-              icon={<SwapHorizIcon />}
-              items={taskLists
-                .filter((list) => list.id !== selectedTaskList?.id)
-                .map((list) => ({
-                  label: list.name,
-                  action: () => moveSelectedTasks({ listId: list.id }),
-                }))}
-            />
-
-            <IconButton onClick={archiveSelectedTasks}>
-              <DeleteIcon />
-            </IconButton>
-          </Fragment>
-        }
-      />
-      <TaskAdder />
-    </div>
+      {selectedTaskList ? (
+        <EditListModal
+          onClose={() => setShowEditListModal(false)}
+          open={showEditListModal}
+          initialValues={selectedTaskList}
+          listId={selectedTaskList.id}
+        />
+      ) : null}
+    </React.Fragment>
   )
 }

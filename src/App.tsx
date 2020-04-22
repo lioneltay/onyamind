@@ -13,10 +13,9 @@ import { ThemeProvider } from "theme"
 
 import * as api from "services/api"
 import { useActions, useSelector } from "services/store"
+import { logEvent } from "services/analytics/events"
 
 import { Helmet } from "react-helmet"
-
-import Demo from "./Demo"
 
 export default () => {
   return (
@@ -32,7 +31,6 @@ export default () => {
 
             <GlobalStyles />
             <App />
-            {/* <Demo /> */}
           </ThemeProvider>
         </StylesProvider>
       </Router>

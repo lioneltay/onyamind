@@ -2,6 +2,7 @@ import React, { Fragment } from "react"
 import { RouteComponentProps } from "react-router-dom"
 import { noopTemplate as css } from "lib/utils"
 import styled from "styled-components"
+import { partition } from "ramda"
 
 import {
   List,
@@ -29,10 +30,52 @@ import { onTasksChange } from "pages/lists/api"
 
 import { Helmet } from "react-helmet"
 
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd"
+
 const Flip = styled.div<{ flip: boolean }>`
   transform: rotate(${({ flip }) => (flip ? "-180deg" : "0")});
   transition: 300ms;
 `
+
+function orderTasks(tasks: Task[], taskOrder: ID[]): Task[] {
+  const [inOrderTasks, otherTasks] = partition(
+    (task) => !!taskOrder.find((id) => task.id === id),
+    tasks,
+  )
+
+  return [
+    ...otherTasks,
+    ...(taskOrder
+      .map((id) => inOrderTasks.find((task) => task.id === id))
+      .filter(Boolean) as Task[]),
+  ]
+}
+
+type PartitionTaskOptions = {
+  routine?: boolean
+}
+
+function partitionTasks(tasks: Task[], { routine }: PartitionTaskOptions) {
+  const [completeTasks, incompleteTasks] = partition((task) => {
+    if (!routine) {
+      return task.complete
+    }
+
+    if (task.completedAt) {
+      const completedDate = new Date(task.completedAt)
+      const lastMidnight = new Date()
+      lastMidnight.setHours(4)
+      lastMidnight.setMinutes(0)
+      lastMidnight.setSeconds(0)
+
+      return completedDate > lastMidnight
+    } else {
+      return task.complete
+    }
+  }, tasks)
+
+  return { completeTasks, incompleteTasks }
+}
 
 const Content = () => {
   const theme = useTheme()
@@ -44,6 +87,7 @@ const Content = () => {
       decompleteCompletedTasks,
       archiveCompletedTasks,
     },
+    app: { reorderTasks },
   } = useActions()
 
   const {
@@ -52,13 +96,26 @@ const Content = () => {
     incompleteTasks,
     loadingTasks,
     multiselect,
-  } = useSelector((state, s) => ({
-    multiselect: state.listPage.multiselect,
-    editingTask: s.listPage.editingTask(state),
-    completeTasks: s.listPage.completedTasks(state),
-    incompleteTasks: s.listPage.incompletedTasks(state),
-    loadingTasks: s.listPage.loadingTasks(state),
-  }))
+    selectedTaskList,
+  } = useSelector((state, s) => {
+    const selectedTaskList = s.app.selectedTaskList(state)
+    const tasks = s.listPage.tasks(state) ?? []
+    const { completeTasks, incompleteTasks } = partitionTasks(tasks, {
+      routine: selectedTaskList?.routine,
+    })
+
+    return {
+      selectedTaskList,
+      multiselect: state.listPage.multiselect,
+      editingTask: s.listPage.editingTask(state),
+      completeTasks,
+      incompleteTasks: orderTasks(
+        incompleteTasks,
+        selectedTaskList?.taskOrder ?? [],
+      ),
+      loadingTasks: s.listPage.loadingTasks(state),
+    }
+  })
 
   const [showCompleteTasks, setShowCompleteTasks] = React.useState(false)
 
@@ -76,15 +133,61 @@ const Content = () => {
 
   return (
     <Fragment>
-      <List className="p-0" style={{ background: theme.backgroundColor }}>
-        {incompleteTasks.map((task) => (
-          <Task
-            key={task.id}
-            backgroundColor={theme.backgroundColor}
-            task={task}
-          />
-        ))}
-      </List>
+      <DragDropContext
+        onDragEnd={(result) => {
+          if (!result.destination?.index || !selectedTaskList) {
+            return
+          }
+
+          const fromTaskId = incompleteTasks[result.source.index].id
+          const toTaskId = incompleteTasks[result.destination.index].id
+
+          reorderTasks({
+            fromTaskId,
+            toTaskId,
+            taskOrder: incompleteTasks.map((task) => task.id),
+            listId: selectedTaskList.id,
+          })
+        }}
+      >
+        <Droppable droppableId="dropzone">
+          {(provided) => (
+            <List
+              {...provided.droppableProps}
+              innerRef={provided.innerRef}
+              className="p-0"
+              style={{ background: theme.backgroundColor }}
+            >
+              {incompleteTasks.map((task, index) => (
+                <Draggable key={task.id} draggableId={task.id} index={index}>
+                  {(provided) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      style={{
+                        ...provided.draggableProps.style,
+                        transform: provided.draggableProps.style?.transform
+                          ? provided.draggableProps.style.transform.replace(
+                              /-?\d*\.?\d*px,/,
+                              "0px,",
+                            )
+                          : undefined,
+                      }}
+                    >
+                      <Task
+                        IconProps={provided.dragHandleProps}
+                        backgroundColor={theme.backgroundColor}
+                        task={task}
+                      />
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </List>
+          )}
+        </Droppable>
+      </DragDropContext>
 
       <List className="p-0" onClick={toggleShowCompleteTasks}>
         <ListItem button>
@@ -172,7 +275,7 @@ export default ({
     userId: state.auth.user?.uid,
     selectedTaskListId: state.app.selectedTaskListId,
     selectedTaskList: s.app.selectedTaskList(state),
-    taskListsLoaded: !!state.app.taskLists,
+    taskListsLoaded: !!state.app.taskLists && state.app.taskLists.length > 0,
     listIdParamValid: !!state.app.taskLists?.find((list) => list.id === listId),
     completeTasksCount: s.listPage.completedTasks(state).length,
     incompleteTasksCount: s.listPage.incompletedTasks(state).length,
