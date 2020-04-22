@@ -116,7 +116,9 @@ const selectPrimaryTaskList = () => async (
 
   const listId = primaryList?.id ?? taskLists[0].id
 
-  assert(taskLists.length > 0, "User has no TaskLists")
+  if (!listId) {
+    return
+  }
 
   dispatch(selectTaskList(listId))
 }

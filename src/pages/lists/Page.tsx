@@ -275,7 +275,7 @@ export default ({
     userId: state.auth.user?.uid,
     selectedTaskListId: state.app.selectedTaskListId,
     selectedTaskList: s.app.selectedTaskList(state),
-    taskListsLoaded: !!state.app.taskLists,
+    taskListsLoaded: !!state.app.taskLists && state.app.taskLists.length > 0,
     listIdParamValid: !!state.app.taskLists?.find((list) => list.id === listId),
     completeTasksCount: s.listPage.completedTasks(state).length,
     incompleteTasksCount: s.listPage.incompletedTasks(state).length,
