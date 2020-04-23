@@ -247,7 +247,7 @@ const Content = () => {
             {(task) => (
               <Task
                 key={task.id}
-                backgroundColor={theme.backgroundFadedColor}
+                backgroundColor={theme.backgroundColor}
                 task={task}
               />
             )}

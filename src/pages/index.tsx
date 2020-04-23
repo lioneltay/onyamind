@@ -15,8 +15,9 @@ export default () => {
 
   return (
     <div
+      className="fd-c"
       css={css`
-        background: ${theme.backgroundFadedColor};
+        background: ${theme.backgroundColor};
         min-height: 100vh;
       `}
     >

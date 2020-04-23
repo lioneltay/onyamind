@@ -1,15 +1,21 @@
 import React from "react"
 import { noopTemplate as css } from "lib/utils"
 
-import { Text } from "lib/components"
-import { Divider, Switch } from "@material-ui/core"
-
 import { useSelector, useActions } from "services/store"
-
-import { SectionTitle, SubSectionTitle } from "./components"
 
 import Connections from "./Connections"
 import EmailSettings from "./EmailSettings"
+
+import { ListItemText } from "lib/components"
+import {
+  Switch,
+  List,
+  ListItem,
+  ListItemIcon,
+  Avatar,
+  ListItemSecondaryAction,
+} from "@material-ui/core"
+import { Brightness4Icon } from "lib/icons"
 
 export default () => {
   const {
@@ -23,39 +29,41 @@ export default () => {
 
   return (
     <section
-      className="pt-5 px-4"
       css={css`
-        max-width: 600px;
         width: 100%;
+        height: 100%;
         margin-left: auto;
         margin-right: auto;
-        padding-bottom: 100px;
       `}
     >
-      {permanentUser ? (
-        <React.Fragment>
-          <EmailSettings className="mb-7" />
+      <List>
+        {permanentUser ? (
+          <React.Fragment>
+            <EmailSettings />
 
-          <Connections className="mb-7" />
-        </React.Fragment>
-      ) : null}
+            <Connections />
+          </React.Fragment>
+        ) : null}
 
-      <section className="mb-7">
-        <SectionTitle gutterBottom>Preferences</SectionTitle>
+        <ListItem onClick={toggleDarkMode}>
+          <ListItemIcon>
+            <Avatar>
+              <Brightness4Icon htmlColor="white" />
+            </Avatar>
+          </ListItemIcon>
 
-        <div className="fj-sb fa-c">
-          <Text variant="body2">Dark mode</Text>
+          <ListItemText primary="Dark mode" />
 
-          <Switch
-            checked={darkMode}
-            value="checkedB"
-            color="primary"
-            onChange={toggleDarkMode}
-          />
-        </div>
-
-        <Divider className="mt-4" />
-      </section>
+          <ListItemSecondaryAction>
+            <Switch
+              checked={darkMode}
+              value="checkedB"
+              color="primary"
+              onChange={toggleDarkMode}
+            />
+          </ListItemSecondaryAction>
+        </ListItem>
+      </List>
     </section>
   )
 }
