@@ -117,26 +117,26 @@ const Content = () => {
     loadingTasks,
     multiselect,
     selectedTaskList,
-    tasks,
+    completeTasks,
+    incompleteTasks,
+    taskOrder,
   } = useSelector((state, s) => {
     const selectedTaskList = s.app.selectedTaskList(state)
-
-    console.log(state.listPage.tasks)
+    const tasks = orderTasks(
+      state.listPage.tasks ?? [],
+      selectedTaskList?.taskOrder ?? [],
+    )
 
     return {
-      tasks: orderTasks(
-        state.listPage.tasks ?? [],
-        selectedTaskList?.taskOrder ?? [],
-      ),
+      taskOrder: tasks.map((task) => task.id),
+      ...partitionTasks(tasks, {
+        routine: selectedTaskList?.routine,
+      }),
       selectedTaskList,
       multiselect: state.listPage.multiselect,
       editingTask: s.listPage.editingTask(state),
       loadingTasks: s.listPage.loadingTasks(state),
     }
-  })
-
-  const { completeTasks, incompleteTasks } = partitionTasks(tasks, {
-    routine: selectedTaskList?.routine,
   })
 
   const [showCompleteTasks, setShowCompleteTasks] = React.useState(false)
@@ -167,7 +167,7 @@ const Content = () => {
           reorderTasks({
             fromTaskId,
             toTaskId,
-            taskOrder: tasks.map((task) => task.id),
+            taskOrder,
             listId: selectedTaskList.id,
           })
         }}
