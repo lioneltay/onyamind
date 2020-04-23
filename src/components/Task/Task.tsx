@@ -44,10 +44,10 @@ export default ({
         min-height: ${TASK_ITEM_HEIGHT}px;
         height: ${TASK_ITEM_HEIGHT}px;
       `}
-      style={{ ...listItemProps.style, backgroundColor }}
       button={true as any}
       selected={selected}
       {...(listItemProps as ListItemProps)}
+      style={{ ...listItemProps.style, backgroundColor }}
       onClick={(event) => {
         onItemClick(task.id)
         listItemProps.onClick?.(event)
