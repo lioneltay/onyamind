@@ -17,6 +17,7 @@
     "build:analyze": "npm run clean && ANALYZE=true webpack --config ./webpack/webpack.config.prod.js",
     "typecheck": "tsc --noEmit --watch --skipLibCheck",
     "lint": "eslint . --ext .ts,.tsx",
+    "sync-firestore-indexes": "firebase firestore:indexes > firestore.indexes.json",
     "cy:run": "cypress run",
     "cy:open": "cypress open",
     "jest:watch": "jest --watch",

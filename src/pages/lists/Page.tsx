@@ -1,8 +1,8 @@
 import React, { Fragment } from "react"
 import { RouteComponentProps } from "react-router-dom"
-import { noopTemplate as css } from "lib/utils"
+import { noopTemplate as css, assert } from "lib/utils"
 import styled from "styled-components"
-import { partition } from "ramda"
+import { partition, sort, comparator } from "ramda"
 
 import {
   List,
@@ -37,7 +37,26 @@ const Flip = styled.div<{ flip: boolean }>`
   transition: 300ms;
 `
 
+/**
+ * Orders tasks according to task order.
+ * Tasks not included in the task order are added in front with the existing order preserved.
+ */
 function orderTasks(tasks: Task[], taskOrder: ID[]): Task[] {
+  const copy = [...tasks]
+  const orderedTasks = []
+  const extraTasks = []
+
+  while (copy.length > 0) {
+    const task = copy.shift()
+    assert(task, "Must exist since length > 0")
+
+    if (taskOrder.find((id) => task.id === id)) {
+      orderedTasks.push(task)
+    } else {
+      extraTasks.push(task)
+    }
+  }
+
   const [inOrderTasks, otherTasks] = partition(
     (task) => !!taskOrder.find((id) => task.id === id),
     tasks,
@@ -74,7 +93,10 @@ function partitionTasks(tasks: Task[], { routine }: PartitionTaskOptions) {
     }
   }, tasks)
 
-  return { completeTasks, incompleteTasks }
+  return {
+    completeTasks,
+    incompleteTasks,
+  }
 }
 
 const Content = () => {
@@ -92,29 +114,29 @@ const Content = () => {
 
   const {
     editingTask,
-    completeTasks,
-    incompleteTasks,
     loadingTasks,
     multiselect,
     selectedTaskList,
+    tasks,
   } = useSelector((state, s) => {
     const selectedTaskList = s.app.selectedTaskList(state)
-    const tasks = s.listPage.tasks(state) ?? []
-    const { completeTasks, incompleteTasks } = partitionTasks(tasks, {
-      routine: selectedTaskList?.routine,
-    })
+
+    console.log(state.listPage.tasks)
 
     return {
+      tasks: orderTasks(
+        state.listPage.tasks ?? [],
+        selectedTaskList?.taskOrder ?? [],
+      ),
       selectedTaskList,
       multiselect: state.listPage.multiselect,
       editingTask: s.listPage.editingTask(state),
-      completeTasks,
-      incompleteTasks: orderTasks(
-        incompleteTasks,
-        selectedTaskList?.taskOrder ?? [],
-      ),
       loadingTasks: s.listPage.loadingTasks(state),
     }
+  })
+
+  const { completeTasks, incompleteTasks } = partitionTasks(tasks, {
+    routine: selectedTaskList?.routine,
   })
 
   const [showCompleteTasks, setShowCompleteTasks] = React.useState(false)
@@ -145,7 +167,7 @@ const Content = () => {
           reorderTasks({
             fromTaskId,
             toTaskId,
-            taskOrder: incompleteTasks.map((task) => task.id),
+            taskOrder: tasks.map((task) => task.id),
             listId: selectedTaskList.id,
           })
         }}
