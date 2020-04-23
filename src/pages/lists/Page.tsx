@@ -16,7 +16,12 @@ import {
 
 import { ListItemText, IconButtonMenu } from "lib/components"
 
-import { ExpandMoreIcon, MoreVertIcon } from "lib/icons"
+import {
+  ExpandMoreIcon,
+  MoreVertIcon,
+  CheckIcon,
+  CheckCircleIcon,
+} from "lib/icons"
 
 import Task from "./components/Task"
 
@@ -249,6 +254,7 @@ const Content = () => {
                 key={task.id}
                 backgroundColor={theme.backgroundColor}
                 task={task}
+                SelectIcon={CheckIcon}
               />
             )}
           </TransitionTaskList>

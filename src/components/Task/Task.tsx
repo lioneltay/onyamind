@@ -20,6 +20,8 @@ export type TaskProps = ListItemProps & {
 
   onSelectTask?: (id: ID) => void
   onItemClick?: (id: ID) => void
+
+  SelectIcon?: React.ComponentType<Stylable>
 }
 
 export default ({
@@ -33,6 +35,7 @@ export default ({
   selected,
 
   IconProps,
+  SelectIcon = AssignmentIcon,
   ...listItemProps
 }: TaskProps) => {
   const theme = useTheme()
@@ -83,7 +86,7 @@ export default ({
           }}
           size="small"
         >
-          <AssignmentIcon
+          <SelectIcon
             style={{
               color: theme.iconColor,
               transform: `scale(${multiselect ? 0.7 : 1})`,
