@@ -1,5 +1,5 @@
 import React from "react"
-import { animated, useTransition } from "react-spring"
+import { useTransition, animated } from "react-spring"
 import { TASK_ITEM_HEIGHT } from "config"
 import { noopTemplate as css } from "lib/utils"
 
@@ -28,10 +28,10 @@ const TransitionTaskList = ({ tasks, children }: TransitionTaskListProps) => {
       {transitions.map(({ item, key, props }, index) => (
         <animated.div
           key={key}
-          style={props}
-          css={css`
-            overflow: hidden;
-          `}
+          style={{
+            ...props,
+            overflow: "hidden",
+          }}
         >
           {children(item, index)}
         </animated.div>

@@ -4,8 +4,8 @@ import {
   generateUser,
   getByText,
   getByTestId,
+  wait,
 } from "testing"
-import { wait } from "@testing-library/react"
 import user from "@testing-library/user-event"
 import { Drawer, FeedbackModal } from "components/global"
 
