@@ -1,8 +1,8 @@
-import React, { Fragment } from "react"
+import React from "react"
 import { RouteComponentProps } from "react-router-dom"
 import { noopTemplate as css, assert } from "lib/utils"
 import styled from "styled-components"
-import { partition, sort, comparator } from "ramda"
+import { partition } from "ramda"
 
 import {
   List,
@@ -20,7 +20,7 @@ import { ExpandMoreIcon, MoreVertIcon } from "lib/icons"
 
 import Task from "./components/Task"
 
-import { EditTaskModal } from "components"
+import { EditTaskModal, TransitionTaskList } from "components"
 
 import { useTheme } from "theme"
 import { useSelector, useActions } from "services/store"
@@ -154,7 +154,7 @@ const Content = () => {
   }
 
   return (
-    <Fragment>
+    <React.Fragment>
       <DragDropContext
         onDragEnd={(result) => {
           if (!result.destination || !selectedTaskList) {
@@ -180,31 +180,33 @@ const Content = () => {
               className="p-0"
               style={{ background: theme.backgroundColor }}
             >
-              {incompleteTasks.map((task, index) => (
-                <Draggable key={task.id} draggableId={task.id} index={index}>
-                  {(provided) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      style={{
-                        ...provided.draggableProps.style,
-                        transform: provided.draggableProps.style?.transform
-                          ? provided.draggableProps.style.transform.replace(
-                              /-?\d*\.?\d*px,/,
-                              "0px,",
-                            )
-                          : undefined,
-                      }}
-                    >
-                      <Task
-                        IconProps={provided.dragHandleProps}
-                        backgroundColor={theme.backgroundColor}
-                        task={task}
-                      />
-                    </div>
-                  )}
-                </Draggable>
-              ))}
+              <TransitionTaskList tasks={incompleteTasks}>
+                {(task, index) => (
+                  <Draggable key={task.id} draggableId={task.id} index={index}>
+                    {(provided) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        style={{
+                          ...provided.draggableProps.style,
+                          transform: provided.draggableProps.style?.transform
+                            ? provided.draggableProps.style.transform.replace(
+                                /-?\d*\.?\d*px,/,
+                                "0px,",
+                              )
+                            : undefined,
+                        }}
+                      >
+                        <Task
+                          IconProps={provided.dragHandleProps}
+                          backgroundColor={theme.backgroundColor}
+                          task={task}
+                        />
+                      </div>
+                    )}
+                  </Draggable>
+                )}
+              </TransitionTaskList>
               {provided.placeholder}
             </List>
           )}
@@ -241,13 +243,15 @@ const Content = () => {
 
       <List>
         <Collapse in={showCompleteTasks}>
-          {completeTasks.map((task) => (
-            <Task
-              key={task.id}
-              backgroundColor={theme.backgroundFadedColor}
-              task={task}
-            />
-          ))}
+          <TransitionTaskList tasks={completeTasks}>
+            {(task) => (
+              <Task
+                key={task.id}
+                backgroundColor={theme.backgroundFadedColor}
+                task={task}
+              />
+            )}
+          </TransitionTaskList>
         </Collapse>
       </List>
 
@@ -268,7 +272,7 @@ const Content = () => {
           }}
         />
       ) : null}
-    </Fragment>
+    </React.Fragment>
   )
 }
 
@@ -341,7 +345,7 @@ export default ({
   }, [selectedTaskListId])
 
   return (
-    <Fragment>
+    <React.Fragment>
       <Helmet>
         {selectedTaskList?.name ? (
           incompleteTasksCount + completeTasksCount === 0 ? (
@@ -370,6 +374,6 @@ export default ({
           <Content />
         </div>
       </section>
-    </Fragment>
+    </React.Fragment>
   )
 }

@@ -9,6 +9,7 @@ import ListItemIcon, { ListItemIconProps } from "@material-ui/core/ListItemIcon"
 import { ListItemText } from "lib/components"
 
 import { AssignmentIcon } from "lib/icons"
+import { TASK_ITEM_HEIGHT } from "config"
 
 export type TaskProps = ListItemProps & {
   IconProps?: Omit<ListItemIconProps, "children">
@@ -40,7 +41,8 @@ export default ({
     <ListItem
       css={css`
         position: relative;
-        min-height: 70px;
+        min-height: ${TASK_ITEM_HEIGHT}px;
+        height: ${TASK_ITEM_HEIGHT}px;
       `}
       style={{ ...listItemProps.style, backgroundColor }}
       button={true as any}
