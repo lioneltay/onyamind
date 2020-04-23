@@ -135,7 +135,7 @@ const Content = () => {
     <Fragment>
       <DragDropContext
         onDragEnd={(result) => {
-          if (!result.destination?.index || !selectedTaskList) {
+          if (!result.destination || !selectedTaskList) {
             return
           }
 
