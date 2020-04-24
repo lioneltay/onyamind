@@ -9,6 +9,7 @@ import ListItemIcon, { ListItemIconProps } from "@material-ui/core/ListItemIcon"
 import { ListItemText } from "lib/components"
 
 import { AssignmentIcon } from "lib/icons"
+import { TASK_ITEM_HEIGHT } from "config"
 
 export type TaskProps = ListItemProps & {
   IconProps?: Omit<ListItemIconProps, "children">
@@ -19,6 +20,8 @@ export type TaskProps = ListItemProps & {
 
   onSelectTask?: (id: ID) => void
   onItemClick?: (id: ID) => void
+
+  SelectIcon?: React.ComponentType<Stylable>
 }
 
 export default ({
@@ -32,6 +35,7 @@ export default ({
   selected,
 
   IconProps,
+  SelectIcon = AssignmentIcon,
   ...listItemProps
 }: TaskProps) => {
   const theme = useTheme()
@@ -40,12 +44,13 @@ export default ({
     <ListItem
       css={css`
         position: relative;
-        min-height: 70px;
+        min-height: ${TASK_ITEM_HEIGHT}px;
+        height: ${TASK_ITEM_HEIGHT}px;
       `}
-      style={{ ...listItemProps.style, backgroundColor }}
       button={true as any}
       selected={selected}
       {...(listItemProps as ListItemProps)}
+      style={{ ...listItemProps.style, backgroundColor }}
       onClick={(event) => {
         onItemClick(task.id)
         listItemProps.onClick?.(event)
@@ -81,7 +86,7 @@ export default ({
           }}
           size="small"
         >
-          <AssignmentIcon
+          <SelectIcon
             style={{
               color: theme.iconColor,
               transform: `scale(${multiselect ? 0.7 : 1})`,

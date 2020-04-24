@@ -1,4 +1,27 @@
 {
-  "indexes": [],
+  "indexes": [
+    {
+      "collectionGroup": "task",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "archived",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "listId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "userId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    }
+  ],
   "fieldOverrides": []
 }

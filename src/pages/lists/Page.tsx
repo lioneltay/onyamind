@@ -1,6 +1,6 @@
-import React, { Fragment } from "react"
+import React from "react"
 import { RouteComponentProps } from "react-router-dom"
-import { noopTemplate as css } from "lib/utils"
+import { noopTemplate as css, assert } from "lib/utils"
 import styled from "styled-components"
 import { partition } from "ramda"
 
@@ -16,11 +16,16 @@ import {
 
 import { ListItemText, IconButtonMenu } from "lib/components"
 
-import { ExpandMoreIcon, MoreVertIcon } from "lib/icons"
+import {
+  ExpandMoreIcon,
+  MoreVertIcon,
+  CheckIcon,
+  CheckCircleIcon,
+} from "lib/icons"
 
 import Task from "./components/Task"
 
-import { EditTaskModal } from "components"
+import { EditTaskModal, TransitionTaskList } from "components"
 
 import { useTheme } from "theme"
 import { useSelector, useActions } from "services/store"
@@ -37,7 +42,26 @@ const Flip = styled.div<{ flip: boolean }>`
   transition: 300ms;
 `
 
+/**
+ * Orders tasks according to task order.
+ * Tasks not included in the task order are added in front with the existing order preserved.
+ */
 function orderTasks(tasks: Task[], taskOrder: ID[]): Task[] {
+  const copy = [...tasks]
+  const orderedTasks = []
+  const extraTasks = []
+
+  while (copy.length > 0) {
+    const task = copy.shift()
+    assert(task, "Must exist since length > 0")
+
+    if (taskOrder.find((id) => task.id === id)) {
+      orderedTasks.push(task)
+    } else {
+      extraTasks.push(task)
+    }
+  }
+
   const [inOrderTasks, otherTasks] = partition(
     (task) => !!taskOrder.find((id) => task.id === id),
     tasks,
@@ -74,7 +98,10 @@ function partitionTasks(tasks: Task[], { routine }: PartitionTaskOptions) {
     }
   }, tasks)
 
-  return { completeTasks, incompleteTasks }
+  return {
+    completeTasks,
+    incompleteTasks,
+  }
 }
 
 const Content = () => {
@@ -92,27 +119,27 @@ const Content = () => {
 
   const {
     editingTask,
-    completeTasks,
-    incompleteTasks,
     loadingTasks,
     multiselect,
     selectedTaskList,
+    completeTasks,
+    incompleteTasks,
+    taskOrder,
   } = useSelector((state, s) => {
     const selectedTaskList = s.app.selectedTaskList(state)
-    const tasks = s.listPage.tasks(state) ?? []
-    const { completeTasks, incompleteTasks } = partitionTasks(tasks, {
-      routine: selectedTaskList?.routine,
-    })
+    const tasks = orderTasks(
+      state.listPage.tasks ?? [],
+      selectedTaskList?.taskOrder ?? [],
+    )
 
     return {
+      taskOrder: tasks.map((task) => task.id),
+      ...partitionTasks(tasks, {
+        routine: selectedTaskList?.routine,
+      }),
       selectedTaskList,
       multiselect: state.listPage.multiselect,
       editingTask: s.listPage.editingTask(state),
-      completeTasks,
-      incompleteTasks: orderTasks(
-        incompleteTasks,
-        selectedTaskList?.taskOrder ?? [],
-      ),
       loadingTasks: s.listPage.loadingTasks(state),
     }
   })
@@ -132,10 +159,10 @@ const Content = () => {
   }
 
   return (
-    <Fragment>
+    <React.Fragment>
       <DragDropContext
         onDragEnd={(result) => {
-          if (!result.destination?.index || !selectedTaskList) {
+          if (!result.destination || !selectedTaskList) {
             return
           }
 
@@ -145,7 +172,7 @@ const Content = () => {
           reorderTasks({
             fromTaskId,
             toTaskId,
-            taskOrder: incompleteTasks.map((task) => task.id),
+            taskOrder,
             listId: selectedTaskList.id,
           })
         }}
@@ -158,31 +185,33 @@ const Content = () => {
               className="p-0"
               style={{ background: theme.backgroundColor }}
             >
-              {incompleteTasks.map((task, index) => (
-                <Draggable key={task.id} draggableId={task.id} index={index}>
-                  {(provided) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      style={{
-                        ...provided.draggableProps.style,
-                        transform: provided.draggableProps.style?.transform
-                          ? provided.draggableProps.style.transform.replace(
-                              /-?\d*\.?\d*px,/,
-                              "0px,",
-                            )
-                          : undefined,
-                      }}
-                    >
-                      <Task
-                        IconProps={provided.dragHandleProps}
-                        backgroundColor={theme.backgroundColor}
-                        task={task}
-                      />
-                    </div>
-                  )}
-                </Draggable>
-              ))}
+              <TransitionTaskList tasks={incompleteTasks}>
+                {(task, index) => (
+                  <Draggable key={task.id} draggableId={task.id} index={index}>
+                    {(provided) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        style={{
+                          ...provided.draggableProps.style,
+                          transform: provided.draggableProps.style?.transform
+                            ? provided.draggableProps.style.transform.replace(
+                                /-?\d*\.?\d*px,/,
+                                "0px,",
+                              )
+                            : undefined,
+                        }}
+                      >
+                        <Task
+                          IconProps={provided.dragHandleProps}
+                          backgroundColor={theme.backgroundColor}
+                          task={task}
+                        />
+                      </div>
+                    )}
+                  </Draggable>
+                )}
+              </TransitionTaskList>
               {provided.placeholder}
             </List>
           )}
@@ -219,13 +248,16 @@ const Content = () => {
 
       <List>
         <Collapse in={showCompleteTasks}>
-          {completeTasks.map((task) => (
-            <Task
-              key={task.id}
-              backgroundColor={theme.backgroundFadedColor}
-              task={task}
-            />
-          ))}
+          <TransitionTaskList tasks={completeTasks}>
+            {(task) => (
+              <Task
+                key={task.id}
+                backgroundColor={theme.backgroundColor}
+                task={task}
+                SelectIcon={CheckIcon}
+              />
+            )}
+          </TransitionTaskList>
         </Collapse>
       </List>
 
@@ -246,7 +278,7 @@ const Content = () => {
           }}
         />
       ) : null}
-    </Fragment>
+    </React.Fragment>
   )
 }
 
@@ -319,7 +351,7 @@ export default ({
   }, [selectedTaskListId])
 
   return (
-    <Fragment>
+    <React.Fragment>
       <Helmet>
         {selectedTaskList?.name ? (
           incompleteTasksCount + completeTasksCount === 0 ? (
@@ -348,6 +380,6 @@ export default ({
           <Content />
         </div>
       </section>
-    </Fragment>
+    </React.Fragment>
   )
 }

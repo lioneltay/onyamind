@@ -2,7 +2,15 @@ import React from "react"
 import { noopTemplate as css } from "lib/utils"
 
 import { Text, TextProps } from "lib/components"
-import { Divider } from "@material-ui/core"
+import { Button, Modal, ListItemText } from "lib/components"
+import {
+  TextField,
+  ListItem,
+  ListItemIcon,
+  Avatar,
+  ListItemSecondaryAction,
+} from "@material-ui/core"
+import { FacebookIcon, GoogleIcon, ClearIcon } from "lib/icons"
 
 import { GoogleButton, FacebookButton } from "lib/login-buttons"
 
@@ -45,37 +53,30 @@ export default (props: Stylable) => {
   }, [user.providerData.length])
 
   return (
-    <div {...props}>
-      <SectionTitle className="mt-7">Connections</SectionTitle>
+    <React.Fragment>
+      <SocialConnectionInfo
+        className="px-4"
+        provider="google"
+        data={googleData}
+      />
 
-      {user.providerData.length === 0 ? (
-        <Text color="error" variant="body2">
-          You have no connected login methods and will have to sign in by email
-          in the future
-        </Text>
-      ) : null}
-
-      <Divider className="my-4" />
-
-      <SocialConnectionInfo provider="google" data={googleData} />
-
-      <Divider className="my-4" />
-
-      <SocialConnectionInfo provider="facebook" data={facebookData} />
-
-      <Divider className="mt-4" />
-    </div>
+      <SocialConnectionInfo
+        className="px-4"
+        provider="facebook"
+        data={facebookData}
+      />
+    </React.Fragment>
   )
 }
 
 const PROVIDER_INFO = {
   google: {
     name: "Google",
-    ProviderButton: GoogleButton,
+    icon: <GoogleIcon />,
   },
   facebook: {
     name: "Facebook",
-    ProviderButton: FacebookButton,
+    icon: <FacebookIcon />,
   },
 } as const
 
@@ -96,90 +97,53 @@ const SocialConnectionInfo = ({
     auth: { setUser },
   } = useActions()
 
-  const { name, ProviderButton } = PROVIDER_INFO[provider]
+  const { name, icon } = PROVIDER_INFO[provider]
 
   return (
-    <div
-      css={css`
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-      `}
-      {...rest}
-    >
-      <div>
-        <SubSectionTitle gutterBottom>
-          {data ? `You are connected to ${name}` : `Connect to ${name}`}
-        </SubSectionTitle>
+    <ListItem
+      onClick={async () => {
+        if (data) {
+          return
+        }
 
-        <Text variant="body2">
-          {data
-            ? `You can now log in with ${name}`
-            : `Connect to log in with ${name}`}
-        </Text>
-      </div>
+        linkProvider(provider)
+          .then(({ user }) => {
+            setUser(user)
+            openSnackbar({
+              type: "success",
+              text: `Connected to ${name}`,
+            })
+          })
+          .catch((error) => {
+            console.error("ERROR", error)
+            openSnackbar({
+              type: "error",
+              text: error.message,
+            })
+            logError(error)
+          })
+      }}
+    >
+      <ListItemIcon>
+        <Avatar>{icon}</Avatar>
+      </ListItemIcon>
 
       {data ? (
-        <div className="fa-s">
-          <div className="fd-c fa-e">
-            {data.displayName ? (
-              <Text variant="body2">{data.displayName}</Text>
-            ) : null}
-
-            {data.email ? <Text variant="body2">{data.email}</Text> : null}
-
-            {disconnecting ? null : (
-              <Text
-                variant="caption"
-                color="textSecondary"
-                role="button"
-                onClick={async () => {
-                  setDisconnecting(true)
-                  await unlinkProvider(data.providerId)
-                    .then((user) => {
-                      setUser(user)
-                      openSnackbar({
-                        type: "success",
-                        text: `Disconnected from ${name}`,
-                      })
-                    })
-                    .catch((error) => {
-                      console.error("ERROR", error)
-                      openSnackbar({
-                        type: "error",
-                        text: error.message,
-                      })
-                      logError(error)
-                    })
-                  setDisconnecting(false)
-                }}
-              >
-                (disconnect)
-              </Text>
-            )}
-          </div>
-
-          {data.photoURL ? (
-            <img
-              src={data.photoURL}
-              className="ml-4"
-              css={css`
-                width: 48px;
-                height: 48px;
-                border-radius: 4px;
-              `}
-            />
-          ) : null}
-        </div>
+        <ListItemText primary={`Disconnect ${name}`} secondary={data.email} />
       ) : (
-        <ProviderButton
+        <ListItemText primary={`Connect to ${name}`} />
+      )}
+
+      {data && !disconnecting ? (
+        <ListItemSecondaryAction
           onClick={async () => {
-            linkProvider(provider)
-              .then(({ user }) => {
+            setDisconnecting(true)
+            await unlinkProvider(data.providerId)
+              .then((user) => {
                 setUser(user)
                 openSnackbar({
                   type: "success",
-                  text: `Connected to ${name}`,
+                  text: `Disconnected from ${name}`,
                 })
               })
               .catch((error) => {
@@ -190,11 +154,12 @@ const SocialConnectionInfo = ({
                 })
                 logError(error)
               })
+            setDisconnecting(false)
           }}
         >
-          Connect to {name}
-        </ProviderButton>
-      )}
-    </div>
+          <ClearIcon htmlColor="white" />
+        </ListItemSecondaryAction>
+      ) : null}
+    </ListItem>
   )
 }

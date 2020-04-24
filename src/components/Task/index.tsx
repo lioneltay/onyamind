@@ -56,9 +56,25 @@ const SwipeableTask = ({
   }
 
   const [spring, set] = useSpring(() => ({
-    config: config.stiff,
+    config: {
+      mass: 1,
+      tension: 300,
+      friction: 1,
+      clamp: true,
+      precision: 0.5,
+    },
     to: { x: 0 },
-    onRest: () => {},
+    onRest: () => {
+      if (instance.over) {
+        if (instance.direction === "left") {
+          setTimeout(onSwipeLeft, 250)
+        } else if (instance.direction === "right") {
+          setTimeout(onSwipeRight, 250)
+        } else {
+          logError(new Error("Animation ended without direction"))
+        }
+      }
+    },
   })) as any[]
 
   const bind = useGesture(
@@ -88,15 +104,15 @@ const SwipeableTask = ({
           instance.over = true
         }
 
-        if (instance.over) {
-          if (instance.direction === "left") {
-            setTimeout(onSwipeLeft, 500)
-          } else if (instance.direction === "right") {
-            setTimeout(onSwipeRight, 500)
-          } else {
-            logError(new Error("Animation ended without direction"))
-          }
-        }
+        // if (instance.over) {
+        //   if (instance.direction === "left") {
+        //     setTimeout(onSwipeLeft, 250)
+        //   } else if (instance.direction === "right") {
+        //     setTimeout(onSwipeRight, 250)
+        //   } else {
+        //     logError(new Error("Animation ended without direction"))
+        //   }
+        // }
 
         set({ x })
       },

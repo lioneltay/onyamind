@@ -13,6 +13,7 @@ import { MOBILE_WIDTH } from "config"
 import { onTrashTasksChange } from "./api"
 
 import { Helmet } from "react-helmet"
+import { TransitionTaskList } from "components"
 
 const Content = () => {
   const theme = useTheme()
@@ -32,15 +33,17 @@ const Content = () => {
   }
 
   return (
-    <List className="p-0">
-      {tasks.map((task) => (
-        <Task
-          key={task.id}
-          backgroundColor={theme.backgroundColor}
-          task={task}
-          selected={editingTaskId === task.id}
-        />
-      ))}
+    <List className="p-0" style={{ backgroundColor: theme.backgroundColor }}>
+      <TransitionTaskList tasks={tasks}>
+        {(task) => (
+          <Task
+            key={task.id}
+            backgroundColor={theme.backgroundColor}
+            task={task}
+            selected={editingTaskId === task.id}
+          />
+        )}
+      </TransitionTaskList>
     </List>
   )
 }
