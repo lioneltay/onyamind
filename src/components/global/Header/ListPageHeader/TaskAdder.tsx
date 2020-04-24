@@ -75,17 +75,10 @@ export default () => {
       <OuterContainer
         style={{
           paddingTop: mobile ? 0 : 24,
-          background: theme.backgroundFadedColor,
+          background: theme.backgroundColor,
         }}
       >
-        <Container
-          style={{
-            height: 57,
-            background: multiselect
-              ? theme.backgroundFadedColor
-              : theme.backgroundColor,
-          }}
-        >
+        <Container style={{ height: 57 }}>
           {multiselect ? (
             <ListItem
               button
