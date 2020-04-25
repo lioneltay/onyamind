@@ -5,11 +5,11 @@ import { useTheme } from "theme"
 import { Fab } from "@material-ui/core"
 import ListItem, { ListItemProps } from "@material-ui/core/ListItem"
 import ListItemIcon, { ListItemIconProps } from "@material-ui/core/ListItemIcon"
+import Dotdotdot from "react-dotdotdot"
 
 import { ListItemText } from "lib/components"
 
 import { AssignmentIcon } from "lib/icons"
-import { TASK_ITEM_HEIGHT } from "config"
 
 export type TaskProps = ListItemProps & {
   IconProps?: Omit<ListItemIconProps, "children">
@@ -42,10 +42,9 @@ export default ({
 
   return (
     <ListItem
+      divider
       css={css`
         position: relative;
-        min-height: ${TASK_ITEM_HEIGHT}px;
-        height: ${TASK_ITEM_HEIGHT}px;
       `}
       button={true as any}
       selected={selected}
@@ -112,16 +111,20 @@ export default ({
         }
         secondary={
           task.notes ? (
-            <span
-              className="ellipsis bold"
+            <Dotdotdot
+              clamp={2}
+              className="bold"
               style={{
                 maxWidth: "100%",
                 display: "inline-block",
                 textDecoration: task.complete ? "line-through" : "none",
               }}
+              css={css`
+                white-space: pre-wrap;
+              `}
             >
               {task.notes}
-            </span>
+            </Dotdotdot>
           ) : undefined
         }
       />
