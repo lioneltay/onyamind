@@ -52,29 +52,30 @@ self.addEventListener("activate", (event) => {
 const broadcast = new BroadcastChannel("notification-action")
 
 self.addEventListener("notificationclose", (event) => {
-  broadcast.postMessage({
-    action: "COMPLETE_TASK",
-    payload: {
-      task: event.notification.data,
-    },
-  })
+  // broadcast.postMessage({
+  //   action: "COMPLETE_TASK",
+  //   payload: {
+  //     task: event.notification.data,
+  //   },
+  // })
 })
 
 self.addEventListener("notificationclick", (event) => {
-  // switch (event.action) {
-  //   case "DISMISS": {
-  //     event.notification.close()
-  //     return
-  //   }
-  //   case "COMPLETE_TASK": {
-  //     broadcast.postMessage({
-  //       action: "COMPLETE_TASK",
-  //       payload: {
-  //         taskId: event.notification.data.id,
-  //       },
-  //     })
-  //     event.notification.close()
-  //     return
-  //   }
-  // }
+  switch (event.action) {
+    case "DISMISS": {
+      event.notification.close()
+      return
+    }
+    case "COMPLETE_TASK": {
+      console.log("SERVICE WORKER COMPLET ETASK")
+      broadcast.postMessage({
+        action: "COMPLETE_TASK",
+        payload: {
+          task: event.notification.data,
+        },
+      })
+      event.notification.close()
+      return
+    }
+  }
 })
