@@ -1,17 +1,17 @@
 import React from "react"
-import { noUndefinedValues } from "lib/utils"
+import { noUndefinedValues, noopTemplate as css } from "lib/utils"
 
 import { Formik, Form } from "formik"
-import Button from "@material-ui/core/Button"
-import TextField from "@material-ui/core/TextField"
-import { Modal, ModalProps } from "lib/components"
+import { InputBase, IconButton } from "@material-ui/core"
+import { FullScreenModal, FullScreenModalProps, Button } from "lib/components"
+import { SubjectIcon } from "lib/icons"
 
 type Values = {
   title?: string
   notes?: string
 }
 
-type Props = Omit<ModalProps, "children" | "onSubmit"> & {
+type Props = Omit<FullScreenModalProps, "children" | "onSubmit"> & {
   initialValues?: Values
   onSubmit: (values: Values) => Promise<void> | void
 }
@@ -34,46 +34,68 @@ const EditModal: React.FunctionComponent<Props> = ({
       }}
     >
       {({ setFieldValue, values, isSubmitting }) => (
-        <Modal style={{ width: 500, maxWidth: "100%" }} {...rest}>
-          <Form>
+        <FullScreenModal
+          css={css`
+            display: grid;
+            grid-template-rows: auto 1fr;
+          `}
+          {...rest}
+        >
+          <Form
+            className="px-1h pb-1h"
+            css={css`
+              display: grid;
+              grid-template-rows: 1fr auto;
+            `}
+          >
             <div>
-              <TextField
-                autoFocus
-                label="Task"
-                placeholder="Task"
-                fullWidth
-                variant="outlined"
-                value={values.title}
-                onChange={(e) => setFieldValue("title", e.target.value)}
-              />
+              <div>
+                <InputBase
+                  css={css`
+                    font-size: 24px;
+                  `}
+                  autoFocus
+                  placeholder="Enter title"
+                  fullWidth
+                  value={values.title}
+                  onChange={(e) => setFieldValue("title", e.target.value)}
+                />
+              </div>
+
+              <div className="mt-1h fa-s">
+                <IconButton
+                  css={css`
+                    width: 32px;
+                    height: 32px;
+                  `}
+                  size="small"
+                  className="mr-1"
+                >
+                  <SubjectIcon fontSize="small" />
+                </IconButton>
+
+                <InputBase
+                  placeholder="Add details"
+                  fullWidth
+                  multiline={true}
+                  value={values.notes}
+                  onChange={(e) => setFieldValue("notes", e.target.value)}
+                />
+              </div>
             </div>
 
-            <div className="mt-3">
-              <TextField
-                label="Notes"
-                placeholder="Notes"
-                fullWidth
-                multiline={true}
-                rows={3}
-                rowsMax={5}
-                variant="outlined"
-                value={values.notes}
-                onChange={(e) => setFieldValue("notes", e.target.value)}
-              />
-            </div>
-
-            <div className="fj-e mt-4">
+            <div className="fj-e mt-1h">
               <Button
                 variant="outlined"
                 color="primary"
                 type="submit"
                 disabled={isSubmitting}
               >
-                Save
+                Done
               </Button>
             </div>
           </Form>
-        </Modal>
+        </FullScreenModal>
       )}
     </Formik>
   )

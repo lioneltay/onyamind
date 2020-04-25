@@ -25,6 +25,7 @@ import {
   Email,
   Brightness4,
   CheckCircle,
+  Subject,
   SvgIconComponent,
 } from "@material-ui/icons"
 
@@ -68,5 +69,6 @@ export const SettingsIcon = iconFromMaterialIcon("Settings", Settings)
 export const EmailIcon = iconFromMaterialIcon("Email", Email)
 export const Brightness4Icon = iconFromMaterialIcon("Brightness4", Brightness4)
 export const CheckCircleIcon = iconFromMaterialIcon("CheckCircle", CheckCircle)
+export const SubjectIcon = iconFromMaterialIcon("Subject", Subject)
 
 export * from "./provider-icons"

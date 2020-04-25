@@ -67,7 +67,6 @@ self.addEventListener("notificationclick", (event) => {
       return
     }
     case "COMPLETE_TASK": {
-      console.log("SERVICE WORKER COMPLET ETASK")
       broadcast.postMessage({
         action: "COMPLETE_TASK",
         payload: {

@@ -41,7 +41,7 @@ const CreateTaskListModal: React.FunctionComponent<Props> = ({
 
   return (
     <Modal
-      className="p-3"
+      className="p-1"
       style={{ width: 500, maxWidth: "100%" }}
       open={open}
       onClose={onClose}
@@ -56,7 +56,7 @@ const CreateTaskListModal: React.FunctionComponent<Props> = ({
       >
         {({ values, setFieldValue, isSubmitting }) => (
           <Form>
-            <div className="mt-3">
+            <div className="mt-1">
               <TextField
                 autoFocus
                 required
@@ -69,7 +69,7 @@ const CreateTaskListModal: React.FunctionComponent<Props> = ({
               />
             </div>
 
-            <div className="mt-3 fa-c">
+            <div className="mt-1 fa-c">
               <FormControlLabel
                 control={
                   <Checkbox
@@ -97,7 +97,7 @@ const CreateTaskListModal: React.FunctionComponent<Props> = ({
               />
             </div>
 
-            <div className="mt-3">
+            <div className="mt-1">
               <FormControlLabel
                 control={
                   <Checkbox

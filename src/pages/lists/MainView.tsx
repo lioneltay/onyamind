@@ -15,7 +15,7 @@ import {
 
 import { ListItemText, IconButtonMenu } from "lib/components"
 
-import { ExpandMoreIcon, MoreVertIcon, CheckIcon } from "lib/icons"
+import { ExpandMoreIcon, MoreVertIcon, CheckIcon, DeleteIcon } from "lib/icons"
 
 import Task from "./components/Task"
 
@@ -102,6 +102,7 @@ const MainView = () => {
       editTask,
       decompleteCompletedTasks,
       archiveCompletedTasks,
+      archiveTask,
     },
     app: { reorderTasks },
   } = useActions()
@@ -253,8 +254,17 @@ const MainView = () => {
       {editingTask ? (
         <EditTaskModal
           disableBackdropClick
-          title="Edit Task"
           onClose={() => stopEditingTask()}
+          secondaryAction={
+            <IconButton
+              onClick={() => {
+                stopEditingTask()
+                archiveTask(editingTask.id)
+              }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          }
           open={!multiselect && !!editingTask}
           initialValues={editingTask}
           onSubmit={async (values) => {
