@@ -17,9 +17,9 @@ import { ListItemText, IconButtonMenu } from "lib/components"
 
 import { ExpandMoreIcon, MoreVertIcon, CheckIcon, DeleteIcon } from "lib/icons"
 
-import Task from "./components/Task"
+import { Task, TransitionTaskList } from "./components"
 
-import { EditTaskModal, TransitionTaskList } from "components"
+import { EditTaskModal } from "components"
 
 import { useTheme } from "theme"
 import { useSelector, useActions } from "services/store"

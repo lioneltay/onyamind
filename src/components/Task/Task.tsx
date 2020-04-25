@@ -117,14 +117,13 @@ export default ({
           secondary={
             task.notes ? (
               <Dotdotdot
+                tagName="span"
                 clamp={2}
                 className="bold"
-                style={{
-                  maxWidth: "100%",
-                  display: "inline-block",
-                  textDecoration: task.complete ? "line-through" : "none",
-                }}
                 css={css`
+                  max-width: 100%;
+                  display: inline-block;
+                  textdecoration: ${task.complete ? "line-through" : "none"};
                   white-space: pre-wrap;
                 `}
               >
