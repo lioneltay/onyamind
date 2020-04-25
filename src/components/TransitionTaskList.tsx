@@ -25,13 +25,17 @@ const TransitionTaskList = ({ tasks, children }: TransitionTaskListProps) => {
   })
 
   return (
-    <React.Fragment>
+    <div
+      css={css`
+        overflow: hidden;
+      `}
+    >
       {transitions.map(({ item, key, props }, index) => (
         <animated.div key={key} style={props}>
           {children(item, index)}
         </animated.div>
       ))}
-    </React.Fragment>
+    </div>
   )
 }
 
