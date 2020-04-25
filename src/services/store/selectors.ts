@@ -3,11 +3,9 @@ import * as listPageSelectors from "./listPage/selectors"
 import * as uiSelectors from "./ui/selectors"
 import * as authSelectors from "./auth/selectors"
 import * as appSelectors from "./app/selectors"
-import * as trashPageSelectors from "./trashPage/selectors"
 import { State } from "./reducer"
 
 export const selectors = {
-  trashPage: trashPageSelectors,
   listPage: listPageSelectors,
   ui: uiSelectors,
   app: appSelectors,

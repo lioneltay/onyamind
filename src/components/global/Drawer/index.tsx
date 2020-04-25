@@ -268,15 +268,6 @@ export default () => {
         <Divider />
 
         <OptionItem
-          icon={<DeleteIcon />}
-          text="Trash"
-          onClick={() => {
-            history.push("/trash")
-            toggleDrawer()
-          }}
-        />
-
-        <OptionItem
           icon={<SettingsIcon />}
           text="Settings"
           onClick={() => {

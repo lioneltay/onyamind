@@ -4,10 +4,6 @@ import {
   reducer as listPageReducer,
   State as ListPageState,
 } from "./listPage/reducer"
-import {
-  reducer as trashPageReducer,
-  State as TrashPageState,
-} from "./trashPage/reducer"
 import { reducer as authReducer, State as AuthState } from "./auth/reducer"
 import { reducer as uiReducer, State as UIState } from "./ui/reducer"
 import {
@@ -20,7 +16,6 @@ export type State = {
   app: AppState
   settings: SettingsState
   listPage: ListPageState
-  trashPage: TrashPageState
   auth: AuthState
   ui: UIState
 }
@@ -31,7 +26,6 @@ export const reducer = combineReducers({
   app: appReducer,
   settings: settingsReducer,
   listPage: listPageReducer,
-  trashPage: trashPageReducer,
   ui: uiReducer,
   auth: authReducer,
 })
