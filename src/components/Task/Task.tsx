@@ -78,7 +78,7 @@ export default ({
       >
         <Fab
           style={{
-            borderRadius: multiselect ? "50%" : "5px",
+            borderRadius: "50%",
             transition: "300ms",
             border: selected ? "1px solid blue" : "none",
             background: theme.backgroundFadedColor,
@@ -89,7 +89,7 @@ export default ({
           <SelectIcon
             style={{
               color: theme.iconColor,
-              transform: `scale(${multiselect ? 0.7 : 1})`,
+              transform: `scale(0.8)`,
               transition: "300ms",
             }}
           />
