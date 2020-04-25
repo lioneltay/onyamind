@@ -103,7 +103,7 @@ export default () => {
 
   return (
     <SwipeableDrawer
-      open={show || true}
+      open={show}
       onOpen={toggleDrawer}
       onClose={() => {
         closeDrawer()
