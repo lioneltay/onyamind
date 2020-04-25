@@ -123,7 +123,7 @@ export default ({
                 css={css`
                   max-width: 100%;
                   display: inline-block;
-                  textdecoration: ${task.complete ? "line-through" : "none"};
+                  text-decoration: ${task.complete ? "line-through" : "none"};
                   white-space: pre-wrap;
                 `}
               >
