@@ -1,7 +1,8 @@
 import React from "react"
 import { useTransition, animated } from "react-spring"
-import { TASK_ITEM_HEIGHT } from "config"
 import { noopTemplate as css } from "lib/utils"
+
+const MAX_HEIGHT = 120
 
 type TransitionTaskListProps = {
   tasks: Task[]
@@ -17,22 +18,16 @@ const TransitionTaskList = ({ tasks, children }: TransitionTaskListProps) => {
       clamp: true,
       precision: 0.1,
     },
-    initial: { height: TASK_ITEM_HEIGHT, opacity: 1 },
-    from: { height: 0, opacity: 0 },
-    enter: [{ opacity: 1 }, { height: TASK_ITEM_HEIGHT, opacity: 1 }],
-    leave: [{ opacity: 0 }, { height: 0, opacity: 0 }],
+    initial: { maxHeight: MAX_HEIGHT, opacity: 1 },
+    from: { maxHeight: 0, opacity: 0 },
+    enter: [{ opacity: 1 }, { maxHeight: MAX_HEIGHT, opacity: 1 }],
+    leave: [{ opacity: 0 }, { maxHeight: 0, opacity: 0 }],
   })
 
   return (
     <React.Fragment>
       {transitions.map(({ item, key, props }, index) => (
-        <animated.div
-          key={key}
-          style={{
-            ...props,
-            overflow: "hidden",
-          }}
-        >
+        <animated.div key={key} style={props}>
           {children(item, index)}
         </animated.div>
       ))}
