@@ -276,8 +276,6 @@ export default () => {
           }}
         />
 
-        <Divider />
-
         <OptionItem
           icon={<FeedbackIcon />}
           text="Send feedback"
