@@ -24,8 +24,6 @@ import { EditTaskModal } from "components"
 import { useTheme } from "theme"
 import { useSelector, useActions } from "services/store"
 
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd"
-
 const Flip = styled.div<{ flip: boolean }>`
   transform: rotate(${({ flip }) => (flip ? "-180deg" : "0")});
   transition: 300ms;
@@ -150,7 +148,8 @@ const MainView = () => {
 
   return (
     <React.Fragment>
-      <DragDropContext
+      <TransitionTaskList
+        tasks={incompleteTasks}
         onDragEnd={(result) => {
           if (!result.destination || !selectedTaskList) {
             return
@@ -166,47 +165,7 @@ const MainView = () => {
             listId: selectedTaskList.id,
           })
         }}
-      >
-        <Droppable droppableId="dropzone">
-          {(provided) => (
-            <List
-              {...provided.droppableProps}
-              innerRef={provided.innerRef}
-              className="p-0"
-              style={{ background: theme.backgroundColor }}
-            >
-              <TransitionTaskList tasks={incompleteTasks}>
-                {(task, index) => (
-                  <Draggable key={task.id} draggableId={task.id} index={index}>
-                    {(provided) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        style={{
-                          ...provided.draggableProps.style,
-                          transform: provided.draggableProps.style?.transform
-                            ? provided.draggableProps.style.transform.replace(
-                                /-?\d*\.?\d*px,/,
-                                "0px,",
-                              )
-                            : undefined,
-                        }}
-                      >
-                        <Task
-                          IconProps={provided.dragHandleProps}
-                          backgroundColor={theme.backgroundColor}
-                          task={task}
-                        />
-                      </div>
-                    )}
-                  </Draggable>
-                )}
-              </TransitionTaskList>
-              {provided.placeholder}
-            </List>
-          )}
-        </Droppable>
-      </DragDropContext>
+      />
 
       <List className="p-0" onClick={toggleShowCompleteTasks}>
         <ListItem button>
@@ -238,16 +197,24 @@ const MainView = () => {
 
       <List>
         <Collapse in={showCompleteTasks}>
-          <TransitionTaskList tasks={completeTasks}>
-            {(task) => (
-              <Task
-                key={task.id}
-                backgroundColor={theme.backgroundColor}
-                task={task}
-                SelectIcon={CheckIcon}
-              />
-            )}
-          </TransitionTaskList>
+          <TransitionTaskList
+            tasks={completeTasks}
+            onDragEnd={(result) => {
+              if (!result.destination || !selectedTaskList) {
+                return
+              }
+
+              const fromTaskId = completeTasks[result.source.index].id
+              const toTaskId = completeTasks[result.destination.index].id
+
+              reorderTasks({
+                fromTaskId,
+                toTaskId,
+                taskOrder,
+                listId: selectedTaskList.id,
+              })
+            }}
+          />
         </Collapse>
       </List>
 

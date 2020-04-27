@@ -43,15 +43,3 @@ export { useActions, Action } from "./actions"
 export { useSelector } from "./selectors"
 
 export { State, GetState } from "./reducer"
-
-type gg = {
-  hello: {
-    there: {
-      how: {
-        are: {
-          you: string
-        }
-      }
-    }
-  }
-}
