@@ -74,7 +74,7 @@ export default ({
   // Keep url synced with selectedTaskListId
   React.useEffect(() => {
     if (selectedTaskListId) {
-      history.push(listPageUrl(selectedTaskListId))
+      history.replace(listPageUrl(selectedTaskListId))
     }
   }, [selectedTaskListId])
 

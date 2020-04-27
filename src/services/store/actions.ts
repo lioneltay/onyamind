@@ -20,17 +20,12 @@ import {
   Action as SettingsAction,
 } from "./settings/actions"
 import {
-  actionCreators as trashPageActionCreators,
-  Action as TrashPageAction,
-} from "./trashPage/actions"
-import {
   actionCreators as appActionCreators,
   Action as AppAction,
 } from "./app/actions"
 
 export type Action =
   | ListPageAction
-  | TrashPageAction
   | UIAction
   | AuthAction
   | SettingsAction
@@ -40,7 +35,6 @@ export const actionCreators = {
   app: appActionCreators,
   settings: settingsActionCreators,
   listPage: listPageActionCreators,
-  trashPage: trashPageActionCreators,
   ui: uiActionCreators,
   auth: authActionCreators,
 } as const
@@ -56,7 +50,7 @@ export function useActions(slice?: keyof typeof actionCreators) {
     return slice
       ? bindActionCreators(actionCreators[slice], dispatch)
       : mapObjIndexed(
-          value => bindActionCreators(value, dispatch),
+          (value) => bindActionCreators(value, dispatch),
           actionCreators,
         )
   }, [])

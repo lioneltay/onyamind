@@ -29,160 +29,166 @@ export type SwipeableTaskProps = TaskComponentProps & {
   swipeRightIcon?: React.ReactNode
 }
 
-const SwipeableTask = ({
-  disableSwipe,
-  onSwipeLeft = noop,
-  onSwipeRight = noop,
-  swipeLeftBackground = "tomato",
-  swipeLeftIcon = <DeleteIcon />,
-  swipeRightBackground = "dodgerblue",
-  swipeRightIcon = <CheckIcon />,
-  onSelectTask = noop,
-  onItemClick = noop,
-  ...taskProps
-}: SwipeableTaskProps) => {
-  const instance = useInstance({
-    over: false,
-    direction: "none",
-    isDragging: false,
-  })
-
-  const [direction, setDirection] = React.useState<Direction>("none")
-  instance.direction = direction
-
-  function updateDirection(val: Direction) {
-    setDirection(val)
-    instance.direction = val
-  }
-
-  const [spring, set] = useSpring(() => ({
-    config: {
-      mass: 1,
-      tension: 300,
-      friction: 1,
-      clamp: true,
-      precision: 0.5,
-    },
-    to: { x: 0 },
-    onRest: () => {
-      if (instance.over) {
-        if (instance.direction === "left") {
-          setTimeout(onSwipeLeft, 250)
-        } else if (instance.direction === "right") {
-          setTimeout(onSwipeRight, 250)
-        } else {
-          logError(new Error("Animation ended without direction"))
-        }
-      }
-    },
-  })) as any[]
-
-  const bind = useGesture(
+const SwipeableTask = React.forwardRef(
+  (
     {
-      onDragStart: () => {
-        instance.isDragging = true
-      },
-      onDragEnd: () => {
-        // Delay to ensure this runs after any click events run
-        setTimeout(() => {
-          instance.isDragging = false
-        }, 0)
-      },
-      onDrag: ({ down, movement: [mx], direction: [xDir], velocity }) => {
-        const trigger = velocity > 0.5
-        const dir = xDir < 0 ? -1 : 1
+      disableSwipe,
+      onSwipeLeft = noop,
+      onSwipeRight = noop,
+      swipeLeftBackground = "tomato",
+      swipeLeftIcon = <DeleteIcon />,
+      swipeRightBackground = "dodgerblue",
+      swipeRightIcon = <CheckIcon />,
+      onSelectTask = noop,
+      onItemClick = noop,
+      ...taskProps
+    }: SwipeableTaskProps,
+    ref: any,
+  ) => {
+    const instance = useInstance({
+      over: false,
+      direction: "none",
+      isDragging: false,
+    })
 
-        const isOver = !down && trigger
-        const x = isOver ? window.innerWidth * dir : down ? mx : 0
+    const [direction, setDirection] = React.useState<Direction>("none")
+    instance.direction = direction
 
-        const dirVal = mx < 0 ? "left" : "right"
-        if (direction !== dirVal) {
-          updateDirection(dirVal)
+    function updateDirection(val: Direction) {
+      setDirection(val)
+      instance.direction = val
+    }
+
+    const [spring, set] = useSpring(() => ({
+      config: {
+        mass: 1,
+        tension: 300,
+        friction: 1,
+        clamp: true,
+        precision: 0.5,
+      },
+      to: { x: 0 },
+      onRest: () => {
+        if (instance.over) {
+          if (instance.direction === "left") {
+            setTimeout(onSwipeLeft, 250)
+          } else if (instance.direction === "right") {
+            setTimeout(onSwipeRight, 250)
+          } else {
+            logError(new Error("Animation ended without direction"))
+          }
         }
-
-        if (isOver) {
-          instance.over = true
-        }
-
-        // if (instance.over) {
-        //   if (instance.direction === "left") {
-        //     setTimeout(onSwipeLeft, 250)
-        //   } else if (instance.direction === "right") {
-        //     setTimeout(onSwipeRight, 250)
-        //   } else {
-        //     logError(new Error("Animation ended without direction"))
-        //   }
-        // }
-
-        set({ x })
       },
-    },
-    { drag: { axis: "x" } },
-  )
+    })) as any[]
 
-  const dragAwareOnItemClick = React.useCallback(
-    (id: ID) => {
-      if (!instance.isDragging) {
-        onItemClick(id)
-      }
-    },
-    [onItemClick],
-  )
+    const bind = useGesture(
+      {
+        onDragStart: () => {
+          instance.isDragging = true
+        },
+        onDragEnd: () => {
+          // Delay to ensure this runs after any click events run
+          setTimeout(() => {
+            instance.isDragging = false
+          }, 0)
+        },
+        onDrag: ({ down, movement: [mx], direction: [xDir], velocity }) => {
+          const trigger = velocity > 0.5
+          const dir = xDir < 0 ? -1 : 1
 
-  const dragAwareOnSelectTask = React.useCallback(
-    (id: ID) => {
-      if (!instance.isDragging) {
-        onSelectTask(id)
-      }
-    },
-    [onSelectTask],
-  )
+          const isOver = !down && trigger
+          const x = isOver ? window.innerWidth * dir : down ? mx : 0
 
-  const left = direction === "left"
-  const right = direction === "right"
+          const dirVal = mx < 0 ? "left" : "right"
+          if (direction !== dirVal) {
+            updateDirection(dirVal)
+          }
 
-  return (
-    <div
-      css={css`
-        width: 100%;
-        position: relative;
-        overflow-x: hidden;
-      `}
-    >
-      <ListItem
-        className={right ? "fj-s" : left ? "fj-e" : undefined}
-        style={{
-          position: "absolute",
-          width: "100%",
-          height: "100%",
-          top: 0,
-          left: 0,
-          backgroundColor: right
-            ? swipeRightBackground
-            : left
-            ? swipeLeftBackground
-            : undefined,
-        }}
+          if (isOver) {
+            instance.over = true
+          }
+
+          // if (instance.over) {
+          //   if (instance.direction === "left") {
+          //     setTimeout(onSwipeLeft, 250)
+          //   } else if (instance.direction === "right") {
+          //     setTimeout(onSwipeRight, 250)
+          //   } else {
+          //     logError(new Error("Animation ended without direction"))
+          //   }
+          // }
+
+          set({ x })
+        },
+      },
+      { drag: { axis: "x" } },
+    )
+
+    const dragAwareOnItemClick = React.useCallback(
+      (id: ID) => {
+        if (!instance.isDragging) {
+          onItemClick(id)
+        }
+      },
+      [onItemClick],
+    )
+
+    const dragAwareOnSelectTask = React.useCallback(
+      (id: ID) => {
+        if (!instance.isDragging) {
+          onSelectTask(id)
+        }
+      },
+      [onSelectTask],
+    )
+
+    const left = direction === "left"
+    const right = direction === "right"
+
+    return (
+      <div
+        css={css`
+          width: 100%;
+          position: relative;
+          overflow-x: hidden;
+        `}
       >
-        <IconButton style={{ color: "white" }}>
-          {right ? swipeRightIcon : left ? swipeLeftIcon : undefined}
-        </IconButton>
-      </ListItem>
+        <ListItem
+          className={right ? "fj-s" : left ? "fj-e" : undefined}
+          style={{
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+            top: 0,
+            left: 0,
+            backgroundColor: right
+              ? swipeRightBackground
+              : left
+              ? swipeLeftBackground
+              : undefined,
+          }}
+        >
+          <IconButton style={{ color: "white" }}>
+            {right ? swipeRightIcon : left ? swipeLeftIcon : undefined}
+          </IconButton>
+        </ListItem>
 
-      <animated.div
-        {...(disableSwipe ? undefined : bind())}
-        style={{
-          transform: spring.x.interpolate((x: any) => `translateX(${x}px)`),
-        }}
-      >
-        <Task
-          {...taskProps}
-          onItemClick={dragAwareOnItemClick}
-          onSelectTask={dragAwareOnSelectTask}
-        />
-      </animated.div>
-    </div>
-  )
-}
+        <animated.div
+          {...(disableSwipe ? undefined : bind())}
+          style={{
+            transform: spring.x.interpolate((x: any) => `translateX(${x}px)`),
+          }}
+        >
+          <Task
+            {...taskProps}
+            ref={ref}
+            onItemClick={dragAwareOnItemClick}
+            onSelectTask={dragAwareOnSelectTask}
+          />
+        </animated.div>
+      </div>
+    )
+  },
+)
 
 export default SwipeableTask

@@ -13,13 +13,12 @@ import {
   Collapse,
   Avatar,
   Divider,
-  Button,
   IconButton,
   LinearProgress,
   Fade,
 } from "@material-ui/core"
 
-import { Text, Modal } from "lib/components"
+import { Text, Button } from "lib/components"
 
 import {
   HelpIcon,
@@ -165,10 +164,10 @@ export default () => {
             </ListItemSecondaryAction>
           </ListItem>
         )}
-        <ListItem className="pb-0 pt-3" dense>
+        <ListItem className="pb-0" dense>
           <ListItemText className="fa-c">
             <Text variant="subtitle2" className="fa-c">
-              <span className="mr-3">Primary List</span>
+              <span className="mr-1">Primary List</span>
               <HelpIcon
                 className="cursor-pointer"
                 style={{ color: theme.iconColor }}
@@ -208,7 +207,7 @@ export default () => {
         )}
         <Divider />
         <ListItem
-          className="pb-0 pt-3"
+          className="pb-0"
           dense
           button
           onClick={() => setShowOtherLists((show) => !show)}
@@ -259,23 +258,14 @@ export default () => {
             fullWidth
             color="primary"
             variant="text"
-            style={{ height: 64 }}
+            style={{ height: 48 }}
             onClick={() => setShowCreateModal(true)}
           >
-            CREATE NEW LIST
+            Create List
           </Button>
         </ListItem>
 
         <Divider />
-
-        <OptionItem
-          icon={<DeleteIcon />}
-          text="Trash"
-          onClick={() => {
-            history.push("/trash")
-            toggleDrawer()
-          }}
-        />
 
         <OptionItem
           icon={<SettingsIcon />}
@@ -285,8 +275,6 @@ export default () => {
             closeDrawer()
           }}
         />
-
-        <Divider />
 
         <OptionItem
           icon={<FeedbackIcon />}

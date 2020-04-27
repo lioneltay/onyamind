@@ -1,20 +1,6 @@
 import * as functions from "firebase-functions"
 import { admin } from "../utils/firebase"
 
-type ID = string
-
-type Task = {
-  id: ID
-  listId: ID
-  userId: ID
-  archived: boolean
-  complete: boolean
-  createdAt: Date
-  updatedAt: Date | null
-  notes?: string
-  title: string
-}
-
 /**
  * Keep taskList numberOfCompleteTasks and numberOfIncompleteTasks up to date as tasks are changed
  */

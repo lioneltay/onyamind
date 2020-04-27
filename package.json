@@ -27,8 +27,8 @@
     "test:cypress:emulators:exec:ci": "firebase use staging --token $FIREBASE_DEPLOY_KEY && firebase emulators:exec --only firestore,functions,firestore:rules --token $FIREBASE_DEPLOY_KEY",
     "test:cypress:helper": "start-server-and-test dev:local:test http-get://localhost:7000 cy:run",
     "test:cypress:ci": "npm run test:cypress:emulators:exec:ci -- \"npm run test:cypress:helper\"",
-    "test": "npm run test:jest && npm run test:cypress",
-    "test:ci": "npm run test:jest && npm run test:cypress:ci"
+    "test": "npm run test:jest",
+    "test:ci": "npm run test:jest"
   },
   "keywords": [],
   "author": "",
