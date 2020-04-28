@@ -3,12 +3,12 @@ import { CloseIcon } from "lib/icons"
 import { Task, TaskProps as ComponentTaskProps } from "components"
 import { useSelector, useActions } from "services/store"
 
-export type TaskProps = Omit<ComponentTaskProps, "multiselect"> & {
+export type TaskProps = ComponentTaskProps & {
   selected?: boolean
   backgroundColor?: string
 }
 
-const ListPageTask = React.forwardRef((props: TaskProps, ref: any) => {
+const ListPageTask = (props: TaskProps) => {
   const {
     toggleTaskSelection,
     toggleEditingTask,
@@ -24,12 +24,10 @@ const ListPageTask = React.forwardRef((props: TaskProps, ref: any) => {
 
   return (
     <Task
-      ref={ref}
       {...props}
       backgroundColor={props.backgroundColor}
       swipeRightIcon={props.complete ? <CloseIcon /> : undefined}
       selected={selected}
-      multiselect={multiselect}
       onItemClick={() => toggleEditingTask(props.id)}
       onSelectTask={(id) => {
         stopEditingTask()
@@ -40,6 +38,6 @@ const ListPageTask = React.forwardRef((props: TaskProps, ref: any) => {
       }}
     />
   )
-})
+}
 
 export default React.memo(ListPageTask)

@@ -91,7 +91,10 @@ const TransitionTaskList = ({
                     <Task
                       IconProps={provided.dragHandleProps}
                       backgroundColor={theme.backgroundColor}
-                      {...task}
+                      id={task.id}
+                      complete={task.complete}
+                      title={task.title}
+                      notes={task.notes}
                       {...taskProps}
                     />
                   </animated.div>

@@ -15,6 +15,7 @@ export const onTasksChange = ({
     .where("listId", "==", listId)
     .where("userId", "==", userId)
     .orderBy("createdAt", "desc")
+    .limit(50)
     .onSnapshot((snapshot) => {
       const tasks = snapshot.docs.map((doc) => dataWithId(doc) as Task)
       onChange(tasks)

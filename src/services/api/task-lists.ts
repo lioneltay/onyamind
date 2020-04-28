@@ -135,6 +135,8 @@ export const onTaskListsChange = ({
   return firestore
     .collection("taskList")
     .where("userId", "==", userId)
+    .orderBy("createdAt", "desc")
+    .limit(20)
     .onSnapshot((snapshot) => {
       const taskLists = snapshot.docs.map((doc) => dataWithId(doc) as TaskList)
       onChange(taskLists)
