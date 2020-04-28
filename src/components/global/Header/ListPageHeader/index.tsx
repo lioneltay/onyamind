@@ -48,7 +48,7 @@ export default () => {
   const {
     completeSelectedTasks,
     decompleteSelectedTasks,
-    archiveSelectedTasks,
+    deleteSelectedTasks,
     moveSelectedTasks,
     setMultiselect,
   } = useActions("listPage")
@@ -118,7 +118,7 @@ export default () => {
                   }))}
               />
 
-              <IconButton onClick={archiveSelectedTasks}>
+              <IconButton onClick={deleteSelectedTasks}>
                 <DeleteIcon />
               </IconButton>
             </Fragment>

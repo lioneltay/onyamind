@@ -11,18 +11,26 @@ import {
 } from "react-beautiful-dnd"
 import { useTheme } from "theme"
 
-import Task from "./Task"
+import Task, { TaskProps } from "./Task"
 
 const MAX_HEIGHT = 98
 
-type TransitionTaskListProps = {
-  tasks: Task[]
-  onDragEnd: OnDragEndResponder
-}
+type TaskItem = Pick<TaskProps, "id" | "title" | "complete" | "notes">
 
-const TransitionTaskList = ({ tasks, onDragEnd }: TransitionTaskListProps) => {
+type TransitionTaskListProps = {
+  tasks: TaskItem[]
+  onDragEnd: OnDragEndResponder
+} & Pick<
+  TaskProps,
+  "onSwipeLeft" | "onSwipeRight" | "swipeLeftIcon" | "swipeRightIcon"
+>
+
+const TransitionTaskList = ({
+  tasks,
+  onDragEnd,
+  ...taskProps
+}: TransitionTaskListProps) => {
   const theme = useTheme()
-  const heightRefs = React.useRef<Record<ID, number>>({})
   const [immediate, setImmediate] = React.useState(true)
 
   React.useEffect(() => {
@@ -46,8 +54,6 @@ const TransitionTaskList = ({ tasks, onDragEnd }: TransitionTaskListProps) => {
     },
     leave: (item: any) => async (next: any) => {
       await next({ opacity: 0 })
-      const negativeHeight = heightRefs.current[item.id] - MAX_HEIGHT
-      console.log(negativeHeight, heightRefs.current)
       await next({ maxHeight: -41 })
     },
   } as any)
@@ -83,16 +89,13 @@ const TransitionTaskList = ({ tasks, onDragEnd }: TransitionTaskListProps) => {
                     `}
                   >
                     <Task
-                      ref={(el) => {
-                        console.log(el)
-                        const rect = el?.getBoundingClientRect()
-                        if (rect?.height && !heightRefs.current[task.id]) {
-                          heightRefs.current[task.id] = rect.height
-                        }
-                      }}
                       IconProps={provided.dragHandleProps}
                       backgroundColor={theme.backgroundColor}
-                      task={task}
+                      id={task.id}
+                      complete={task.complete}
+                      title={task.title}
+                      notes={task.notes}
+                      {...taskProps}
                     />
                   </animated.div>
                 )}

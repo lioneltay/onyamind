@@ -83,7 +83,7 @@ export const reducer = (state: State = initialState, action: Action): State => {
         selectedTaskIds: [],
       }
     }
-    case "LIST|ARCHIVE_SELECTED_TASKS|PENDING": {
+    case "LIST|DELETE_SELECTED_TASKS|PENDING": {
       return {
         ...state,
         selectedTaskIds: [],

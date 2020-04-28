@@ -3,7 +3,6 @@ import { ActionsUnion, ActionTypesUnion } from "services/store/helpers"
 import { GetState, Dispatch } from "services/store"
 import { selectors as storeSelectors } from "services/store/selectors"
 import * as api from "services/api"
-import { firestore, firebase } from "services/firebase"
 
 const selectors = storeSelectors.listPage
 
@@ -26,9 +25,6 @@ const setTasks = ({ tasks, listId }: SetTasksOptions) =>
 const toggleTaskSelection = (taskId: ID) =>
   ({ type: "LIST|TOGGLE_TASK_SELECTION", payload: { taskId } } as const)
 
-const selectMultipleTasks = (taskIds: ID[]) =>
-  ({ type: "LIST|SELECT_MULTIPLE_TASKS", payload: { taskIds } } as const)
-
 const selectAllTasks = () => ({ type: "LIST|SELECT_ALL_TASKS" } as const)
 
 const deselectAllTasks = () => ({ type: "LIST|DESELECT_ALL_TASKS" } as const)
@@ -47,21 +43,23 @@ const toggleEditingTask = (taskId: ID | null) =>
     payload: { taskId },
   } as const)
 
-const archiveSelectedTasksPending = () =>
-  ({ type: "LIST|ARCHIVE_SELECTED_TASKS|PENDING" } as const)
-const archiveSelectedTasksFailure = () =>
-  ({ type: "LIST|ARCHIVE_SELECTED_TASKS|FAILURE" } as const)
-const archiveSelectedTasksSuccess = () =>
-  ({ type: "LIST|ARCHIVE_SELECTED_TASKS|SUCCESS" } as const)
-const archiveSelectedTasks = () => (dispatch: Dispatch, getState: GetState) => {
+const deleteSelectedTasksPending = () =>
+  ({ type: "LIST|DELETE_SELECTED_TASKS|PENDING" } as const)
+const deleteSelectedTasksFailure = () =>
+  ({ type: "LIST|DELETE_SELECTED_TASKS|FAILURE" } as const)
+const deleteSelectedTasksSuccess = () =>
+  ({ type: "LIST|DELETE_SELECTED_TASKS|SUCCESS" } as const)
+const deleteSelectedTasks = () => (dispatch: Dispatch, getState: GetState) => {
   const tasks = selectors.selectedTasks(getState())
 
-  dispatch(archiveSelectedTasksPending())
+  dispatch(deleteSelectedTasksPending())
   return api
-    .editTasks(tasks.map((task) => ({ ...task, archived: true })))
-    .then(() => dispatch(archiveSelectedTasksSuccess()))
+    .deleteTasks(
+      tasks.map((task) => ({ taskId: task.id, listId: task.listId })),
+    )
+    .then(() => dispatch(deleteSelectedTasksSuccess()))
     .catch((e) => {
-      dispatch(archiveSelectedTasksFailure())
+      dispatch(deleteSelectedTasksFailure())
       throw e
     })
 }
@@ -121,24 +119,23 @@ const completeSelectedTasks = () => (
     })
 }
 
-const archiveCompletedTasksPending = () =>
-  ({ type: "LIST|ARCHIVE_COMPLETED_TASKS|PENDING" } as const)
-const archiveCompletedTasksFailure = () =>
-  ({ type: "LIST|ARCHIVE_COMPLETED_TASKS|FAILURE" } as const)
-const archiveCompletedTasksSuccess = () =>
-  ({ type: "LIST|ARCHIVE_COMPLETED_TASKS|SUCCESS" } as const)
-const archiveCompletedTasks = () => (
-  dispatch: Dispatch,
-  getState: GetState,
-) => {
+const deleteCompletedTasksPending = () =>
+  ({ type: "LIST|DELETE_COMPLETED_TASKS|PENDING" } as const)
+const deleteCompletedTasksFailure = () =>
+  ({ type: "LIST|DELETE_COMPLETED_TASKS|FAILURE" } as const)
+const deleteCompletedTasksSuccess = () =>
+  ({ type: "LIST|DELETE_COMPLETED_TASKS|SUCCESS" } as const)
+const deleteCompletedTasks = () => (dispatch: Dispatch, getState: GetState) => {
   const tasks = selectors.completedTasks(getState())
 
-  dispatch(archiveCompletedTasksPending())
+  dispatch(deleteCompletedTasksPending())
   return api
-    .editTasks(tasks.map((task) => ({ ...task, archived: true })))
-    .then(() => dispatch(archiveCompletedTasksSuccess()))
+    .deleteTasks(
+      tasks.map((task) => ({ taskId: task.id, listId: task.listId })),
+    )
+    .then(() => dispatch(deleteCompletedTasksSuccess()))
     .catch((e) => {
-      dispatch(archiveCompletedTasksFailure())
+      dispatch(deleteCompletedTasksFailure())
       throw e
     })
 }
@@ -241,19 +238,23 @@ const editTask = ({ taskId, title, notes, complete }: EditTaskInput) => (
     })
 }
 
-const archiveTaskPending = () =>
-  ({ type: "LIST|ARCHIVE_TASK|PENDING" } as const)
-const archiveTaskFailure = () =>
-  ({ type: "LIST|ARCHIVE_TASK|FAILURE" } as const)
-const archiveTaskSuccess = () =>
-  ({ type: "LIST|ARCHIVE_TASK|SUCCESS" } as const)
-const archiveTask = (taskId: ID) => (dispatch: Dispatch) => {
-  dispatch(archiveTaskPending())
+type DeleteTaskInput = {
+  taskId: ID
+  listId: ID
+}
+
+const deleteTaskPending = () => ({ type: "LIST|DELETE_TASK|PENDING" } as const)
+const deleteTaskFailure = () => ({ type: "LIST|DELETE_TASK|FAILURE" } as const)
+const deleteTaskSuccess = () => ({ type: "LIST|DELETE_TASK|SUCCESS" } as const)
+const deleteTask = ({ taskId, listId }: DeleteTaskInput) => (
+  dispatch: Dispatch,
+) => {
+  dispatch(deleteTaskPending())
   return api
-    .editTask({ taskId, data: { archived: true } })
-    .then(() => dispatch(archiveTaskSuccess()))
+    .deleteTask({ taskId, listId })
+    .then(() => dispatch(deleteTaskSuccess()))
     .catch((e) => {
-      dispatch(archiveTaskFailure())
+      dispatch(deleteTaskFailure())
       throw e
     })
 }
@@ -326,10 +327,10 @@ export const actionCreators = {
   selectIncompleteTasks,
   deselectIncompleteTasks,
 
-  archiveSelectedTasks,
-  archiveSelectedTasksPending,
-  archiveSelectedTasksFailure,
-  archiveSelectedTasksSuccess,
+  deleteSelectedTasks,
+  deleteSelectedTasksPending,
+  deleteSelectedTasksFailure,
+  deleteSelectedTasksSuccess,
 
   moveSelectedTasks,
   moveSelectedTasksPending,
@@ -356,9 +357,9 @@ export const actionCreators = {
   editTaskFailure,
   editTaskSuccess,
 
-  archiveTaskPending,
-  archiveTaskFailure,
-  archiveTaskSuccess,
+  deleteTaskPending,
+  deleteTaskFailure,
+  deleteTaskSuccess,
 
   checkTaskPending,
   checkTaskFailure,
@@ -374,18 +375,18 @@ export const actionCreators = {
   moveTaskFailure,
   moveTaskSuccess,
 
-  archiveCompletedTasksPending,
-  archiveCompletedTasksFailure,
-  archiveCompletedTasksSuccess,
+  deleteCompletedTasksPending,
+  deleteCompletedTasksFailure,
+  deleteCompletedTasksSuccess,
 
   completeSelectedTasks,
   decompleteSelectedTasks,
   decompleteCompletedTasks,
   createTask,
   editTask,
-  archiveTask,
+  deleteTask,
   moveTask,
-  archiveCompletedTasks,
+  deleteCompletedTasks,
 }
 
 export type Action = ActionsUnion<typeof actionCreators>
