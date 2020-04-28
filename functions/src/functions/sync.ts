@@ -30,28 +30,6 @@ export const syncListTaskCount = functions.firestore
 
     // Update
     if (before && after) {
-      if (
-        // Trash updates don't matter
-        (before.archived && after.archived) ||
-        // No count affecting properties have changed
-        (before.archived === after.archived &&
-          before.complete === after.complete &&
-          before.listId === after.listId)
-      ) {
-        // Nothing changed
-        return
-      }
-
-      if (before.archived && !after.archived) {
-        // Unarchiving - after list gained a task
-        return updateCount({ task: after, num: 1 })
-      }
-
-      if (!before.archived && after.archived) {
-        // Archiving - before list lost a task
-        return updateCount({ task: before, num: -1 })
-      }
-
       // What ever happens the previous 'loses' a task and the after 'gains'
       return Promise.all([
         updateCount({ task: before, num: -1 }),
