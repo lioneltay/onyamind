@@ -92,8 +92,14 @@ const SwipeableTask = React.forwardRef(
             instance.isDragging = false
           }, 0)
         },
-        onDrag: ({ down, movement: [mx], direction: [xDir], velocity }) => {
-          const trigger = velocity > 0.5
+        onDrag: ({
+          down,
+          movement: [mx],
+          direction: [xDir],
+          velocity,
+          distance,
+        }) => {
+          const trigger = velocity > 0.5 && mx > 100
           const dir = xDir < 0 ? -1 : 1
 
           const isOver = !down && trigger
@@ -107,16 +113,6 @@ const SwipeableTask = React.forwardRef(
           if (isOver) {
             instance.over = true
           }
-
-          // if (instance.over) {
-          //   if (instance.direction === "left") {
-          //     setTimeout(onSwipeLeft, 250)
-          //   } else if (instance.direction === "right") {
-          //     setTimeout(onSwipeRight, 250)
-          //   } else {
-          //     logError(new Error("Animation ended without direction"))
-          //   }
-          // }
 
           set({ x })
         },
