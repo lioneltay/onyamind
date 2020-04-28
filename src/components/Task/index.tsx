@@ -98,8 +98,10 @@ const SwipeableTask = React.forwardRef(
           direction: [xDir],
           velocity,
           distance,
+          swipe: [swipeX],
         }) => {
-          const trigger = velocity > 0.5 && mx > 100
+          // const trigger = velocity > 0.5 && mx > 100
+          const trigger = swipeX
           const dir = xDir < 0 ? -1 : 1
 
           const isOver = !down && trigger
