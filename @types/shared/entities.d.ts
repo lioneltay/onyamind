@@ -29,7 +29,6 @@ declare global {
     id: ID
     listId: ID
     userId: ID
-    archived: boolean
     complete: boolean
     createdAt: Timestamp
     updatedAt: Timestamp | null

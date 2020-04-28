@@ -21,8 +21,8 @@ type Direction = "left" | "right" | "none"
 
 export type SwipeableTaskProps = TaskComponentProps & {
   disableSwipe?: boolean
-  onSwipeLeft?: () => void
-  onSwipeRight?: () => void
+  onSwipeLeft?: (taskId: ID) => void
+  onSwipeRight?: (taskId: ID) => void
   swipeLeftBackground?: string
   swipeRightBackground?: string
   swipeLeftIcon?: React.ReactNode
@@ -71,9 +71,9 @@ const SwipeableTask = React.forwardRef(
       onRest: () => {
         if (instance.over) {
           if (instance.direction === "left") {
-            setTimeout(onSwipeLeft, 250)
+            setTimeout(() => onSwipeLeft(taskProps.id), 250)
           } else if (instance.direction === "right") {
-            setTimeout(onSwipeRight, 250)
+            setTimeout(() => onSwipeRight(taskProps.id), 250)
           } else {
             logError(new Error("Animation ended without direction"))
           }

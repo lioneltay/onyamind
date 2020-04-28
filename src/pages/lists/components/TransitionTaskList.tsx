@@ -11,16 +11,25 @@ import {
 } from "react-beautiful-dnd"
 import { useTheme } from "theme"
 
-import Task from "./Task"
+import Task, { TaskProps } from "./Task"
 
 const MAX_HEIGHT = 98
 
-type TransitionTaskListProps = {
-  tasks: Task[]
-  onDragEnd: OnDragEndResponder
-}
+type TaskItem = Pick<TaskProps, "id" | "title" | "complete" | "notes">
 
-const TransitionTaskList = ({ tasks, onDragEnd }: TransitionTaskListProps) => {
+type TransitionTaskListProps = {
+  tasks: TaskItem[]
+  onDragEnd: OnDragEndResponder
+} & Pick<
+  TaskProps,
+  "onSwipeLeft" | "onSwipeRight" | "swipeLeftIcon" | "swipeRightIcon"
+>
+
+const TransitionTaskList = ({
+  tasks,
+  onDragEnd,
+  ...taskProps
+}: TransitionTaskListProps) => {
   const theme = useTheme()
   const [immediate, setImmediate] = React.useState(true)
 
@@ -82,7 +91,8 @@ const TransitionTaskList = ({ tasks, onDragEnd }: TransitionTaskListProps) => {
                     <Task
                       IconProps={provided.dragHandleProps}
                       backgroundColor={theme.backgroundColor}
-                      task={task}
+                      {...task}
+                      {...taskProps}
                     />
                   </animated.div>
                 )}

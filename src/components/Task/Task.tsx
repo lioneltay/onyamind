@@ -12,9 +12,12 @@ import { ListItemText } from "lib/components"
 import { AssignmentIcon } from "lib/icons"
 
 export type TaskProps = ListItemProps & {
+  id: ID
+  title: string
+  notes?: string
+  complete?: boolean
   IconProps?: Omit<ListItemIconProps, "children">
 
-  task: Task
   multiselect: boolean
   backgroundColor?: string
 
@@ -27,9 +30,13 @@ export type TaskProps = ListItemProps & {
 export default React.forwardRef(
   (
     {
+      id,
+      title,
+      notes,
+      complete,
+
       backgroundColor = "transparent",
 
-      task,
       multiselect,
 
       onSelectTask = () => {},
@@ -61,7 +68,7 @@ export default React.forwardRef(
           {...(listItemProps as ListItemProps)}
           style={{ ...listItemProps.style, backgroundColor }}
           onClick={(event) => {
-            onItemClick(task.id)
+            onItemClick(id)
             listItemProps.onClick?.(event)
           }}
         >
@@ -81,7 +88,7 @@ export default React.forwardRef(
             // }}
             onClick={(event) => {
               event.stopPropagation()
-              onSelectTask(task.id)
+              onSelectTask(id)
               IconProps?.onClick?.(event)
             }}
           >
@@ -113,14 +120,14 @@ export default React.forwardRef(
                   maxWidth: "100%",
                   display: "inline-block",
                   fontSize: "0.95rem",
-                  textDecoration: task.complete ? "line-through" : "none",
+                  textDecoration: complete ? "line-through" : "none",
                 }}
               >
-                {task.title}
+                {title}
               </span>
             }
             secondary={
-              task.notes ? (
+              notes ? (
                 <Dotdotdot
                   tagName="span"
                   clamp={2}
@@ -128,11 +135,11 @@ export default React.forwardRef(
                   css={css`
                     max-width: 100%;
                     display: inline-block;
-                    text-decoration: ${task.complete ? "line-through" : "none"};
+                    text-decoration: ${complete ? "line-through" : "none"};
                     white-space: pre-wrap;
                   `}
                 >
-                  {task.notes}
+                  {notes}
                 </Dotdotdot>
               ) : undefined
             }

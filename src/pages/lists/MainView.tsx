@@ -98,9 +98,11 @@ const MainView = () => {
     listPage: {
       stopEditingTask,
       editTask,
+      checkTask,
+      uncheckTask,
       decompleteCompletedTasks,
-      archiveCompletedTasks,
-      archiveTask,
+      deleteCompletedTasks,
+      deleteTask,
     },
     app: { reorderTasks },
   } = useActions()
@@ -112,6 +114,7 @@ const MainView = () => {
     selectedTaskList,
     completeTasks,
     incompleteTasks,
+    tasks,
     taskOrder,
   } = useSelector((state, s) => {
     const selectedTaskList = s.app.selectedTaskList(state)
@@ -125,6 +128,7 @@ const MainView = () => {
       ...partitionTasks(tasks, {
         routine: selectedTaskList?.routine,
       }),
+      tasks,
       selectedTaskList,
       multiselect: state.listPage.multiselect,
       editingTask: s.listPage.editingTask(state),
@@ -149,7 +153,14 @@ const MainView = () => {
   return (
     <React.Fragment>
       <TransitionTaskList
-        tasks={incompleteTasks}
+        tasks={incompleteTasks.map((task) => ({ ...task, complete: false }))}
+        onSwipeLeft={(id) => {
+          const task = tasks.find((task) => task.id === id)
+          if (task) {
+            deleteTask({ taskId: task.id, listId: task.listId })
+          }
+        }}
+        onSwipeRight={(id) => checkTask(id)}
         onDragEnd={(result) => {
           if (!result.destination || !selectedTaskList) {
             return
@@ -188,7 +199,7 @@ const MainView = () => {
               },
               {
                 label: "Delete completed items",
-                action: archiveCompletedTasks,
+                action: deleteCompletedTasks,
               },
             ]}
           />
@@ -198,7 +209,14 @@ const MainView = () => {
       <List>
         <Collapse in={showCompleteTasks}>
           <TransitionTaskList
-            tasks={completeTasks}
+            tasks={completeTasks.map((task) => ({ ...task, complete: true }))}
+            onSwipeLeft={(id) => {
+              const task = tasks.find((task) => task.id === id)
+              if (task) {
+                deleteTask({ taskId: task.id, listId: task.listId })
+              }
+            }}
+            onSwipeRight={(id) => uncheckTask(id)}
             onDragEnd={(result) => {
               if (!result.destination || !selectedTaskList) {
                 return
@@ -226,7 +244,10 @@ const MainView = () => {
             <IconButton
               onClick={() => {
                 stopEditingTask()
-                archiveTask(editingTask.id)
+                const task = tasks.find((task) => task.id === editingTask.id)
+                if (task) {
+                  deleteTask({ taskId: task.id, listId: task.listId })
+                }
               }}
             >
               <DeleteIcon />

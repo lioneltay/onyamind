@@ -14,7 +14,6 @@ export const onTasksChange = ({
     .collection("task")
     .where("listId", "==", listId)
     .where("userId", "==", userId)
-    .where("archived", "==", false)
     .orderBy("createdAt", "desc")
     .onSnapshot((snapshot) => {
       const tasks = snapshot.docs.map((doc) => dataWithId(doc) as Task)
