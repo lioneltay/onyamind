@@ -5,7 +5,7 @@ import { noUndefinedValues } from "lib/utils"
 type PartialTaskWithID = Partial<Task> & { id: ID }
 
 export const createTask = async (
-  task: Omit<Task, "id" | "createdAt" | "updatedAt" | "complete" | "archived">,
+  task: Omit<Task, "id" | "createdAt" | "updatedAt" | "complete">,
 ) => {
   const batch = firestore.batch()
 
@@ -14,7 +14,6 @@ export const createTask = async (
     ...task,
     userId: task.userId || null,
     complete: false,
-    archived: false,
     createdAt: Date.now(),
     updatedAt: Date.now(),
     completedAt: null,
