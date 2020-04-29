@@ -101,7 +101,7 @@ type MoveTaskInput = {
   fromListId: ID
   toListId: ID
 }
-export const moveTask = async ({
+const moveTask = async ({
   taskId,
   fromListId,
   toListId,

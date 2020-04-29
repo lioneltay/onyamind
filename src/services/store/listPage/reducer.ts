@@ -38,6 +38,10 @@ export const reducer = (state: State = initialState, action: Action): State => {
       }
     }
     case "LIST|SET_MULTISELECT": {
+      if (action.payload.multiselect === state.multiselect) {
+        return state
+      }
+
       return {
         ...state,
         multiselect: action.payload.multiselect,

@@ -103,6 +103,8 @@ const MainView = () => {
       decompleteCompletedTasks,
       deleteCompletedTasks,
       deleteTask,
+      toggleTaskSelection,
+      toggleEditingTask,
     },
     app: { reorderTasks },
   } = useActions()
@@ -116,6 +118,7 @@ const MainView = () => {
     incompleteTasks,
     tasks,
     taskOrder,
+    selectedTaskIds,
   } = useSelector((state, s) => {
     const selectedTaskList = s.app.selectedTaskList(state)
     const tasks = orderTasks(
@@ -133,6 +136,7 @@ const MainView = () => {
       multiselect: state.listPage.multiselect,
       editingTask: s.listPage.editingTask(state),
       loadingTasks: s.listPage.loadingTasks(state),
+      selectedTaskIds: state.listPage.selectedTaskIds,
     }
   })
 
