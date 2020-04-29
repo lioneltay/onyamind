@@ -133,6 +133,7 @@ const MainView = () => {
       multiselect: state.listPage.multiselect,
       editingTask: s.listPage.editingTask(state),
       loadingTasks: s.listPage.loadingTasks(state),
+      selectedTaskIds: state.listPage.selectedTaskIds,
     }
   })
 

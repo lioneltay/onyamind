@@ -13,14 +13,22 @@ const ListPageTask = (props: TaskProps) => {
     toggleTaskSelection,
     toggleEditingTask,
     stopEditingTask,
-    setMultiselect,
   } = useActions("listPage")
-  const { selectedTaskIds, multiselect } = useSelector((state) => ({
+  const { selectedTaskIds } = useSelector((state) => ({
     selectedTaskIds: state.listPage.selectedTaskIds,
-    multiselect: state.listPage.multiselect,
   }))
 
   const selected = selectedTaskIds.findIndex((id) => id === props.id) >= 0
+
+  const handleItemClick = React.useCallback(
+    (id: ID) => toggleEditingTask(id),
+    [],
+  )
+
+  const handleSelectTask = React.useCallback((id: ID) => {
+    stopEditingTask()
+    toggleTaskSelection(id)
+  }, [])
 
   return (
     <Task
@@ -28,14 +36,8 @@ const ListPageTask = (props: TaskProps) => {
       backgroundColor={props.backgroundColor}
       swipeRightIcon={props.complete ? <CloseIcon /> : undefined}
       selected={selected}
-      onItemClick={() => toggleEditingTask(props.id)}
-      onSelectTask={(id) => {
-        stopEditingTask()
-        toggleTaskSelection(id)
-        if (!multiselect) {
-          setMultiselect(true)
-        }
-      }}
+      onItemClick={handleItemClick}
+      onSelectTask={handleSelectTask}
     />
   )
 }

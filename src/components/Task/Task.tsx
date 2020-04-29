@@ -1,5 +1,5 @@
 import React from "react"
-import { noopTemplate as css } from "lib/utils"
+import { noopTemplate as css, noop } from "lib/utils"
 import { useTheme } from "theme"
 
 import { Fab } from "@material-ui/core"
@@ -26,7 +26,7 @@ export type TaskProps = ListItemProps & {
   SelectIcon?: React.ComponentType<Stylable>
 }
 
-export default ({
+const Task = ({
   id,
   title,
   notes,
@@ -34,8 +34,8 @@ export default ({
 
   backgroundColor = "transparent",
 
-  onSelectTask = () => {},
-  onItemClick = () => {},
+  onSelectTask = noop,
+  onItemClick = noop,
   selected,
 
   IconProps,
@@ -140,3 +140,5 @@ export default ({
     </div>
   )
 }
+
+export default React.memo(Task)
