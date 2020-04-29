@@ -25,10 +25,10 @@ export const createTaskNotification = async (task: Task) => {
     // Large image to show in notification
     // image: "/public/favicon.png",
     actions: [
-      {
-        title: "Dismiss",
-        action: "DISMISS",
-      },
+      // {
+      //   title: "Dismiss",
+      //   action: "DISMISS",
+      // },
       {
         title: "Complete",
         action: "COMPLETE_TASK",
