@@ -63,6 +63,7 @@ export const useHandleRoutineReset = () => {
 
       if (
         !list ||
+        !list.routine ||
         (list.routineRestartedAt &&
           new Date(list.routineRestartedAt) > getRoutineResetTime())
       ) {
