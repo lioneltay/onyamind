@@ -7,7 +7,7 @@ import ListItem, { ListItemProps } from "@material-ui/core/ListItem"
 import ListItemIcon, { ListItemIconProps } from "@material-ui/core/ListItemIcon"
 import Dotdotdot from "react-dotdotdot"
 
-import { ListItemText } from "lib/components"
+import { ListItemText, A, Linkify } from "lib/components"
 
 import { AssignmentIcon } from "lib/icons"
 
@@ -66,18 +66,6 @@ const Task = ({
       >
         <ListItemIcon
           {...IconProps}
-          // onPointerDown={(event) => {
-          //   event.stopPropagation()
-          //   IconProps?.onPointerDown?.(event)
-          // }}
-          // onMouseDown={(event) => {
-          //   event.stopPropagation()
-          //   IconProps?.onMouseDown?.(event)
-          // }}
-          // onTouchStart={(event) => {
-          //   event.stopPropagation()
-          //   IconProps?.onTouchStart?.(event)
-          // }}
           onClick={(event) => {
             event.stopPropagation()
             onSelectTask(id)
@@ -120,19 +108,21 @@ const Task = ({
           }
           secondary={
             notes ? (
-              <Dotdotdot
-                tagName="span"
-                clamp={2}
-                className="bold"
-                css={css`
-                  max-width: 100%;
-                  display: inline-block;
-                  text-decoration: ${complete ? "line-through" : "none"};
-                  white-space: pre-wrap;
-                `}
-              >
-                {notes}
-              </Dotdotdot>
+              <Linkify>
+                <Dotdotdot
+                  tagName="span"
+                  clamp={2}
+                  className="bold"
+                  css={css`
+                    max-width: 100%;
+                    display: inline-block;
+                    text-decoration: ${complete ? "line-through" : "none"};
+                    white-space: pre-wrap;
+                  `}
+                >
+                  {notes}
+                </Dotdotdot>
+              </Linkify>
             ) : undefined
           }
         />

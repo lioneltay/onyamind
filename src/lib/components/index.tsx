@@ -8,5 +8,6 @@ export {
 export { default as ListItemText } from "./ListItemText"
 export { default as Button, ButtonProps } from "./Button"
 export { A, Link } from "./Anchor"
+export { default as Linkify } from "./Linkify"
 
 export * from "./popover-menus"

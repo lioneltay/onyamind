@@ -8,7 +8,7 @@ on:
     branches: [master, staging]
 
 jobs:
-  build:
+  PR Test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
