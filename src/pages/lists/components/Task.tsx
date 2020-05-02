@@ -13,6 +13,7 @@ const ListPageTask = (props: TaskProps) => {
     toggleTaskSelection,
     toggleEditingTask,
     stopEditingTask,
+    setMultiselect,
   } = useActions("listPage")
   const { selectedTaskIds } = useSelector((state) => ({
     selectedTaskIds: state.listPage.selectedTaskIds,
@@ -28,6 +29,7 @@ const ListPageTask = (props: TaskProps) => {
   const handleSelectTask = React.useCallback((id: ID) => {
     stopEditingTask()
     toggleTaskSelection(id)
+    setMultiselect(true)
   }, [])
 
   return (

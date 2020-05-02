@@ -54,9 +54,7 @@ const deleteSelectedTasks = () => (dispatch: Dispatch, getState: GetState) => {
 
   dispatch(deleteSelectedTasksPending())
   return api
-    .deleteTasks(
-      tasks.map((task) => ({ taskId: task.id, listId: task.listId })),
-    )
+    .deleteTasks(tasks.map((task) => task.id))
     .then(() => dispatch(deleteSelectedTasksSuccess()))
     .catch((e) => {
       dispatch(deleteSelectedTasksFailure())
@@ -130,9 +128,7 @@ const deleteCompletedTasks = () => (dispatch: Dispatch, getState: GetState) => {
 
   dispatch(deleteCompletedTasksPending())
   return api
-    .deleteTasks(
-      tasks.map((task) => ({ taskId: task.id, listId: task.listId })),
-    )
+    .deleteTasks(tasks.map((task) => task.id))
     .then(() => dispatch(deleteCompletedTasksSuccess()))
     .catch((e) => {
       dispatch(deleteCompletedTasksFailure())
@@ -238,20 +234,13 @@ const editTask = ({ taskId, title, notes, complete }: EditTaskInput) => (
     })
 }
 
-type DeleteTaskInput = {
-  taskId: ID
-  listId: ID
-}
-
 const deleteTaskPending = () => ({ type: "LIST|DELETE_TASK|PENDING" } as const)
 const deleteTaskFailure = () => ({ type: "LIST|DELETE_TASK|FAILURE" } as const)
 const deleteTaskSuccess = () => ({ type: "LIST|DELETE_TASK|SUCCESS" } as const)
-const deleteTask = ({ taskId, listId }: DeleteTaskInput) => (
-  dispatch: Dispatch,
-) => {
+const deleteTask = (taskId: ID) => (dispatch: Dispatch) => {
   dispatch(deleteTaskPending())
   return api
-    .deleteTask({ taskId, listId })
+    .deleteTask(taskId)
     .then(() => dispatch(deleteTaskSuccess()))
     .catch((e) => {
       dispatch(deleteTaskFailure())

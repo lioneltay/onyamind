@@ -87,7 +87,7 @@ const MainView = () => {
         onSwipeLeft={(id) => {
           const task = tasks.find((task) => task.id === id)
           if (task) {
-            deleteTask({ taskId: task.id, listId: task.listId })
+            deleteTask(task.id)
           }
         }}
         onSwipeRight={(id) => checkTask(id)}
@@ -143,7 +143,7 @@ const MainView = () => {
             onSwipeLeft={(id) => {
               const task = tasks.find((task) => task.id === id)
               if (task) {
-                deleteTask({ taskId: task.id, listId: task.listId })
+                deleteTask(task.id)
               }
             }}
             onSwipeRight={(id) => uncheckTask(id)}
@@ -176,7 +176,7 @@ const MainView = () => {
                 stopEditingTask()
                 const task = tasks.find((task) => task.id === editingTask.id)
                 if (task) {
-                  deleteTask({ taskId: task.id, listId: task.listId })
+                  deleteTask(task.id)
                 }
               }}
             >
