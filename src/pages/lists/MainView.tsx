@@ -1,99 +1,29 @@
-import React from "react"
-import { noopTemplate as css, assert } from "lib/utils"
-import styled from "styled-components"
-import { partition } from "ramda"
-
 import {
+  Collapse,
+  Fade,
+  IconButton,
+  LinearProgress,
   List,
   ListItem,
   ListItemIcon,
-  LinearProgress,
-  Fade,
-  Collapse,
-  IconButton,
 } from "@material-ui/core"
-
-import { ListItemText, IconButtonMenu } from "lib/components"
-
-import { ExpandMoreIcon, MoreVertIcon, CheckIcon, DeleteIcon } from "lib/icons"
-
-import { Task, TransitionTaskList } from "./components"
-
 import { EditTaskModal } from "components"
-
+import { IconButtonMenu, ListItemText } from "lib/components"
+import { DeleteIcon, ExpandMoreIcon, MoreVertIcon } from "lib/icons"
+import { partition } from "ramda"
+import React from "react"
+import { useActions, useSelector } from "services/store"
+import styled from "styled-components"
 import { useTheme } from "theme"
-import { useSelector, useActions } from "services/store"
+import { TransitionTaskList } from "./components"
+import { orderTasks, useHandleRoutineReset } from "./utils"
 
 const Flip = styled.div<{ flip: boolean }>`
   transform: rotate(${({ flip }) => (flip ? "-180deg" : "0")});
   transition: 300ms;
 `
 
-/**
- * Orders tasks according to task order.
- * Tasks not included in the task order are added in front with the existing order preserved.
- */
-function orderTasks(tasks: Task[], taskOrder: ID[]): Task[] {
-  const copy = [...tasks]
-  const orderedTasks = []
-  const extraTasks = []
-
-  while (copy.length > 0) {
-    const task = copy.shift()
-    assert(task, "Must exist since length > 0")
-
-    if (taskOrder.find((id) => task.id === id)) {
-      orderedTasks.push(task)
-    } else {
-      extraTasks.push(task)
-    }
-  }
-
-  const [inOrderTasks, otherTasks] = partition(
-    (task) => !!taskOrder.find((id) => task.id === id),
-    tasks,
-  )
-
-  return [
-    ...otherTasks,
-    ...(taskOrder
-      .map((id) => inOrderTasks.find((task) => task.id === id))
-      .filter(Boolean) as Task[]),
-  ]
-}
-
-type PartitionTaskOptions = {
-  routine?: boolean
-}
-
-function partitionTasks(tasks: Task[], { routine }: PartitionTaskOptions) {
-  const [completeTasks, incompleteTasks] = partition((task) => {
-    if (!routine) {
-      return task.complete
-    }
-
-    if (task.completedAt) {
-      const completedDate = new Date(task.completedAt)
-      const lastMidnight = new Date()
-      lastMidnight.setHours(4)
-      lastMidnight.setMinutes(0)
-      lastMidnight.setSeconds(0)
-
-      return completedDate > lastMidnight
-    } else {
-      return task.complete
-    }
-  }, tasks)
-
-  return {
-    completeTasks,
-    incompleteTasks,
-  }
-}
-
 const MainView = () => {
-  const theme = useTheme()
-
   const {
     listPage: {
       stopEditingTask,
@@ -125,9 +55,8 @@ const MainView = () => {
 
     return {
       taskOrder: tasks.map((task) => task.id),
-      ...partitionTasks(tasks, {
-        routine: selectedTaskList?.routine,
-      }),
+      incompleteTasks: s.listPage.incompletedTasks(state),
+      completeTasks: s.listPage.completedTasks(state),
       tasks,
       selectedTaskList,
       multiselect: state.listPage.multiselect,
@@ -136,6 +65,8 @@ const MainView = () => {
       selectedTaskIds: state.listPage.selectedTaskIds,
     }
   })
+
+  useHandleRoutineReset(selectedTaskList?.id)
 
   const [showCompleteTasks, setShowCompleteTasks] = React.useState(false)
 

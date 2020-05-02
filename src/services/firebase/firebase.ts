@@ -14,8 +14,7 @@ const isTest = process.env.NODE_ENV === "test"
 
 export const firebase = firebaseImport
 
-// firebase.initializeApp(isProduction ? config.production : config.staging)
-firebase.initializeApp(config.production)
+firebase.initializeApp(isProduction ? config.production : config.staging)
 
 export const firestore = firebase.firestore()
 export const auth = firebase.auth()

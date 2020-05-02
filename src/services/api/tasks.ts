@@ -101,11 +101,7 @@ type MoveTaskInput = {
   fromListId: ID
   toListId: ID
 }
-const moveTask = async ({
-  taskId,
-  fromListId,
-  toListId,
-}: MoveTaskInput) => {
+const moveTask = async ({ taskId, fromListId, toListId }: MoveTaskInput) => {
   // TODO
 
   const batch = firestore.batch()
@@ -129,4 +125,10 @@ export async function checkTask(taskId: ID) {
 
 export async function uncheckTask(taskId: ID) {
   return editTask({ taskId, data: { complete: false, completedAt: null } })
+}
+
+export async function uncheckTasks(taskIds: ID[]) {
+  return editTasks(
+    taskIds.map((id) => ({ id, complete: false, completedAt: null })),
+  )
 }
