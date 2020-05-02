@@ -50,7 +50,8 @@ function isUncheckedRoutineTask(task: Task): boolean {
   return new Date(task.completedAt) > getRoutineResetTime()
 }
 
-export const useHandleRoutineReset = (listId?: ID) => {
+export const useHandleRoutineReset = () => {
+  const listId = useSelector((state) => state.app.selectedTaskListId)
   const store = useStore()
 
   React.useEffect(() => {
@@ -58,7 +59,7 @@ export const useHandleRoutineReset = (listId?: ID) => {
       const state = store.getState()
 
       const lists = state.app.taskLists || []
-      const list = lists.find((list) => list.id === list.id)
+      const list = lists.find((list) => list.id === listId)
 
       if (
         !list ||

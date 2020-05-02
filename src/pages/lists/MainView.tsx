@@ -10,11 +10,9 @@ import {
 import { EditTaskModal } from "components"
 import { IconButtonMenu, ListItemText } from "lib/components"
 import { DeleteIcon, ExpandMoreIcon, MoreVertIcon } from "lib/icons"
-import { partition } from "ramda"
 import React from "react"
 import { useActions, useSelector } from "services/store"
 import styled from "styled-components"
-import { useTheme } from "theme"
 import { TransitionTaskList } from "./components"
 import { orderTasks, useHandleRoutineReset } from "./utils"
 
@@ -66,7 +64,7 @@ const MainView = () => {
     }
   })
 
-  useHandleRoutineReset(selectedTaskList?.id)
+  useHandleRoutineReset()
 
   const [showCompleteTasks, setShowCompleteTasks] = React.useState(false)
 
