@@ -1,8 +1,10 @@
 import { createStore, applyMiddleware, compose } from "redux"
 import { createEpicMiddleware } from "redux-observable"
 import thunkMiddleware from "redux-thunk"
+import { useStore as libUseStore } from "react-redux"
 
 import { reducer, State } from "./reducer"
+import { Action } from "./actions"
 
 import { rootEpic } from "./epics"
 
@@ -35,6 +37,10 @@ export const configureStore = ({
 }
 
 export const store = configureStore()
+
+export const useStore = () => {
+  return libUseStore<State, Action>()
+}
 
 export { Dispatch } from "redux"
 

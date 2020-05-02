@@ -68,29 +68,19 @@ export const editTasks = async (tasks: PartialTaskWithID[]): Promise<void> => {
   return batch.commit()
 }
 
-type DeleteTaskInput = {
-  taskId: ID
-  listId: ID
-}
-export const deleteTask = async ({ taskId, listId }: DeleteTaskInput) => {
+export const deleteTask = async (taskId: ID) => {
   const batch = firestore.batch()
 
   batch.delete(firestore.collection("task").doc(taskId))
-  batch.update(firestore.collection("taskList").doc(listId), {
-    taskOrder: firebase.firestore.FieldValue.arrayRemove(taskId),
-  })
 
   await batch.commit()
 }
 
-export const deleteTasks = (inputs: DeleteTaskInput[]) => {
+export const deleteTasks = (taskIds: ID[]) => {
   const batch = firestore.batch()
 
-  inputs.forEach(({ taskId, listId }) => {
+  taskIds.forEach((taskId) => {
     batch.delete(firestore.collection("task").doc(taskId))
-    batch.update(firestore.collection("taskList").doc(listId), {
-      taskOrder: firebase.firestore.FieldValue.arrayRemove(taskId),
-    })
   })
 
   return batch.commit()
@@ -101,11 +91,7 @@ type MoveTaskInput = {
   fromListId: ID
   toListId: ID
 }
-const moveTask = async ({
-  taskId,
-  fromListId,
-  toListId,
-}: MoveTaskInput) => {
+const moveTask = async ({ taskId, fromListId, toListId }: MoveTaskInput) => {
   // TODO
 
   const batch = firestore.batch()
@@ -129,4 +115,10 @@ export async function checkTask(taskId: ID) {
 
 export async function uncheckTask(taskId: ID) {
   return editTask({ taskId, data: { complete: false, completedAt: null } })
+}
+
+export async function uncheckTasks(taskIds: ID[]) {
+  return editTasks(
+    taskIds.map((id) => ({ id, complete: false, completedAt: null })),
+  )
 }
