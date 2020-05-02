@@ -23,6 +23,7 @@ declare global {
     taskOrder?: ID[]
     /** Whether or not this list is a routine list */
     routine?: boolean
+    routineRestartedAt?: null | Timestamp
   }
 
   export type Task = {

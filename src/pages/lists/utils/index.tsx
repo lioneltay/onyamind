@@ -2,7 +2,7 @@ import React from "react"
 import { assert } from "lib/utils"
 import { partition } from "ramda"
 import { useActions, useSelector, useStore } from "services/store"
-import { uncheckTasks } from "services/api"
+import { uncheckTasks, editList } from "services/api"
 
 /**
  * Orders tasks according to task order.
@@ -33,19 +33,21 @@ export function orderTasks(tasks: Task[], taskOrder: ID[]): Task[] {
   ]
 }
 
-function isUncheckedRoutineTask(task: Task): boolean {
-  if (!task.completedAt) {
-    return false
-  }
-
-  const completedDate = new Date(task.completedAt)
+function getRoutineResetTime() {
   // Reset at 4:00am local time
   const resetTime = new Date()
   resetTime.setHours(4)
   resetTime.setMinutes(0)
   resetTime.setSeconds(0)
 
-  return completedDate > resetTime
+  return resetTime
+}
+
+function isUncheckedRoutineTask(task: Task): boolean {
+  if (!task.completedAt) {
+    return false
+  }
+  return new Date(task.completedAt) > getRoutineResetTime()
 }
 
 export const useHandleRoutineReset = (listId?: ID) => {
@@ -53,18 +55,28 @@ export const useHandleRoutineReset = (listId?: ID) => {
 
   React.useEffect(() => {
     function handler() {
-      if (!listId) {
+      const state = store.getState()
+
+      const lists = state.app.taskLists || []
+      const list = lists.find((list) => list.id === list.id)
+
+      if (
+        !list ||
+        (list.routineRestartedAt &&
+          new Date(list.routineRestartedAt) > getRoutineResetTime())
+      ) {
         return
       }
 
-      console.log("FOCUS HANDLER RUN")
-      const state = store.getState()
-
       const tasks = (state.listPage.tasks || []).filter(isUncheckedRoutineTask)
 
-      console.log(tasks)
-
       uncheckTasks(tasks.map((task) => task.id))
+      editList({
+        listId: list.id,
+        data: {
+          routineRestartedAt: Date.now(),
+        },
+      })
     }
 
     handler()
