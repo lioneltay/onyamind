@@ -22,7 +22,12 @@ type TransitionTaskListProps = {
   onDragEnd: OnDragEndResponder
 } & Pick<
   TaskProps,
-  "onSwipeLeft" | "onSwipeRight" | "swipeLeftIcon" | "swipeRightIcon"
+  | "onSwipeLeft"
+  | "onSwipeRight"
+  | "swipeLeftIcon"
+  | "swipeRightIcon"
+  | "onSelectTask"
+  | "onItemClick"
 >
 
 const TransitionTaskList = ({
