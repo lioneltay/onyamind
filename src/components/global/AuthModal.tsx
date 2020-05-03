@@ -114,8 +114,12 @@ export default () => {
           position: absolute;
           top: 0;
           right: 0;
+          z-index: 10;
         `}
-        onClick={closeAuthModal}
+        onClick={() => {
+          console.log('close')
+          closeAuthModal()
+        }}
       >
         <ClearIcon />
       </IconButton>
