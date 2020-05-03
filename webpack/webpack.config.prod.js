@@ -48,3 +48,5 @@ module.exports = {
       : []),
   ],
 }
+
+console.log("@@@@@@@@@@@@@", process.env.APP_MODE)
