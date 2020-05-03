@@ -16,8 +16,6 @@ export const firebase = firebaseImport
 
 firebase.initializeApp(isProduction ? config.production : config.staging)
 
-console.log({ isProduction })
-
 export const firestore = firebase.firestore()
 export const auth = firebase.auth()
 export const perf = firebase.performance()

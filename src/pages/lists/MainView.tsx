@@ -15,6 +15,7 @@ import { useActions, useSelector } from "services/store"
 import styled from "styled-components"
 import { TransitionTaskList } from "./components"
 import { orderTasks, useHandleRoutineReset } from "./utils"
+import { partition } from "ramda"
 
 const Flip = styled.div<{ flip: boolean }>`
   transform: rotate(${({ flip }) => (flip ? "-180deg" : "0")});
@@ -48,13 +49,17 @@ const MainView = () => {
     const selectedTaskList = s.app.selectedTaskList(state)
     const tasks = orderTasks(
       state.listPage.tasks ?? [],
-      selectedTaskList?.taskOrder ?? [],
+      selectedTaskList?.taskOrder,
+    )
+    const [completeTasks, incompleteTasks] = partition(
+      (task) => task.complete,
+      tasks,
     )
 
     return {
       taskOrder: tasks.map((task) => task.id),
-      incompleteTasks: s.listPage.incompletedTasks(state),
-      completeTasks: s.listPage.completedTasks(state),
+      incompleteTasks,
+      completeTasks,
       tasks,
       selectedTaskList,
       multiselect: state.listPage.multiselect,

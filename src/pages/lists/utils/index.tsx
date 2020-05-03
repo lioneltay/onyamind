@@ -8,7 +8,7 @@ import { uncheckTasks, editList } from "services/api"
  * Orders tasks according to task order.
  * Tasks not included in the task order are added in front with the existing order preserved.
  */
-export function orderTasks(tasks: Task[], taskOrder: ID[]): Task[] {
+export function orderTasks(tasks: Task[], taskOrder: ID[] = []): Task[] {
   const copy = [...tasks]
   const orderedTasks = []
   const extraTasks = []
