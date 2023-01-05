@@ -71,7 +71,7 @@
     "faker": "^4.1.0",
     "firebase-admin": "^8.10.0",
     "firebase-tools": "^7.16.0",
-    "html-webpack-plugin": "^3.2.0",
+    "html-webpack-plugin": "^5.5.0",
     "jest": "^25.4.0",
     "jest-watch-typeahead": "^0.4.2",
     "prettier": "^2.0.1",
